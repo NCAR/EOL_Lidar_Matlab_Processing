@@ -4,7 +4,7 @@ clear all; close all
 write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
     'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
 
-node = 'MPD2';
+node = 'MPD3';
 
 flag.save_quicklook = 0;  % save quicklook to local directory
 flag.save_data = 0;  % save files in matlab format
@@ -37,7 +37,7 @@ elseif strcmp(node,'MPD3')==1
  files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', '/scr/eldora1/wvdial_3_data/2018');
  catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD4')==1
- files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', '/scr/eldora1/wvdial_3_data/2018');
+ files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', '/scr/eldora1/wvdial_4_data/2018');
  catalog = '/pub/incoming/catalog/operations';
 end
 j=1;

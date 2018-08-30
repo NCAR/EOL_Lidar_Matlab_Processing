@@ -87,7 +87,7 @@ MCS.molecular = MCS.all(MCS.channel1==3,:); % 3 is the molecular HSRL channel
 LL.all = [LL.time1, LL.wavelength1, LL.current1];
 LL.online = LL.all(strcmp(LL.name1,'WVOnline'),:);
 LL.offline = LL.all(strcmp(LL.name1,'WVOffline'),:);
-LL.hsrl =  LL.all(strcmp(LL.name1,'HSRL'),:);
+%LL.hsrl =  LL.all(strcmp(LL.name1,'HSRL'),:);
 
 HKeep.all = [HKeep.time1, HKeep.temp1];
 
@@ -100,15 +100,18 @@ WS.all = [WS.time1, WS.temp1, WS.press1, WS.relhum1];
 
 % grid to a fixed time base
 ave_time = 2;  % time grid in seconds
-time_grid = (floor(min(MCS.time1)):1/24/60/60*(ave_time):ceil(max(MCS.time1)))';
+time_grid = (floor(min(MCS.time1)):1/60/60*(ave_time):ceil(max(MCS.time1)))';
 LL.online_grid = interp1(LL.online(:,1), LL.online(:,2:end), time_grid, 'nearest', 'extrap'); 
 LL.offline_grid = interp1(LL.offline(:,1), LL.offline(:,2:end), time_grid, 'nearest', 'extrap'); 
-LL.hsrl_grid = interp1(LL.hsrl(:,1), LL.hsrl(:,2:end), time_grid, 'nearest', 'extrap');
+%LL.hsrl_grid = interp1(LL.hsrl(:,1), LL.hsrl(:,2:end), time_grid, 'nearest', 'extrap');
+[x, ia, ic] = unique(Pow.all(:,1),'rows');  % remove duplicate time points
+uA = Pow.all(ia,:);  % apply those to the other rows
 MCS.online_grid = interp1(MCS.online(:,1), MCS.online(:,2:end), time_grid, 'nearest', 'extrap'); 
 MCS.offline_grid = interp1(MCS.offline(:,1), MCS.offline(:,2:end), time_grid, 'nearest', 'extrap'); 
-MCS.combined_grid = interp1(MCS.combined(:,1), MCS.combined(:,2:end), time_grid, 'nearest', 'extrap'); 
-MCS.molecular_grid = interp1(MCS.molecular(:,1), MCS.molecular(:,2:end), time_grid, 'nearest', 'extrap');
+%MCS.combined_grid = interp1(MCS.combined(:,1), MCS.combined(:,2:end), time_grid, 'nearest', 'extrap'); 
+%MCS.molecular_grid = interp1(MCS.molecular(:,1), MCS.molecular(:,2:end), time_grid, 'nearest', 'extrap');
 HKeep.temp1 = interp1(HKeep.all(:,1), HKeep.all(:,2), time_grid, 'nearest', 'extrap');
+HKeep.temp2 = interp1(HKeep.all(:,1), HKeep.all(:,3), time_grid, 'nearest', 'extrap');
 [x, ia, ic] = unique(Pow.all(:,1),'rows');  % remove duplicate time points
 uA = Pow.all(ia,:);  % apply those to the other rows
 Pow.online = interp1(uA(:,1), uA(:,2), time_grid, 'nearest', 'extrap');
@@ -116,10 +119,10 @@ Pow.offline = interp1(uA(:,1), uA(:,8), time_grid, 'nearest', 'extrap');
 WS.online = interp1(WS.all(:,1), WS.all(:,2:end), time_grid, 'nearest', 'extrap');
 
 % combine all of the data into original data format
-online_merged = [time_grid, LL.online_grid, Pow.online, WS.online, MCS.online_grid];
-offline_merged = [time_grid, LL.offline_grid, HKeep.temp1, WS.online, MCS.offline_grid];
-hsrl_com_merged = [time_grid, LL.hsrl_grid, Pow.online, WS.online, MCS.combined_grid];
-hsrl_mol_merged = [time_grid, LL.hsrl_grid, HKeep.temp1, WS.online, MCS.molecular_grid];
+online_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCS.online_grid];
+offline_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCS.offline_grid];
+%hsrl_com_merged = [time_grid, LL.hsrl_grid, Pow.online, WS.online, MCS.combined_grid];
+%hsrl_mol_merged = [time_grid, LL.hsrl_grid, HKeep.temp1, WS.online, MCS.molecular_grid];
 
 cd(dd) % point back to original directory
 

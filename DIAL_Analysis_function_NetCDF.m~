@@ -216,9 +216,9 @@ end
   end
         
         
- folder_date = textscan(folder_in(end-7:end), '%8f', 1); folder_date=folder_date{1}; % change to read ingore the NF and FF 
- %folder_CH = textscan(folder_in(end-1:end), '%s'); folder_CH=folder_CH{1}; % change to read ingore the NF and FF 
- %folder_CH=folder_CH{1:1};
+ folder_date = textscan(folder_in(end-8:end), '%8f', 1); folder_date=folder_date{1}; % change to read ingore the NF and FF 
+ folder_CH = textscan(folder_in(end-1:end), '%s'); folder_CH=folder_CH{1}; % change to read ingore the NF and FF 
+ folder_CH=folder_CH{1:1};
   
 % Parsing off the auxiliary 
  Online = single(Online_Raw_Data(:,9:end)); 
@@ -676,10 +676,10 @@ end
  N_masked(N_avg < 0) = nan; % remove non-pysical (negative) wv regions
  N_masked(abs(N_error./N_avg) > 20.00) = nan; % remove high error regions
  N_masked(Offline_Raw_Data(:,8:end)./(MCS.bin_duration*1e-9*MCS.accum) > 5E6) = nan; % remove raw counts above linear count threshold (5MC/s)
- %if strcmp(folder_CH,'NF') == 1
- %  N_masked(abs(N_error./N_avg) > 1.00) = nan; % remove high error regions
- %  N_masked(Offline_Raw_Data(:,8:end)./(MCS.bin_duration*1e-9*MCS.accum) > 1.25E6) = nan; % remove raw counts above linear count threshold (5MC/s)
- %end
+ if strcmp(folder_CH,'NF') == 1
+   N_masked(abs(N_error./N_avg) > 1.00) = nan; % remove high error regions
+   N_masked(Offline_Raw_Data(:,8:end)./(MCS.bin_duration*1e-9*MCS.accum) > 1.25E6) = nan; % remove raw counts above linear count threshold (5MC/s)
+ end
  % blank first 300 meters when pulse is going out
  %blank = nan.*ones(size(N_masked(:,1:300/gate)));
  %N_masked = single(horzcat(blank, N_masked(:,(300/gate+1):end)));  
@@ -761,9 +761,9 @@ if flag.mark_gaps ==1
   N_error(isnan(r_blank)) = NaN;   
 end
 
-  year = strread(folder_in(end-7:end-4), '%4f', 1); 
- % year = 2000+year;
-  time_new = time_grid;%+datenum(year,1,0);
+  year = strread(folder_in(end-7:end-6), '%6f', 1); 
+  year = 2000+year;
+  time_new = datenum(year,1,0)+time_grid;
   date_plot = datestr(nanmean(time_new), 'dd mmm yyyy') % this was changed
  
   
@@ -830,7 +830,7 @@ end
  
   
   cd(write_data_folder)
-  name=strcat(date_plot);
+  name=strcat(date_plot, folder_CH);
   
   if flag.WS == 1
    save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error',...
@@ -852,7 +852,7 @@ end
     Online_Temp_Spatial_Avg(isinf(Online_Temp_Spatial_Avg)==1) = -1; 
     time_unix = (time_new-datenum(1970,1,1))*86400; % convert to unix time
    
-    cdf_name = strcat('wv_dial.', datestr(date_plot, 'yymmdd'));
+    cdf_name = strcat('wv_dial.', datestr(date_plot, 'yymmdd'), folder_CH);
     ncid = netcdf.create([cdf_name '.nc'],'CLOBBER');       
     % define the dimensions and variables
     % netcdf.reDef(ncid);
@@ -1149,17 +1149,10 @@ ylim([0 9e3]);
    figure(204)
    plot(Surf_AH)
    title('surface absolute humidity, atm')
- %  figure(206)
- %  plotyy([time_new', time_new'], [(P_on)', (P_off)'], [time_new', time_new',time_new'], [T_bench', T_base', Surf_T']);
- %  title('on and offline seed current (mA) and rel transmitted power (left), inside and outside temp, C (right)')
- end
    figure(205)
-   plot(time_new, P_on, 'r') 
-   hold on
-   plot(time_new, P_off, 'k')
-   legend('P_{on}', 'P_{off}') 
-   hold off 
- 
+   plotyy([time_new', time_new'], [(P_on)', (P_off)'], [time_new', time_new',time_new'], [T_bench', T_base', Surf_T']);
+   title('on and offline seed current (mA) and rel transmitted power (left), inside and outside temp, C (right)')
+ end
 end
  
 toc
