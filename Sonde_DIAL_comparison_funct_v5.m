@@ -1,4 +1,4 @@
-function[] = Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift,error_threshold, Wind_speed, save_figs)
+function[] = Sonde_DIAL_comparison_funct_v5(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift,error_threshold, Wind_speed, save_figs)
 %clear all;
 %close all;
 
@@ -11,16 +11,7 @@ file = date(1:end-7)
      'time shift may not work properly because the hour is 00:00'
  end
  
-%date = '10 Jul 2014';
-%time = '02:00'; 
 
-
-%include sonde data 0=off 1=on
-sonde = 1;
-%replot time vs range images at start of processing 0=off 1=on
-replot = 0;
-%save figures at end of processing 0=off 1=on
-%save_figs = 1; 
 % range offset
 range_offset = 0.0;  % this is corrected in the data now.   correct for the pulse length (see WVDIAL_gate_designation_offset.numbers)
                         % post PECAN this will be -37.5m (no more delay)
@@ -31,25 +22,26 @@ accum = 10000;
 
 gate = round((bin_duration*1e-9*3e8/2)*10)/10;
 
-C = importdata('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/NCAR_C_Map.mat');
+C = importdata('/Users/spuler/Documents/GitHub/Matlab_DIAL_processing/NCAR_C_Map.mat');
 %cd('/Users/spuler/Desktop/WV_DIAL_data/') % point to the directory where data is stored 
 dd = pwd; % get the current path
 cd('/Volumes/documents/WV_DIAL_data/processed_data') % point to the directory where data is stored 
 %cd('/Users/spuler/Desktop/FRAPPE_PECAN') % point to the directory where data is stored 
 
-%data = load(strcat(file, 'FF.mat'));
-data = load(strcat(file, 'Python.mat'));
+data = load(strcat(file, 'FF.mat'));
+%data = load(strcat(file, 'Python.mat'));
 
 N_avg_FF=data.N_avg;
 N_error_FF=data.N_error;
-%RB_FF=data.RB;
-%OD_FF=data.OD;
+RB_FF=data.RB;
+OD_FF=data.OD;
 %background_FF = data.background_off;
 %time_new_FF = data.time_new;
 range = data.range;
 time_new =  data.time_new;
-%T = data.T;
-%P = data.P;
+T = data.T;
+P = data.P;
+
 
 
  for i=1:length(time_new)
@@ -69,8 +61,9 @@ time_new =  data.time_new;
  start_time = int16(start_time_i);  
  end_time = int16(end_time_i);
 
-  g_FF_ave = nanmean(N_avg_FF(start_time:end_time,:));
-  g_error_FF_ave = nanmean(N_error_FF(start_time:end_time,:));
+ 
+  g_FF_ave = nanmean(N_avg_FF(start_time:end_time,:)).*1e6./6.022E23.*18.015;
+  g_error_FF_ave = nanmean(N_error_FF(start_time:end_time,:)).*1e6./6.022E23.*18.015;
     
   % calcuate how many 1 min profiles are being averaged (using 30 sec profiles)
   ave_num_FF = sum(~isnan(N_avg_FF(start_time:end_time,:)),1)/2; %./60;
@@ -79,6 +72,9 @@ time_new =  data.time_new;
 
   g_H2O = N_H2O.*1e6./6.022E23.*18.015;
   dial_range = range./1e3-range_offset;
+  
+%  g_FF_ave((g_FF_ave> 4) & (dial_range > 4)) = nan; %mask clouds
+%  g_NF_ave((g_NF_ave> 4) & (dial_range > 3.5)) = nan; %mask clouds
   
   g_error_FF_ave(isnan(g_FF_ave)) = nan;
   g_FF_ave(isnan(g_error_FF_ave)) = nan;
@@ -95,7 +91,6 @@ time_new =  data.time_new;
   ylabel('Height (km, AGL)', 'Fontsize', 30, 'Fontweight', 'b');
   % overlay Near Field Channel
   figure(10)
-  if sonde==1
     hold on
     if sonde_top >= 2500 
       plot(g_H2O(1:2500,1),sonde_range(1:2500,1), '-b', 'MarkerSize', 2, 'LineWidth', 2)
@@ -105,9 +100,6 @@ time_new =  data.time_new;
     hold off   
     %legend('1 min Far Field', '25 min Far Field', '1 min Near Field', '25 min Near Field', 'Sonde','Location', 'NorthEast');
     legend('Far Field', 'Sonde','Location', 'NorthEast');
-  else
-   legend('Far Field', 'Location', 'NorthEast');
-  end
   grid on
   % add error bars
   hold on
@@ -119,7 +111,56 @@ time_new =  data.time_new;
   grid on
   set(gca, 'FontSize', 22) 
     
+    
 
+
+
+  %compare estimated T with measured T profile
+  figure(12)
+  plot(T_sonde(1:sonde_top,1)+273,sonde_range(1:sonde_top,1), 'g')
+  hold on
+  plot(T,range/1000)
+  ylim([0 6])
+  title({[date, ' Temp']}, 'Fontsize', 30, 'Fontweight', 'b')
+  hold off
+  
+   % use this bit of code to get the sonde data on the range spacing of the DIAL
+  idx = find(diff(sonde_range)<=0); % check for monotonic altitudes in the sonde
+  while isempty(idx) == 0
+    idx = find(diff(sonde_range)<=0); % check for monotonic altitudes in the sonde
+    for i=1:size(idx,1)
+      sonde_range(idx(i),1)= sonde_range(idx(i)+1,1)-1e-12;
+    end
+  end
+  % convert sonde to DIAL gates
+  T_sonde_grid = interp1(sonde_range,T_sonde+273,range/1000, 'linear'); 
+  T_diff = T_sonde_grid-T;
+  P_sonde_grid = interp1(sonde_range,P_sonde./1013.25,range/1000, 'linear'); 
+  P_diff = P_sonde_grid-P;
+  
+  figure(121)
+  plot(T_diff,range/1000)
+  ylim([0 6])
+  title({[date, ' Temp']}, 'Fontsize', 30, 'Fontweight', 'b')
+  hold off
+  
+  %compare estimated P with measured P profile
+  figure(13)
+  plot(P_sonde(1:sonde_top,1)./1013.25,sonde_range(1:sonde_top,1), 'g')
+  hold on
+  plot(P,range/1000)
+  ylim([0 6])
+  xlim([0 1])
+  title({[date, ' Pressure']}, 'Fontsize', 30, 'Fontweight', 'b')
+  hold off
+
+  figure(131)
+  plot(P_diff,range/1000)
+  ylim([0 6])
+  title({[date, ' Temp']}, 'Fontsize', 30, 'Fontweight', 'b')
+  hold off
+ 
+  
 if save_figs==1
 % print the figures to file 
   %cd('/Users/spuler/Desktop/WV_DIAL_data/plots/') % point to the directory where data is stored 
@@ -138,45 +179,9 @@ if save_figs==1
 end
   
 
-if sonde==1  
-%  % use this section to help set the temperature and pressure profile
-  %T0 = 273+25; % set to match the sounding
-  %T = T0-0.0065.*range; % set to match the sounding
-  % pressure in atmospheres
-  %P0  = 0.83; % set to match the sounding
-  %P = P0.*(T0./T).^-5.5;   % set this value to match sounding
-
-  %compare estimated T with measured T profile
-  %figure(12)
-  %plot(T_sonde(1:sonde_top,1)+273,sonde_range(1:sonde_top,1), 'g')
-  %hold on
-  %plot(T,range/1000)
-  %ylim([0 8])
-  %title({[date, ' Temp']}, 'Fontsize', 30, 'Fontweight', 'b')
-  %hold off
-
-  %compare estimated P with measured P profile
-  %figure(13)
-  %plot(P_sonde(1:sonde_top,1)./1013.25,sonde_range(1:sonde_top,1), 'g')
-  %hold on
-  %plot(P,range/1000)
-  %ylim([0 8])
-  %xlim([0 1])
-  %title({[date, ' Pressure']}, 'Fontsize', 30, 'Fontweight', 'b')
-  %hold off
-end   
-
-
-
- name=strcat(date, '_WV_2CH'); 
- 
-  
- 
-
-
 %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
   cd('/Volumes/documents/WV_DIAL_data/processed_data') % point to the directory where data is stored 
   name=strcat(date, '_sonde');
-  save(name, 'g_FF_ave', 'dial_range', 'g_H2O', 'sonde_range',...
+  save(name, 'g_FF_ave', 'dial_range', 'g_H2O', 'sonde_range','P_diff', 'T_diff',...
        'g_error_FF_ave')
-  
+end  

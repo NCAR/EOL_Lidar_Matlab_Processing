@@ -1,4 +1,4 @@
-function[] = DIAL_Analysis_v52_function(folder_in, MCS, write_data_folder, flag, node, ...
+function[] = DIAL_Analysis_function_NetCDF(folder_in, date_in, MCS, write_data_folder, flag, node, ...
     profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog)
 
 %% notes
@@ -79,7 +79,7 @@ gate = round((MCS.bin_duration*1e-9*3e8/2)*10)/10
 
 delta_r_index =  150/gate; % this is the cumlative sum photons gate spacing 
 delta_r = delta_r_index*gate*100; % delta r in cm
-r1 = round(1500/gate); % index for smoothing range 1 (2km)
+r1 = round(1500/gate); % index for smoothing range 2 (2500m)
 r2 = round(2500/gate); % index for smoothing range 2 (2500m)
 spatial_average1 = 150/gate; %150 meter smoothing range 1 
 spatial_average2 = 300/gate; %300 meter smoothing between range 1 and 2
@@ -91,7 +91,8 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 
 %% Importing online and offline files from the selected date
 
-[data_on,data_off,folder_in] = File_Retrieval_v13(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+[data_on,data_off,folder_in] = File_Retrieval_NetCDF(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+%[data_on,data_off,folder_in] = File_Retrieval_v13(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
 %[data_on,data_off,folder_in] = File_Retrieval_v13(MCS.bins, folder_in); %use to read binary data (bin number passed in)  
 % v13 ingores the last hour
 
@@ -105,7 +106,8 @@ catch err
 end
 
   % add trap error associated with Perdigao instrument crash 
-  time2 = (Online_Raw_Data(:,1)); 
+  serial_date = datenum(num2str(date_in),'yymmdd');
+  time2 = double((Online_Raw_Data(:,1)))./24+serial_date;
   %time2 = time2-0.25; % this was a fix for computer switch 20-Oct to 26-Oct 2017
   %time2(time2>292.5)= time2(time2>292.5)-0.25; % 19-Oct-2017 fix
   time = time2;
@@ -389,7 +391,7 @@ end
   end
  
   % grid data in time to final array size 
-  time_grid = (floor(min(time)):1/24/60*(ave_time.gr):ceil(min(time)))';
+  time_grid = (floor(min(time)):1/24/60*(ave_time.gr):ceil(max(time)))';
   
   lambda_all = interp1(time, lambda_all, time_grid, 'next', extrapolation); 
   lambda_all_N = interp1(time, lambda_all_N, time_grid, 'nearest', extrapolation); %added for multiwavelength processing
@@ -756,7 +758,7 @@ end
   year = strread(folder_in(end-7:end-6), '%6f', 1); 
   year = 2000+year;
   time_new = datenum(year,1,0)+time_grid;
-  date=datestr(nanmean(time_new), 'dd mmm yyyy')
+  date_plot = datestr(nanmean(time_new), 'dd mmm yyyy') % this was changed
  
   
  % OD is - ln(I/I.o), since offline is not the same as online it needs to
@@ -820,7 +822,7 @@ end
  
   
   cd(write_data_folder)
-  name=strcat(date, folder_CH);
+  name=strcat(date_plot, folder_CH);
   
   if flag.WS == 1
    save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error',...
@@ -842,7 +844,7 @@ end
     Online_Temp_Spatial_Avg(isinf(Online_Temp_Spatial_Avg)==1) = -1; 
     time_unix = (time_new-datenum(1970,1,1))*86400; % convert to unix time
    
-    cdf_name = strcat('wv_dial.', datestr(date, 'yymmdd'), folder_CH);
+    cdf_name = strcat('wv_dial.', datestr(date_plot, 'yymmdd'), folder_CH);
     ncid = netcdf.create([cdf_name '.nc'],'CLOBBER');       
     % define the dimensions and variables
     % netcdf.reDef(ncid);
@@ -958,7 +960,7 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(C)
   %shading interp 
-  hh = title({[date,'  Relative Backscatter (C/ns km^2)']},'fontweight','b','fontsize',font_size);
+  hh = title({[date_plot,'  Relative Backscatter (C/ns km^2)']},'fontweight','b','fontsize',font_size);
   P_t = get(hh, 'Position');
   set(hh,'Position', [P_t(1) P_t(2)+0.2 P_t(3)])
   xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
@@ -979,11 +981,11 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   set(gca,'TickLength',[0.005; 0.0025]);
   colorbar('EastOutside');
   axis([fix(min(time_new)) fix(min(time_new))+1 0 6])
-  caxis([0 12]);
+  caxis([0 10]);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(C)
   %shading interp
-  hh = title({[date,'  Water Vapor (g/m^{3})']},'fontweight','b','fontsize',font_size);
+  hh = title({[date_plot,'  Water Vapor (g/m^{3})']},'fontweight','b','fontsize',font_size);
   P_t = get(hh, 'Position');
   set(hh,'Position', [P_t(1) P_t(2)+0.2 P_t(3)])
   xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
@@ -997,10 +999,10 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
 
  if flag.save_quicklook == 1
   cd(write_data_folder) % point to the directory where data is stored 
-  date=datestr(nanmean(time_new), 'yyyymmdd');
+  date_save=datestr(nanmean(time_new), 'yyyymmdd');
 % save the image as a PNG to the local data folder 
   %name1=strcat('lidar.NCAR-WV-DIAL.', date, '0000.', folder_CH, '.png'); 
-  name=strcat('lidar.',node,'-WV-DIAL.', date, '0000.', folder_CH, '.png'); 
+  name=strcat('lidar.',node,'-WV-DIAL.', date_save, '0000.', folder_CH, '.png'); 
   print(figure1, name, '-dpng', '-r300') % set the resolution as 300 dpi
   if flag.save_catalog == 1 % upload figure to the field catalog
     test=ftp('catalog.eol.ucar.edu', 'anonymous', 'spuler@ucar.edu')
@@ -1024,7 +1026,7 @@ if flag.plot_data == 1
   h = pcolor(x,y,Z);
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); caxis([0 300]);
-  title({[date,' relative error']},...
+  title({[date_plot,' relative error']},...
      'fontweight','b','fontsize',font_size)
   ylabel('Altitude (km)','fontweight','b','fontsize',font_size); 
   axis([fix(min(time_new)) fix(min(time_new))+1 0 6])
@@ -1040,7 +1042,7 @@ if flag.plot_data == 1
   h = pcolor(x,y,Z);
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); caxis([0 18]);
-  title({[date,' masked wv']},...
+  title({[date_plot,' masked wv']},...
      'fontweight','b','fontsize',font_size)
   ylabel('Altitude (km)','fontweight','b','fontsize',font_size); 
   axis([fix(min(time_new)) fix(min(time_new))+1 0 6])
@@ -1056,7 +1058,7 @@ if flag.plot_data == 1
   h = pcolor(x,y,Z);
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); caxis([15 19]);  % model assume 2E17 at ground and 2E15 at 8km 
-  title({[date,' number density']},...
+  title({[date_plot,' number density']},...
      'fontweight','b','fontsize',font_size)
   ylabel('Altitude (km)','fontweight','b','fontsize',font_size); 
   axis([fix(min(time_new)) fix(min(time_new))+1 0 6])
@@ -1073,7 +1075,7 @@ if flag.plot_data == 1
   set(h, 'EdgeColor', 'none');
   %shading flat;
   axis xy; colorbar('EastOutside'); caxis([15 19]);  % model assumes there will be ~2E17 at ground and 2E15 at 8km 
-  title({[date,' number density error']},...
+  title({[date_plot,' number density error']},...
      'fontweight','b','fontsize', font_size)
   ylabel('Altitude (km)','fontweight','b','fontsize',font_size); 
   axis([fix(min(time_new)) fix(min(time_new))+1 0 6])
@@ -1090,7 +1092,7 @@ if flag.plot_data == 1
        plot(time_new, lambda_all); 
   end
   datetick('x','HH','keeplimits');
-  title({[date,'  Online wavelength']},...
+  title({[date_plot,'  Online wavelength']},...
      'fontweight','b','fontsize',20)
   ylim([lambda-.001 lambda+.001])
  
@@ -1098,7 +1100,7 @@ if flag.plot_data == 1
   figure21 = figure('Position', plot_size2);
   plot(time_new, lambda_all_off);
   datetick('x','HH','keeplimits');
-  title({[date,'  Offline wavelength']},...
+  title({[date_plot,'  Offline wavelength']},...
    'fontweight','b','fontsize',20)
   ylim([lambda_off-.001 lambda_off+.001])
 
@@ -1179,7 +1181,7 @@ colormap(C)
 figure('Position',plot_size1);
 imagesc(time_new,range./1e3, FY');
 axis xy; colorbar('EastOutside'); caxis([-5e16 5e16]);  % model assumes there will be ~2E17 at ground and 2E15 at 8km 
-title({[date,' Horizontal Gradient']},...
+title({[date_plot,' Horizontal Gradient']},...
      'fontweight','b','fontsize',16)
 ylabel('Altitude (km)','fontweight','b','fontsize',20); 
 datetick('x','HH','keeplimits');
@@ -1196,7 +1198,7 @@ colormap(C)
  caxis([-0.1 2]);
  datetick('x','HH','keeplimits');
  colormap(C)
- title({[date,'  Column Optical Depth']},...
+ title({[date_plot,'  Column Optical Depth']},...
       'fontweight','b','fontsize',30)
  xlabel('Time (UTC)','fontweight','b','fontsize',30); 
  ylabel('Height (km, AGL)','fontweight','b','fontsize',30); 
@@ -1209,7 +1211,7 @@ colormap(C)
  figure('Position',[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/2])
  semilogy(time_new, background_off, time_new, background_on); %
  datetick('x','HH','keeplimits');
-  title({[date,'  Offline background C/s']},...
+  title({[date_plot,'  Offline background C/s']},...
      'fontweight','b','fontsize',30)
  ylim([1e2  1e7])
  hold on
@@ -1229,7 +1231,7 @@ colormap(C)
  end
  plot(time_new(1:end-1), cloud_base_idx);
  datetick('x','HH','keeplimits');
- title({[date,'  Cloud Base']},'fontweight','b','fontsize',30)
+ title({[date_plot,'  Cloud Base']},'fontweight','b','fontsize',30)
  ylim([0  16000])
  ylabel('Height (m, AGL)','fontweight','b','fontsize',30); 
  xlabel('UTC','fontweight','b','fontsize',30); 

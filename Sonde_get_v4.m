@@ -1,4 +1,4 @@
-function[N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, Wind_speed] = Sonde_get_v3(sondedir, sondefilename, average) 
+function[N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, Wind_speed, ID_sonde] = Sonde_get_v4(sondedir, sondefilename, average) 
 
 %d = pwd; % get the current path
 %cd('/scr/rsf1/vanandel/HSRL/h2o_data/2012/sondes') % point to the directory where data is stored  
@@ -12,14 +12,12 @@ function[N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, W
       sonde_min = strread(sondefilename(13:end), '%2c', 1);
       sonde_sec = strread(sondefilename(15:end), '%2c', 1);
       header = importdata(sonde, ' ', 12);
-      
-        IndexC = strfind(header, 'Sonde Id/Sonde Type:');
-        Index = find(not(cellfun('isempty', IndexC)));
-        dummy = cellstr(header(Index))
-        dummy2 = dummy{1,1}
-        sonde_ID = strread(dummy2(44:end), '%5c', 1); 
-      
-      
+          % add this to read the sonde ID
+          IndexC = strfind(header, 'Sonde Id/Sonde Type:');
+          Index = find(not(cellfun('isempty', IndexC)));
+          dummy = cellstr(header(Index));
+          dummy2 = dummy{1,1};
+          ID_sonde = strread(dummy2(44:end), '%5c', 1); 
       data = importdata(sonde, ' ', 14);
       P_sonde=data.data(:,5);  % pressure in mbar
       T_sonde=data.data(:,6);  % temperature in C

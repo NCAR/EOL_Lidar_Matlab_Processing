@@ -31,7 +31,7 @@ accum = 10000;
 
 gate = round((bin_duration*1e-9*3e8/2)*10)/10;
 
-C = importdata('/Users/spuler/Documents/GitHub/Matlab_DIAL_processing/NCAR_C_Map.mat');
+C = importdata('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/NCAR_C_Map.mat');
 %cd('/Users/spuler/Desktop/WV_DIAL_data/') % point to the directory where data is stored 
 dd = pwd; % get the current path
 cd('/Volumes/documents/WV_DIAL_data/processed_data') % point to the directory where data is stored 

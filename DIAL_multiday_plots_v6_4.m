@@ -10,10 +10,10 @@ date = '24 Apr 2017'; % Perdigao
 days = 55; skip = 5;
 date = '15 May 2017'; % Perdigao 
 days = 3; skip = 1;
-%date = '15 May 2017'; % Perdigao 
-%days = 3; skip = 2;
+date = '24 May 2017'; % Perdigao 
+days = 10; skip = 2;
 
-%DIAL=2;
+DIAL=2;
 %date = '28 Jul 2017'; % DLB-HSRL and WV-DIAL @ LAFE 
 %days = 40; skip = 4;
 %date = '14 Aug 2017'; % DLB-HSRL and WV-DIAL @ LAFE 
@@ -22,6 +22,8 @@ days = 3; skip = 1;
 %days = 21; skip = 3;
 %date = '03 Jan 2018'; % DLB-HSRL and WV-DIAL post LAFE finalizing rack mounting
 %days = 21; skip = 3;
+date = '05 Aug 2017'; % Perdigao 
+days = 10; skip = 2;
 
 font_size = 14; % use this for 2015a version
 %font_size = 16; % use this for 2015a version
@@ -187,8 +189,9 @@ if replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 12]);
+ caxis([0 14]);
  colormap(C)
+ %colormap(perula)
  %shading interp
  % P_t = get(hh, 'Position');
  % set(hh,'Position', [P_t(1) P_t(2)+0.1 P_t(3)])
@@ -210,14 +213,17 @@ if replot==1
  % plot Narrow RB
  figure('Position',size)
  Z = double(log10((real(RB_FF')./RB_scale)));
+ Z_mask = Z;
+ Z_mask(RB_FF'<5) = NaN;
  % Z(isnan(Z)) = -1;
  set(gcf,'renderer','zbuffer');
  h = pcolor(x,y,Z);
+  h = pcolor(x,y,Z_mask);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(duration)) ceil(max(duration)) 0 12])
- caxis([1 6]);
- colormap(C)
+ caxis([2 5]);
+ %colormap(C)
  %shading interp
  % P_t = get(hh, 'Position');
  % set(hh,'Position', [P_t(1) P_t(2)+0.2 P_t(3)])
@@ -228,10 +234,12 @@ if replot==1
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'DIAL Relative Backscatter (C/ns km^2)']},'fontweight','b','fontsize',font_size);
+  % hh = title({[date,'DIAL Relative Backscatter (C/ns km^2)']},'fontweight','b','fontsize',font_size);
+   hh = title({[date,'DIAL Attenuated Backscatter (A.U.)']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   hh = title({'DIAL Relative Backscatter (C/ns km^2)'},'fontweight','b','fontsize',font_size);
+ %  hh = title({'DIAL Relative Backscatter (C/ns km^2)'},'fontweight','b','fontsize',font_size);
+    hh = title({'DIAL Attenuated Backscatter (A.U.)'},'fontweight','b','fontsize',font_size);
  end
  set(gca,'Fontsize',font_size,'Fontweight','b');
 
@@ -383,7 +391,7 @@ if replot==1
    axis([fix(min(duration)) ceil(max(duration)) -inf inf])
    %ax(3).YTick = [20 22.5 25 27.5 30 32.5 35 37.5 40];
    set(ax(3),'Color','none')
-   set(ax(3),'YAxisLocation','right')
+   set(ax(3),'YAxisLocation','right')map
    set(ax(3),'XAxisLocation','bottom')
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    ylabel('transmitted energy, uJ', 'Fontsize', font_size, 'Fontweight', 'b');  
@@ -512,21 +520,21 @@ if save_figs==1
   
   %size = [scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2]; % use for standard plots
   size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/2.05]; % use for long plots 
-  %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.47 scrsz(4)/2]; % use for Perdigao BAMS plots 
+  size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.51 scrsz(4)/2]; % use for Perdigao BAMS plots 
   %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/2 scrsz(4)/2]; % use for day plots 
   %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/2.2]; % use for AMT sized 3-day plots (with large font)
   
-  FigH = figure(1);
-  %set(gca,'Fontsize',16.5,'Fontweight','b');
+  FigH = figure(6);
+  set(gca,'Fontsize',42,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
   name=strcat(date, 'FF_H2O_multi'); 
   print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi
  
   FigH = figure(2);
- % set(gca,'Fontsize',16.5,'Fontweight','b');
+  set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
   name=strcat(date, 'FF_RB_multi'); 
-  print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
+  print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi;
   
   FigH = figure(3);
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);

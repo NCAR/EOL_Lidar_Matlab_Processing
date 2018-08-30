@@ -1,9 +1,9 @@
 clear all
 close all
 scrsz = get(0,'ScreenSize');
-sonde_select = 0;
+sonde_select = 1;
 sonde_smooth = 150; % range smooth the sondes to match DIAL
-save_figs = 1; 
+save_figs = 0; 
 gate = 75;
 cut = 3; %number of std to consider as outliner
 
@@ -37,6 +37,7 @@ end
 
 % convert sonde to native DIAL at 75 meter gates
 g_H2O_grid = interp1(sonde_range, g_H2O, dial_range, 'linear'); 
+
 % now smooth sonde data to 150 m  DIAL
 %length_spatial = ones(1,2)/(2);
 %g_H2O_grid_avg = filter2(length_spatial,  g_H2O_grid );
@@ -64,14 +65,52 @@ figure(1)
 plot(g_H2O_grid_avg(1:219), dial_range(1:219), 'b-o', g_FF_ave(1:219), dial_range(1:219), 'r-o'); %,  g_NF_ave(1:219), dial_range(1:219), 'g-o')
 ylim([0 6])
 
+% use this remove empty DIAL or sonde profies (or only 1 point)
+% if sonde_select == 1
+   if isnan(nanmean(g_FF_ave(3:219)-g_H2O_grid_avg(3:219))) == 1 || nanstd(g_FF_ave(3:219)) == 0
+  %   prompt = 'enter 1 to reject this sonde ';
+  %   x = input(prompt);
+  %   if x==1
+  %    prompt = 'rejecting this sonde ';
+  %    pause
+      continue
+    end
+%  end
+
+%DIAL_profile_std = nanstd(g_FF_ave(3:219))
+%DIAL_profile_cov = nancov(g_FF_ave(3:219))
+%pause
+
+
+AH_diff = (g_FF_grid-g_H2O_grid); % DIAL-sonde
+error = (g_FF_grid - g_H2O_grid)./g_H2O_grid; %DIAL-sonde/sonde
+sonde_ID = str2num(ID_sonde);
+all_profile_values = (error(~isnan(error)));
+all_sonde_ID_values = (sonde_ID.*(ones(size(all_profile_values))));
 
 if j == 1  % first time through do this
-  error_FF = (g_FF_grid - g_H2O_grid)./g_H2O_grid;
-  diff_error_FF = (g_FF_grid - g_H2O_grid);
+  error_FF = (g_FF_grid - g_H2O_grid)./g_H2O_grid; %DIAL-sonde/sonde
+ % AH_error_tot = (g_FF_grid - g_H2O_grid)./g_H2O_grid; %DIAL-sonde/sonde
+  AH_diff_tot = AH_diff ; % DIAL-sonde
+  T_diff_tot = T_diff; % DIAL-sonde
+  P_diff_tot = P_diff; % DIAL-sonde
+  sonde_ID_tot = str2num(ID_sonde);
+  all_profile_values_tot = (error(~isnan(error)));
+  all_sonde_ID_values_tot = (sonde_ID.*(ones(size(all_profile_values))));
 else
   error_FF = vertcat(error_FF, (g_FF_grid-g_H2O_grid)./g_H2O_grid);
-  diff_error_FF = vertcat(diff_error_FF, (g_FF_grid-g_H2O_grid));  
+ % AH_error_tot = vertcat(AH_error_tot, (g_FF_grid - g_H2O_grid)./g_H2O_grid); 
+  AH_diff_tot = vertcat(AH_diff_tot, AH_diff); 
+  T_diff_tot = vertcat(T_diff_tot, T_diff); 
+  P_diff_tot = vertcat(P_diff_tot, P_diff);
+  sonde_ID_tot = vertcat(sonde_ID_tot, str2num(ID_sonde));
+  all_profile_values_tot = horzcat(all_profile_values, all_profile_values_tot);
+  all_sonde_ID_values_tot = horzcat(all_sonde_ID_values, all_sonde_ID_values_tot);
 end
+
+
+
+
 
 figure(100) % show plot with shifted range
 plot(g_FF_grid, dial_grid_range, 'r-o')%,  g_NF_grid, circshift(dial_grid_range,[1,shift/2-index]), 'g-o')
@@ -91,20 +130,11 @@ ylabel('Height (km, AGL)', 'Fontsize', 30, 'Fontweight', 'b');
      set(hb, 'Color', 'r');
      cd(dd)
   hold off
-  
   %legend('Far Field', 'Near Field', 'Sonde' ,'Location', 'NorthEast');
   legend('Far Field', 'Sonde' ,'Location', 'NorthEast');
   grid on
   set(gca, 'FontSize', 22) 
 
-
-  if sonde_select == 1
-    prompt = 'enter 1 to reject this sonde ';
-    x = input(prompt);
-    if x==1
-      continue
-    end
-  end
 
   if save_figs==1
      % print the figures to file 
@@ -118,13 +148,160 @@ ylabel('Height (km, AGL)', 'Fontsize', 30, 'Fontweight', 'b');
   end
 
  
-figure(2)
-plot(error_FF , dial_grid_range, 'ro', 'MarkerSize', 3); %error_NF , dial_grid_range, 'gx')
-xlim([-1 1])
+figure(200)
+plot(AH_diff_tot , dial_grid_range, 'ro', 'MarkerSize', 3); %error_NF , dial_grid_range, 'gx')
+xlim([-4 4])
 ylim([0 6])
+legend('\Delta AH (g/m^{3})')
+xlabel('AH Diff (K) DIAL-sonde',  'Fontsize', 30, 'Fontweight', 'b');
+
+figure(201)
+plot(T_diff_tot , dial_range, 'ro', 'MarkerSize', 3); %error_NF , dial_grid_range, 'gx')
+%xlim([-1 1])
+ylim([0 6])
+legend('\Delta T (K)')
+xlabel('T Diff (K) DIAL-sonde',  'Fontsize', 30, 'Fontweight', 'b');
+
+figure(202)
+plot(P_diff_tot , dial_range, 'ro', 'MarkerSize', 3); %error_NF , dial_grid_range, 'gx')
+%hist_range=repmat(dial_range,[size(P_diff_tot,1),1]);
+%histogram2(P_diff_tot,hist_range,'DisplayStyle','tile','ShowEmptyBins','on'); 
+%xlim([-1 1])
+ylim([0 6])
+legend('\Delta P (atm)')
+xlabel('P Diff (atm) DIAL-sonde',  'Fontsize', 30, 'Fontweight', 'b');
+
+profile_diff_mean = nanmedian(AH_diff_tot(:,2:4500/gate),2); % 4.5km and down 75m (ignore suface station) 
+%profile_diff_mean = nanmedian(AH_diff_tot,2);
+figure(203)
+plot(sonde_ID_tot, profile_diff_mean, 'ro', 'MarkerSize', 3); 
+%hist_range=repmat(dial_range,[size(P_diff_tot,1),1]);
+%histogram2(P_diff_tot,hist_range,'DisplayStyle','tile','ShowEmptyBins','on'); 
+%xlim([-1 1])
+%ylim([0 6])
+%legend('\Delta P (atm)')
+xlabel('mean column AH Diff',  'Fontsize', 20, 'Fontweight', 'b');
 
 
+profile_error_mean = nanmedian(error_FF(:,2:4500/gate),2); % 4.5km and down 75m (ignore suface station)
+%profile_error_mean = nanmedian(AH_diff_tot,2);
+figure(204)
+plot(sonde_ID_tot, profile_error_mean, 'ro', 'MarkerSize', 3); 
+%hist_range=repmat(dial_range,[size(P_diff_tot,1),1]);
+%histogram2(P_diff_tot,hist_range,'DisplayStyle','tile','ShowEmptyBins','on'); 
+%xlim([-1 1])
+%ylim([0 6])
+%legend('\Delta P (atm)')
+xlabel('mean column relative error',  'Fontsize', 20, 'Fontweight', 'b');
+
+ label = num2str(profile_error_mean(end));
+ figure(205)
+ plot(error_FF(end,1:40), dial_grid_range(end,1:40))
+ text(double(error_FF(1,6)), double(dial_grid_range(1,6)), label);
+ grid on
+ xlabel('mean column relative error',  'Fontsize', 20, 'Fontweight', 'b');
+
+ label = num2str(profile_diff_mean(end));
+ figure(206)
+ plot(AH_diff_tot(end,1:40), dial_grid_range(end,1:40))
+ text(double(AH_diff_tot(1,6)), double(dial_grid_range(1,6)), label);
+ grid on
+ xlabel('mean column AH Diff',  'Fontsize', 20, 'Fontweight', 'b');
+ 
+ %pause
 end
+
+
+%spuler = [sonde_ID_tot profile_error_mean];
+%edges=  min(sonde_ID_tot):1:max(sonde_ID_tot)+1;
+
+
+
+spuler = [all_sonde_ID_values_tot; all_profile_values_tot]';
+low = (spuler(:,2)<3*nanstd(spuler(:,2)));
+high = ((spuler(:,2))>-3*nanstd(spuler(:,2))); 
+spuler_C = [spuler((low)&(high),1), spuler((low)&(high),2)];
+
+
+edges=  min(all_sonde_ID_values_tot):1:max(all_sonde_ID_values_tot)+1;
+N = histcounts(all_sonde_ID_values_tot, edges);
+[N,bin] = histcounts(all_sonde_ID_values_tot, edges);
+sonde_ID_counts = N(N>0);
+sonde_ID_bin = bin(N>0);
+%spuler_mean = sonde_ID_bin';
+%spuler_std = sonde_ID_bin';
+i = 1;
+for i=1:size(sonde_ID_bin,2)
+spuler(spuler(:,1)==sonde_ID_bin(i)) = i;
+dummy = spuler(spuler(:,1)==i,2); 
+dummy2 = dummy( ((dummy)<3*nanstd(dummy))  & ((dummy)>-3*nanstd(dummy)) );
+spuler_mean(i) = nanmean(dummy2);
+%spuler_std(i) = nanstd(spuler(spuler(:,1)==i,2));
+spuler_std(i) = std(dummy2,'omitnan');
+spuler_skew(i) = skewness(dummy2,0);
+spuler_kurt(i) = kurtosis(dummy2);
+end
+spulertest= [spuler_mean; spuler_std; spuler_skew; spuler_kurt];
+ 
+figure(504)
+plot(spuler(:,1), spuler(:,2), 'ro', 'MarkerSize', 3); 
+%ylabel('mean AH Diff (g/m^3) DIAL-sonde',  'Fontsize', 20, 'Fontweight', 'b');
+ylabel('Relative error abs humidty [DIAL-sonde/sonde]',  'Fontsize', 20, 'Fontweight', 'b');
+xlabel('sonde batch number',  'Fontsize', 20, 'Fontweight', 'b');
+ylim([-1 1])
+xlim([0 size(sonde_ID_bin,2)+1])
+grid on
+
+x = 1:size(sonde_ID_bin,2);
+labels = cellstr(num2str([sonde_ID_bin; sonde_ID_counts]'));
+figure(505)
+%plot(x, spuler_mean, 'ro', 'MarkerSize', 3); 
+errorbar(x, spuler_mean, spuler_std, 'ro', 'MarkerSize', 3)
+text(double(x), double(spuler_mean)+0.05, labels, 'VerticalAlignment', 'top', ...
+   'HorizontalAlignment', 'right', 'Rotation', 90);
+%ylabel('Diff absoulte humidty (g/m^3) DIAL-sonde',  'Fontsize', 20, 'Fontweight', 'b');
+ylabel('Relative error abs humidty [DIAL-sonde/sonde]',  'Fontsize', 20, 'Fontweight', 'b');
+xlabel('sonde batch number',  'Fontsize', 20, 'Fontweight', 'b');
+ylim([-1 1])
+ylim([-0.25 0.25])
+xlim([0 size(sonde_ID_bin,2)+1])
+grid on
+
+figure(507)
+boxplot(spuler_C(:,2), spuler_C(:,1), 'Notch', 'on', ...
+    'DataLim', [-0.5, 0.5], 'ExtremeMode', 'clip'); %, 'PlotStyle', 'compact')
+grid on
+ylabel('Relative error abs humidty [DIAL-sonde/sonde]',  'Fontsize', 20, 'Fontweight', 'b');
+xlabel('sonde batch number',  'Fontsize', 20, 'Fontweight', 'b');
+
+hist_range=repmat(dial_range,[size(P_diff_tot,1),1]);
+hist_grid_range=repmat(dial_grid_range,[size(AH_diff_tot,1),1]);
+
+yedges = 0:0.250:6;
+figure(300)
+histogram2(AH_diff_tot,hist_grid_range,'YBinEdges',yedges,'DisplayStyle','tile','ShowEmptyBins','on', 'Normalization', 'probability'); 
+xlim([-4 4])
+%ylim([0 6])
+legend('\Delta AH (g/m^{3})')
+xlabel('AH Diff (K) DIAL-sonde',  'Fontsize', 20, 'Fontweight', 'b');
+ylabel('Height (km, AGL)', 'Fontsize', 20, 'Fontweight', 'b');
+
+xedges = -15:1:15;
+figure(301)
+histogram2(T_diff_tot,hist_range,'XBinEdges',xedges, 'YBinEdges',yedges, 'DisplayStyle','tile','ShowEmptyBins','on'); 
+%ylim([0 6])
+%xlim([-15 15])
+legend('\Delta T (K)')
+xlabel('T Diff (K) DIAL-sonde',  'Fontsize', 20, 'Fontweight', 'b');
+ylabel('Height (km, AGL)', 'Fontsize', 20, 'Fontweight', 'b');
+
+figure(302)
+histogram2(P_diff_tot,hist_range,'YBinEdges',yedges,'DisplayStyle','tile','ShowEmptyBins','on'); 
+%xlim([-0.01 0.01])
+%ylim([0 6])
+legend('\Delta P (atm)')
+xlabel('P Diff (atm) DIAL-sonde',  'Fontsize', 20, 'Fontweight', 'b');
+ylabel('Height (km, AGL)', 'Fontsize', 20, 'Fontweight', 'b');
 
 % remove 3 standard deviations as outliers 
  outlier = nanstd(error_FF).*cut;
@@ -172,11 +349,11 @@ ylim([0 6])
 
 
 summed_FF = (nansum(error_FF,1));
-summed_diff_FF = (nansum(diff_error_FF,1));
+summed_diff_FF = (nansum(AH_diff_tot,1));
 sq_summed_FF = (nansum(error_FF.^2,1));
 NaN_number_FF =  ~isnan(error_FF);
 number_FF = sum(NaN_number_FF,1);
-NaN_diff_number_FF =  ~isnan(diff_error_FF);
+NaN_diff_number_FF =  ~isnan(AH_diff_tot);
 diff_number_FF = sum(NaN_diff_number_FF,1);
 
 
@@ -239,23 +416,22 @@ xData=[-4; -3; -2; -1; 0; 1; 2; 3; 4];
 set(gca, 'XTick',  xData)
 
 
+if save_figs==1
+  scrsz = get(0,'ScreenSize');
+  FigH = figure(506);
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [scrsz(4)/2 scrsz(4)/10 scrsz(3)/2 scrsz(4)/1.5]);
+  name=strcat('mean_sonde_error'); 
+  print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi
 
-    
-scrsz = get(0,'ScreenSize');
-FigH = figure(3);
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [scrsz(4)/2 scrsz(4)/10 scrsz(3)/2 scrsz(4)/1.5]);
-name=strcat('mean_sonde_error'); 
-print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi
+  scrsz = get(0,'ScreenSize');
+  FigH = figure(31);
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [scrsz(4)/2 scrsz(4)/10 scrsz(3)/2 scrsz(4)/1.5]);
+  name=strcat('DIAL_sonde_diff'); 
+  print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi
 
-scrsz = get(0,'ScreenSize');
-FigH = figure(31);
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [scrsz(4)/2 scrsz(4)/10 scrsz(3)/2 scrsz(4)/1.5]);
-name=strcat('DIAL_sonde_diff'); 
-print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi
-
-FigH = figure(4);
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [scrsz(4)/2 scrsz(4)/10 scrsz(3)/2 scrsz(4)/1.5]);
-name=strcat('rms_sonde_error'); 
-print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi
-
+  FigH = figure(4);
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [scrsz(4)/2 scrsz(4)/10 scrsz(3)/2 scrsz(4)/1.5]);
+  name=strcat('rms_sonde_error'); 
+  print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi
+end
 

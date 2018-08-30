@@ -79,7 +79,6 @@ gate = round((MCS.bin_duration*1e-9*3e8/2)*10)/10
 
 delta_r_index =  150/gate; % this is the cumlative sum photons gate spacing 
 delta_r = delta_r_index*gate*100; % delta r in cm
-r1 = round(1500/gate); % index for smoothing range 1 (2km)
 r2 = round(2500/gate); % index for smoothing range 2 (2500m)
 spatial_average1 = 150/gate; %150 meter smoothing range 1 
 spatial_average2 = 300/gate; %300 meter smoothing between range 1 and 2
@@ -91,7 +90,7 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 
 %% Importing online and offline files from the selected date
 
-[data_on,data_off,folder_in] = File_Retrieval_v13(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+%[data_on,data_off,folder_in] = File_Retrieval_v13(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
 %[data_on,data_off,folder_in] = File_Retrieval_v13(MCS.bins, folder_in); %use to read binary data (bin number passed in)  
 % v13 ingores the last hour
 
