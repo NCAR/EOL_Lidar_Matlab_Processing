@@ -674,7 +674,7 @@ end
 
  N_masked = N_avg;
  N_masked(N_avg < 0) = nan; % remove non-pysical (negative) wv regions
- N_masked(abs(N_error./N_avg) > 20.00) = nan; % remove high error regions
+ N_masked(abs(N_error./N_avg) > 3.00) = nan; % remove high error regions
  N_masked(Offline_Raw_Data(:,8:end)./(MCS.bin_duration*1e-9*MCS.accum) > 5E6) = nan; % remove raw counts above linear count threshold (5MC/s)
  %if strcmp(folder_CH,'NF') == 1
  %  N_masked(abs(N_error./N_avg) > 1.00) = nan; % remove high error regions
@@ -1159,7 +1159,12 @@ ylim([0 9e3]);
    plot(time_new, P_off, 'k')
    legend('P_{on}', 'P_{off}') 
    hold off 
- 
+   figure(206)
+   plot(time_new, P_on./mean(P_off), 'r') 
+   hold on
+   plot(time_new, P_off./mean(P_off), 'k')
+   legend('P_{on}', 'P_{off}') 
+   hold off 
 end
  
 toc
