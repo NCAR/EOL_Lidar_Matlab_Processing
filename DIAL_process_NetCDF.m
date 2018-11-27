@@ -4,10 +4,10 @@ clear all; close all
 write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
     'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
 
-node = 'MPD3';
+node = 'MPD1';
 
 flag.save_quicklook = 0;  % save quicklook to local directory
-flag.save_data = 0;  % save files in matlab format
+flag.save_data = 1;  % save files in matlab format
 flag.save_netCDF = 0; % save files netCDF format
 flag.save_catalog = 0; % upload quicklook (and data) to field catalog
 

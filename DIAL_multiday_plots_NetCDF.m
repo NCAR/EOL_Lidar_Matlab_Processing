@@ -12,8 +12,10 @@ date = '15 May 2017'; % Perdigao
 days = 3; skip = 1;
 date = '24 May 2017'; % Perdigao 
 days = 10; skip = 2;
-date = '01 Nov 2018'; % Relampago 
-days = 14; skip = 2
+date = '27 Oct 2018'; % RELAMPAGO high data rate  
+days = 20; skip = 2;
+date = '16 Nov 2018'; % RELAMPAGO low data rate
+days = 10; skip = 2;
 
 %DIAL=2;
 %date = '28 Jul 2017'; % DLB-HSRL and WV-DIAL @ LAFE 
@@ -27,7 +29,8 @@ days = 14; skip = 2
 %date = '05 Aug 2017'; % Perdigao 
 %days = 10; skip = 2;
 
-font_size = 14; % use this for 2015a version
+font_size = 36; % use this for 2018a version
+%font_size = 14; % use this for 2015a version
 %font_size = 16; % use this for 2015a version
 %font_size = 28; % use this for 2014a version
 WS = 1; % set to 1 for using the weather station data (after Jan 2016)
@@ -40,19 +43,15 @@ replot = 1;
 save_figs = 0;
 %Wide field channel 0=off 1=on
 near_field = 0;  % now the HSRL channel
-% Wide field multiplier -- make it easier to compare Wide/Narrow RB profiles
-near_mult = 3.0;  % Wide Narrow ratio should be (90*.87*.7)/10= ~5.5  % after high QE detector was installed in July 2016
-%near_mult = 2.0;  % Wide Narrow ratio should be (90*.87*.7)/10= ~5.5  % before high QE detector was installed
-%near_mult = 2.4;  % Wide Narrow ratio should be (90*.87*.7)/10= ~5.5
-near_mult = 1.0;
 
 %number of accumulations 
-if datenum(date)>=datenum('06 Feb 2015')&& datenum(date) <= datenum('21 Apr 2015')
-  accum = 30000; %changed on 07-Feb-2015 when switched to 7 kHz  
-  RB_scale = 3; % use to keep the arbitrary units of RB scale the same before
+if datenum(date)>=datenum('16 Nov 2018')&& datenum(date)<=datenum('18 Dec 2018')
+  accum = 32000; %  
+  bin_duration = 500;  % ns 
+  RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
 else
-  accum = 10000; 
-  accum = 14285; %this was changed before perdigao need to get the date
+  accum = 14000; %this was changed before perdigao need to get the date
+  bin_duration = 250;  % ns (this change from 50 to 500 on 14-June-2014)
   RB_scale = 1;
 end
   
@@ -64,7 +63,7 @@ C = importdata('/Users/spuler/Documents/GitHub/Matlab_DIAL_processing/NCAR_C_Map
 %cd('/Volumes/documents/WV_DIAL_data/processed_data_20min') % point to the directory where data is stored 
 cd('/Volumes/documents/WV_DIAL_data/processed_data') % point to the directory where data is stored 
 %bin duration in ns
-bin_duration = 500;  % ns (this change from 50 to 500 on 14-June-2014)
+
 
 if DIAL==2
   cd('/Volumes/documents/WV_DIAL_data/DIAL2_processed_data') % point to the directory where data is stored 
@@ -77,25 +76,8 @@ gate = round((bin_duration*1e-9*3e8/2)*10)/10
 
 for i=1:days
   if i==1  
-    if near_field==1  
-      if exist(strcat(date, 'NF.mat'))==2
-        load(strcat(date, 'NF.mat'))
-      end
-      range_limit = size(N_avg,2);
-      N_avg_NF=N_avg;
-      RB_NF=RB;
-      OD_NF=OD;
-      background_NF_on = background_on;
-      background_NF_off = background_off;
-      lambda_NF_on = lambda_all;
-      lambda_NF_off = lambda_all_off;
-      if WS==1
-        t_hsrl = I_off;
-        p_hsrl = Bench_T;
-      end
-    end
-    if exist(strcat(date, 'FF.mat'))==2
-      load(strcat(date, 'FF.mat'))
+    if exist(strcat(date, '.mat'))==2
+      load(strcat(date, '.mat'))
     end
     range_limit = size(N_avg,2);
     N_avg_FF=N_avg;
@@ -110,36 +92,16 @@ for i=1:days
       surf_T = Surf_T;
       surf_P = Surf_P;
       surf_AH = Surf_AH;
-      t_off = I_off;
-      t_on = I_on;
-      p_on = Bench_T;
-      p_off = P_ave;
-     % bench_T = Bench_T;
+      i_off = I_off;
+      i_on = I_on;
+      p_on = P_on;
+      p_off = P_off;
+      t_bench = T_bench;
     end
   else
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
-    if near_field==1
-      if exist(strcat(date, 'NF.mat'))==2
-        load(strcat(date, 'NF.mat'))
-      end
-      range_limit_ch = size(N_avg,2);
-      if range_limit_ch < range_limit
-          range_limit = range_limit_ch;
-      end
-      N_avg_NF = vertcat(N_avg_NF(:,1:range_limit), N_avg(2:end,1:range_limit));    
-      RB_NF= vertcat(RB_NF(:,1:range_limit), RB(2:end,1:range_limit));
-      OD_NF= vertcat(OD_NF(:,1:range_limit), OD(2:end,1:range_limit));
-      background_NF_on = vertcat(background_NF_on, background_on(2:end));
-      background_NF_off = vertcat(background_NF_off, background_off(2:end));
-      lambda_NF_on = vertcat(lambda_NF_on, lambda_all(2:end));
-      lambda_NF_off = vertcat(lambda_NF_off, lambda_all_off(2:end));
-      if WS==1
-        t_hsrl = vertcat(t_hsrl,I_off(2:end,:));
-        p_hsrl = vertcat(p_hsrl, Bench_T(2:end,:)); 
-      end
-    end
-    if exist(strcat(date, 'FF.mat'))==2
-      load(strcat(date, 'FF.mat'))
+    if exist(strcat(date, '.mat'))==2
+      load(strcat(date, '.mat'))
     end
     range_limit_ch = size(N_avg,2);
     if range_limit_ch < range_limit
@@ -157,11 +119,11 @@ for i=1:days
       surf_T = vertcat(surf_T,Surf_T(2:end,:));
       surf_P = vertcat(surf_P,Surf_P(2:end,:));
       surf_AH = vertcat(surf_AH, Surf_AH(2:end,:));
-      t_off = vertcat(t_off,I_off(2:end,:));
-      t_on = vertcat(t_on, I_on(2:end,:));
-      p_on = vertcat(p_on, Bench_T(2:end,:));  
-      p_off = vertcat(p_off, P_ave(2:end,:)); 
-  %    bench_T = vertcat(bench_T,Bench_T(2:end,:));
+      i_off = vertcat(i_off,I_off(2:end,:));
+      i_on = vertcat(i_on, I_on(2:end,:));
+      p_on = vertcat(p_on, P_on(2:end,:));  
+      p_off = vertcat(p_off, P_off(2:end,:)); 
+      t_bench = vertcat(t_bench, T_bench(2:end,:));  
     end
   end
 end
@@ -191,7 +153,7 @@ if replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 14]);
+ caxis([0 18]);
  colormap(C)
  %colormap(perula)
  %shading interp
@@ -224,8 +186,9 @@ if replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(duration)) ceil(max(duration)) 0 12])
- caxis([2 5]);
- %colormap(C)
+ caxis([1 6]);
+ colormap(C)
+ %colormap(perula)
  %shading interp
  % P_t = get(hh, 'Position');
  % set(hh,'Position', [P_t(1) P_t(2)+0.2 P_t(3)])
@@ -253,21 +216,10 @@ if replot==1
     len1= length(duration);
     len2 = length(background_FF_on);
     len3 = length(background_FF_off); % HSRL molecular channel
-    %len4 = length(background_NF_off); % HSRL combined channel
+
     len = vertcat(len1, len2, len3);
     plot_end = min(len);  
     semilogy(duration(1:plot_end), background_FF_on(1:plot_end), 'r', duration(1:plot_end), background_FF_off(1:plot_end), 'k') 
-    if near_field==1 
-      hold on
-      semilogy(duration(1:plot_end), background_NF_on(1:plot_end), 'b', duration(1:plot_end), background_NF_off(1:plot_end), 'g') 
-      hold off
-    end
-     % hold on
-     %   gate_num = 25; % look at counts from 1.875 km range (75 m gates)
-     %   semilogy(duration(1:plot_end), (background_NF(1:plot_end)+RB_NF(:,gate_num))/(bin_duration*1e-9*accum), 'r:' , duration(1:plot_end), (background_FF(1:plot_end)+RB_FF(:,gate_num))/(bin_duration*1e-9*accum), 'k:') 
-     %   % look at Wide/Narrow ratio @ gate_num: ideally this should be constant 
-     %   semilogy(duration(1:plot_end), ((RB_NF(:,gate_num)./RB_FF(:,gate_num)))*10/(bin_duration*1e-9*accum), 'g') 
-     % hold off
   else
     semilogy(duration, background_FF_off, 'black')
   end
@@ -359,8 +311,8 @@ if replot==1
    subplot1=subplot(2,1,1,'Parent',figure1,'YGrid','on', 'XGrid','on');
    box(subplot1,'on');
    hold(subplot1,'all');
-   plot(duration, (t_off),'b','LineWidth',2,'DisplayName','T_{off}') % these plot diode Temps
-   plot(duration, (t_on),'r','LineWidth',2, 'DisplayName','T_{on}')
+  % plot(duration, (i_off),'b','LineWidth',2,'DisplayName','i_{off}') % these plot diode Temps
+  % plot(duration, (i_on),'r','LineWidth',2, 'DisplayName','i_{on}')
 %   plot(duration, (t_hsrl),'g','LineWidth',2, 'DisplayName','T_{hsrl}')
    axis([fix(min(duration)) ceil(max(duration)) -inf inf])
    YTick = [100 120 140 160 180];
@@ -371,7 +323,7 @@ if replot==1
    subplot2=subplot(2,1,2,'Parent',figure1,'YGrid','on', 'XGrid','on');
    box(subplot2,'on');
    hold(subplot2,'all');
-%   plot(duration, bench_T,'r', 'LineWidth',1, 'DisplayName','T bench')
+   %plot(duration, T_bench,'r', 'LineWidth',1, 'DisplayName','T bench')
    plot(duration, surf_T, 'b', 'LineWidth',1, 'DisplayName','Surface T')
    axis([fix(min(duration)) ceil(max(duration)) -inf inf]);   % -20 40])
       YTick = [-25 0 25 50];
@@ -422,97 +374,7 @@ if replot==1
    hold off;
  end
  
-  if near_field==1
-   %plot Wide water vapor in g/m^3
-   figure('Position',size)  
-   %(number density in mol/cm3)(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
-   %Z = double(real(N_avg_NF'.*1e6./6.022E23.*18.015));
-   Z = double(real(log10(N_avg_NF')));
-   % Z(isnan(Z)) = -1;
-   set(gcf,'renderer','zbuffer');
-   h = pcolor(x,y,Z);
-   set(h, 'EdgeColor', 'none');
-   colorbar('EastOutside');
-   axis([fix(min(x)) ceil(max(x)) 0 12])
-   caxis([-8.5 -2.5]);
-   colormap(C)
-   % shading interp
-   % P_t = get(hh, 'Position');
-   % set(hh,'Position', [P_t(1) P_t(2)+0.2 P_t(3)])
-   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-   set(gca, 'XTick',  xData)
-   set(gca,'TickDir','out');
-   set(gca,'TickLength',[0.005; 0.0025]);
-   if days == 1
-     datetick('x','HH:MM','keeplimits', 'keepticks');
-     xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   %  hh = title({[date,'Wide Field DIAL Water Vapor (g/m^{3})']},'fontweight','b','fontsize',font_size);
-     hh = title({[date,'Wide Field DIAL Water Vapor (g/m^{3})']},'fontweight','b','fontsize',font_size);
-   else
-     datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
- %    hh = title({'Wide Field DIAL Water Vapor (g/m^{3})'},'fontweight','b','fontsize',font_size);
-     hh = title({'DLB-HSRL Aerosol Backscatter Coefficient (m^{-1}sr^{-1})'},'fontweight','b','fontsize',font_size);
-   end
-   set(gca,'Fontsize',font_size,'Fontweight','b');
-
  
-   % plot Wide RB
-   figure('Position', size)
-   %composite = max(RB_NF(:,1:round(3000/gate)).*near_mult, RB_FF(:,1:round(3000/gate))); % this uses the Wide channel for the bottom 
-   %composite1 = horzcat(composite, RB_FF(:,round(3000/gate)+1:end));
-   %Z = double(log10((real(composite1')./RB_scale)));
-   Z = double(log10((real(RB_NF').*near_mult)));
-   % Z(isnan(Z)) = -1;
-   set(gcf,'renderer','zbuffer');
-   h = pcolor(x,y,Z);
-   set(h, 'EdgeColor', 'none');
-   colorbar('EastOutside');
-   axis([fix(min(duration)) ceil(max(duration)) 0 12])
-   caxis([1 6]);
-   colormap(C)
-   %shading interp
-   % P_t = get(hh, 'Position');
-   % set(hh,'Position', [P_t(1) P_t(2)+0.2 P_t(3)])
-   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-   set(gca, 'XTick',  xData)
-   set(gca,'TickDir','out');
-   set(gca,'TickLength',[0.005; 0.0025]);
-   if days == 1
-     datetick('x','HH:MM','keeplimits', 'keepticks');
-     xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
-%     hh = title({[date,'DIAL Relative Backscatter (C/ns km^2)']},'fontweight','b','fontsize',font_size);
-     hh = title({[date,'DLB-HSRL Attenuated Backscatter (C/ns km^2)']},'fontweight','b','fontsize',font_size);
-   else
-     datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-%     hh = title({'DIAL Relative Backscatter (C/ns km^2)'},'fontweight','b','fontsize',font_size); 
-     hh = title({'DLB-HSRL Attenuated Backscatter (C/ns km^2)'},'fontweight','b','fontsize',font_size); 
-   end
-   set(gca,'Fontsize',font_size,'Fontweight','b');
-   
-
-   figure('Position',size)
-   Z = double(real((N_avg_FF-N_avg_NF)./N_avg_NF)');
-   set(gcf,'renderer','zbuffer');
-   h = pcolor(x,y,Z);
-   set(h, 'EdgeColor', 'none');
-   colorbar('EastOutside');
-   axis([fix(min(duration)) ceil(max(duration)) 0 6])
-   caxis([-0.5 0.5]);
-   colormap(C)
-   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-   set(gca, 'XTick',  xData)
-   set(gca,'TickDir','out');
-   set(gca,'TickLength',[0.005; 0.0025]); 
-   if days == 1
-     datetick('x','HH:MM','keeplimits', 'keepticks');
-     xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
-     hh = title({[date,'  Water Vapor [% difference: (Narrow-Wide)/Wide]']},'fontweight','b','fontsize',font_size);
-   else
-     datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-     hh = title({'  Water Vapor [% difference: (Narrow-Wide)/Wide]'},'fontweight','b','fontsize',font_size); 
-   end
-   set(gca,'Fontsize',font_size,'Fontweight','b');
- end
  
  
 if save_figs==1
@@ -522,28 +384,30 @@ if save_figs==1
   
   %size = [scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2]; % use for standard plots
   size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/2.05]; % use for long plots 
-  size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.51 scrsz(4)/2]; % use for Perdigao BAMS plots 
+  %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.51 scrsz(4)/2]; % use for Perdigao BAMS plots 
   %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/2 scrsz(4)/2]; % use for day plots 
   %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/2.2]; % use for AMT sized 3-day plots (with large font)
   
-  FigH = figure(6);
-  set(gca,'Fontsize',42,'Fontweight','b'); % use for Perdigao BAMS plots 
+  FigH = figure(1);
+%  set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
-  name=strcat(date, 'FF_H2O_multi'); 
+  name=strcat(date, 'H2O_multi'); 
   print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi
  
   FigH = figure(2);
-  set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
+ % set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
-  name=strcat(date, 'FF_RB_multi'); 
+  name=strcat(date, 'RB_multi'); 
   print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpi;
   
   FigH = figure(3);
+ % set(gca,'Fontsize',36,'Fontweight','b');
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
   name=strcat(date, 'background_multi'); 
   print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
   
   FigH = figure(5);
+ %  set(gca,'Fontsize',36,'Fontweight','b');
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
   name=strcat(date, 'column_OD_multi'); 
   print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
@@ -551,28 +415,12 @@ if save_figs==1
   if WS==1
       size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
       FigH = figure(6);
+     % set(gca,'Fontsize',36,'Fontweight','b');
       set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);
       name=strcat(date, 'Housekeeping'); 
       print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
   end
-  
-  if near_field==1
-  
-    FigH = figure(7);
-    set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
-    name=strcat(date, 'NF_H2O_multi'); 
-    print(FigH, name, '-dpng', '-r300') % set the resolution as 600 dpi
- 
-    FigH = figure(8);
-    set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
-    name=strcat(date, 'NF_RB_multi'); 
-    print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
-
-
-  end
- 
    
-  
 end
  
   name=strcat(date, '_WV_2CH'); 
@@ -581,54 +429,6 @@ end
 
 
  
-%  %Making the Wide and Narrow data files the same size
-% if near_field==1 
-%   try
-%      N_avg_FF_m = N_avg_FF(1:size(N_avg_FF,1),1:end);
-%      N_avg_NF_m = N_avg_NF(1:size(N_avg_FF_m,1),1:end);
-%   catch err
-%      Offline_Raw_Data = N_avg_NF(1:size(N_avg_NF,1),1:end);
-%      N_avg_FF_m = N_avg_FF(1:size(N_avg_NF_m,1),1:end);
-%   end
 
-% if near_field==1 
-% N_avg_NF_m =  N_avg_NF;
-% N_avg_FF_m =  N_avg_FF;
-%
-%
-% %smooth data for 20 shots and 2 range bins
-%  window_spatial = ones(1,150/gate)/(150/gate);
-%  window_temporal = ones(2,1)/2;
-%  mask=window_temporal*window_spatial;
-%  N_avg_NF_m = filter2(mask, N_avg_NF_m);
-%  N_avg_FF_m = filter2(mask, N_avg_FF_m); 
-%
-% 
-% %plot column OD for the Wide  
-% figure('Position',[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2])
-% Z = double(real(OD_NF'));
-% set(gcf,'renderer','zbuffer');
-% h = pcolor(x,y,Z);
-% set(h, 'EdgeColor', 'none');
-% colorbar('EastOutside');
-% axis([fix(min(duration)) ceil(max(duration)) 0 12])
-% caxis([-0.1 2]);
-%    set(gca, 'XTick',  xData)
-%    if days == 1
-%        datetick('x','HH:MM','keeplimits', 'keepticks');
-%        xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
-%    else
-%        datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-%    end
-% colormap(C)
-% title({'  Column Optical Depth, Wide Field'},...
-%      'fontweight','b','fontsize',font_size)
-% xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
-% ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-% set(gca, 'XTick',  xData)
-% set(gca,'TickDir','out');
-% set(gca,'TickLength',[0.005; 0.0025]);
-% set(gca,'Fontsize',font_size,'Fontweight','b');
-% end
  
 toc

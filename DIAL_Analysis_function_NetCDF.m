@@ -91,10 +91,8 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 
 %% Importing online and offline files from the selected date
 
-[data_on,data_off,folder_in] = File_Retrieval_NetCDF(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
-%[data_on,data_off,folder_in] = File_Retrieval_v13(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
-%[data_on,data_off,folder_in] = File_Retrieval_v13(MCS.bins, folder_in); %use to read binary data (bin number passed in)  
-% v13 ingores the last hour
+%[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2_noPow(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
 
 %Making the online and offline data files the same size
 try
@@ -187,7 +185,7 @@ end
     % check for multiple wavelengths
     edges_on=828.180:.0001:828.220;
     [value,edges]=histcounts(round(4*lambda_all,3)/4,edges_on); % bin rounded wavelengths
-    lambda_N = edges(value>=10)  % wavelength values with occurance > 10
+    lambda_N = edges(value>=1000)  % wavelength values with occurance > 10
     %lambda_F = value(value~=0);  % frequency of occurance
     lambda_all_N = round(4*lambda_all,3)/4; 
     figure(1234)
@@ -198,7 +196,7 @@ end
 
     edges_off=828.280:.00075:828.320;
     [value,edges]=histcounts(round(2*lambda_all_off,3)/2,edges_off); % bin rounded wavelengths
-    lambda_off_N = edges(value>=10)  % wavelength values with occurance > 10
+    lambda_off_N = edges(value>=1000)  % wavelength values with occurance > 10
     % select the most common offline values associated with the online 
       value_sort = [value; edges(1:end-1)]';
       values_sorted = sortrows(value_sort, 1);
@@ -452,8 +450,8 @@ end
     
   if flag.gradient_filter == 1
     [FX,FY] = gradient(Offline_Temp_Spatial_Avg);
-    Offline_Temp_Spatial_Avg(FX<-1000) = nan; % remove falling edge of clouds
-    Offline_Temp_Spatial_Avg(FX> 1000) = nan; % remove leading edge of clouds   
+    Offline_Temp_Spatial_Avg(FX<-(2000*(MCS.bin_duration*MCS.accum)/500/14200)) = nan; % remove falling edge of clouds
+    Offline_Temp_Spatial_Avg(FX> (2000*(MCS.bin_duration*MCS.accum)/500/14200)) = nan; % remove leading edge of clouds   
     
     if flag.troubleshoot == 1
       imagesc(time_grid,range./1e3, FX');
@@ -989,7 +987,7 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   set(gca,'TickLength',[0.005; 0.0025]);
   colorbar('EastOutside');
   axis([fix(min(time_new)) fix(min(time_new))+1 0 6])
-  caxis([0 10]);
+  caxis([0 20]);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(C)
   %shading interp
