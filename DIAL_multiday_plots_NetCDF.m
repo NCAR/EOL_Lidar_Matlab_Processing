@@ -16,6 +16,8 @@ date = '27 Oct 2018'; % RELAMPAGO high data rate
 days = 20; skip = 2;
 date = '16 Nov 2018'; % RELAMPAGO low data rate
 days = 10; skip = 2;
+date = '31 Oct 2018'; % RELAMPAGO high data rate  
+days = 16; skip = 2;
 
 %DIAL=2;
 %date = '28 Jul 2017'; % DLB-HSRL and WV-DIAL @ LAFE 
