@@ -293,22 +293,21 @@ end
    RB_on = nanmoving_average(Online_sub,profiles2ave.rb/2,1,flag.int);
    RB = nanmoving_average(Offline_sub,profiles2ave.rb/2,1,flag.int);
 
-   
-% overlap correct from Zemax model
-  O_x = [0;100;200;300;400;500;750;1000;1250;2000;3000;4000;5000;6000;8000;12000];
-  O_y = [0.00000E+00; 1.36897E-05; 5.28302E-04; 2.36897E-03; 6.96017E-03; 3.68973E-02; 1.11740E-01; 2.15933E-01; 3.41719E-01; 6.01677E-01; 9.93711E-01; 9.97904E-01; 1.00000E+00; 9.93711E-01; 9.68553E-01; 9.24528E-01];
+% overlap correction from Zemax model
+  O_x = [100;200;300;400;500;750;1000;1250;1500; 2000;3000;4000;5000;6000;8000;12000];
+  O_y = [0; 1.36897E-05; 5.28302E-04; 2.36897E-03; 6.96017E-03; 3.68973E-02; 1.11740E-01; 2.15933E-01; 3.41719E-01; 6.01677E-01; 9.93711E-01; 9.97904E-01; 1.00000E+00; 9.93711E-01; 9.68553E-01; 9.24528E-01];
   O = interp1(O_x, O_y, range, 'linear','extrap');
    
   RB_overlap_on = bsxfun(@rdivide,  RB_on, O);
   RB_overlap = bsxfun(@rdivide,  RB, O);
   
 % range correct   
-  %RB_on = bsxfun(@times, RB_on, range_km_squared);
-  %RB = bsxfun(@times,  RB, range_km_squared);
-  
-  RB_on = bsxfun(@times, RB_overlap_on, range_km_squared);
-  RB = bsxfun(@times,  RB_overlap, range_km_squared);
-
+  RB_on = bsxfun(@times, RB_on, range_km_squared);
+  RB = bsxfun(@times,  RB, range_km_squared);
+  if flag.OF==1
+    RB_on = bsxfun(@times, RB_overlap_on, range_km_squared);
+    RB = bsxfun(@times,  RB_overlap, range_km_squared);
+  end
  % clear Online Offline
 
 % delete(h)
@@ -1019,7 +1018,7 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   date_save=datestr(nanmean(time_new), 'yyyymmdd');
 % save the image as a PNG to the local data folder 
   %name1=strcat('lidar.NCAR-WV-DIAL.', date, '0000.', folder_CH, '.png'); 
-  name=strcat('lidar.',node,'-WV-DIAL.', date_save, '0000.', folder_CH, '.png'); 
+  name=strcat('lidar.',node,'-WV-DIAL.', date_save, '0000.OL.png'); 
   print(figure1, name, '-dpng', '-r300') % set the resolution as 300 dpi
   if flag.save_catalog == 1 % upload figure to the field catalog
     test=ftp('catalog.eol.ucar.edu', 'anonymous', 'spuler@ucar.edu')

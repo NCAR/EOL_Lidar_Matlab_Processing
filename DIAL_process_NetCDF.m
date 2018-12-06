@@ -4,7 +4,7 @@ clear all; close all
 write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
     'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
 
-node = 'MPD1';
+node = 'MPD2';
 
 flag.save_quicklook = 1;  % save quicklook to local directory
 flag.save_data = 1;  % save files in matlab format
@@ -18,6 +18,7 @@ flag.WS = 1; % use the surface weather station data to calcuate spectroscopy
 flag.decimate = 0; % decimate all data to half the wv resoltuion
 flag.int = 0; % interpolate nans in nanmoving_average
 flag.mark_gaps = 0; % sets gaps in data to NaNs
+flag.OF = 1; % correct for geometric overlap functions
 
 flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
@@ -57,7 +58,7 @@ for j = 1:size(files,2)
     end
     folder_in=folder;
     date_in = date;
-    DIAL_Analysis_function_NetCDF_overlap(folder, date, MCS, write_data_folder, flag, node, ...
+    DIAL_Analysis_function_NetCDF(folder, date, MCS, write_data_folder, flag, node, ...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog)%
 
 
