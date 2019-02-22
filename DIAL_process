@@ -1,0 +1,33 @@
+#! /bin/sh
+
+echo "save_quicklook $1" 
+echo "save_data: $2"
+echo "save_netCDF: $3"
+echo "save_catalog: $4"
+echo "node: $5"
+# get current date and year to feed into Matlab
+daystr=`date -u +%y%m%d`
+year=`date +%Y`
+# if the first 20 min of a new day use previous day 
+hour=`date -u +%k%M` 
+echo "hour = $hour"
+if [ $hour -lt 20 ]
+then 
+ echo finish processing previous day
+ daystr=`date +%y%m%d`
+fi
+echo "daystr = $daystr"
+echo "year = $year"
+node=\'$5\'
+echo "node = ${node}"
+
+# make output dirs
+mkdir -p /scr/eldora1/wvdial_1_processed_data
+mkdir -p /scr/eldora1/wvdial_2_processed_data
+# set the Matlab command
+matcmd="addpath $HOME/dial/MatlabV2; WVDIALProcessingV01_01_function(${daystr},$1,$2,$3,$4,${node}); exit"
+# file, save_quicklook, save_data, save_netCDF, save_catalog
+cmd="/opt/local/bin/matlab -nodisplay -nosplash -r \"$matcmd\""
+echo "cmd = $cmd"
+# run the command
+eval $cmd
