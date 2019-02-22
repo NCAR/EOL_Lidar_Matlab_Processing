@@ -1,5 +1,7 @@
 #! /bin/sh
 
+# calls matlab to process MPD data
+
 echo "save_quicklook $1" 
 echo "save_data: $2"
 echo "save_netCDF: $3"
