@@ -1,4 +1,4 @@
-function[online_merged,offline_merged,folder] = File_Retrieval_NetCDF(bins, folder)
+function[online_merged,offline_merged,folder] = File_Retrieval_NetCDF_v2(bins, folder)
 
 dd = pwd; % get the current path
 %cd /scr/eldora1/wvdial_2_data/2018

@@ -91,8 +91,8 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 
 %% Importing online and offline files from the selected date
 
-%[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
-[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2_noPow(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+%[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2_noPow(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
 
 %Making the online and offline data files the same size
 try
