@@ -1,4 +1,4 @@
-addpath('/Users/spuler/Documents/GitHub/Matlab_DIAL_processing/jsonlab')
+addpath('~/Matlab_DIAL_processing/jsonlab')
 dat=loadjson(['/Users/spuler/Documents/GitHub/NCAR-LidarProcessing/calibrations/dial2_calvals.json'],'SimplifyCell',1); 
 
 %t_date = '11-Jun-2017'

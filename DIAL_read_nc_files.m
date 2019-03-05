@@ -1,7 +1,8 @@
 clear all
 close all
 
-filename = '/net/ftp/pub/temp/users/mhayman/LAFE/wv_dial.170809.Python.nc';
+filename = '/scr/sci/mhayman/DIAL/Processed_Data/RELAMPAGO/wv_dial01.181101.Python.nc';
+%filename = '/net/ftp/pub/temp/users/mhayman/LAFE/wv_dial.170809.Python.nc';
 %filename = '/scr/eldora1/wvdial_2_processed_data/wv_dial.170814.Python.nc';
 %filename = '/net/ftp/pub/temp/users/mhayman/DIAL-PERDIGAO/WVDIAL1_WVDIAL_20170515T0000_20170518T0000_created_20180319__SondeEval.nc';
 %filename = '/net/ftp/pub/temp/users/mhayman/DIAL-PERDIGAO/wv_dial.170517.Python.nc';

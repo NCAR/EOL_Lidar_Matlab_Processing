@@ -1,7 +1,8 @@
 clear all
 close all
 
-filename = '/net/ftp/pub/temp/users/mhayman/LAFE/wv_dial.170809.Python.nc';
+filename = '/scr/sci/mhayman/DIAL/Processed_Data/RELAMPAGO/wv_dial01.181117.Python.nc';
+%filename = '/net/ftp/pub/temp/users/mhayman/LAFE/wv_dial.170809.Python.nc';
 %filename = '/scr/eldora1/wvdial_2_processed_data/wv_dial.170814.Python.nc';
 %filename = '/net/ftp/pub/temp/users/mhayman/DIAL-PERDIGAO/WVDIAL1_WVDIAL_20170515T0000_20170518T0000_created_20180319__SondeEval.nc';
 %filename = '/net/ftp/pub/temp/users/mhayman/DIAL-PERDIGAO/wv_dial.170517.Python.nc';
@@ -11,13 +12,14 @@ n = datenum(date, 'yymmdd');
 
 
 ncid = netcdf.open(filename, 'NC_NOWRITE');
-  %ncdisp(filename, '/', 'min') % use this to display all variables
+  ncdisp(filename, '/', 'min') % use this to display all variables
   %ncdisp(filename, 'Absolute_Humidity') 
   
-  variable{1} = 'Denoised_Backscatter_Ratio';
-  variable{2} = 'Backscatter_Ratio';
-  variable{3} = 'Denoised_Aerosol_Backscatter_Coefficient'; 
-  variable{4} = 'Absolute_Humidity';
+
+  variable{1} = 'Absolute_Humidity';
+  variable{2} = 'WV_Offline_Backscatter_Channel';
+ % variable{3} = 'Denoised_Aerosol_Backscatter_Coefficient'; 
+ % variable{4} = 'Denoised_Backscatter_Ratio';
   
   for i = 1:size(variable,2)
    var_units{i} = ncreadatt(filename, variable{i},'units');
@@ -50,7 +52,7 @@ xData =  linspace(fix(min(x{1})),  ceil(max(x{1})), 25);
   set(gcf,'renderer','zbuffer');
   h = pcolor(x{i}, y{i}/1000, real(log10(var{i})));
   set(h, 'EdgeColor', 'none'); 
-  axis xy; colorbar('EastOutside'); %caxis([0 2.5]);
+  axis xy; colorbar('EastOutside'); %caxis([0 10]);
   title({[date ,' ',replace(variable{i}, '_', ' '), ' [',var_units{i},']']},...
        'fontweight','b','fontsize',font_size)%,'Interpreter', 'none')
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
@@ -69,19 +71,19 @@ xData =  linspace(fix(min(x{1})),  ceil(max(x{1})), 25);
   subplot1=subplot(2,1,2,'Parent',figure10);
   box(subplot1,'on');
   set(gcf,'renderer','zbuffer');
-  h = pcolor(x{3},y{3}/1000,var{3}); %real(log10(var{3})));
+  h = pcolor(x{1},y{1}/1000, var{1}); %real(log10(var{1})));
   set(h, 'EdgeColor', 'none');
   set(gca,'TickDir','out');
   set(gca,'TickLength',[0.005; 0.0025]);
   set(gca, 'XTick',  xData)
   colorbar('EastOutside');
-  axis([fix(min(x{3})) fix(min(x{3}))+1 0 12])
-  caxis([1e-8 1e-4]);
+  axis([fix(min(x{1})) fix(min(x{1}))+1 0 6])
+  caxis([1 20]);
   %caxis([1 5]);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(jet)
   %shading interp 
-  hh =  title({[date ,' ',replace(variable{3}, '_', ' '), ' [',var_units{3},']']},...
+  hh =  title({[date ,' ',replace(variable{1}, '_', ' '), ' [',var_units{1},']']},...
        'fontweight','b','fontsize',font_size)%,'Interpreter', 'none')
   P_t = get(hh, 'Position');
   set(hh,'Position', [P_t(1) P_t(2)+0.2 P_t(3)])
@@ -89,26 +91,26 @@ xData =  linspace(fix(min(x{1})),  ceil(max(x{1})), 25);
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
   set(gca,'Fontsize',font_size,'Fontweight','b');
 
-set(gca,'Zscale', 'log')
-set(gca,'Colorscale', 'log')
+set(gca,'Zscale', 'linear')
+set(gca,'Colorscale', 'linear')
 set(gca,'Zscale', 'linear')
 
   %plot water vapor in g/m^3
   subplot1=subplot(2,1,1,'Parent',figure10);
   box(subplot1,'on'); %(number density in mol/cm3)(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
   set(gcf,'renderer','zbuffer');
-  h = pcolor(x{1},y{1}/1000,var{1});
+  h = pcolor(x{2},y{2}/1000,var{2});
   set(h, 'EdgeColor', 'none');
   set(gca, 'XTick',  xData)
   set(gca,'TickDir','out');
   set(gca,'TickLength',[0.005; 0.0025]);
   colorbar('EastOutside');
-  axis([fix(min(x{1})) fix(min(x{1}))+1 0 12])
-  caxis([1e0 1e3]);
+  axis([fix(min(x{2})) fix(min(x{2}))+1 0 12])
+  caxis([1e0 1e5]);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(jet)
   %shading interp
-  hh =  title({[date ,' ',replace(variable{1}, '_', ' '), ' [',var_units{1},']']},...
+  hh =  title({[date ,' ',replace(variable{2}, '_', ' '), ' [',var_units{2},']']},...
        'fontweight','b','fontsize',font_size)%,'Interpreter', 'none')
   P_t = get(hh, 'Position');
   set(hh,'Position', [P_t(1) P_t(2)+0.2 P_t(3)])
@@ -118,7 +120,7 @@ set(gca,'Zscale', 'linear')
  
 set(gca,'Zscale', 'log')
 set(gca,'Colorscale', 'log')
-set(gca,'Zscale', 'linear')kke
+set(gca,'Zscale', 'linear')
   
   %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
   %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/2.05]; % use for long plots 
