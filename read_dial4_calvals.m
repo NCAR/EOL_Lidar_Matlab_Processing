@@ -1,5 +1,7 @@
-addpath('/Users/spuler/Documents/GitHub/Matlab_DIAL_processing/jsonlab')
-dat=loadjson(['/Users/spuler/Documents/GitHub/NCAR-LidarProcessing/calibrations/dial4_calvals.json'],'SimplifyCell',1); 
+%addpath('/Users/spuler/Documents/GitHub/Matlab_DIAL_processing/jsonlab')
+%dat=loadjson(['/Users/spuler/Documents/GitHub/NCAR-LidarProcessing/calibrations/dial4_calvals.json'],'SimplifyCell',1); 
+addpath('./jsonlab')
+dat=loadjson(['../NCAR-LidarProcessing/calibrations/dial4_calvals.json'],'SimplifyCell',1); 
 
 %t_date = '11-Jun-2017'
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
