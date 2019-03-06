@@ -1,5 +1,3 @@
-%addpath('/Users/spuler/Documents/GitHub/Matlab_DIAL_processing/jsonlab')
-%dat=loadjson(['/Users/spuler/Documents/GitHub/NCAR-LidarProcessing/calibrations/dial1_calvals.json'],'SimplifyCell',1); 
 addpath('./jsonlab')
 dat=loadjson(['../NCAR-LidarProcessing/calibrations/dial1_calvals.json'],'SimplifyCell',1); 
 

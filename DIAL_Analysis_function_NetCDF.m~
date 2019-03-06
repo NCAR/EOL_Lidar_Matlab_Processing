@@ -684,8 +684,7 @@ end
  N_masked(N_avg < 0) = nan; % remove non-pysical (negative) wv regions
  N_masked(abs(N_error./N_avg) > 3.00) = nan; % remove high error regions
  N_masked(Offline_Raw_Data(:,8:end)./(MCS.bin_duration*1e-9*MCS.accum) > 5E6) = nan; % remove raw counts above linear count threshold (5MC/s)
-
-%if strcmp(folder_CH,'NF') == 1
+ %if strcmp(folder_CH,'NF') == 1
  %  N_masked(abs(N_error./N_avg) > 1.00) = nan; % remove high error regions
  %  N_masked(Offline_Raw_Data(:,8:end)./(MCS.bin_duration*1e-9*MCS.accum) > 1.25E6) = nan; % remove raw counts above linear count threshold (5MC/s)
  %end
@@ -740,10 +739,10 @@ end
   
 %% mark gaps in data with NaNs (this should be improved as it uses a zero change in wavelength as an indication that the data has a gap)
 if flag.mark_gaps ==1
-  %lambda_blank=lambda_all;
-  %lambda_blank(diff(lambda_all,1)==0) = NaN;  
-  lambda_blank = background_off;
-  lambda_blank(diff(background_off,1)==0) = NaN; 
+  lambda_blank=lambda_all;
+  lambda_blank(diff(lambda_all,1)==0) = NaN;  
+  lambda_blank=offline_bl
+  
   r_blank = bsxfun(@times, ones(length(lambda_all),length(range)), lambda_blank);
   lambda_all_off(isnan(lambda_blank)) = NaN; 
   T_bench(isnan(lambda_blank)) = NaN; 
