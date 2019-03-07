@@ -31,27 +31,35 @@ days = 52; skip = 4;
 %date = '05 Aug 2017'; % Perdigao 
 %days = 10; skip = 2;
 
-DIAL=3;
-date = '11 Jun 2018'; %  
-days = 176; skip = 11;  % shoot for about 14 ticks
+%DIAL=3;
+%date = '11 Jun 2018'; %  
+%days = 176; skip = 11;  % shoot for about 14 ticks
+%date = '05 Aug 2018'; %  
+%days = 60; skip = 5;  % shoot for about 14 ticks
+%date = '04 Oct 2018'; %  
 %days = 60; skip = 5;  % shoot for about 14 ticks
 
-%DIAL=4;
+DIAL=4;
 %date = '08 Aug 2018'; %  
 %days = 184; skip = 16;  % shoot for about 14 ticks
+date = '08 Aug 2018'; %  
+days = 80; skip = 5;  % shoot for about 14 ticks
+%date = '07 Oct 2018'; %  
+%days = 60; skip = 5;  % shoot for about 14 ticks
 
 font_size = 36; % use this for 2018a version
 %font_size = 14; % use this for 2015a version
 %font_size = 16; % use this for 2015a version
 %font_size = 28; % use this for 2014a version
-WS = 0; % set to 1 for using the weather station data (after Jan 2016)
 
+% set to 1 for using the weather station data (after Jan 2016)
+WS = 1;
 %include sonde data 0=off 1=on
 sonde = 0;
 %replot time vs range images at start of processing 0=off 1=on
 replot = 1;
 %save figures at end of processing 0=off 1=on
-save_figs = 0;
+save_figs = 1;
 %Wide field channel 0=off 1=on
 near_field = 0;  % now the HSRL channel
 
@@ -377,9 +385,9 @@ if replot==1
    ax(2)=subplot(2,1,2);
    % plot power on right y-axis of the upper plot (% assumes 5% pickoff)
    ax(3) = axes('Position',get(ax(1),'Position'));
-   plot(duration, (p_off/1000),'b--','LineWidth', 1, 'DisplayName','P_{off}') % changed from 0.05 to 0.0425
+   plot(duration, (p_off/1000),'b-','LineWidth', 1, 'DisplayName','P_{off}') % changed from 0.05 to 0.0425
    hold on
-   plot(duration, p_on/1000,'r--', 'LineWidth',1, 'DisplayName','P_{on}')
+   plot(duration, p_on/1000,'r-', 'LineWidth',1, 'DisplayName','P_{on}')
    %plot(duration, p_hsrl/2500,'g--', 'LineWidth',1, 'DisplayName','P_{hsrl}')
    axis([fix(min(duration)) ceil(max(duration)) -inf inf])
    %ax(3).YTick = [20 22.5 25 27.5 30 32.5 35 37.5 40];
@@ -395,7 +403,7 @@ if replot==1
    
    % plot Surface pressure right y-axis of the lower plot
    ax(4) = axes('Position',get(ax(2),'Position'));
-   plot(duration, surf_P, 'b--','LineWidth', 1, 'DisplayName','Surf P') 
+   plot(duration, surf_P, 'k-','LineWidth', 1, 'DisplayName','Surf P') 
    axis([fix(min(duration)) ceil(max(duration)) -inf inf])
    set(ax(4),'Color','none')
    set(ax(4),'YAxisLocation','right')
@@ -428,28 +436,28 @@ if save_figs==1
   %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/2.2]; % use for AMT sized 3-day plots (with large font)
   
   FigH = figure(1);
-  set(gca,'Fontsize',38,'Fontweight','b'); % use for Perdigao BAMS plots 
+  set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
   name=strcat(date, 'H2O_multi'); 
-  print(FigH, name, '-dpng', '-r600') % set the resolution as 300 dpi
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  
   FigH = figure(2);
-  set(gca,'Fontsize',38,'Fontweight','b'); % use for Perdigao BAMS plots 
+  set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
   name=strcat(date, 'RB_multi'); 
-  print(FigH, name, '-dpng', '-r600') % set the resolution as 300 dpi;
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
   FigH = figure(3);
  % set(gca,'Fontsize',36,'Fontweight','b');
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
   name=strcat(date, 'background_multi'); 
-  print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
   FigH = figure(5);
  %  set(gca,'Fontsize',36,'Fontweight','b');
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
   name=strcat(date, 'column_OD_multi'); 
-  print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
   if WS==1
       size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
@@ -457,7 +465,7 @@ if save_figs==1
      % set(gca,'Fontsize',36,'Fontweight','b');
       set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);
       name=strcat(date, 'Housekeeping'); 
-      print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
+      print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   end
    
 end
