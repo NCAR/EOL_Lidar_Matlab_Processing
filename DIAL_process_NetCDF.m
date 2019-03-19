@@ -4,7 +4,7 @@ clear all; close all
 write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
     'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
 
-node = 'MPD3';
+node = 'MPD1';
 
 flag.save_quicklook = 1;  % save quicklook to local directory
 flag.save_data = 1;  % save files in matlab format
@@ -24,7 +24,7 @@ flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 12; % hour to show troubleshooting profiles
 
-ave_time.wv = 5.0; % averaging time (in minutes) for the water vapor 
+ave_time.wv = 2.0; % averaging time (in minutes) for the water vapor 
 ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files
 

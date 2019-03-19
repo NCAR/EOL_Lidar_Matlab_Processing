@@ -1,7 +1,7 @@
 clear all
 close all
 
-filename = '/scr/sci/mhayman/DIAL/Processed_Data/RELAMPAGO/wv_dial01.181117.Python.nc';
+filename = '/scr/sci/mhayman/DIAL/Processed_Data/RELAMPAGO/wv_dial01.181108.Python.nc';
 %filename = '/net/ftp/pub/temp/users/mhayman/LAFE/wv_dial.170809.Python.nc';
 %filename = '/scr/eldora1/wvdial_2_processed_data/wv_dial.170814.Python.nc';
 %filename = '/net/ftp/pub/temp/users/mhayman/DIAL-PERDIGAO/WVDIAL1_WVDIAL_20170515T0000_20170518T0000_created_20180319__SondeEval.nc';
@@ -106,7 +106,7 @@ set(gca,'Zscale', 'linear')
   set(gca,'TickLength',[0.005; 0.0025]);
   colorbar('EastOutside');
   axis([fix(min(x{2})) fix(min(x{2}))+1 0 12])
-  caxis([1e0 1e5]);
+  caxis([1e1 1e6]);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(jet)
   %shading interp
