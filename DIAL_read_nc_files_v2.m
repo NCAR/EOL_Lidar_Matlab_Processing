@@ -10,14 +10,14 @@ date = filename(end-15:end-10);
 n = datenum(date, 'yymmdd');
 %n = datenum('2017-08-09 00:00:00', 'yyyy-mm-dd HH:MM:SS');
 
-
 ncid = netcdf.open(filename, 'NC_NOWRITE');
-  ncdisp(filename, '/', 'min') % use this to display all variables
+  %ncdisp(filename, '/', 'min') % use this to display all variables
   %ncdisp(filename, 'Absolute_Humidity') 
   
 
   variable{1} = 'Absolute_Humidity';
-  variable{2} = 'WV_Offline_Backscatter_Channel';
+  variable{2} = 'Attenuated_Backscatter';
+ % variable{2} = 'WV_Offline_Backscatter_Channel';
  % variable{3} = 'Denoised_Aerosol_Backscatter_Coefficient'; 
  % variable{4} = 'Denoised_Backscatter_Ratio';
   
@@ -95,7 +95,6 @@ set(gca,'Zscale', 'linear')
 set(gca,'Colorscale', 'linear')
 set(gca,'Zscale', 'linear')
 
-  %plot water vapor in g/m^3
   subplot1=subplot(2,1,1,'Parent',figure10);
   box(subplot1,'on'); %(number density in mol/cm3)(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
   set(gcf,'renderer','zbuffer');
@@ -106,7 +105,7 @@ set(gca,'Zscale', 'linear')
   set(gca,'TickLength',[0.005; 0.0025]);
   colorbar('EastOutside');
   axis([fix(min(x{2})) fix(min(x{2}))+1 0 12])
-  caxis([1e1 1e6]);
+  caxis([1e3 1e9]);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(jet)
   %shading interp
@@ -122,12 +121,14 @@ set(gca,'Zscale', 'log')
 set(gca,'Colorscale', 'log')
 set(gca,'Zscale', 'linear')
   
-  %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+
+  cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
   %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/2.05]; % use for long plots 
-  %FigH = figure(1);
-  %set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
-  %name=strcat(date, 'Python'); 
-  %print(FigH, name, '-dpng', '-r300') % set the resolution as 300 dpiFigH = figure(1);
+  size = [scrsz(4)/1.5 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/1.5];
+  FigH = figure(3);
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
+  name=strcat(date, 'Python'); 
+  print(FigH, name, '-dpng', '-r0') % set the resolution as 300 dpiFigH = figure(1);
   
   %cd('/Volumes/documents/WV_DIAL_data/processed_data/') % point to the directory where data is stored 
   %name=strcat(date,'Python');

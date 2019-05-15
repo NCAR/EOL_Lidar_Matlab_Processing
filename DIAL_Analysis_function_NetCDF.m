@@ -77,7 +77,7 @@ RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
 %Spatial averaging (range average) in bins.  
 gate = round((MCS.bin_duration*1e-9*3e8/2)*10)/10
 
-delta_r_index =  150/gate; % this is the cumlative sum photons gate spacing 
+delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
 delta_r = delta_r_index*gate*100; % delta r in cm
 r1 = round(1500/gate); % index for smoothing range 2 (2500m)
 r2 = round(2500/gate); % index for smoothing range 2 (2500m)
@@ -183,7 +183,7 @@ end
  %   h = msgbox('Online wavelength not stable during time period', 'Warning','warn');
  end
     % check for multiple wavelengths
-    edges_on=828.180:.0001:828.220;
+    edges_on=828.180:.00005:828.220;
     [value,edges]=histcounts(round(4*lambda_all,3)/4,edges_on); % bin rounded wavelengths
     lambda_N = edges(value>=1000)  % wavelength values with occurance > 10
     %lambda_F = value(value~=0);  % frequency of occurance
@@ -194,7 +194,7 @@ end
     plot(lambda_all)
     hold off
 
-    edges_off=828.280:.00075:828.320;
+    edges_off=828.280:.00005:828.320;
     [value,edges]=histcounts(round(2*lambda_all_off,3)/2,edges_off); % bin rounded wavelengths
     lambda_off_N = edges(value>=1000)  % wavelength values with occurance > 10
     % select the most common offline values associated with the online 
@@ -202,7 +202,7 @@ end
       values_sorted = sortrows(value_sort, 1);
       lambda_off_N = sort(values_sorted(end-size(lambda_N,2)+1:end))
     %lambda_off_F = value(value~=0);  % frequency of occurance
-    lambda_all_off_N=round(2*lambda_all_off,3)/2;
+    lambda_all_off_N=round(2*lambda_all_off,3)/4;
     figure(5678)
     plot(lambda_all_off_N)
     hold on
@@ -449,7 +449,7 @@ end
   Offline_Temp_Spatial_Avg = interp1(time_grid_act, Offline_Temp_Spatial_Avg_act, time_grid, 'linear','extrap');
   Online_Temp_Spatial_Avg = interp1(time_grid_act, Online_Temp_Spatial_Avg_act, time_grid, 'linear','extrap'); 
 
-% remove any negative counts
+% %remove any negative counts
     Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) <= 0) = 0;   
     Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) <= 0) = 0;  
     RB(real(RB) <= 0) = 0;
@@ -780,7 +780,7 @@ end
   
  % OD is - ln(I/I.o), since offline is not the same as online it needs to
  % scaled by the first few good gates -- choose 300 m to 450 m
- scale_factor = nanmean(Online_Temp_Spatial_Avg(:,300/gate:450/gate),2)./nanmean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2);
+ scale_factor = nanmean(Online_Temp_Spatial_Avg(:,300/gate:525/gate),2)./nanmean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2);
  scale = bsxfun(@times, Offline_Temp_Spatial_Avg, scale_factor);
  OD = -(log(Online_Temp_Spatial_Avg./scale)); % calculate column optical depth
   

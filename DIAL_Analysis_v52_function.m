@@ -955,7 +955,8 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   subplot1=subplot(2,1,1,'Parent',figure1);
   box(subplot1,'on');
   set(gcf,'renderer','zbuffer');
-  Z = double(log10((real(RB')./RB_scale)));
+ % Z = double(log10((real(RB')./RB_scale)));
+  Z = double(real(RB')./RB_scale);
   %Z = real(double(log10(Offline_Temp_Spatial_Avg_act')));
   %Z(isnan(Z)) = -1;
   h = pcolor(x,y,Z);
@@ -965,7 +966,7 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   set(gca, 'XTick',  xData)
   colorbar('EastOutside');
   axis([fix(min(time_new)) fix(min(time_new))+1 0 12])
-  caxis([1 6]);
+  caxis([1e1 1e6]);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(C)
   %shading interp 
@@ -975,6 +976,9 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
   set(gca,'Fontsize',font_size,'Fontweight','b');
+  set(gca,'Zscale', 'log')
+  set(gca,'Colorscale', 'log')
+  set(gca,'Zscale', 'linear')
   
   %plot water vapor in g/m^3
   subplot1=subplot(2,1,2,'Parent',figure1);

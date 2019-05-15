@@ -55,7 +55,7 @@ DIAL=1;
 %date = '05 Apr 2019'; % Five-unit side-by-side test  
 %days = 5; skip = 1;
 
-DIAL=5;
+%DIAL=5;
 date = '25 Apr 2019'; % Five-unit side-by-side test  
 days = 5; skip = 1;
 
@@ -71,7 +71,7 @@ flag.sonde = 0;
 %replot time vs range images at start of processing 0=off 1=on
 flag.replot = 1;
 %save figures at end of processing 0=off 1=on
-flag.save_figs = 0;
+flag.save_figs = 1;
 %Wide field channel 0=off 1=on
 flag.save_data = 1;
 
@@ -250,8 +250,7 @@ if flag.replot==1
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
  caxis([0 18]);
- colormap(jet)
- %colormap(C)
+ colormap(C)
  %colormap(perula)
  %shading interp
  % P_t = get(hh, 'Position');

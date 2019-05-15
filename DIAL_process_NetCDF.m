@@ -1,12 +1,12 @@
 clear all; close all
 
+node = 'MPD5';
+
 %location to write files
-write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
+    write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
     'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
 
-node = 'MPD1';
-
-flag.save_quicklook = 1;  % save quicklook to local directory
+flag.save_quicklook = 0;  % save quicklook to local directory
 flag.save_data = 1;  % save files in matlab format
 flag.save_netCDF = 0; % save files netCDF format
 flag.save_catalog = 0; % upload quicklook (and data) to field catalog
@@ -17,14 +17,14 @@ flag.pileup = 1; % use pileup correction for detectors
 flag.WS = 1; % use the surface weather station data to calcuate spectroscopy
 flag.decimate = 1; % decimate all data to half the wv resoltuion
 flag.int = 0; % interpolate nans in nanmoving_average
-flag.mark_gaps = 0; % sets gaps in data to NaNs
+flag.mark_gaps = 1; % sets gaps in data to NaNs
 flag.OF = 1; % correct for geometric overlap functions
 
 flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 12; % hour to show troubleshooting profiles
 
-ave_time.wv = 2.0; % averaging time (in minutes) for the water vapor 
+ave_time.wv = 5.0; % averaging time (in minutes) for the water vapor 
 ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files
 
