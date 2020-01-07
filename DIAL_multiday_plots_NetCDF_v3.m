@@ -1,7 +1,7 @@
 clear all; close all;
 tic
 
-DIAL=1;
+%DIAL=1;
 %date = '01 Jul 2014'; % FRAPPE (no WS)
 %days = 50; skip = 5; % days to plot and days to skip ticks for plots
 %date = '27 May 2015'; %PECAN (no WS)
@@ -45,7 +45,7 @@ DIAL=1;
 %date = '05 Apr 2019'; % Five-unit side-by-side test  
 %days = 5; skip = 1;
 
-%DIAL=4;
+DIAL=4;
 %date = '08 Aug 2018'; %  
 %days = 184; skip = 16;  % shoot for about 14 ticks
 %date = '08 Aug 2018'; %  
@@ -55,38 +55,54 @@ DIAL=1;
 %date = '05 Apr 2019'; % Five-unit side-by-side test  
 %days = 5; skip = 1;
 
-%DIAL=5;
-date = '25 Apr 2019'; % Five-unit side-by-side test  
-days = 5; skip = 1;
+DIAL=5;
+date = '17 Apr 2019'; % SGP test  
+days = 32; skip = 4;
+days = 72; skip = 9;
+days = 96; skip = 12;
+
+%DIAL=4;
+%date = '16 Aug 2019'; % Comparison test new butterfly DBR + TWA transmitter 
+%days = 55; skip = 5;
+
+%DIAL=4;
+%date = '03 Dec 2019'; %
+%days = 17; skip = 1;
+
+flag.near = 0;  % read in the near range channel (0=off 1=on)
 
 font_size = 36; % use this for 2018a version
 %font_size = 14; % use this for 2015a version
-%font_size = 16; % use this for 2015a version
+%font_size = 16; % use this for 2015a versionexit
 %font_size = 28; % use this for 2014a version
 
 % set to 1 for using the weather station data (after Jan 2016)
 WS = 1;
-%include sonde data 0=off 1=on
+%include sonde data (0=off 1=on)
 flag.sonde = 0;
-%replot time vs range images at start of processing 0=off 1=on
+%replot time vs range images at start of processing (0=off 1=on)
 flag.replot = 1;
-%save figures at end of processing 0=off 1=on
+%save figures at end of processing (0=off 1=on)
 flag.save_figs = 1;
-%Wide field channel 0=off 1=on
-flag.save_data = 1;
+%save data at end of processing (0=off 1=on)
+flag.save_data = 0;
+%plot NetCDF sonde data on top (0=off 1=on)
+flag.plot_sonde_data = 0;
 
-near_field = 0;  % now the HSRL channel
 
+
+
+RB_scale = 1;
 %number of accumulations 
-if datenum(date)>=datenum('16 Nov 2018')&& datenum(date)<=datenum('18 Dec 2018')
-  accum = 32000; %  
-  bin_duration = 500;  % ns 
-  RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
-else
-  accum = 14000; %this was changed before perdigao need to get the date
-  bin_duration = 250;  % ns (this change from 50 to 500 on 14-June-2014)
-  RB_scale = 1;
-end
+%if datenum(date)>=datenum('16 Nov 2018')&& datenum(date)<=datenum('18 Dec 2018')
+%  accum = 32000; %  
+%  bin_duration = 500;  % ns 
+%  RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
+%else
+%  accum = 14000; %this was changed before perdigao need to get the date
+%  bin_duration = 250;  % ns (this change from 50 to 500 on 14-June-2014)
+%  RB_scale = 1;
+%end
   
 C = importdata('NCAR_C_Map.mat');
 %cd('/Users/spuler/Desktop/FRAPPE_PECAN') % point to the directory where data is stored 
@@ -98,28 +114,44 @@ if DIAL==1
 elseif DIAL==2
   cd('/Volumes/documents/WV_DIAL_data/MPD2_processed_data') % point to the directory where data is stored 
   bin_duration = 250;  % ns (this change from 500 to 250 for DIAL#2 on 2014)
-  near_field = 1;  % now the HSRL channel
+  %near_field = 1;  % now the HSRL channel
 elseif DIAL==3
   cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data') % point to the directory where data is stored 
 elseif DIAL==4
   cd('/Volumes/documents/WV_DIAL_data/MPD4_processed_data') % point to the directory where data is stored 
 elseif DIAL==5
   cd('/Volumes/documents/WV_DIAL_data/MPD5_processed_data') % point to the directory where data is stored 
+elseif DIAL==5
+
 end
 
 
-gate = round((bin_duration*1e-9*3e8/2)*10)/10
+%gate = round((bin_duration*1e-9*3e8/2)*10)/10
+
+test_gate = exist('gate') % check for early versions were the gate wasn't saved
+if test_gate == 0
+ gate = 75
+end
 
 i=1;
+range_grid_size = 37.5;
+
 for i=1:days
   if i==1  
-    if exist(strcat(date, '.mat'))==2
-      load(strcat(date, '.mat'))
-    end
+    % load the near range data or regular data depending on flag  
+    if flag.near == 1
+      if exist(strcat(date, '_near.mat'))==2
+        load(strcat(date, '_near.mat'))
+      end
+    else
+      if exist(strcat(date, '.mat'))==2
+        load(strcat(date, '.mat'))
+      end
+    end 
     range_limit = size(N_avg,2);
     % grid everything to a 75 m gate size 
-      if range(2) == 37.5
-         range_grid_75 = 0:75:(range_limit-1)*37.5; 
+      if gate < 75
+         range_grid_75 = 0:range_grid_size:(range_limit-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
          OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
@@ -128,7 +160,7 @@ for i=1:days
      end
     N_avg_comb=N_avg;
     RB_comb=RB;
-    OD_comb=OD;
+  %  OD_comb=OD;
     background_comb_on = background_on;
     background_comb_off = background_off;
     lambda_comb_on = lambda_all;
@@ -147,27 +179,35 @@ for i=1:days
     end
   else
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
-    if exist(strcat(date, '.mat'))==2
-      load(strcat(date, '.mat'))
-    end
+    if flag.near == 1
+      if exist(strcat(date, '_near.mat'))==2
+        load(strcat(date, '_near.mat'))
+      end
+    else
+      if exist(strcat(date, '.mat'))==2
+        load(strcat(date, '.mat'))
+      end
+    end  
     range_limit_ch = size(N_avg,2);
    % if range_limit_ch < range_limit
    %     range_limit = range_limit_ch;
    % end
     % grid everything to a 75 m gate size 
-      if range(2) == 37.5
-         range_grid_75 = 0:75:(range_limit_ch-1)*37.5; 
+      if gate < 75
+         range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
-         OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
+  %       OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
          range_limit = range_limit_ch/2;
       end
-    range_limit = size(N_avg_comb,2); % catch any changes in range
+    range_lim1 = size(N_avg_comb,2); % catch any changes in range
+    range_lim2 = size(N_avg,2); % catch any changes in range
+    range_limit = min([range_lim1 range_lim2]);
     
     N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg(2:end,1:range_limit));
     RB_comb = vertcat(RB_comb(:,1:range_limit), RB(2:end,1:range_limit));
-    OD_comb= vertcat(OD_comb(:,1:range_limit), OD(2:end,1:range_limit));
+ %   OD_comb= vertcat(OD_comb(:,1:range_limit), OD(2:end,1:range_limit));
     duration = vertcat(duration, time_new(2:end));
     background_comb_on = vertcat(background_comb_on, background_on(2:end));
     background_comb_off = vertcat(background_comb_off, background_off(2:end));
@@ -249,8 +289,9 @@ if flag.replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 18]);
- colormap(C)
+ caxis([0 4]);
+ colormap(jet)
+ %colormap(C)
  %colormap(perula)
  %shading interp
  % P_t = get(hh, 'Position');
@@ -310,28 +351,28 @@ if flag.replot==1
  
 % plot the background
   figure('Position',Scrnsize)
-  if near_field==1 
-    len1= length(duration);
-    len2 = length(background_comb_on);
-    len3 = length(background_comb_off); % HSRL molecular channel
-
-    len = vertcat(len1, len2, len3);
-    plot_end = min(len);  
-    semilogy(duration(1:plot_end), background_comb_on(1:plot_end), 'r', duration(1:plot_end), background_comb_off(1:plot_end), 'k') 
-  else
+ % if near_field==1 
+ %   len1= length(duration);
+ %   len2 = length(background_comb_on);
+ %   len3 = length(background_comb_off); % HSRL molecular channel
+ %
+ %   len = vertcat(len1, len2, len3);
+ %   plot_end = min(len);  
+ %   semilogy(duration(1:plot_end), background_comb_on(1:plot_end), 'r', duration(1:plot_end), background_comb_off(1:plot_end), 'k') 
+ % else
     semilogy(duration, background_comb_off, 'black')
-  end
+ % end
   axis([fix(min(duration)) ceil(max(duration)) 1e2 1e7])
   ylabel('Offline background C/s', 'Fontsize', font_size, 'Fontweight', 'b');  
   grid on
   %hold on
   %  semilogy(duration, 5e6, 'green', 'Linewidth', 2)    % Add a horizontal line to show the 5Mc/s linearity limit
   %hold off
-  if near_field==1  
-  legend('WV Online  ', 'WV Offline  ', 'HSRL molecular  ', 'HSRL combined  ','Location', 'NorthWest');
-  else
-   legend('WV Online  ', 'WV Offline  ', 'Location', 'NorthWest');
-  end
+ % if near_field==1  
+ % legend('WV Online  ', 'WV Offline  ', 'HSRL molecular  ', 'HSRL combined  ','Location', 'NorthWest');
+ % else
+ legend('WV Online  ', 'WV Offline  ', 'Location', 'NorthWest');
+ % end
   set(gca, 'XTick',  xData)
   set(gca,'TickDir','out');
   set(gca,'TickLength',[0.005; 0.0025]);
@@ -347,61 +388,61 @@ if flag.replot==1
   
   
 % plot column OD for the Narrow  
-  figure('Position',Scrnsize)
-  Z = double(real(OD_comb'));
-  set(gcf,'renderer','zbuffer');
-  h = pcolor(x,y,Z);
-  set(h, 'EdgeColor', 'none');
-  colorbar('EastOutside');
-  axis([fix(min(duration)) ceil(max(duration)) 0 12])
-  caxis([-0.1 2]);
-  colormap(C)
-  title({('  Column Optical Depth, Narrow Field  ')},...
-       'fontweight','b','fontsize',font_size)
-  xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
-  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-  set(gca, 'XTick',  xData)
-  set(gca,'TickDir','out');
-  set(gca,'TickLength',[0.005; 0.0025]);
-  if days == 1
-    datetick('x','HH:MM','keeplimits', 'keepticks');
-    xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
-  else
-    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-  end
-  set(gca,'Fontsize',font_size,'Fontweight','b');
-
+  % figure('Position',Scrnsize)
+  % Z = double(real(OD_comb'));
+  % set(gcf,'renderer','zbuffer');
+  % h = pcolor(x,y,Z);
+  % set(h, 'EdgeColor', 'none');
+  % colorbar('EastOutside');
+  % axis([fix(min(duration)) ceil(max(duration)) 0 12])
+  % caxis([-0.1 2]);
+  % colormap(C)
+  %title({('  Column Optical Depth, Narrow Field  ')},...
+  %     'fontweight','b','fontsize',font_size)
+  % xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
+  % ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+  % set(gca, 'XTick',  xData)
+  % set(gca,'TickDir','out');
+  % set(gca,'TickLength',[0.005; 0.0025]);
+  % if days == 1
+  %   datetick('x','HH:MM','keeplimits', 'keepticks');
+  %   xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
+  % else
+  %   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+  % end
+  % set(gca,'Fontsize',font_size,'Fontweight','b');
+%
+%  
+%  plot1 = OD_comb(:,round(2500/gate));
+%  plot2 = OD_comb(:,round(5000/gate));
+%  %window = ones(1,1)/1;
+%  %plot1s = filter2(window, plot1);
+%  %plot2s = filter2(window, plot2);
+%  dd = pwd; % get the current path
+%  cd('/Users/spuler/Desktop/WV_DIAL/Matlab/')
+%    plot1s = ndnanfilter(plot1,'rectwin', 20); 
+%    plot2s = ndnanfilter(plot2,'rectwin', 20);
+%  cd(dd)
   
-  plot1 = OD_comb(:,round(2500/gate));
-  plot2 = OD_comb(:,round(5000/gate));
-  %window = ones(1,1)/1;
-  %plot1s = filter2(window, plot1);
-  %plot2s = filter2(window, plot2);
-  dd = pwd; % get the current path
-  cd('/Users/spuler/Desktop/WV_DIAL/Matlab/')
-    plot1s = ndnanfilter(plot1,'rectwin', 20); 
-    plot2s = ndnanfilter(plot2,'rectwin', 20);
-  cd(dd)
-  
-% plot column optical depth at 5km and 2.5km as function of time
-  figure('Position',Scrnsize)
-  plot(duration, plot1s, 'b',duration, plot2s, 'k', 'LineWidth', 2)
-  axis([fix(min(duration)) ceil(max(duration)) 0 2.5])
-  ylabel('OD', 'Fontsize', font_size, 'Fontweight', 'b');
-  grid on
-  legend('OD at 2.5km', 'OD at 5.0km','Location', 'NorthWest');
-  set(gca, 'XTick',  xData)
-  set(gca,'TickDir','out');
-  set(gca,'TickLength',[0.005; 0.0025]);
-  if days == 1
-    datetick('x','HH:MM','keeplimits', 'keepticks');
-    xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
-    hh = title({[date,'DIAL Column OD']},'fontweight','b','fontsize',font_size);
-  else
-    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-       hh = title({'DIAL Column OD'},'fontweight','b','fontsize',font_size); 
-  end
-  set(gca,'Fontsize',font_size,'Fontweight','b');
+% % plot column optical depth at 5km and 2.5km as function of time
+%  figure('Position',Scrnsize)
+%  plot(duration, plot1s, 'b',duration, plot2s, 'k', 'LineWidth', 2)
+%  axis([fix(min(duration)) ceil(max(duration)) 0 2.5])
+%  ylabel('OD', 'Fontsize', font_size, 'Fontweight', 'b');
+%  grid on
+%  legend('OD at 2.5km', 'OD at 5.0km','Location', 'NorthWest');
+%  set(gca, 'XTick',  xData)
+%  set(gca,'TickDir','out');
+%  set(gca,'TickLength',[0.005; 0.0025]);
+%  if days == 1
+%    datetick('x','HH:MM','keeplimits', 'keepticks');
+%    xlabel('Time (UTC)','fontweight','b','fontsize',font_size); 
+%    hh = title({[date,'DIAL Column OD']},'fontweight','b','fontsize',font_size);
+%  else
+%    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+%       hh = title({'DIAL Column OD'},'fontweight','b','fontsize',font_size); 
+%  end
+%  set(gca,'Fontsize',font_size,'Fontweight','b');
   
  if WS==1
  % plot housekeeping data
@@ -472,21 +513,34 @@ if flag.replot==1
    hold off;
  end
  
- 
+%%
+if flag.plot_sonde_data==1
+  % the elevation needs to be read from the json file
+    elevation= 310.0; %MPD05 was at 310m elevation at SGP
+  %d=pwd;
+  %cd('/Volumes/documents/WV_DIAL_data/SGP_sondes/') % point to the directory where data is stored
+   cd('/scr/sci/tammy/mpd/sgp/soundings/')
+   [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
+   jj=1;
+  %cd= d;
+  for jj = 1:size(sondefilename,2)
+      cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+      Sonde_read_nc_files(jj, elevation, sondedir, sondefilename);
+  end
+end 
 
- 
- 
 %% 
 if flag.save_figs==1
   %cd('/Users/spuler/Desktop/WV_DIAL_data/plots/') % point to the directory where data is stored 
   cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
   date=datestr(nanmean(time_new), 'yyyymmdd');
   
-  %size = [scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2]; % use for standard plots
+  %Scrnsize = [scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2]; % use for standard plots
   Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/2.05]; % use for long plots 
-  %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.51 scrsz(4)/2]; % use for Perdigao BAMS plots 
-  %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/2 scrsz(4)/2]; % use for day plots 
-  %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/2.2]; % use for AMT sized 3-day plots (with large font)
+  Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plots 
+  %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.51 scrsz(4)/2]; % use for Perdigao BAMS plots 
+  %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/2 scrsz(4)/2]; % use for day plots 
+  %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/2.2]; % use for AMT sized 3-day plots (with large font)
   
   FigH = figure(1);
   set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
@@ -501,20 +555,20 @@ if flag.save_figs==1
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
   FigH = figure(3);
- % set(gca,'Fontsize',36,'Fontweight','b');
+  % set(gca,'Fontsize',36,'Fontweight','b');
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
   name=strcat(date, 'background_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
-  FigH = figure(5);
- %  set(gca,'Fontsize',36,'Fontweight','b');
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
-  name=strcat(date, 'column_OD_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+%  FigH = figure(5);
+% %  set(gca,'Fontsize',36,'Fontweight','b');
+%  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
+%  name=strcat(date, 'column_OD_multi'); 
+%  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
   if WS==1
       size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
-      FigH = figure(6);
+      FigH = figure(4);
      % set(gca,'Fontsize',36,'Fontweight','b');
       set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);
       name=strcat(date, 'Housekeeping'); 

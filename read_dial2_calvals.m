@@ -1,5 +1,5 @@
 addpath('./jsonlab')
-dat=loadjson(['../NCAR-LidarProcessing/calibrations/dial2_calvals.json'],'SimplifyCell',1); 
+dat=loadjson(['../eol-lidar-calvals/calvals/dial2_calvals.json'],'SimplifyCell',1); 
 
 %t_date = '11-Jun-2017'
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
@@ -52,7 +52,16 @@ if (t_date >= datetime(dat.Location(i).date,'InputFormat','d-MM-yyyy H:m')) == 1
     location = dat.Location(i).location;
 end
 end
+
+for i=1:size(dat.Wavemeter_offset,2)
+if (t_date >= datetime(dat.Wavemeter_offset(i).date,'InputFormat','d-MM-yyyy H:m')) == 1
+    wavemeter_offset = dat.Wavemeter_offset(i).value;
+end
+end
+
 location %write the location to the screen 
+wavemeter_offset %write the calibration offset to the screen 
+
 
 %calcuate the accumuation time per MCS dwell 
 time_per_column = MCS.accum*((MCS.bins*MCS.bin_duration)+MCS.accum_delay)/1e9; % acummulation time in seconds

@@ -55,8 +55,8 @@ DIAL=4;
 %date = '05 Apr 2019'; % Five-unit side-by-side test  
 %days = 5; skip = 1;
 
-%DIAL=5;
-date = '17 Apr 2019'; % Five-unit side-by-side test  
+DIAL=5;
+date = '17 Apr 2019'; % SGP test  
 days = 32; skip = 4;
 days = 72; skip = 9;
 days = 96; skip = 12;
@@ -66,12 +66,14 @@ days = 96; skip = 12;
 %days = 55; skip = 5;
 
 %DIAL=4;
-%date = '31 Oct 2019'; %
-%days = 7; skip = 1;
+%date = '03 Dec 2019'; %
+%days = 17; skip = 1;
+
+flag.near = 0;  % read in the near range channel (0=off 1=on)
 
 font_size = 36; % use this for 2018a version
 %font_size = 14; % use this for 2015a version
-%font_size = 16; % use this for 2015a version
+%font_size = 16; % use this for 2015a versionexit
 %font_size = 28; % use this for 2014a version
 
 % set to 1 for using the weather station data (after Jan 2016)
@@ -81,24 +83,26 @@ flag.sonde = 0;
 %replot time vs range images at start of processing (0=off 1=on)
 flag.replot = 1;
 %save figures at end of processing (0=off 1=on)
-flag.save_figs = 0;
+flag.save_figs = 1;
 %save data at end of processing (0=off 1=on)
 flag.save_data = 0;
 %plot NetCDF sonde data on top (0=off 1=on)
 flag.plot_sonde_data = 0;
-% read in the near range channel (0=off 1=on)
-flag.near = 1;  
 
+
+
+
+RB_scale = 1;
 %number of accumulations 
-if datenum(date)>=datenum('16 Nov 2018')&& datenum(date)<=datenum('18 Dec 2018')
-  accum = 32000; %  
-  bin_duration = 500;  % ns 
-  RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
-else
-  accum = 14000; %this was changed before perdigao need to get the date
-  bin_duration = 250;  % ns (this change from 50 to 500 on 14-June-2014)
-  RB_scale = 1;
-end
+%if datenum(date)>=datenum('16 Nov 2018')&& datenum(date)<=datenum('18 Dec 2018')
+%  accum = 32000; %  
+%  bin_duration = 500;  % ns 
+%  RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
+%else
+%  accum = 14000; %this was changed before perdigao need to get the date
+%  bin_duration = 250;  % ns (this change from 50 to 500 on 14-June-2014)
+%  RB_scale = 1;
+%end
   
 C = importdata('NCAR_C_Map.mat');
 %cd('/Users/spuler/Desktop/FRAPPE_PECAN') % point to the directory where data is stored 
@@ -124,7 +128,14 @@ end
 
 %gate = round((bin_duration*1e-9*3e8/2)*10)/10
 
+test_gate = exist('gate') % check for early versions were the gate wasn't saved
+if test_gate == 0
+ gate = 75
+end
+
 i=1;
+range_grid_size = 37.5;
+
 for i=1:days
   if i==1  
     % load the near range data or regular data depending on flag  
@@ -140,7 +151,7 @@ for i=1:days
     range_limit = size(N_avg,2);
     % grid everything to a 75 m gate size 
       if gate < 75
-         range_grid_75 = 0:75:(range_limit-1)*37.5; 
+         range_grid_75 = 0:range_grid_size:(range_limit-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
          OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
@@ -182,8 +193,8 @@ for i=1:days
    %     range_limit = range_limit_ch;
    % end
     % grid everything to a 75 m gate size 
-      if range(2) == 37.5
-         range_grid_75 = 0:75:(range_limit_ch-1)*37.5; 
+      if gate < 75
+         range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
   %       OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
@@ -278,7 +289,7 @@ if flag.replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 15]);
+ caxis([0 4]);
  colormap(jet)
  %colormap(C)
  %colormap(perula)
@@ -360,7 +371,7 @@ if flag.replot==1
  % if near_field==1  
  % legend('WV Online  ', 'WV Offline  ', 'HSRL molecular  ', 'HSRL combined  ','Location', 'NorthWest');
  % else
-   legend('WV Online  ', 'WV Offline  ', 'Location', 'NorthWest');
+ legend('WV Online  ', 'WV Offline  ', 'Location', 'NorthWest');
  % end
   set(gca, 'XTick',  xData)
   set(gca,'TickDir','out');

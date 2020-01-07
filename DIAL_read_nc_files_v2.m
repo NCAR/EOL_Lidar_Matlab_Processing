@@ -1,7 +1,9 @@
 clear all
 close all
 
-filename = '/scr/sci/mhayman/DIAL/Processed_Data/RELAMPAGO/wv_dial01.181108.Python.nc';
+%filename = '/scr/sci/mhayman/DIAL/Processed_Data/MPDSGP/t_res_2min/wv_dial05.190705.Python.nc';
+filename = '/users/spuler/desktop/MPD4_Denoised_Automated_20191203T000000_20191209T235900_SuperRes2_.nc';
+
 %filename = '/net/ftp/pub/temp/users/mhayman/LAFE/wv_dial.170809.Python.nc';
 %filename = '/scr/eldora1/wvdial_2_processed_data/wv_dial.170814.Python.nc';
 %filename = '/net/ftp/pub/temp/users/mhayman/DIAL-PERDIGAO/WVDIAL1_WVDIAL_20170515T0000_20170518T0000_created_20180319__SondeEval.nc';
@@ -17,19 +19,22 @@ ncid = netcdf.open(filename, 'NC_NOWRITE');
 
   variable{1} = 'Absolute_Humidity';
   variable{2} = 'Attenuated_Backscatter';
+  variable{1} = 'surface_AbsHum';
  % variable{2} = 'WV_Offline_Backscatter_Channel';
  % variable{3} = 'Denoised_Aerosol_Backscatter_Coefficient'; 
  % variable{4} = 'Denoised_Backscatter_Ratio';
   
+ i=1;
   for i = 1:size(variable,2)
    var_units{i} = ncreadatt(filename, variable{i},'units');
    var_units{i} = erase(var_units{i}, '$');
-   var_time{i} = ncread(filename,horzcat('time_',variable{i}));   
+   var_time{i} = ncread(filename,horzcat('time_',variable{i}));  
+       var_time{i} = ncread(filename,'time'); 
    var_range{i} = ncread(filename,horzcat('range_',variable{i}));   
    var{i} = ncread(filename, variable{i});
    var_variance{i} = ncread(filename, horzcat(variable{i},'_variance')); 
    var_mask{i} = ncread(filename,horzcat(variable{i},'_mask')); 
-   x{i} = n+double(var_time{i}/3600/24);
+   x{i} = double(var_time{i}/3600/24);
    y{i} = double(var_range{i}');
   end  
 
@@ -121,19 +126,33 @@ set(gca,'Zscale', 'log')
 set(gca,'Colorscale', 'log')
 set(gca,'Zscale', 'linear')
   
-
-  cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
-  %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/2.05]; % use for long plots 
-  size = [scrsz(4)/1.5 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/1.5];
-  FigH = figure(3);
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
-  name=strcat(date, 'Python'); 
-  print(FigH, name, '-dpng', '-r0') % set the resolution as 300 dpiFigH = figure(1);
+if flag.save_data == 1
+    cd(write_data_folder)
+    name=strcat(date_plot);
+      if flag.WS == 1
+     save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error',...
+         'Surf_T', 'Surf_P', 'Surf_RH', 'Surf_AH', 'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off')
+    else
+     save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error', ...
+          'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off')
+    end
+end
+ 
+  if flag.save_fig == 1
+    cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+    %size = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/2.05]; % use for long plots 
+    size = [scrsz(4)/1.5 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/1.5];
+    FigH = figure(3);
+    set(FigH, 'PaperUnits', 'points', 'PaperPosition', size);
+    name=strcat(date, 'Python'); 
+    print(FigH, name, '-dpng', '-r0') % set the resolution as 300 dpiFigH = figure(1);
   
-  %cd('/Volumes/documents/WV_DIAL_data/processed_data/') % point to the directory where data is stored 
-  %name=strcat(date,'Python');
-  %N_avg = Zah';
-  %N_error = absolute_humidity_variance';
-  %time_new = x;
-  %range = range';
-  %save(name, 'N_avg', 'range', 'time_new', 'N_error')
+    %cd('/Volumes/documents/WV_DIAL_data/processed_data/') % point to the directory where data is stored 
+    %name=strcat(date,'Python');
+    %N_avg = Zah';
+    %N_error = absolute_humidity_variance';
+    %time_new = x;
+    %range = range';
+    %save(name, 'N_avg', 'range', 'time_new', 'N_error')
+  end
+  

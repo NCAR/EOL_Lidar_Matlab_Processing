@@ -1,15 +1,125 @@
 
-elevation= 310.0; %MPD05 was at 310m elevation at SGP
+elevation= 317.0; %MPD05 was at 317m elevation at SGP
 
 %d=pwd;
 %cd('/Volumes/documents/WV_DIAL_data/SGP_sondes/') % point to the directory where data is stored
-cd('/scr/sci/tammy/mpd/sgp/soundings/')
+%cd('/scr/sci/tammy/mpd/sgp/soundings/')
+cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
+%flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
 %cd= d;
+
 for jj = 1:size(sondefilename,2)
     cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
-    Sonde_read_nc_files(jj, elevation, sondedir, sondefilename); 
+    [xx(jj,:), yy(jj,:)] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration); 
     %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
     %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
-end
+ end
+    
+    
+% create a line plot of the sonde vs MPD data
+scrsz = get(0,'ScreenSize');
+Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
+font_size = 14;
+WV_min = 0;
+WV_max = 20;
+bins = WV_max*4; % bin size is x 0.1 x 0.1 g/m^2
+%bin_min = 1;
+%bin_max = 400;
+
+% remove the surface station data
+x_no_surface = xx(:,2:end); 
+y_no_surface = yy(:,2:end); 
+
+% reshape into one long array
+x_sonde = reshape(x_no_surface,1,[]); %sondes
+y_MPD05 = reshape(y_no_surface,1,[]); %MPD
+xx0 = WV_min:1:WV_max;
+yy0 = WV_min:1:WV_max;
+
+
+
+% calculate the best fit (in a least-squares sense) and the correlation coefficient
+idx = (isnan(y_MPD05)|isnan(x_sonde)); %remove the NaNs
+num_samples = size(x_sonde(~idx), 2); 
+fit = polyfit(x_sonde(~idx),y_MPD05(~idx),1);
+[Corr, P_test] = corrcoef(x_sonde(~idx),y_MPD05(~idx))
+Cov = cov(x_sonde(~idx),y_MPD05(~idx))
+StDev = sqrt((cov(x_sonde(~idx),y_MPD05(~idx))))
+% Evaluate fit equation using polyval
+xx = WV_min:0.1:WV_max;
+y_est = polyval(fit,xx);
+
+figure(7) %Frequency histogram 
+%figure('Position',Scrsize);
+% this is temporary (the python code should remove these 
+y_MPD05(y_MPD05<-WV_min)=NaN; % remove points outside of plot range 
+y_MPD05(y_MPD05>WV_max)=NaN; % remove points outside of plot range 
+x_sonde(x_sonde<-WV_min)=NaN; % remove points outside of plot range 
+x_sonde(x_sonde>WV_max)=NaN; % remove points outside of plot range 
+binscatter(x_sonde,y_MPD05, [bins bins]);    
+  %N=hh.NumBins;
+  %hh.NumBins =[bins bins];
+  %hh.XLimits = [WV_min WV_max];
+  %hh.YLimits = [WV_min WV_max];
+%ax.CLim = [bin_min bin_max];
+%ax.XGrid = 'on';
+%ax.YGrid = 'on';
+colormap('parula')
+c=colorbar;
+c.Label.String = 'Sample pairs per bin';
+%title(['WV x=MPD05, ', ' y=Raman Lidar'])
+xlim([WV_min WV_max]);
+%pause(0.001) % there is something odd about this all running at once
+%set(gca,'Fontsize',font_size,'Fontweight','b');
+ylim([WV_min WV_max]); 
+ylabel('MPD05 absolute humidity (g m^{-3})'); 
+xlabel('Radiosonde absolute humidity (g m^{-3})'); 
+set(gca,'Fontsize',font_size,'Fontweight','b');
+% Display fit infor on graph
+text(1, 19, ['Number of samples = ' num2str(num_samples(1))], 'FontSize', 22, 'Color', 'r')
+text(1, 18, ['y = ' num2str(fit(1),3) '*x + ' num2str(fit(2),3)], 'FontSize', 22, 'Color', 'r')
+text(1, 17, ['Corr = ' num2str(Corr(2),3)], 'FontSize', 22, 'Color', 'r')
+text(1, 16, ['StDev = ' num2str(StDev(2),3) 'g m^{-3}'], 'FontSize', 22, 'Color', 'r')
+hold on
+plot(xx0,yy0, 'k-')  % plot the 1:1 line
+plot(xx,y_est,'r--','LineWidth',2)  % plot the least squared fit line
+hold off
+
+figure(8)
+plot(x_sonde, y_MPD05, 'o')
+xlim([0 20])
+ylim([0 20])
+xlim([WV_min WV_max]);
+%pause(0.001) % there is something odd about this all running at once
+%set(gca,'Fontsize',font_size,'Fontweight','b');
+ylim([WV_min WV_max]); 
+ylabel('MPD05 absolute humidity (g m^{-3})'); 
+xlabel('Radiosonde absolute humidity (g m^{-3})'); 
+set(gca,'Fontsize',font_size,'Fontweight','b');
+% Display fit infor on graph
+text(1, 19, ['Number of samples = ' num2str(num_samples(1))], 'FontSize', 22, 'Color', 'r')
+text(1, 18, ['y = ' num2str(fit(1),3) '*x + ' num2str(fit(2),3)], 'FontSize', 22, 'Color', 'r')
+text(1, 17, ['Corr = ' num2str(Corr(2),3)], 'FontSize', 22, 'Color', 'r')
+text(1, 16, ['StDev = ' num2str(StDev(2),3) 'g m^{-3}'], 'FontSize', 22, 'Color', 'r')
+% Add trend line to plot
+hold on
+plot(xx0,yy0, 'k-')  % plot the 1:1 line
+plot(xx,y_est,'r--','LineWidth',2) % plot the least squared fit line
+hold off
+
+cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+FigH = figure(7);
+set(gca,'Fontsize',30,'Fontweight','b'); % 
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+name=strcat(date, 'Sonde_hist_multi'); 
+print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+
+
+cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+FigH = figure(8);
+set(gca,'Fontsize',30,'Fontweight','b'); % 
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+name=strcat(date, 'Sonde_multi'); 
+print(FigH, name, '-dpng', '-r0') % set at the screen resolution 

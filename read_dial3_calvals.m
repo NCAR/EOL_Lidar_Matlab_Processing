@@ -1,5 +1,5 @@
 addpath('./jsonlab')
-dat=loadjson(['../NCAR-LidarProcessing/calibrations/dial3_calvals.json'],'SimplifyCell',1); 
+dat=loadjson(['../eol-lidar-calvals/calvals//dial3_calvals.json'],'SimplifyCell',1); 
 
 %t_date = '11-Jun-2017'
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
@@ -52,7 +52,16 @@ if (t_date >= datetime(dat.Location(i).date,'InputFormat','d-MM-yyyy H:m')) == 1
     location = dat.Location(i).location;
 end
 end
+
+for i=1:size(dat.Wavemeter_offset,2)
+if (t_date >= datetime(dat.Wavemeter_offset(i).date,'InputFormat','d-MM-yyyy H:m')) == 1
+    wavemeter_offset = dat.Wavemeter_offset(i).value;
+end
+end
+
 location %write the location to the screen 
+wavemeter_offset %write the calibration offset to the screen 
+
 
 %calcuate the accumuation time per MCS dwell 
 time_per_column = MCS.accum*((MCS.bins*MCS.bin_duration)+MCS.accum_delay)/1e9; % acummulation time in seconds
@@ -61,7 +70,7 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/time_per_column)+1)/2); % 7kHz, 10k a
 load('diff_geo_cor_170810.mat');
 %timing_range_correction = ((1.25+1/2)-0.5/2)*150;  % changed hardware timing to start after pulse through
 timing_range_correction = (1.25-0.2+0.25/2-1.0/2)*150  % Delay of MCS - delay of TOSA trigger + MCS bin duration/2 - pulse duration/2
-blank_range = 450; % new pulse generator shifts gate timing so less outgoing pulse contamination   
+blank_range = 525; % new pulse generator shifts gate timing so less outgoing pulse contamination   
     
     
     

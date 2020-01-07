@@ -1,9 +1,10 @@
 %addpath('/Users/spuler/Documents/GitHub/Matlab_DIAL_processing/jsonlab')
 %dat=loadjson(['/Users/spuler/Documents/GitHub/NCAR-LidarProcessing/calibrations/dial4_calvals.json'],'SimplifyCell',1); 
 addpath('./jsonlab')
-dat=loadjson(['../NCAR-LidarProcessing/calibrations/dial4_calvals.json'],'SimplifyCell',1); 
+dat=loadjson(['../eol-lidar-calvals/calvals/dial5_calvals.json'],'SimplifyCell',1); 
 
 %t_date = '11-Jun-2017'
+wavemeter_offset = double(0); 
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
 
 for i=1:size(dat.MCS_bins,2)
@@ -54,7 +55,15 @@ if (t_date >= datetime(dat.Location(i).date,'InputFormat','d-MM-yyyy H:m')) == 1
     location = dat.Location(i).location;
 end
 end
+
+for i=1:size(dat.Wavemeter_offset,2)
+if (t_date >= datetime(dat.Wavemeter_offset(i).date,'InputFormat','d-MM-yyyy H:m')) == 1
+    wavemeter_offset = dat.Wavemeter_offset(i).value;
+end
+end
+
 location %write the location to the screen 
+wavemeter_offset %write the calibration offset to the screen 
 
 %calcuate the accumuation time per MCS dwell 
 time_per_column = MCS.accum*((MCS.bins*MCS.bin_duration)+MCS.accum_delay)/1e9; % acummulation time in seconds
