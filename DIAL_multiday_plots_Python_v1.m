@@ -10,27 +10,37 @@ tic
 %DIAL=4;
 
 DIAL=5;
-date = '18 Apr 2019'; % Five-unit side-by-side test 
+date = '17 Apr 2019'; % Five-unit side-by-side test 
 %days = 4; skip = 1;
-%days = 32; skip = 4;
+days = 32; skip = 4;
 days = 72; skip = 8;
+days = 96; skip = 12;
+date = '19 Apr 2019'; % Five-unit side-by-side test 
+days = 12; skip = 1;
+%dirname = '/Volumes/documents/WV_DIAL_data/MPD5_python_5min_125m_processed_data_low_res';
+%range_grid_size = 300;  %set the size of the range gridding
+%dirname = '/Volumes/documents/WV_DIAL_data/MPD5_python_5min_125m_processed_data';
 dirname = '/Volumes/documents/WV_DIAL_data/MPD5_python_10min_150m_processed_data';
+range_grid_size = 75;  %set the size of the range gridding
   
 font_size = 36; % use this for 2018a version
 %font_size = 14; % use this for 2015a version
 
 % set to 1 for using the weather station data (after Jan 2016)
-WS = 0;
-%include sonde data 0=off 1=on
+WS = 1;
+%include sonde data (0=off 1=on)
 flag.sonde = 0;
-%replot time vs range images at start of processing 0=off 1=on
+%replot time vs range images at start of processing (0=off 1=on)
 flag.replot = 1;
-%save figures at end of processing 0=off 1=on
-flag.save_figs = 0;
-%Wide field channel 0=off 1=on
+%save figures at end of processing (0=off 1=on)
+flag.save_figs = 1;
+%save data at end of processing (0=off 1=on)
 flag.save_data = 0;
-%plot NetCDF sonde data on top 0=off 1=on
+%plot NetCDF sonde data on top (0=off 1=on)
 flag.plot_sonde_data = 0;
+%decimate figures to the screen 2x size (1900 pixels x2)
+flag.decimate = 1;
+
 
 near_field = 0;  % now the HSRL channel
 
@@ -48,6 +58,7 @@ end
 C = importdata('NCAR_C_Map.mat');
 %cd('/Users/spuler/Desktop/FRAPPE_PECAN') % point to the directory where data is stored 
 %cd('/Users/spuler/Desktop/WV_DIAL_data/') % point to the directory where data is stored 
+dd=pwd;
 
 if DIAL==1
   cd('/Volumes/documents/WV_DIAL_data/MPD1_processed_data') % point to the directory where data is stored 
@@ -67,13 +78,33 @@ elseif DIAL==5
 end
 
 
-gate = round((bin_duration*1e-9*3e8/2)*10)/10
+%gate = round((bin_duration*1e-9*3e8/2)*10)/10
+%gate = 75
+%range_grid_size = gate
 i=1;
+
 
 for i=1:days
   if i==1  
     if exist(strcat(date, '.mat'))==2
       load(strcat(date, '.mat'))
+      range_limit = size(range,2);
+      % remove bad power section from SGP MPD#5
+        bad_date1 = '26 May 2019';
+        bad_date2 = '05 Jun 2019';
+        bad_date3 = '30 Jun 2019';
+        test1 = datenum(date) > datenum(bad_date1);
+        test2 = datenum(date) < datenum(bad_date2);
+        test3 = datenum(date) > datenum(bad_date3);
+        test4 = (test1 & test2) | test3;
+        if test4 == 1
+         BLANK = N_avg(11,:);
+         N_avg(12,:)=BLANK;
+         N_avg(13,:)=BLANK;
+         N_avg(14,:)=BLANK;
+         N_avg(15,:)=BLANK;
+         N_avg(16,:)=BLANK;
+        end
     end
     range_limit = size(N_avg,2);
     RB = RB(1:size(N_avg,1), 1:size(N_avg,2)); %add this line to force RB to same size as N_avg
@@ -84,6 +115,9 @@ for i=1:days
        RB = interp1(range, RB, range_grid_75, 'linear', 'extrap')';
        range = range_grid_75;
        range_limit = range_limit/2;
+     else
+       RB = RB';  % need to transpose if not regridded
+       N_avg = N_avg';  % need to transpose if not regridded
      end
     N_avg_comb=N_avg;
     RB_comb=RB;
@@ -93,6 +127,19 @@ for i=1:days
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
     if exist(strcat(date, '.mat'))==2
       load(strcat(date, '.mat'))
+        % remove date with bad seed power from SGP MPD#5
+        test1 = datenum(date) > datenum(bad_date1);
+        test2 = datenum(date) < datenum(bad_date2);
+        test3 = datenum(date) > datenum(bad_date3);
+        test4 = (test1 & test2) | test3;
+        if test4 == 1
+         BLANK = N_avg(11,:);
+         N_avg(12,:)=BLANK;
+         N_avg(13,:)=BLANK;
+         N_avg(14,:)=BLANK;
+         N_avg(15,:)=BLANK;
+         N_avg(16,:)=BLANK;
+        end
     end
     range_limit_ch = min(size(N_avg,2), size(N_avg_comb,2)*2);
     RB = RB(1:size(N_avg,1), 1:size(N_avg,2)); %add this line to force RB to same size as N_avg
@@ -103,6 +150,9 @@ for i=1:days
          RB = interp1(range, RB, range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
          range_limit = range_limit_ch/2;
+      else
+         RB = RB';  % need to transpose if not regridded
+         N_avg = N_avg';  % need to transpose if not regridded
       end
     range_limit = size(N_avg,2); % catch any changes in range
     N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg(2:end,1:range_limit));
@@ -112,8 +162,8 @@ for i=1:days
 end
 
 %stop
- %% save data
-  
+
+% save data 
  if flag.save_data == 1
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
   name=strcat(date, '_combined');
@@ -160,21 +210,45 @@ if days == 1
 else
   xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(duration))-fix(min(duration)))/skip)+1 );
  % xData =  linspace(fix(min(duration)),  round(max(duration)), 36);
-end
+ end
+
+% point back to original directory 
+cd(dd);
 x = (duration)';
 y = (range(1:range_limit)./1e3);
+Z_AH = double(real(N_avg_comb'.*1e6./6.022E23.*18.015));  %number density in mol/cm3(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
+Z_RB = double((real(RB_comb')./RB_scale));
+ 
+scrsz = get(0,'ScreenSize');
+% decimate the duraion down to the screen resolution (should be 1900 pixels)
+flag.int = 0; % interpolate nans in nanmoving_average
+if flag.decimate == 1 
+    decimate_time = fix(length(duration)/scrsz(3)/2); %decimate to number of horiz pixels;
+    if  decimate_time >1 
+      decimate_range = 1; % keep native gate spacing 
+      % average RB data before decimating
+       Z_AH = nanmoving_average(Z_AH,decimate_time,2,flag.int);
+       Z_RB = nanmoving_average(Z_RB,decimate_time,2,flag.int);
+      % then decimate
+       x = x(1:decimate_time:end);
+       Z_AH =  Z_AH(1:decimate_range:end, 1:decimate_time:end);
+       Z_RB =  Z_RB(1:decimate_range:end, 1:decimate_time:end); 
+    end
+end
 
+
+Scrnsize=[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2];
 if flag.replot==1
  % plot Narrow water vapor in g/m^3
  figure('Position',Scrnsize)
- Z = double(real(N_avg_comb'.*1e6./6.022E23.*18.015));  %number density in mol/cm3(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
+ %Z = double(real(N_avg_comb'.*1e6./6.022E23.*18.015));  %number density in mol/cm3(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
  % Z(isnan(Z)) = -1;
  set(gcf,'renderer','zbuffer');
- h = pcolor(x,y,Z);
+ h = pcolor(x,y,Z_AH);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 20]);
+ caxis([0 18]);
  colormap(jet)
  %colormap(C)
  %colormap(perula)
@@ -191,19 +265,19 @@ if flag.replot==1
    hh = title({[date,'DIAL Water Vapor (g m^{-3})']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   hh = title({'DIAL Water Vapor (g m^{-3})'},'fontweight','b','fontsize',font_size);
+   hh = title({'MPD Absolute Humidity (g m^{-3})'},'fontweight','b','fontsize',font_size);
  end
  set(gca,'Fontsize',font_size,'Fontweight','b');
  
  
  % plot Narrow RB
  figure('Position',Scrnsize)
- Z = double((real(RB_comb')./RB_scale));
+% Z = double((real(RB_comb')./RB_scale));
 % Z_mask = Z;
 % Z_mask(RB_FF'<5) = NaN;
  % Z(isnan(Z)) = -1;
  set(gcf,'renderer','zbuffer');
- h = pcolor(x,y,Z);
+ h = pcolor(x,y,Z_RB);
 %  h = pcolor(x,y,Z_mask);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');

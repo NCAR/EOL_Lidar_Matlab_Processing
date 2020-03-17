@@ -88,22 +88,46 @@ end
 for d = 1:length(WS.dirListing)
   %read in the weather station data
   WS.filename = WS.dirListing(d).name;
+  %ncdisp(WS.filename, '/', 'min') % use this to display all variables
   WS.time = ncread(WS.filename,'time');
   WS.temp = ncread(WS.filename,'Temperature');
   WS.press = ncread(WS.filename,'Pressure');
   WS.relhum = ncread(WS.filename,'RelHum');
+  WS.abshum = ncread(WS.filename,'AbsHum');
     if d>1   % sum the days nc data files into a single array
     WS.time1 = [WS.time1; WS.time];
     WS.temp1 = [WS.temp1; WS.temp];
     WS.press1 = [WS.press1; WS.press];
     WS.relhum1 = [WS.relhum1; WS.relhum];
+    WS.abshum1 = [WS.abshum1; WS.abshum];
   else
     WS.time1 = WS.time;
     WS.temp1 = WS.temp;
     WS.press1 = WS.press;
     WS.relhum1 = WS.relhum;
+    WS.abshum1 = WS.abshum;
   end
 end
+%figure(10)
+%plot(WS.time1, WS.abshum1)
+%figure(11)
+%plot(WS.time1, WS.temp1)
+%figure(12)
+%plot(WS.time1, WS.press1)
+%figure(13)
+%plot(WS.time1, WS.relhum1)
+
+% remove bad data  
+try  
+   WS.temp1(WS.temp1<-1000)=NaN;
+   WS.press1(WS.press1<-1000)=NaN;
+   WS.relhum1(WS.relhum1<-1000)=NaN;  
+   WS.abshum1(WS.abshum1<-1000)=NaN; 
+%   LL.wavelength1(LL.wavelength1<-1000)=NaN; 
+catch
+end
+
+
 
 % combine time and data 
 MCS.all = [MCS.time1,MCS.data1];

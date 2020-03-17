@@ -1,28 +1,39 @@
 
-elevation= 317.0; %MPD05 was at 317m elevation at SGP
-flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
+x_range_grid_size = 60;  
+x_values = comb_Raman_AH;
+x_duration = comb_Raman_duration;
+y_values = N_avg_comb.*1e6./6.022E23.*18.015;
+y_duration = duration;
+y_range_grid_size = range_grid_size; 
 
-%d=pwd;
-%cd('/Volumes/documents/WV_DIAL_data/SGP_sondes/') % point to the directory where data is stored
-%cd('/scr/sci/tammy/mpd/sgp/soundings/')
-cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
-[sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
-%flag.MR = 0; % instead of absolute humidity plot the mixing ratio
-jj=1;
-%cd= d;
+% grid MPD tp Raman data in time 
+y_values_grid = interp1(y_duration, y_values, x_duration, 'nearest');
+% grid Raman lidar to MPD in range 
+x_values_grid = interp1(Raman_alt{1}, x_values', 0:.075:6, 'nearest');
+y_values_grid = y_values_grid(:,1:size(x_values_grid,1))';
 
-for jj = 1:size(sondefilename,2)
-    cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
-   % add the following three lines for Raman 
-    range_grid_size = 60;  
-    N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
-    duration = comb_Raman_duration;
-   [xx(jj,:), yy(jj,:)] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, flag); 
-   %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
-    %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
- end
-    
-    
+x = x_duration;
+y = 0:.075:6;
+Z = real(x_values_grid);
+% plot the Raman AH
+  figure1 = figure('Position',plot_size1);
+  set(gcf,'renderer','zbuffer');
+  h = pcolor(x, y, Z);
+  set(h, 'EdgeColor', 'none'); 
+  axis xy; colorbar('EastOutside'); 
+  caxis([0 18]);
+  ylim([0 6])
+Z = real(y_values_grid);
+  % plot MPD AH
+  figure1 = figure('Position',plot_size1);
+  set(gcf,'renderer','zbuffer');
+  h = pcolor(x, y, Z);
+  set(h, 'EdgeColor', 'none'); 
+  axis xy; colorbar('EastOutside'); 
+  caxis([0 18]);
+  ylim([0 6])
+  
+
 % create a line plot of the sonde vs MPD data
 scrsz = get(0,'ScreenSize');
 Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
@@ -33,31 +44,26 @@ bins = WV_max*4; % bin size is x 0.1 x 0.1 g/m^2
 %bin_min = 1;
 %bin_max = 400;
 
-% remove the surface station data
-x_no_surface = xx(:,2:end); 
-y_no_surface = yy(:,2:end); 
-
 % reshape into one long array
-x_sonde = reshape(x_no_surface,1,[]); %sondes
-y_MPD05 = reshape(y_no_surface,1,[]); %MPD
+x_Raman = reshape(x_values_grid,1,[]); %Raman Lidar
+y_MPD05 = reshape(y_values_grid,1,[]); %MPD
 xx0 = WV_min:1:WV_max;
 yy0 = WV_min:1:WV_max;
 
 
-
-y_MPD05(y_MPD05<-WV_max*3)=NaN; % remove points 3x outside of plot range 
-y_MPD05(y_MPD05>WV_max*3)=NaN; % remove points 3x outside of plot range 
-x_sonde(x_sonde<-WV_max*3)=NaN; % remove points 3x outside of plot range 
-x_sonde(x_sonde>WV_max*3)=NaN; % remove points 3xoutside of plot range 
+y_MPD05(y_MPD05<-WV_max*2)=NaN; % remove points 3x outside of plot range 
+y_MPD05(y_MPD05>WV_max*2)=NaN; % remove points 3x outside of plot range 
+x_Raman(x_Raman<-WV_max*2)=NaN; % remove points 3x outside of plot range 
+x_Raman(x_Raman>WV_max*2)=NaN; % remove points 3xoutside of plot range 
 
 % calculate the best fit (in a least-squares sense) and the correlation coefficient
-idx = (isnan(y_MPD05)|isnan(x_sonde)); %remove the NaNs
+idx = (isnan(y_MPD05)|isnan(x_Raman)); %remove the NaNs
 %num_samples = size(x_sonde(~idx), 2); 
 %fit = polyfit(x_sonde(~idx),y_MPD05(~idx),1);
 %[Corr, P_test] = corrcoef(x_sonde(~idx),y_MPD05(~idx))
 %Cov = cov(x_sonde(~idx),y_MPD05(~idx))
 %StDev = sqrt((cov(x_sonde(~idx),y_MPD05(~idx))))
-mdl = fitlm(x_sonde(~idx),y_MPD05(~idx));
+mdl = fitlm(x_Raman(~idx),y_MPD05(~idx));
 Rsquared = mdl.Rsquared.Ordinary
 Corr = sqrt(Rsquared) 
 StDev = mdl.RMSE
@@ -72,7 +78,7 @@ y_est = polyval(fit,xx);
 figure(7) %Frequency histogram 
 %figure('Position',Scrsize);
 % this is temporary (the python code should remove these 
-binscatter(x_sonde,y_MPD05, [bins bins]);    
+binscatter(x_Raman,y_MPD05, [bins bins]);    
   %N=hh.NumBins;
   %hh.NumBins =[bins bins];
   %hh.XLimits = [WV_min WV_max];
@@ -100,11 +106,11 @@ text(1, 16, ['StDev = ' num2str(StDev,3) 'g m^{-3}'], 'FontSize', 22, 'Color', '
 
 hold on
 plot(xx0,yy0, 'k-')  % plot the 1:1 line
-plot(xx,y_est,'r--','LineWidth',2)  % plot the least squared fit line
+%plot(xx,y_est,'r--','LineWidth',2)  % plot the least squared fit line
 hold off
 
 figure(8)
-plot(x_sonde, y_MPD05, 'o')
+plot(x_Raman, y_MPD05, 'o')
 xlim([0 20])
 ylim([0 20])
 xlim([WV_min WV_max]);
@@ -129,7 +135,7 @@ cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data
 FigH = figure(7);
 set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-name=strcat(date, 'Sonde_hist_multi'); 
+name=strcat(date, 'Raman_hist_multi'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 
 
@@ -137,5 +143,5 @@ cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data
 FigH = figure(8);
 set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-name=strcat(date, 'Sonde_multi'); 
+name=strcat(date, 'Raman_multi'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 

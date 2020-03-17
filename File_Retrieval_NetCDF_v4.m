@@ -4,7 +4,7 @@ dd = pwd; % get the current path
 %cd /scr/eldora1/wvdial_2_data/2018
 %folder = '20180818';
 cd(folder)
-MCS.dirListing = dir(strcat('MCSsample','*')); %ncdisp('MCSsample000011.nc', '/', 'min') 
+MCS.dirListing = dir(strcat('MCSsample','*')); %ncdisp('MCSsample000000.nc', '/', 'min') 
 LL.dirListing = dir(strcat('LLsample','*')); %ncdisp('LLsample000000.nc', '/', 'min')
 %Etalon.dirListing = dir(strcat('Etalonsample','*')); %ncdisp('Etalonsample000000.nc', '/', 'min')
 HKeep.dirListing = dir(strcat('HKeepsample','*')); %ncdisp('HKeepsample000000.nc', '/', 'min')
@@ -19,6 +19,7 @@ for d = 1:length(MCS.dirListing)
   MCS.data = ncread(MCS.filename,'Data'); 
   MCS.time = ncread(MCS.filename,'time'); 
   MCS.channel = ncread(MCS.filename,'Channel'); 
+ % MCS.channel_name = h5read(MCS.filename,'/ChannelAssignment'); 
   if d>1   % sum the days nc data files into a single array
     MCS.time1=[MCS.time1;MCS.time];
     MCS.data1=[MCS.data1;MCS.data];
@@ -117,13 +118,15 @@ end
 %figure(13)
 %plot(WS.time1, WS.relhum1)
 % remove bad data
-WS.temp1(WS.temp1==-1056)=NaN;
-WS.press1(WS.press1==-1056)=NaN;
-WS.relhum1(WS.relhum1==-1056)=NaN;  
-WS.abshum1(WS.abshum1==-1056)=NaN;
 
-
-
+try
+   WS.temp1(WS.temp1<-1000)=NaN;
+   WS.press1(WS.press1<-1000)=NaN;
+   WS.relhum1(WS.relhum1<-1000)=NaN;  
+   WS.abshum1(WS.abshum1<-1000)=NaN; 
+%   LL.wavelength1(LL.wavelength1<-1000)=NaN; 
+catch
+end
 
 
 % combine time and data 

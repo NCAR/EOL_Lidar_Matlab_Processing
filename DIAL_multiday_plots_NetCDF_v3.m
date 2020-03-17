@@ -57,6 +57,7 @@ DIAL=4;
 
 DIAL=5;
 date = '17 Apr 2019'; % SGP test  
+days = 7; skip = 1;
 days = 32; skip = 4;
 days = 72; skip = 9;
 days = 96; skip = 12;
@@ -65,11 +66,14 @@ days = 96; skip = 12;
 %date = '16 Aug 2019'; % Comparison test new butterfly DBR + TWA transmitter 
 %days = 55; skip = 5;
 
-%DIAL=4;
-%date = '03 Dec 2019'; %
-%days = 17; skip = 1;
+DIAL=4;
+date = '16 Dec 2019'; % data processed to 13-Dec (available to 7-Dec 2019)
+days = 85; skip = 5;
+date = '04 Mar 2020'; % data processed to 13-Dec (available to 7-Dec 2019)
+days = 14; skip = 2;
 
 flag.near = 0;  % read in the near range channel (0=off 1=on)
+flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
 
 font_size = 36; % use this for 2018a version
 %font_size = 14; % use this for 2015a version
@@ -88,8 +92,10 @@ flag.save_figs = 1;
 flag.save_data = 0;
 %plot NetCDF sonde data on top (0=off 1=on)
 flag.plot_sonde_data = 0;
-
-
+%decimate figures to the screen 2x size (1900 pixels x2)
+flag.decimate = 1;
+%set the size of the range gridding
+range_grid_size = 75;
 
 
 RB_scale = 1;
@@ -107,22 +113,25 @@ RB_scale = 1;
 C = importdata('NCAR_C_Map.mat');
 %cd('/Users/spuler/Desktop/FRAPPE_PECAN') % point to the directory where data is stored 
 %cd('/Users/spuler/Desktop/WV_DIAL_data/') % point to the directory where data is stored 
+dd=pwd;
 
 if DIAL==1
   cd('/Volumes/documents/WV_DIAL_data/MPD1_processed_data') % point to the directory where data is stored 
   %bin duration in ns
-elseif DIAL==2
+ elseif DIAL==2
   cd('/Volumes/documents/WV_DIAL_data/MPD2_processed_data') % point to the directory where data is stored 
   bin_duration = 250;  % ns (this change from 500 to 250 for DIAL#2 on 2014)
   %near_field = 1;  % now the HSRL channel
-elseif DIAL==3
+ elseif DIAL==3
   cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data') % point to the directory where data is stored 
+  if flag.afterpulse == 1
+    cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data_afterpulse_corrected') % point to the directory where data is stored   
+  end
 elseif DIAL==4
   cd('/Volumes/documents/WV_DIAL_data/MPD4_processed_data') % point to the directory where data is stored 
-elseif DIAL==5
+ elseif DIAL==5
   cd('/Volumes/documents/WV_DIAL_data/MPD5_processed_data') % point to the directory where data is stored 
-elseif DIAL==5
-
+ elseif DIAL==5
 end
 
 
@@ -134,7 +143,7 @@ if test_gate == 0
 end
 
 i=1;
-range_grid_size = 37.5;
+
 
 for i=1:days
   if i==1  
@@ -227,6 +236,8 @@ for i=1:days
 end
 
 %stop
+
+
  %% save data
   
  if flag.save_data == 1
@@ -266,30 +277,48 @@ end
 
  end
 
-
-scrsz = get(0,'ScreenSize');
-Scrnsize=[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2];
-
-if days == 1
+ if days == 1
   xData =  linspace(fix(min(duration)),  ceil(max(duration)), 25);
 else
   xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(duration))-fix(min(duration)))/skip)+1 );
  % xData =  linspace(fix(min(duration)),  round(max(duration)), 36);
-end
+ end
+
+% point back to original directory 
+cd(dd);
 x = (duration)';
 y = (range(1:range_limit)./1e3);
+Z_AH = double(real(N_avg_comb'.*1e6./6.022E23.*18.015));  %number density in mol/cm3(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
+Z_RB = double((real(RB_comb')./RB_scale));
+ 
+scrsz = get(0,'ScreenSize');
+% decimate the duraion down to the screen resolution (should be 1900 pixels)
+flag.int = 0; % interpolate nans in nanmoving_average
+if flag.decimate == 1 
+    decimate_time = fix(length(duration)/scrsz(3)/2); %decimate to number of horiz pixels;
+    decimate_range = 1; % keep native gate spacing 
+    % average RB data before decimating
+     Z_AH = nanmoving_average(Z_AH,decimate_time,2,flag.int);
+     Z_RB = nanmoving_average(Z_RB,decimate_time,2,flag.int);
+    % then decimate
+     x = x(1:decimate_time:end);
+     Z_AH =  Z_AH(1:decimate_range:end, 1:decimate_time:end);
+     Z_RB =  Z_RB(1:decimate_range:end, 1:decimate_time:end);   
+end
 
+
+Scrnsize=[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2];
 if flag.replot==1
  % plot Narrow water vapor in g/m^3
  figure('Position',Scrnsize)
- Z = double(real(N_avg_comb'.*1e6./6.022E23.*18.015));  %number density in mol/cm3(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
+ %Z = double(real(N_avg_comb'.*1e6./6.022E23.*18.015));  %number density in mol/cm3(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
  % Z(isnan(Z)) = -1;
  set(gcf,'renderer','zbuffer');
- h = pcolor(x,y,Z);
+ h = pcolor(x,y,Z_AH);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 4]);
+ caxis([0 5]);
  colormap(jet)
  %colormap(C)
  %colormap(perula)
@@ -313,12 +342,12 @@ if flag.replot==1
  
  % plot Narrow RB
  figure('Position',Scrnsize)
- Z = double((real(RB_comb')./RB_scale));
+% Z = double((real(RB_comb')./RB_scale));
 % Z_mask = Z;
 % Z_mask(RB_FF'<5) = NaN;
  % Z(isnan(Z)) = -1;
  set(gcf,'renderer','zbuffer');
- h = pcolor(x,y,Z);
+ h = pcolor(x,y,Z_RB);
 %  h = pcolor(x,y,Z_mask);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
@@ -445,14 +474,16 @@ if flag.replot==1
 %  set(gca,'Fontsize',font_size,'Fontweight','b');
   
  if WS==1
+     font_size = 14
  % plot housekeeping data
    figure1 = figure('Position',Scrnsize);
    subplot1=subplot(2,1,1,'Parent',figure1,'YGrid','on', 'XGrid','on');
    box(subplot1,'on');
    hold(subplot1,'all');
-  % plot(duration, (i_off),'b','LineWidth',2,'DisplayName','i_{off}') % these plot diode Temps
-  % plot(duration, (i_on),'r','LineWidth',2, 'DisplayName','i_{on}')
-%   plot(duration, (t_hsrl),'g','LineWidth',2, 'DisplayName','T_{hsrl}')
+  %plot(duration, (i_off),'b','LineWidth',2,'DisplayName','i_{off}') % these plot diode Temps
+  %plot(duration, (i_on),'r','LineWidth',2, 'DisplayName','i_{on}')
+  plot(duration, (lambda_comb_on),'b','LineWidth',2,'DisplayName','Lambda_{on}') % these plot diode Temps
+  %plot(duration, (t_hsrl),'g','LineWidth',2, 'DisplayName','T_{hsrl}')
    axis([fix(min(duration)) ceil(max(duration)) -inf inf])
    YTick = [100 120 140 160 180];
    ylabel('seed Temp, C', 'Fontsize', font_size, 'Fontweight', 'b');  
@@ -522,7 +553,7 @@ if flag.plot_sonde_data==1
    cd('/scr/sci/tammy/mpd/sgp/soundings/')
    [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
    jj=1;
-  %cd= d;
+  %cd(dd);
   for jj = 1:size(sondefilename,2)
       cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
       Sonde_read_nc_files(jj, elevation, sondedir, sondefilename);
@@ -537,7 +568,8 @@ if flag.save_figs==1
   
   %Scrnsize = [scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2]; % use for standard plots
   Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/2.05]; % use for long plots 
-  Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plots 
+  Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plots
+  %Scrnsize = [0 0 scrsz(3) scrsz(4)/2]; % x y width height
   %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.51 scrsz(4)/2]; % use for Perdigao BAMS plots 
   %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/2 scrsz(4)/2]; % use for day plots 
   %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/2.2]; % use for AMT sized 3-day plots (with large font)
@@ -554,11 +586,11 @@ if flag.save_figs==1
   name=strcat(date, 'RB_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
-  FigH = figure(3);
-  % set(gca,'Fontsize',36,'Fontweight','b');
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
-  name=strcat(date, 'background_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+%  FigH = figure(3);
+%  % set(gca,'Fontsize',36,'Fontweight','b');
+%  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
+%  name=strcat(date, 'background_multi'); 
+%  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
 %  FigH = figure(5);
 % %  set(gca,'Fontsize',36,'Fontweight','b');
@@ -567,7 +599,8 @@ if flag.save_figs==1
 %  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
   if WS==1
-      size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
+      %size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
+      size2 = [0 0 scrsz(3) scrsz(4)/3]; % use for long plots 
       FigH = figure(4);
      % set(gca,'Fontsize',36,'Fontweight','b');
       set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);

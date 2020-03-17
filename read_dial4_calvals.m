@@ -89,11 +89,6 @@ profiles2ave.wv = 2*round(((ave_time.wv*60/time_per_column)+1)/2);  % 7kHz, 10k 
 profiles2ave.rb = 2*round(((ave_time.rb*60/time_per_column)+1)/2); % 7kHz, 10k accum data rate is ~1.4s 
 load('diff_geo_cor_170810.mat');
 %timing_range_correction = ((1.25+1/2)-0.5/2)*150;  % changed hardware timing to start after pulse through
-timing_range_correction = (1.25-0.2+0.25/2-1.0/2)*150  % Delay of MCS - delay of TOSA trigger + MCS bin duration/2 - pulse duration/2
+%timing_range_correction = (1.25-0.2+0.25/2-1.0/2)*150  % Delay of MCS - delay of TOSA trigger + MCS bin duration/2 - pulse duration/2
 timing_range_correction = (MCS.delay-laser_pulse_delay+MCS.bin_duration/2-laser_pulse_width/2)/1000*150
-
-blank_range = 375; % new pulse generator shifts gate timing so less outgoing pulse contamination   
-
-    
-    
-    
+blank_range = 300; % new pulse generator shifts gate timing so less outgoing pulse contamination

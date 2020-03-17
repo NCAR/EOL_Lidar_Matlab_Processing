@@ -1,32 +1,59 @@
 clear all
 close all
 
-flag.save_fig = 1;
+flag.save_fig = 0;
 flag.save_data = 1;
 
 write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
     'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
 % take care to pick resolution 
-files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', '/scr/sci/mhayman/DIAL/Processed_Data/MPDSGP/t_res_5min/');
+files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/MPDSGP/Lowres/');
+%cd('/Volumes/eol/sci/mhayman/DIAL/Processed_Data/MPDSGP/t_res_5min')
+
 
 j=1;
+
+ variable{1} = 'Absolute_Humidity';
+ variable{2} = 'Attenuated_Backscatter';
+% variable{3} = 'Aerosol_Backscatter_Coefficient'; 
+% variable{4} = 'Backscatter_Ratio';
+
 
 for j = 1:size(files,2)
     folder = (files{j});
     date = textscan(folder(end-15:end-9), '%6f'); date=date{1};  % read date of file
     n = datenum(num2str(date), 'yymmdd');
     ncid = netcdf.open(folder, 'NC_NOWRITE');
-    variable{1} = 'Absolute_Humidity';
-    variable{2} = 'Attenuated_Backscatter';
+    %ncdisp(folder) % use this to display all variables
     for i = 1:size(variable,2)
       var_units{i} = ncreadatt(folder, variable{i},'units');
       var_units{i} = erase(var_units{i}, '$');
       var_time{i} = ncread(folder,horzcat('time_',variable{i}));   
       var_range{i} = ncread(folder,horzcat('range_',variable{i}));   
-      var{i} = ncread(folder, variable{i});
-      
-      var_variance{i} = ncread(folder, horzcat(variable{i},'_variance')); 
-      var_mask{i} = ncread(folder,horzcat(variable{i},'_mask')); 
+      try
+         var{i} = ncread(folder, variable{i});  
+      catch exception
+          %if strcmp(exception.identifier,'internal.matlab.imagesci.nc/read')
+          if strcmp(exception.identifier,'MATLAB:imagesci:netcdf:libraryFailure')
+            str= 'bad';
+          end
+      end
+      try
+        var_variance{i} = ncread(folder, horzcat(variable{i},'_variance')); 
+      catch exception
+          %if strcmp(exception.identifier,'internal.matlab.imagesci.nc/read')
+          if strcmp(exception.identifier,'MATLAB:imagesci:netcdf:libraryFailure')
+            str= 'bad';
+          end
+      end
+      try
+        var_mask{i} = ncread(folder,horzcat(variable{i},'_mask')); 
+      catch exception
+          %if strcmp(exception.identifier,'internal.matlab.imagesci.nc/read')
+          if strcmp(exception.identifier,'MATLAB:imagesci:netcdf:libraryFailure')
+            str= 'bad';
+          end
+      end
       x{i} = n+double(var_time{i}/3600/24);
       y{i} = double(var_range{i}');
     end  
@@ -134,8 +161,11 @@ for j = 1:size(files,2)
        time_new = x{1};
        range = y{1};
        RB = var{2}; 
-       N_avg = var{1}./1e6.*6.022E23./18.015; % convert to number density      
-      save(name, 'N_avg', 'RB', 'range', 'time_new')
+       N_avg = var{1}./1e6.*6.022E23./18.015; % convert to number density 
+       save(name, 'N_avg', 'RB', 'range', 'time_new')
+       %  Beta_a = var{3};
+       %  BSR = var{4};
+       %  save(name, 'N_avg', 'RB', 'range', 'time_new', 'Beta_a', 'BSR')
     end
  close all
 end

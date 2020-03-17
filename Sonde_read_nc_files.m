@@ -1,4 +1,4 @@
-function[sonde_AH_grid, MPD_AH] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration) 
+function[sonde_AH_grid, MPD_AH] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, flag) 
 
 %sondedir
 
@@ -10,7 +10,7 @@ n = datenum(date, 'yymmdd');
 
 ncid = netcdf.open(filename, 'NC_NOWRITE');
   %ncdisp(filename, '/', 'min') % use this to display all variables
-  ncdisp(filename) % use this to display all variables
+  %ncdisp(filename) % use this to display all variables
     
  variable{1} = 'base_time'; % time (seconds since 1970-1-1)
  variable{2} = 'time_offset'; % time (seconds since 1970-1-1)
@@ -72,9 +72,9 @@ w_s = 621.9901.*(e./(sonde_P-e));
 w = sonde_RH./100.*w_s;
 sonde_MR=w;
 
-flag.plot = 0;
+%flag.plot_overlay = 1;
 
-if flag.plot == 1
+if flag.plot_overlay == 1
   figure(110)
   plot(sonde_AH, sonde_AGL/1000)
   xlim([0 20])
@@ -84,6 +84,7 @@ if flag.plot == 1
   plot(sonde_MR, sonde_AGL/1000)
   xlim([0 20])
   ylim([0 6])
+  
 
   figure(113)
   scatter(duration_sonde, sonde_AGL/1000, 25, sonde_AH, '+');
@@ -103,7 +104,7 @@ if flag.plot == 1
   % Sonde absolute humidity
   figure(1)  %overlay the sondes on the multiday on the next 4 lines
   hold on
-   scatter(duration_sonde, sonde_AGL/1000, 5, sonde_AH, '+');
+   scatter(duration_sonde, sonde_AGL/1000, 10, sonde_AH, '+');
   ylim([0 6])
   colormap(jet)
   %end
@@ -123,12 +124,27 @@ if flag.plot == 1
 end
 
 % grid sonde data vs range 
-range_grid = 0:0.075:6;
+range_grid = 0:range_grid_size/1000:5.7;
 [sonde_AGL_km, index] = unique(sonde_AGL/1000); 
 sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'nearest');
 % find the closes time index for the MPD water vapor
 [minValue, closestIndex] = min(abs(min(duration_sonde)-duration))
-MPD_AH = N_avg_comb(closestIndex,1:(6000/75)+1).*1e6./6.022E23.*18.015;
+MPD_AH = N_avg_comb(closestIndex,1:(5700/range_grid_size)+1).*1e6./6.022E23.*18.015;
+%MPD_AH = N_avg_comb(closestIndex,1:(5700/range_grid_size)+1);
+%MPD_AH = N_avg_comb(closestIndex,1:(6000/range_grid_size)).*1e6./6.022E23.*18.015;
+
+if flag.plot_overlay == 1
+  % overlay sonde vs MPD
+  figure(115)
+  plot(sonde_AH_grid, range_grid)
+  hold on
+  plot(MPD_AH, range_grid)
+  hold off
+  xlim([0 20])
+  ylim([0 6])
+
+
+end
 
 
 

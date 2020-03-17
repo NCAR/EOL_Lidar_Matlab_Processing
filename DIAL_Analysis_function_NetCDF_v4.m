@@ -79,7 +79,7 @@ gate = round((MCS.bin_duration*1e-9*3e8/2)*100)/100
 
 delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
 delta_r = delta_r_index*gate*100; % delta r in cm
-r1 = round(1500/gate); % index for smoothing range 2 (2500m)
+r1 = round(1500/gate); % index for smoothing range 1 (1500m)
 r2 = round(2500/gate); % index for smoothing range 2 (2500m)
 spatial_average1 = 150/gate; %150 meter smoothing range 1 
 spatial_average2 = 300/gate; %300 meter smoothing between range 1 and 2
@@ -96,9 +96,12 @@ if flag.near == 1
    % this is a way to process the near range data instead of the normal
    data_on = near_on;
    data_off = near_off;
-   blank_range = 187.5; % new pulse generator shifts gate timing so less outgoing pulse contamination 
+   if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
+     blank_range = 187.5; % low range 
+   end
 else
-   [data_on,data_off,dummy, dummy,folder_in] = File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+  % [data_on,data_off,dummy, dummy,folder_in] = File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+   [data_on,data_off,folder_in] = File_Retrieval_NetCDF_v3(flag, MCS.bins, folder_in); %use to read binary data (bin number passed in) 
   %[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2_noPow(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
 end
 
@@ -258,6 +261,58 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %time = time2;
 %clear Online_Raw_Data  Offline_Raw_Data 
  
+  if flag.afterpulse == 1   % afterpulse correction
+   % 10-Mar-2020 data; 
+   % afterpulse_start = 32458; afterpulse_stop = 34413;
+   % 16-Mar-2020 data; 
+   % afterpulse_start = 32363; afterpulse_stop = 33068;
+   % afterpulse_num = (afterpulse_stop-afterpulse_start)+1; 
+   % afterpulse_off = sum(Offline(afterpulse_start:afterpulse_stop,:))./afterpulse_num;
+   % afterpulse_on = sum(Online(afterpulse_start:afterpulse_stop,:))./afterpulse_num;
+   % skip = round(200/gate);  % don't fit outgoing pulse, cut ranges < ~200 m
+   % ap_spline_off = spline(range(skip:end),afterpulse_off(skip:end),range);
+   % ap_spline_on = spline(range(skip:end),afterpulse_on(skip:end),range);
+   % back_off = mean(ap_spline_off(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
+   % back_on = mean(ap_spline_on(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
+   % afterpulse_sub_off = (bsxfun(@minus, afterpulse_off, back_off)); 
+   % afterpulse_sub_on = (bsxfun(@minus, afterpulse_on, back_on));
+   % ap_spline_sub_off = (bsxfun(@minus, ap_spline_off, back_off)); 
+   % ap_spline_sub_on= (bsxfun(@minus, ap_spline_on, back_on));
+   % 
+   % figure(1001)
+   % semilogy(range(skip:end), afterpulse_sub_off(skip:end), 'bo')
+   % hold on
+   % semilogy(range(skip:end), afterpulse_sub_on(skip:end), 'ro')
+   % semilogy(range, ap_spline_sub_off, 'b--')
+   % semilogy(range, ap_spline_sub_on, 'r--')
+   % hold off
+   % legend('afterpulse_{off}', 'afterpulse_{on}', 'spline_{off}', 'spline_{on}') 
+   % %ylim([5 100])
+   % xlim([0 1000])
+   % ylabel('counts')
+   % xlabel('range (m)')
+   % grid on
+   
+   % save('MPD3_baseline_subtraction', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
+   % save('MPD3_baseline_subtraction_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
+        
+    load 'MPD3_baseline_subtraction' ap_spline_sub_off ap_spline_sub_on
+    if flag.near == 1
+      load 'MPD3_baseline_subtraction_near' ap_spline_sub_off ap_spline_sub_on
+    end
+    
+    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
+    Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
+    figure(1002)
+    semilogy(range, Online(100,:), 'b')
+    hold on
+    semilogy(range, Online_ap_sub(100,:), 'r')
+    hold off
+    
+    Online = Online_ap_sub;
+    Offline = Offline_ap_sub;
+  end
+
 if flag.pileup == 1
 % apply linear correction factor to raw counts 
   %t_d=32E-9; % module dead time of Perkin Elmber
@@ -279,6 +334,9 @@ end
  j = size(Online, 2);
 
 
+
+ 
+ 
 %% Background subtraction %take the values from 14.25km to 15km for background  
 
 %h = waitbar(0,'Background subtraction and range correction');
@@ -311,7 +369,7 @@ end
 
 % geometric overlap correction from Zemax model
   O_x = [50;100;200;300;400;500;750;1000;1250;1500; 2000;3000;4000;5000;6000;8000;12000];
-if flag.near==1
+if (flag.near==1) && (strcmp(node,'MPD4') == 1)
   O_y = [2.47E-2; 9.90E-2; 3.99E-1; 8.72E-1; 1.00E+0; 1.00E+0 ;1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0];
 else
   O_y = [7e-7; 1.5e-5; 2.77e-4; 1.38e-3; 3.98e-3; 8.89e-3; 3.72e-2; 1.06e-1; 2.08e-1; 3.39e-1; 6.61e-1; 9.53e-1; 9.74e-1; 9.86e-1; 9.92e-1; 1.00E+0; 1.00E+0];
