@@ -33,23 +33,26 @@ else
 end
 
 if strcmp(node,'MPD1')==1
-  write_data_folder = strcat(serv_path, 'wvdial_1_processed_data');
+  write_data_folder = strcat(serv_path, 'wvdial_1_processed_data/Matlab');
   files = strcat(serv_path, 'wvdial_1_data/2020/', daystr);
   catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD2')==1
-  write_data_folder = strcat(serv_path, 'wvdial_2_processed_data');
+  write_data_folder = strcat(serv_path, 'wvdial_2_processed_data/Matlab');
   files = strcat(serv_path, 'wvdial_2_data/2020/', daystr);
  catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD3')==1
-  write_data_folder = strcat(serv_path, 'wvdial_3_processed_data');
+  if flag.afterpulse == 1
+    write_data_folder = strcat(serv_path, 'wvdial_3_processed_data/Matlab/afterpulse');
+  end
+  write_data_folder = strcat(serv_path, 'wvdial_3_processed_data/Matlab');
   files = strcat(serv_path, 'wvdial_3_data/2020/', daystr);
  catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD4')==1
-  write_data_folder = strcat(serv_path, 'wvdial_4_processed_data');
+  write_data_folder = strcat(serv_path, 'wvdial_4_processed_data/Matlab');
   files = strcat(serv_path, 'wvdial_4_data/2020/', daystr);
  catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD5')==1
-  write_data_folder = strcat(serv_path, 'wvdial_5_processed_data');
+  write_data_folder = strcat(serv_path, 'wvdial_5_processed_data/Matlab');
   files = strcat(serv_path, 'wvdial_5_data/2020/', daystr);
  catalog = '/pub/incoming/catalog/operations';
 end
