@@ -514,7 +514,7 @@ if flag.save_figs==1
   %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/2.2]; % use for AMT sized 3-day plots (with large font)
   
   FigH = figure(1);
-  set(gca,'Fontsize',fontsize,'Fontweight','b'); % use for Perdigao BAMS plots 
+  set(gca,'Fontsize',font_size,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
   if near == 1
       name=strcat(date, 'H2O_multi_near');
@@ -524,7 +524,7 @@ if flag.save_figs==1
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  
   FigH = figure(2);
-  set(gca,'Fontsize',fontsize,'Fontweight','b'); % use for Perdigao BAMS plots 
+  set(gca,'Fontsize',font_size,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
   if near == 1
       name=strcat(date,  'RB_multi_near');
