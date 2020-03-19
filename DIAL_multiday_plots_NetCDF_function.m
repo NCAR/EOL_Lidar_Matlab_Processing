@@ -411,7 +411,7 @@ if flag.replot==1
 %  set(gca,'Fontsize',font_size,'Fontweight','b');
   
  if WS==1
-     font_size = 14
+ %    font_size = 14
  % plot housekeeping data
    figure1 = figure('Position',Scrnsize);
    subplot1=subplot(2,1,1,'Parent',figure1,'YGrid','on', 'XGrid','on');
@@ -514,7 +514,7 @@ if flag.save_figs==1
   %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/2.2]; % use for AMT sized 3-day plots (with large font)
   
   FigH = figure(1);
-  set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
+  set(gca,'Fontsize',fontsize,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
   if near == 1
       name=strcat(date, 'H2O_multi_near');
@@ -524,7 +524,7 @@ if flag.save_figs==1
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  
   FigH = figure(2);
-  set(gca,'Fontsize',36,'Fontweight','b'); % use for Perdigao BAMS plots 
+  set(gca,'Fontsize',fontsize,'Fontweight','b'); % use for Perdigao BAMS plots 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
   if near == 1
       name=strcat(date,  'RB_multi_near');
@@ -549,7 +549,7 @@ if flag.save_figs==1
       %size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
       size2 = [0 0 scrsz(3) scrsz(4)/3]; % use for long plots 
       FigH = figure(4);
-     % set(gca,'Fontsize',36,'Fontweight','b');
+      set(gca,'Fontsize',14,'Fontweight','b');
       set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);
       if near == 1
         name=strcat(date,  'Housekeeping_near');
