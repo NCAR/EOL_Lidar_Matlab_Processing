@@ -1,4 +1,4 @@
-function[] = DIAL_multiday_plots_NetCDF_function(save_figs, save_data, near, afterpulse, node, daystr, day_num)
+function[] = DIAL_multiday_plots_NetCDF_function(save_figs, save_data, near, afterpulse, node, daystr, daystr2)
 %clear all; 
 close all;
 dd = pwd; % get the current path
@@ -74,10 +74,10 @@ tic
 %date = '16 Dec 2019'; % data processed to 13-Dec (available to 7-Dec 2019)
 %days = 85; skip = 5;
 %date = '04 Mar 2020'; % data processed to 13-Dec (available to 7-Dec 2019)
-date = datestr(datenum(num2str(daystr),'yyyymmdd'), 'dd mmm yyyy');
-days = day_num; skip = 2;
 
-datenum(num2str(daystr),'yyyymmdd');
+date = datestr(datenum(daystr,'yyyymmdd'), 'dd mmm yyyy');
+days = (datenum(daystr2,'yyyymmdd') - datenum(daystr,'yyyymmdd'))+1;
+skip = 2;
 
 flag.near = near;  % read in the near range channel (0=off 1=on)
 flag.afterpulse = afterpulse; % read in the afterpulse corrected data (0=off 1=on)

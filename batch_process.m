@@ -25,11 +25,11 @@ end
    DIAL_process_NetCDF_function(0,1,0,0,1,0,'MPD3','20200319') % MPD #3 (low gain)
    DIAL_process_NetCDF_function(0,1,0,0,0,1,'MPD3','20200319') % MPD #3 (high gain with afterpulse)
    DIAL_process_NetCDF_function(0,1,0,0,1,1,'MPD3','20200319') % MPD #3 (low gain with afterpulse)
-   % save_figs, save_data, near, afterpulse, node, daystr, day_num
-   DIAL_multiday_plots_NetCDF_function(1,0,0,0,'MPD4',20200310,10) % MPD# 4 (high range)
-   DIAL_multiday_plots_NetCDF_function(1,0,1,0,'MPD4',20200310,10) % MPD# 4 (low range)
-   DIAL_multiday_plots_NetCDF_function(1,0,0,0,'MPD3',20200310,10) % MPD #3 (high gain)
-   DIAL_multiday_plots_NetCDF_function(1,0,1,0,'MPD3',20200310,10) % MPD #3 (low gain)
-   DIAL_multiday_plots_NetCDF_function(1,0,0,1,'MPD3',20200310,10) % MPD #3 (high gain with afterpulse)
-   DIAL_multiday_plots_NetCDF_function(1,0,1,1,'MPD3',20200310,10) % MPD #3 (low gain with afterpulse)
+   % save_figs, save_data, near, afterpulse, node, daystr, daystr2
+   DIAL_multiday_plots_NetCDF_function(1,0,0,0,'MPD4','20200310','20200319') % MPD# 4 (high range)
+   DIAL_multiday_plots_NetCDF_function(1,0,1,0,'MPD4','20200310','20200319') % MPD# 4 (low range)
+   DIAL_multiday_plots_NetCDF_function(1,0,0,0,'MPD3','20200310','20200319') % MPD #3 (high gain)
+   DIAL_multiday_plots_NetCDF_function(1,0,1,0,'MPD3','20200310','20200319') % MPD #3 (low gain)
+   DIAL_multiday_plots_NetCDF_function(1,0,0,1,'MPD3','20200310','20200319') % MPD #3 (high gain with afterpulse)
+   DIAL_multiday_plots_NetCDF_function(1,0,1,1,'MPD3','20200310','20200319') % MPD #3 (low gain with afterpulse)
  end
