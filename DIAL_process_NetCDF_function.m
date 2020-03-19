@@ -41,12 +41,12 @@ elseif strcmp(node,'MPD2')==1
   files = strcat(serv_path, 'wvdial_2_data/2020/', daystr);
  catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD3')==1
+  write_data_folder = strcat(serv_path, 'wvdial_3_processed_data/Matlab');
+  files = strcat(serv_path, 'wvdial_3_data/2020/', daystr);
+  catalog = '/pub/incoming/catalog/operations';
   if flag.afterpulse == 1
     write_data_folder = strcat(serv_path, 'wvdial_3_processed_data/Matlab/afterpulse');
   end
-  write_data_folder = strcat(serv_path, 'wvdial_3_processed_data/Matlab');
-  files = strcat(serv_path, 'wvdial_3_data/2020/', daystr);
- catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD4')==1
   write_data_folder = strcat(serv_path, 'wvdial_4_processed_data/Matlab');
   files = strcat(serv_path, 'wvdial_4_data/2020/', daystr);
