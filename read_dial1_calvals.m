@@ -1,6 +1,6 @@
 addpath('./jsonlab')
-dat=loadjson(['../eol-lidar-calvals/calvals/dial1_calvals.json'],'SimplifyCell',1);
-dat=loadjson(['/home/rsfdata/Processing/MatlabV2/GitCalibrations/calibrations/dial1_calvals.json'],'SimplifyCell',1);
+%dat=loadjson(['../eol-lidar-calvals/calvals/dial1_calvals.json'],'SimplifyCell',1);
+dat=loadjson(['/export/fog1/rsfdata/MPD/calibration/eol-lidar-calvals/calvals/dial1_calvals.json'],'SimplifyCell',1);
 
 
 %t_date = '11-Jun-2017'
