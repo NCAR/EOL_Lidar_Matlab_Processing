@@ -13,7 +13,7 @@ flag.pileup = 1; % use pileup correction for detectors
 flag.WS = 1; % use the surface weather station data to calcuate spectroscopy
 flag.decimate = 0; % decimate all data to half the wv resoltuion
 flag.int = 0; % interpolate nans in nanmoving_average
-flag.mark_gaps = 1; % sets gaps in data to NaNs
+flag.mark_gaps = 1; % sets gaps in data to Na
 flag.OF = 1; % correct for geometric overlap functions
 flag.near = near; %process the near range channel (or low gain)
 flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD#3 only)
@@ -26,10 +26,11 @@ ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor
 ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 0.5; % gridding time (in minutes) for the output files (HK data at 2 sec)
 
-serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
-%serv_path = '/home/rsfdata/Processing/EOL_Lidar_Matlab_Processing/'; % when running on server
-serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
-%serv_path = '/scr/eldora1/';
+if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+   serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
+else
+   serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
+end
 
 if strcmp(node,'MPD1')==1
   write_data_folder = strcat(serv_path, 'wvdial_1_processed_data');
@@ -54,6 +55,8 @@ elseif strcmp(node,'MPD5')==1
 end
 
 j=1;
+%days = datenum(num2str(daystr2),'yyyymmdd')-datenum(num2str(daystr),'yyyymmdd');
+
 %for j = 1:size(files,2)
     %folder = (files{j});
     folder = files; 

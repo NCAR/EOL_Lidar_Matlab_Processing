@@ -1,5 +1,7 @@
 addpath('./jsonlab')
-dat=loadjson(['../eol-lidar-calvals/calvals/dial1_calvals.json'],'SimplifyCell',1); 
+dat=loadjson(['../eol-lidar-calvals/calvals/dial1_calvals.json'],'SimplifyCell',1);
+dat=loadjson(['/home/rsfdata/Processing/MatlabV2/GitCalibrations/calibrations/dial1_calvals.json'],'SimplifyCell',1);
+
 
 %t_date = '11-Jun-2017'
 wavemeter_offset = double(0); 
