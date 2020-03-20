@@ -1,16 +1,22 @@
 addpath('./jsonlab')
-%dat=loadjson(['../eol-lidar-calvals/calvals/dial4_calvals.json'],'SimplifyCell',1); 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-   serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
+   serv_path = '/export/fog1/rsfdata/MPD/calibration/'; % when running on server
+elseif strcmp(getenv('HOSTNAME'),'')
+    serv_path = '../'; % running locally 
 else
-   serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
+   serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
 end
-dat=loadjson([strcat(serv_path, 'calibration/eol-lidar-calvals/calvals/dial4_calvals.json')],'SimplifyCell',1);
+dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial4_calvals.json')],'SimplifyCell',1);
 
-
-%t_date = '11-Jun-2017'
+%t_date = '10-Mar-2020' % used for testing
 wavemeter_offset = double(0); 
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
+
+for i=1:size(dat.Afterpulse_File,2)
+if (t_date >= datetime(dat.Afterpulse_File(i).date,'InputFormat','d-MM-yyyy H:m')) == 1
+    Afterpulse_File = dat.Afterpulse_File(i).value;
+end
+end
 
 for i=1:size(dat.MCS_bins,2)
 if (t_date >= datetime(dat.MCS_bins(i).date,'InputFormat','d-MM-yyyy H:m')) == 1

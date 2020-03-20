@@ -1,5 +1,5 @@
 function[] = MPD_Analysis_function_NetCDF_v4(folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog)
+    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)
 
 %% notes
 %Amin Nehrir (original author)
@@ -295,11 +295,60 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    
    % save('MPD3_baseline_subtraction', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
    % save('MPD3_baseline_subtraction_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
-        
-    load 'MPD3_baseline_subtraction' ap_spline_sub_off ap_spline_sub_on
-    if flag.near == 1
-      load 'MPD3_baseline_subtraction_near' ap_spline_sub_off ap_spline_sub_on
+    
+   % load 'MPD3_baseline_subtraction' ap_spline_sub_off ap_spline_sub_on
+   % if flag.near == 1
+   %   load 'MPD3_baseline_subtraction_near' ap_spline_sub_off ap_spline_sub_on
+   % end
+   
+    % read the afterpulse nc file identified in the json file 
+    if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+     serv_path = '/export/fog1/rsfdata/MPD/calibration/'; % when running on server
+    elseif strcmp(getenv('HOSTNAME'),'')
+      serv_path = '../'; % running locally 
+    else
+     serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
     end
+    ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File);   
+    ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
+    ncdisp(ap_filename, '/', 'min') % use this to display all variables
+    if flag.near == 1
+       ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
+       ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');
+       ap_off_shots = ncread(ap_filename, 'WVOfflineLow_LaserShotCount');
+       ap_on_shots = ncread(ap_filename, 'WVOnlineLow_LaserShotCount');
+       ap_off_bin = ncread(ap_filename, 'WVOfflineLow_nsPerBin');
+       ap_on_bin = ncread(ap_filename, 'WVOnlineLow_nsPerBin');
+       afterpulse_off = ap_off_rate*ap_off_bin*ap_off_shots*1e-9;
+       afterpulse_on = ap_on_rate*ap_on_bin*ap_on_shots*1e-9;
+    else
+       ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
+       ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
+       ap_off_shots = ncread(ap_filename, 'WVOffline_LaserShotCount');
+       ap_on_shots = ncread(ap_filename, 'WVOnline_LaserShotCount');
+       ap_off_bin = ncread(ap_filename, 'WVOffline_nsPerBin');
+       ap_on_bin = ncread(ap_filename, 'WVOnline_nsPerBin');
+       afterpulse_off = ap_off_rate*ap_off_bin*ap_off_shots*1e-9;
+       afterpulse_on = ap_on_rate*ap_on_bin*ap_on_shots*1e-9;
+    end
+    netcdf.close(ncid); 
+   % 
+   % figure(1001)
+   % semilogy(afterpulse_range, afterpulse_off, 'bo')
+   % hold on
+   % semilogy(afterpulse_range(skip:end), afterpulse_sub_on(skip:end), 'ro')
+   % semilogy(afterpulse_range, ap_spline_off, 'b--')
+   % semilogy(afterpulse_range, ap_spline_sub_on, 'r--')
+   % hold off
+   % legend('afterpulse_{off}', 'afterpulse_{on}', 'spline_{off}', 'spline_{on}') 
+   % %ylim([5 100])
+   % xlim([0 1000])
+   % ylabel('counts')
+   % xlabel('range (m)')
+   % grid on
+   
+   ap_spline_sub_off = afterpulse_off; 
+   ap_spline_sub_on = afterpulse_on; 
     
     Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
     Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));

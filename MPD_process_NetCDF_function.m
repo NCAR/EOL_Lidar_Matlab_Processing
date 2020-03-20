@@ -78,7 +78,7 @@ j=1;
     folder_in=folder;
     date_in = date;
     MPD_Analysis_function_NetCDF_v4(folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog)%
+        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
     %DIAL_Analysis_function_NetCDF(folder, date, MCS, write_data_folder, flag, node, ...
     %    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog)%
     

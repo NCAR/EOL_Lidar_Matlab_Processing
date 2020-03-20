@@ -1,5 +1,5 @@
 % example batch process 
-start = '20200310';
+start = '20200319';
 stop = '20200320';
 
 start_day = datenum(start,'yyyymmdd');
@@ -20,6 +20,9 @@ if flag.process == 1
     MPD_process_NetCDF_function(0,1,0,0,1,1,'MPD3',file) % MPD #3 (low gain with afterpulse)
   end
 end
+
+start = '20200310';
+stop = '20200320';
 
 if flag.plot == 1
     MPD_multiday_plots_NetCDF_function(1,0,0,0,'MPD4', start, stop) % MPD# 4 (high range)
