@@ -91,8 +91,9 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 
 %% Importing online and offline files from the selected date
 
+read_time_in = 2; % read data in time increments of seconds (default it 2sec) 
 if flag.near == 1
-  [dummy,dummy,near_on, near_off, folder_in] = MPD_File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+  [dummy,dummy,near_on, near_off, folder_in] = MPD_File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in, read_time_in); %use to read binary data (bin number passed in) 
    % this is a way to process the near range data instead of the normal
    data_on = near_on;
    data_off = near_off;
@@ -101,7 +102,7 @@ if flag.near == 1
    end
 else
   % [data_on,data_off,dummy, dummy,folder_in] = File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in); %use to read binary data (bin number passed in) 
-   [data_on,data_off,folder_in] = MPD_File_Retrieval_NetCDF_v3(flag, MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+   [data_on,data_off,folder_in] = MPD_File_Retrieval_NetCDF_v3(flag, MCS.bins, folder_in, read_time_in); %use to read binary data (bin number passed in) 
   %[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2_noPow(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
 end
 
@@ -120,8 +121,8 @@ end
   %time2 = time2-0.25; % this was a fix for computer switch 20-Oct to 26-Oct 2017
   %time2(time2>292.5)= time2(time2>292.5)-0.25; % 19-Oct-2017 fix
   time = time2;
-  time = time(~(time2<(nanmedian(time2)-1.5)));
-  time= time(~(time>(nanmedian(time)+1.5)));
+  %time = time(~(time2<(nanmedian(time2)-1.5)));
+  %time= time(~(time>(nanmedian(time)+1.5)));
   Online_Raw_Data = Online_Raw_Data(~isnan(time),:);
   Offline_Raw_Data = Offline_Raw_Data(~isnan(time),:);
 
@@ -310,40 +311,40 @@ range = single(0:gate:(size(Online,2)-1)*gate);
      serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
     end
     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File);   
+   
     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
     %ncdisp(ap_filename, '/', 'min') % use this to display all variables
-    ap_range = ncread(ap_filename, 'range');
     if flag.near == 1
        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');
-       ap_off_shots = ncread(ap_filename, 'WVOfflineLow_LaserShotCount');
-       ap_on_shots = ncread(ap_filename, 'WVOnlineLow_LaserShotCount');
-       ap_off_bin = ncread(ap_filename, 'WVOfflineLow_nsPerBin');
-       ap_on_bin = ncread(ap_filename, 'WVOnlineLow_nsPerBin');
-       afterpulse_off = ap_off_rate*ap_off_bin*ap_off_shots*1e-9;
-       afterpulse_on = ap_on_rate*ap_on_bin*ap_on_shots*1e-9;
+%        ap_off_shots = ncread(ap_filename, 'WVOfflineLow_LaserShotCount');
+%        ap_on_shots = ncread(ap_filename, 'WVOnlineLow_LaserShotCount');
+%        ap_off_bin = ncread(ap_filename, 'WVOfflineLow_nsPerBin');
+%        ap_on_bin = ncread(ap_filename, 'WVOnlineLow_nsPerBin');
+%        afterpulse_off = ap_off_rate*ap_off_bin*ap_off_shots*1e-9;
+%        afterpulse_on = ap_on_rate*ap_on_bin*ap_on_shots*1e-9;
     else
        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
-       ap_off_shots = ncread(ap_filename, 'WVOffline_LaserShotCount');
-       ap_on_shots = ncread(ap_filename, 'WVOnline_LaserShotCount');
-       ap_off_bin = ncread(ap_filename, 'WVOffline_nsPerBin');
-       ap_on_bin = ncread(ap_filename, 'WVOnline_nsPerBin');
-       afterpulse_off = ap_off_rate*ap_off_bin*ap_off_shots*1e-9;
-       afterpulse_on = ap_on_rate*ap_on_bin*ap_on_shots*1e-9;
+%        ap_off_shots = ncread(ap_filename, 'WVOffline_LaserShotCount');
+%        ap_on_shots = ncread(ap_filename, 'WVOnline_LaserShotCount');
+%        ap_off_bin = ncread(ap_filename, 'WVOffline_nsPerBin');
+%        ap_on_bin = ncread(ap_filename, 'WVOnline_nsPerBin');
+%        afterpulse_off = ap_off_rate*ap_off_bin*ap_off_shots*1e-9;
+%        afterpulse_on = ap_on_rate*ap_on_bin*ap_on_shots*1e-9;
     end
+    ap_range = ncread(ap_filename, 'range');
     netcdf.close(ncid); 
     
-    %afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
-    %afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
+    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*20;
+    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*20;  
     
-   % 
-   % figure(1001)
-   % semilogy(ap_range, afterpulse_off, 'bo')
-   % hold on
+    figure(1001)
+    semilogy(ap_range, afterpulse_off, 'bo')
+    hold on
    % semilogy(afterpulse_range(skip:end), afterpulse_sub_on(skip:end), 'ro')
    % semilogy(afterpulse_range, ap_spline_off, 'b--')
-   % semilogy(afterpulse_range, ap_spline_sub_on, 'r--')
+   % semilogy(range, ap_spline_sub_on, 'r+')
    % hold off
    % legend('afterpulse_{off}', 'afterpulse_{on}', 'spline_{off}', 'spline_{on}') 
    % %ylim([5 100])

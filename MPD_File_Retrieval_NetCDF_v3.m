@@ -1,4 +1,4 @@
-function[online_merged,offline_merged,folder,flag] = MPD_File_Retrieval_NetCDF_v3(flag, bins, folder)
+function[online_merged,offline_merged,folder,flag] = MPD_File_Retrieval_NetCDF_v3(flag, bins, folder, read_time_in)
 
 dd = pwd; % get the current path
 %cd /scr/eldora1/wvdial_2_data/2018
@@ -156,7 +156,7 @@ else
 end
 
 % grid to a fixed time base
-ave_time = 2;  % time grid in seconds
+ave_time = read_time_in;  % time grid in seconds
 time_grid = (floor(min(MCS.time1)):1/60/60*(ave_time):ceil(max(MCS.time1)))';
 LL.online_grid = interp1(LL.online(:,1), LL.online(:,2:end), time_grid, 'nearest', 'extrap'); 
 LL.offline_grid = interp1(LL.offline(:,1), LL.offline(:,2:end), time_grid, 'nearest', 'extrap'); 

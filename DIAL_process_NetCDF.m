@@ -1,6 +1,6 @@
 clear all; close all
 
-node = 'MPD4';
+node = 'MPD3';
 
 %location to write files
     write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
@@ -19,7 +19,7 @@ flag.decimate = 0; % decimate all data to half the wv resoltuion
 flag.int = 0; % interpolate nans in nanmoving_average
 flag.mark_gaps = 1; % sets gaps in data to NaNs
 flag.OF = 1; % correct for geometric overlap functions
-flag.near = 1; %process the near range channel (or low gain)
+flag.near = 0; %process the near range channel (or low gain)
 flag.afterpulse = 1; % correct for afterpulsing (in progress on MPD#3 only)
 
 flag.plot_data = 1;  % need to have this one to save the figs
