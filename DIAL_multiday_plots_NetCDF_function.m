@@ -12,6 +12,7 @@ flag.near = near;  % read in the near range channel (0=off 1=on)
 flag.afterpulse = afterpulse; % read in the afterpulse corrected data (0=off 1=on)
 
 font_size = 28; % use this for 2019b version
+WS_font_size = 14; % use this for 2019b version
 %font_size = 36; % use this for 2018a version
 %font_size = 14; % use this for 2015a version
 %font_size = 16; % use this for 2015a versionexit
@@ -423,9 +424,9 @@ if flag.replot==1
   %plot(duration, (t_hsrl),'g','LineWidth',2, 'DisplayName','T_{hsrl}')
    axis([fix(min(duration)) ceil(max(duration)) -inf inf])
    YTick = [100 120 140 160 180];
-   ylabel('seed Temp, C', 'Fontsize', font_size, 'Fontweight', 'b');  
+   ylabel('seed Temp, C', 'Fontsize', WS_font_size, 'Fontweight', 'b');  
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   set(gca,'Fontsize',font_size,'Fontweight','b');
+   set(gca,'Fontsize',WS_font_size,'Fontweight','b');
    % Plot the temperature data
    subplot2=subplot(2,1,2,'Parent',figure1,'YGrid','on', 'XGrid','on');
    box(subplot2,'on');
@@ -434,7 +435,7 @@ if flag.replot==1
    plot(duration, surf_T, 'b', 'LineWidth',1, 'DisplayName','Surface T')
    axis([fix(min(duration)) ceil(max(duration)) -inf inf]);   % -20 40])
       YTick = [-25 0 25 50];
-   ylabel('temperature, C', 'Fontsize', font_size, 'Fontweight', 'b'); 
+   ylabel('temperature, C', 'Fontsize', WS_font_size, 'Fontweight', 'b'); 
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    set(gca,'Fontsize',font_size,'Fontweight','b');
    % Create legend
@@ -455,8 +456,8 @@ if flag.replot==1
    set(ax(3),'YAxisLocation','right')
    set(ax(3),'XAxisLocation','bottom')
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   ylabel('rel. transmit power', 'Fontsize', font_size, 'Fontweight', 'b');  
-   set(gca,'Fontsize',font_size,'Fontweight','b');
+   ylabel('rel. transmit power', 'Fontsize', WS_font_size, 'Fontweight', 'b');  
+   set(gca,'Fontsize',WS_font_size,'Fontweight','b');
    legend('show', 'Location','southwest')
    set(legend(ax(3)),'Color','white')
    %change backgroud color to transparent
@@ -469,8 +470,8 @@ if flag.replot==1
    set(ax(4),'YAxisLocation','right')
    set(ax(4),'XAxisLocation','bottom')
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   ylabel('surface pressure, atm', 'Fontsize', font_size, 'Fontweight', 'b');  
-   set(gca,'Fontsize',font_size,'Fontweight','b');
+   ylabel('surface pressure, atm', 'Fontsize', WS_font_size, 'Fontweight', 'b');  
+   set(gca,'Fontsize',WS_font_size,'Fontweight','b');
    legend('show')
    set(legend(ax(3)),'Color','white')
    %change backgroud color to transparent
