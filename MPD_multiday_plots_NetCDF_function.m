@@ -12,7 +12,7 @@ flag.near = near;  % read in the near range channel (0=off 1=on)
 flag.afterpulse = afterpulse; % read in the afterpulse corrected data (0=off 1=on)
 
 font_size = 28; % use this for 2019b version
-WS_font_size = 14; % use this for 2019b version
+WS_font_size = 12; % use this for 2019b version
 %font_size = 36; % use this for 2018a version
 %font_size = 14; % use this for 2015a version
 %font_size = 16; % use this for 2015a versionexit
@@ -437,7 +437,7 @@ if flag.replot==1
       YTick = [-25 0 25 50];
    ylabel('temperature, C', 'Fontsize', WS_font_size, 'Fontweight', 'b'); 
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   set(gca,'Fontsize',font_size,'Fontweight','b');
+   set(gca,'Fontsize',WS_font_size,'Fontweight','b');
    % Create legend
    legend(subplot1,'show'); 
    legend(subplot2,'show');
@@ -550,7 +550,7 @@ if flag.save_figs==1
       %size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
       size2 = [0 0 scrsz(3) scrsz(4)/3]; % use for long plots 
       FigH = figure(4);
-      set(gca,'Fontsize',14,'Fontweight','b');
+      set(gca,'Fontsize',WS_font_size,'Fontweight','b');
       set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);
       if near == 1
         name=strcat(date,  'Housekeeping_near');

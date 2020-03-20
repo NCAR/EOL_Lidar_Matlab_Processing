@@ -1,11 +1,11 @@
 % example batch process 
-start = '20200319';
+start = '20200310';
 stop = '20200320';
 
 start_day = datenum(start,'yyyymmdd');
 stop_day = datenum(stop,'yyyymmdd');
 k=start_day;
-flag.process = 1;
+flag.process = 0;
 flag.plot = 1;
 
 if flag.process == 1
