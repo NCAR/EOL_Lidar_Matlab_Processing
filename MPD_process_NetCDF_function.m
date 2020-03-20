@@ -65,15 +65,15 @@ j=1;
     folder = files; 
     date = textscan(folder(end-5:end), '%6f'); date=date{1};  % read date of file
     if strcmp(node,'MPD1')==1
-      read_dial1_calvals % json format version of the above file
+      MPD1_read_calvals % json format version of the above file
     elseif strcmp(node,'MPD2')==1
-      read_dial2_calvals % json format version of the above file
+      MPD2_read_calvals % json format version of the above file
     elseif strcmp(node,'MPD3')==1
-      read_dial3_calvals % json format version of the above file
+      MPD3_read_calvals % json format version of the above file
     elseif strcmp(node,'MPD4')==1
-      read_dial4_calvals % json format version of the above file
+      MPD4_read_calvals % json format version of the above file
     elseif strcmp(node,'MPD5')==1
-      read_dial5_calvals % json format version of the above file
+      MPD5_read_calvals % json format version of the above file
     end
     folder_in=folder;
     date_in = date;
