@@ -312,6 +312,7 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File);   
     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
     ncdisp(ap_filename, '/', 'min') % use this to display all variables
+    ap_range = ncread(ap_filename, 'range');
     if flag.near == 1
        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');
@@ -347,11 +348,15 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    % xlabel('range (m)')
    % grid on
    
-   ap_spline_sub_off = afterpulse_off; 
-   ap_spline_sub_on = afterpulse_on; 
-    
-    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
+   %grid to the current range
+   %ap_spline_sub_off = spline(ap_range, afterpulse_off,range);
+   %ap_spline_sub_on = spline(ap_range, afterpulse_on,range);
+   ap_spline_sub_off = afterpulse_off';
+   ap_spline_sub_on = afterpulse_on';
+   
+   
     Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
+    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
     figure(1002)
     semilogy(range, Online(100,:), 'b')
     hold on
