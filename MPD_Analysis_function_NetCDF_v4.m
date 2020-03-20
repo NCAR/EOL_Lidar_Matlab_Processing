@@ -317,27 +317,15 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     if flag.near == 1
        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');
-%        ap_off_shots = ncread(ap_filename, 'WVOfflineLow_LaserShotCount');
-%        ap_on_shots = ncread(ap_filename, 'WVOnlineLow_LaserShotCount');
-%        ap_off_bin = ncread(ap_filename, 'WVOfflineLow_nsPerBin');
-%        ap_on_bin = ncread(ap_filename, 'WVOnlineLow_nsPerBin');
-%        afterpulse_off = ap_off_rate*ap_off_bin*ap_off_shots*1e-9;
-%        afterpulse_on = ap_on_rate*ap_on_bin*ap_on_shots*1e-9;
     else
        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
-%        ap_off_shots = ncread(ap_filename, 'WVOffline_LaserShotCount');
-%        ap_on_shots = ncread(ap_filename, 'WVOnline_LaserShotCount');
-%        ap_off_bin = ncread(ap_filename, 'WVOffline_nsPerBin');
-%        ap_on_bin = ncread(ap_filename, 'WVOnline_nsPerBin');
-%        afterpulse_off = ap_off_rate*ap_off_bin*ap_off_shots*1e-9;
-%        afterpulse_on = ap_on_rate*ap_on_bin*ap_on_shots*1e-9;
     end
     ap_range = ncread(ap_filename, 'range');
     netcdf.close(ncid); 
     
-    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*20;
-    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*20;  
+    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
+    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
     
     figure(1001)
     semilogy(ap_range, afterpulse_off, 'bo')
