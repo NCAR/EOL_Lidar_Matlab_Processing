@@ -231,13 +231,10 @@ lambda_off = median(lambda_all_off)
     plot(lambda_all_off)
     hold off
 
-
   if isempty(lambda_off_N) == 1
       lambda_off_N = lambda_off 
   end
-  
-  
-  
+    
  folder_date = textscan(folder_in(end-7:end), '%8f', 1); folder_date=folder_date{1}; % change to read ingore the NF and FF 
  %folder_CH = textscan(folder_in(end-1:end), '%s'); folder_CH=folder_CH{1}; % change to read ingore the NF and FF 
  %folder_CH=folder_CH{1:1};
@@ -255,7 +252,7 @@ lambda_off = median(lambda_all_off)
 % Online(tol_idx_mat)=NaN;
 % Offline(tol_idx_mat)=NaN;
 
-%Range vector in meters
+% vector in meters
 range = single(0:gate:(size(Online,2)-1)*gate);
 %range = range+timing_range_correction;  %make range correction from trigger timing
 %time = (Online_Raw_Data(:,1)); 
@@ -297,10 +294,10 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    % save('MPD3_baseline_subtraction', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
    % save('MPD3_baseline_subtraction_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
     
-   % load 'MPD3_baseline_subtraction' ap_spline_sub_off ap_spline_sub_on
-   % if flag.near == 1
-   %   load 'MPD3_baseline_subtraction_near' ap_spline_sub_off ap_spline_sub_on
-   % end
+    load 'MPD3_baseline_subtraction' ap_spline_sub_off ap_spline_sub_on
+    if flag.near == 1
+      load 'MPD3_baseline_subtraction_near' ap_spline_sub_off ap_spline_sub_on
+    end
    
     % read the afterpulse nc file identified in the json file 
     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -324,26 +321,29 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     ap_range = ncread(ap_filename, 'range');
     netcdf.close(ncid); 
     
-    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
-    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
+    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*20;
+    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*20;  
     
-    figure(1001)
-    semilogy(ap_range, afterpulse_off, 'bo')
+    range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
+    range_act = range + range_shift; % %actual range points 
+    
+    figure(1004)
+    semilogy(ap_range, afterpulse_off, 'bo-')
     hold on
-   % semilogy(afterpulse_range(skip:end), afterpulse_sub_on(skip:end), 'ro')
-   % semilogy(afterpulse_range, ap_spline_off, 'b--')
-   % semilogy(range, ap_spline_sub_on, 'r+')
-   % hold off
-   % legend('afterpulse_{off}', 'afterpulse_{on}', 'spline_{off}', 'spline_{on}') 
+    semilogy(ap_range, afterpulse_on, 'b+-')
+    semilogy(range_act, ap_spline_sub_off, 'ro-')
+    semilogy(range_act, ap_spline_sub_on, 'r+-')
+    hold off
+    legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
    % %ylim([5 100])
-   % xlim([0 1000])
-   % ylabel('counts')
-   % xlabel('range (m)')
-   % grid on
+    xlim([-200 15500])
+    ylabel('counts')
+    xlabel('range (m)')
+    grid on
    
    %grid to the current range
-   ap_spline_sub_off = spline(ap_range, afterpulse_off,range);
-   ap_spline_sub_on = spline(ap_range, afterpulse_on,range);
+   ap_spline_sub_off = spline(range, afterpulse_off, range);
+   ap_spline_sub_on = spline(range, afterpulse_on, range);
    %ap_spline_sub_off = afterpulse_off';
    %ap_spline_sub_on = afterpulse_on';
    

@@ -4,7 +4,8 @@ node = 'MPD3';
 
 %location to write files
     write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
-    'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
+    'select folder to store data',  'FilterSpec', '/Users/spuler/Desktop/');
+%    'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
 
 flag.save_quicklook = 0;  % save quicklook to local directory
 flag.save_data = 1;  % save files in matlab format
@@ -30,8 +31,9 @@ ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor
 ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 0.5; % gridding time (in minutes) for the output files (HK data at 2 sec)
 
-serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
+%serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
 %serv_path = '/scr/eldora1/';
+serv_path = '/Users/spuler/Desktop/';
 
 if strcmp(node,'MPD1')==1
   files = uipickfiles('prompt', 'select data files to process',  'FilterSpec', strcat(serv_path, 'wvdial_1_data/2020'));
@@ -40,8 +42,7 @@ elseif strcmp(node,'MPD2')==1
   files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', strcat(serv_path, 'wvdial_2_data/2020'));
  catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD3')==1
-    serv_path = '/Volumes/eol/snow2/rsfdata/projects/mpd/';
-    files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', strcat(serv_path, 'wvdial_3_data/2020'));
+  files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', strcat(serv_path, 'wvdial_3_data/2020'));
  catalog = '/pub/incoming/catalog/operations';
 elseif strcmp(node,'MPD4')==1
  files = uipickfiles('prompt', 'select data files to process', 'FilterSpec', strcat(serv_path, 'wvdial_4_data/2020'));
