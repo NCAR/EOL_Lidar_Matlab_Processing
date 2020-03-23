@@ -307,15 +307,15 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     else
      serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
     end
-    ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File);   
+    ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
    
     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
-    %ncdisp(ap_filename, '/', 'min') % use this to display all variables
+    ncdisp(ap_filename, '/', 'min') % use this to display all variables
     if flag.near == 1
        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');
-       afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.75;
-       afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.75;
+       afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.1;
+       afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.1;
     else
        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
