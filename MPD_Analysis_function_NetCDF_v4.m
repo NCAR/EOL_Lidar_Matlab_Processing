@@ -301,7 +301,7 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    
     % read the afterpulse nc file identified in the json file 
     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-     serv_path = '/export/fog1/rsfdata/MPD/calibration/'; % when running on server
+     serv_path = '/home/rsfdata/Processing/'; % when running on server
     elseif strcmp(getenv('HOSTNAME'),'')
       serv_path = '../'; % running locally 
     else
@@ -310,7 +310,7 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
    
     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
-    ncdisp(ap_filename, '/', 'min') % use this to display all variables
+    %ncdisp(ap_filename, '/', 'min') % use this to display all variables
     if flag.near == 1
        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');
