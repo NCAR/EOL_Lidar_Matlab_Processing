@@ -8,7 +8,7 @@ else
 end
 dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial3_calvals.json')],'SimplifyCell',1);
 
-%t_date = '10-Mar-2020' % used for testing
+%t_date = '24-Mar-2020' % used for testing
 wavemeter_offset = double(0); 
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
 
