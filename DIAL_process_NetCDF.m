@@ -4,8 +4,8 @@ node = 'MPD3';
 
 %location to write files
     write_data_folder = uipickfiles('num',1,'out', 'char', 'prompt', ...
-    'select folder to store data',  'FilterSpec', '/Users/spuler/Desktop/');
-%    'select folder to store data',  'FilterSpec', '/Volumes/eol/fog1/rsfdata/MPD/');
+    'select folder to store data',  'FilterSpec', '/export/fog1/rsfdata/MPD/');
+%    'select folder to store data',  'FilterSpec', '/Users/spuler/Desktop/');
 %    'select folder to store data',  'FilterSpec', '/Volumes/documents/WV_DIAL_data/');
 
 flag.save_quicklook = 0;  % save quicklook to local directory
