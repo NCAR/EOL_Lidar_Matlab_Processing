@@ -1,8 +1,8 @@
-function[] = MPD_multiday_plots_NetCDF_function(save_figs, save_data, near, afterpulse, node, daystr, daystr2)
-%clear all; 
-%start_date = '20200315';
-%stop_date = '20200324';
-%save_figs = 1; save_data=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; daystr2=stop_date;
+%function[] = MPD_multiday_plots_NetCDF_function(save_figs, save_data, near, afterpulse, node, daystr, daystr2)
+clear all; 
+start_date = '20200315';
+stop_date = '20200324';
+save_figs = 1; save_data=0; near= 0; afterpulse=0; node='MPD3'; daystr=start_date; daystr2=stop_date;
 close all;
 tic
 dd = pwd; % get the current path
@@ -102,14 +102,14 @@ for i=1:days
     % grid everything to a 75 m gate size 
       if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit-1)*gate; 
-         N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
-         RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
-         OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
+         N_avg_grid = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
+         RB_grid = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
+       %  OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
          range_limit = range_limit/2;
      end
-    N_avg_comb=N_avg;
-    RB_comb=RB;
+    N_avg_comb=N_avg_grid;
+    RB_comb=RB_grid;
   %  OD_comb=OD;
     background_comb_on = background_on;
     background_comb_off = background_off;
@@ -145,8 +145,8 @@ for i=1:days
     % grid everything to a 75 m gate size 
       if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
-         N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
-         RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
+         N_avg_grid = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
+         RB_grid = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
   %       OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
          range_limit = range_limit_ch/2;
@@ -155,8 +155,8 @@ for i=1:days
     range_lim2 = size(N_avg,2); % catch any changes in range
     range_limit = min([range_lim1 range_lim2]);
     
-    N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg(2:end,1:range_limit));
-    RB_comb = vertcat(RB_comb(:,1:range_limit), RB(2:end,1:range_limit));
+    N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg_grid(2:end,1:range_limit));
+    RB_comb = vertcat(RB_comb(:,1:range_limit), RB_grid(2:end,1:range_limit));
  %   OD_comb= vertcat(OD_comb(:,1:range_limit), OD(2:end,1:range_limit));
     duration = vertcat(duration, time_new(2:end));
     background_comb_on = vertcat(background_comb_on, background_on(2:end));
@@ -572,4 +572,4 @@ end
 
 cd(dd) % point back to original directory 
 toc
-end
+%end

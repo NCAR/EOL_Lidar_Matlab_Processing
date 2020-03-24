@@ -121,8 +121,8 @@ end
   %time2 = time2-0.25; % this was a fix for computer switch 20-Oct to 26-Oct 2017
   %time2(time2>292.5)= time2(time2>292.5)-0.25; % 19-Oct-2017 fix
   time = time2;
-  %time = time(~(time2<(nanmedian(time2)-1.5)));
-  %time= time(~(time>(nanmedian(time)+1.5)));
+  time = time(~(time2<(nanmedian(time2)-1.5)));
+  time= time(~(time>(nanmedian(time)+1.5)));
   Online_Raw_Data = Online_Raw_Data(~isnan(time),:);
   Offline_Raw_Data = Offline_Raw_Data(~isnan(time),:);
 
@@ -632,10 +632,10 @@ line = double(Hitran.file(line_indices, 1:size(Hitran.file,2)));
 
 %Calculate temperature and pressure profile
 if flag.WS == 1
-   % T0 = nanmedian(Surf_T)+273.15
-   % P0 = nanmedian(Surf_P)
-    T0 = median(Surf_T)+273.15
-    P0 = median(Surf_P)
+    T0 = nanmedian(Surf_T)+273.15
+    P0 = nanmedian(Surf_P)
+   % T0 = median(Surf_T)+273.15
+   % P0 = median(Surf_P)
 else
   T0 = 273+30; % surface temperature
 end
@@ -915,13 +915,13 @@ end
   year = strread(folder_in(end-7:end-4), '%4f', 1); 
  % year = 2000+year;
   time_new = time_grid;%+datenum(year,1,0);
- % date_plot = datestr(nanmean(time_new), 'dd mmm yyyy') % this was changed
-  date_plot = datestr(mean(time_new), 'dd mmm yyyy') % this was changed
+  date_plot = datestr(nanmean(time_new), 'dd mmm yyyy') % this was changed
+ % date_plot = datestr(mean(time_new), 'dd mmm yyyy') % this was changed
   
  % OD is - ln(I/I.o), since offline is not the same as online it needs to
  % scaled by the first few good gates -- choose 300 m to 450 m
- %scale_factor = nanmean(Online_Temp_Spatial_Avg(:,300/gate:525/gate),2)./nanmean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2);
- scale_factor = mean(Online_Temp_Spatial_Avg(:,300/gate:525/gate),2)./mean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2);
+ scale_factor = nanmean(Online_Temp_Spatial_Avg(:,300/gate:525/gate),2)./nanmean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2);
+% scale_factor = mean(Online_Temp_Spatial_Avg(:,300/gate:525/gate),2)./mean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2);
  scale = bsxfun(@times, Offline_Temp_Spatial_Avg, scale_factor);
  OD = -(log(Online_Temp_Spatial_Avg./scale)); % calculate column optical depth
   
@@ -1166,8 +1166,8 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
 
  if flag.save_quicklook == 1
   cd(write_data_folder) % point to the directory where data is stored 
-  %date_save=datestr(nanmean(time_new), 'yyyymmdd');
-  date_save=datestr(mean(time_new), 'yyyymmdd');
+  date_save=datestr(nanmean(time_new), 'yyyymmdd');
+%  date_save=datestr(mean(time_new), 'yyyymmdd');
 % save the image as a PNG to the local data folder 
   %name1=strcat('lidar.NCAR-WV-DIAL.', date, '0000.', folder_CH, '.png'); 
   %name=strcat('lidar.',node,'-WV-DIAL.', date_save, '0000.OL.png'); 

@@ -1,6 +1,8 @@
 function[] = MPD_process_NetCDF_function(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
 %clear all; 
-close all
+%close all
+%start_date = '20200324';
+%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 0; afterpulse=0; node='MPD3'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -8,7 +10,7 @@ flag.save_netCDF = save_netCDF; % save files netCDF format
 flag.save_catalog = save_catalog; % upload quicklook (and data) to field catalog
 
 flag.mask_data = 1;  % mask applied to data based on error analysis threshold
-flag.gradient_filter = 1;  % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
+flag.gradient_filter = 0;  % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
 flag.pileup = 1; % use pileup correction for detectors
 flag.WS = 1; % use the surface weather station data to calcuate spectroscopy
 flag.decimate = 0; % decimate all data to half the wv resoltuion
@@ -28,7 +30,9 @@ ave_time.gr = 0.5; % gridding time (in minutes) for the output files (HK data at
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
-else
+elseif strcmp(getenv('HOSTNAME'),'')
+    serv_path = '/Users/spuler/Desktop/'; % when running on server   
+else 
    serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
 end
 
@@ -60,7 +64,6 @@ end
 j=1;
 %days = datenum(num2str(daystr2),'yyyymmdd')-datenum(num2str(daystr),'yyyymmdd');
 
-%for j = 1:size(files,2)
     %folder = (files{j});
     folder = files; 
     date = textscan(folder(end-5:end), '%6f'); date=date{1};  % read date of file
@@ -81,7 +84,5 @@ j=1;
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
     %DIAL_Analysis_function_NetCDF(folder, date, MCS, write_data_folder, flag, node, ...
     %    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog)%
-    
-    
-
-%end
+  
+end
