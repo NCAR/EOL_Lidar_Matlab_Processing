@@ -1,9 +1,9 @@
 % example batch process
-start = '20200324';
-stop = '20200324';
+start_date = '20200324';
+stop_date = '20200324';
 
-start_day = datenum(start,'yyyymmdd');
-stop_day = datenum(stop,'yyyymmdd');
+start_day = datenum(start_date,'yyyymmdd');
+stop_day = datenum(stop_date,'yyyymmdd');
 k=start_day;
 flag.process = 1;
 flag.plot = 1;
@@ -21,15 +21,15 @@ if flag.process == 1
   end
 end
 
-start = '20200315';
-stop = '20200324';
+start_date = '20200315';
+stop_date = '20200324';
 
 if flag.plot == 1
   % save_figs, save_data, near, afterpulse, node, daystr, daystr2
-  MPD_multiday_plots_NetCDF_function(1,0,0,0,'MPD4', start, stop) % MPD# 4 (high range) 
-  MPD_multiday_plots_NetCDF_function(1,0,1,0,'MPD4', start, stop) % MPD# 4 (low range)
-  MPD_multiday_plots_NetCDF_function(1,0,0,0,'MPD3', start, stop) % MPD%  #3 (high gain)
-  MPD_multiday_plots_NetCDF_function(1,0,1,0,'MPD3', start, stop) % MPD #3 (low gain)
-  MPD_multiday_plots_NetCDF_function(1,0,0,1,'MPD3', start, stop) % MPD #3 (high gain with afterpulse)
-  MPD_multiday_plots_NetCDF_function(1,0,1,1,'MPD3', start, stop) % MPD #3 (low gain with afterpulse)
+  MPD_multiday_plots_NetCDF_function(1,0,0,0,'MPD4', start_date, stop_date) % MPD# 4 (high range) 
+  MPD_multiday_plots_NetCDF_function(1,0,1,0,'MPD4', start_date, stop_date) % MPD# 4 (low range)
+  MPD_multiday_plots_NetCDF_function(1,0,0,0,'MPD3', start_date, stop_date) % MPD%  #3 (high gain)
+  MPD_multiday_plots_NetCDF_function(1,0,1,0,'MPD3', start_date, stop_date) % MPD #3 (low gain)
+  MPD_multiday_plots_NetCDF_function(1,0,0,1,'MPD3', start_date, stop_date) % MPD #3 (high gain with afterpulse)
+  MPD_multiday_plots_NetCDF_function(1,0,1,1,'MPD3', start_date, stop_date) % MPD #3 (low gain with afterpulse)
 end
