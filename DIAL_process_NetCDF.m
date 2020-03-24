@@ -21,7 +21,7 @@ flag.decimate = 0; % decimate all data to half the wv resoltuion
 flag.int = 0; % interpolate nans in nanmoving_average
 flag.mark_gaps = 1; % sets gaps in data to NaNs
 flag.OF = 1; % correct for geometric overlap functions
-flag.near = 0; %process the near range channel (or low gain)
+flag.near = 1; %process the near range channel (or low gain)
 flag.afterpulse = 1; % correct for afterpulsing (in progress on MPD#3 only)
 
 flag.plot_data = 1;  % need to have this one to save the figs
@@ -35,7 +35,7 @@ ave_time.gr = 0.5; % gridding time (in minutes) for the output files (HK data at
  if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
      serv_path = '/export/fog1/rsfdata/MPD/' % when running on server
  elseif strcmp(getenv('HOSTNAME'),'')
-    serv_path = '../' % running locally 
+    serv_path = '../Users/spuler/Desktop/' % running locally 
  else
    serv_path = '/Volumes/eol/fog1/rsfdata/MPD/' % 
  end
