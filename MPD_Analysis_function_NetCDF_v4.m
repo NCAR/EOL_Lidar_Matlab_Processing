@@ -294,10 +294,10 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    % save('MPD3_baseline_subtraction', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
    % save('MPD3_baseline_subtraction_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
     
-    load 'MPD3_baseline_subtraction' ap_spline_sub_off ap_spline_sub_on
-    if flag.near == 1
-      load 'MPD3_baseline_subtraction_near' ap_spline_sub_off ap_spline_sub_on
-    end
+   % load 'MPD3_baseline_subtraction' ap_spline_sub_off ap_spline_sub_on
+   % if flag.near == 1
+   %   load 'MPD3_baseline_subtraction_near' ap_spline_sub_off ap_spline_sub_on
+   % end
    
     % read the afterpulse nc file identified in the json file 
     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -325,27 +325,26 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    
     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
     range_act = range + range_shift; % %actual range points 
-    
-    figure(1004)
-    semilogy(ap_range, afterpulse_off, 'bo-')
-    hold on
-    semilogy(ap_range, afterpulse_on, 'b+-')
-    semilogy(range_act, ap_spline_sub_off, 'ro-')
-    semilogy(range_act, ap_spline_sub_on, 'r+-')
-    hold off
-    legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
+   % 
+   % figure(1004)
+   % semilogy(ap_range, afterpulse_off, 'bo-')
+   % hold on
+   % semilogy(ap_range, afterpulse_on, 'b+-')
+   % semilogy(range_act, ap_spline_sub_off, 'ro-')
+   % semilogy(range_act, ap_spline_sub_on, 'r+-')
+   % hold off
+   % legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
    % %ylim([5 100])
-    xlim([-200 15500])
-    ylabel('counts')
-    xlabel('range (m)')
-    grid on
+   % xlim([-200 15500])
+   % ylabel('counts')
+   % xlabel('range (m)')
+   % grid on
    
    %grid to the current range
-   ap_spline_sub_off = spline(range, afterpulse_off, range);
-   ap_spline_sub_on = spline(range, afterpulse_on, range);
+   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
+   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
    %ap_spline_sub_off = afterpulse_off';
    %ap_spline_sub_on = afterpulse_on';
-   
    
     Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
     Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
