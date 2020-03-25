@@ -320,8 +320,8 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     end
     ap_range = ncread(ap_filename, 'range');
     netcdf.close(ncid);   
-    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.375;
-    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.375;  
+    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.4;
+    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.4;  
 
    
     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 

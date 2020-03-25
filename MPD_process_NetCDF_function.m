@@ -67,17 +67,18 @@ j=1;
     %folder = (files{j});
     folder = files; 
     date = textscan(folder(end-5:end), '%6f'); date=date{1};  % read date of file
-    if strcmp(node,'MPD1')==1
-      MPD1_read_calvals % json format version of the above file
-    elseif strcmp(node,'MPD2')==1
-      MPD2_read_calvals % json format version of the above file
-    elseif strcmp(node,'MPD3')==1
-      MPD3_read_calvals % json format version of the above file
-    elseif strcmp(node,'MPD4')==1
-      MPD4_read_calvals % json format version of the above file
-    elseif strcmp(node,'MPD5')==1
-      MPD5_read_calvals % json format version of the above file
-    end
+    MPD_read_calvals
+%     if strcmp(node,'MPD1')==1
+%       MPD1_read_calvals % json format version of the above file
+%     elseif strcmp(node,'MPD2')==1
+%       MPD2_read_calvals % json format version of the above file
+%     elseif strcmp(node,'MPD3')==1
+%       MPD3_read_calvals % json format version of the above file
+%     elseif strcmp(node,'MPD4')==1
+%       MPD4_read_calvals % json format version of the above file
+%     elseif strcmp(node,'MPD5')==1
+%       MPD5_read_calvals % json format version of the above file
+%     end
     folder_in=folder;
     date_in = date;
     MPD_Analysis_function_NetCDF_v4(folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
