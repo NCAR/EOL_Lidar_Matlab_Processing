@@ -313,17 +313,15 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     %ncdisp(ap_filename, '/', 'min') % use this to display all variables
     if flag.near == 1
        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
-       ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');
-       afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.25;
-       afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.25;  
+       ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');  
     else
        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
-       afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.25;
-       afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.25;  
     end
     ap_range = ncread(ap_filename, 'range');
     netcdf.close(ncid);   
+    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.375;
+    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.375;  
 
    
     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
