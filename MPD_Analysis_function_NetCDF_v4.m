@@ -314,14 +314,17 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     if flag.near == 1
        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');
+       afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.75;
+       afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.75;  
     else
        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
+       afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9*.75;
+       afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9*.75;  
     end
     ap_range = ncread(ap_filename, 'range');
     netcdf.close(ncid);   
-    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
-    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
+
    
     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
     range_act = range + range_shift; % %actual range points 
