@@ -1,6 +1,6 @@
 % example batch process
 start_date = '20200318';
-stop_date = '20200325';
+stop_date = '20200326';
 
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
@@ -21,8 +21,8 @@ if flag.process == 1
   end
 end
 
-start_date = '20200316';
-stop_date = '20200325';
+start_date = '20200317';
+stop_date = '20200326';
 
 if flag.plot == 1
   % save_figs, save_data, near, afterpulse, node, daystr, daystr2
