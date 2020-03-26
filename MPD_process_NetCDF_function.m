@@ -1,4 +1,4 @@
-%function[] = MPD_process_NetCDF_function(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
+function[] = MPD_process_NetCDF_function(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
 %clear all; 
 %close all
 %start_date = '20200324';
