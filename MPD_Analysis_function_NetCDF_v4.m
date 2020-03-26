@@ -348,8 +348,8 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    grid minor 
    
    %grid to the current range and substitude nc file for mat file
-  % ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
-  % ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
+   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
+   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
    
     Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
     Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
