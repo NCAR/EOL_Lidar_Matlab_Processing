@@ -589,14 +589,14 @@ end
   Online_sum2 = interp1(time_grid_act, Online_sum2_act, time_grid, 'linear','extrap');
   Background_on_sum2 = interp1(time_grid_act, Background_on_sum2_act, time_grid, 'linear','extrap');
   Background_off_sum2 = interp1(time_grid_act, Background_off_sum2_act, time_grid, 'linear','extrap');  
-  Offline_Temp_Spatial_Avg = interp1(time_grid_act, Offline_Temp_Spatial_Avg_act, time_grid, 'linear','extrap');
-  Online_Temp_Spatial_Avg = interp1(time_grid_act, Online_Temp_Spatial_Avg_act, time_grid, 'linear','extrap'); 
+  Offline_Temp_Spatial_Avg = interp1(time_grid_act, Offline_Temp_Spatial_Avg_act, time_grid, 'linear');
+  Online_Temp_Spatial_Avg = interp1(time_grid_act, Online_Temp_Spatial_Avg_act, time_grid, 'linear'); 
 
 % %remove any negative counts
-    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) <= 0) = 0;   
-    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) <= 0) = 0;  
-    RB(real(RB) <= 0) = 0;
-    RB_on(real(RB_on) <= 0) = 0;
+    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -1) = 0;   
+    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -1) = 0;  
+    RB(real(RB) < 0) = 0;
+    RB_on(real(RB_on) < 0) = 0;
   
 % clear Online_Raw_Data Online Offline Online_sub Offline_sub data_on data_off C_Online C_Offline ... 
 %      Offline_sum1 Online_sum1 Background_on_sum1 Background_off_sum1 Background_off Background_on 

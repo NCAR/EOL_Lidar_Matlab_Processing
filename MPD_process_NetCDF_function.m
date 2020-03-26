@@ -1,7 +1,7 @@
 function[] = MPD_process_NetCDF_function(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
 %clear all; 
 %close all
-%start_date = '20200324';
+%start_date = '20200325';
 %save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
@@ -10,12 +10,12 @@ flag.save_netCDF = save_netCDF; % save files netCDF format
 flag.save_catalog = save_catalog; % upload quicklook (and data) to field catalog
 
 flag.mask_data = 1;  % mask applied to data based on error analysis threshold
-flag.gradient_filter = 0;  % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
+flag.gradient_filter = 1;  % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
 flag.pileup = 1; % use pileup correction for detectors
 flag.WS = 1; % use the surface weather station data to calcuate spectroscopy
 flag.decimate = 0; % decimate all data to half the wv resoltuion
 flag.int = 0; % interpolate nans in nanmoving_average
-flag.mark_gaps = 1; % sets gaps in data to Na
+flag.mark_gaps = 1; % sets gaps in data to NaNs
 flag.OF = 1; % correct for geometric overlap functions
 flag.near = near; %process the near range channel (or low gain)
 flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD#3 only)
