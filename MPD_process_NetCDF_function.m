@@ -1,8 +1,8 @@
 function[] = MPD_process_NetCDF_function(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
 %clear all; 
 %close all
-%start_date = '20200324';
-%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 0; afterpulse=0; node='MPD3'; daystr=start_date; 
+%start_date = '20200325';
+%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -61,29 +61,14 @@ elseif strcmp(node,'MPD5')==1
  catalog = '/pub/incoming/catalog/operations';
 end
 
-j=1;
-%days = datenum(num2str(daystr2),'yyyymmdd')-datenum(num2str(daystr),'yyyymmdd');
 
-    %folder = (files{j});
-    folder = files; 
-    date = textscan(folder(end-5:end), '%6f'); date=date{1};  % read date of file
-    MPD_read_calvals
-%     if strcmp(node,'MPD1')==1
-%       MPD1_read_calvals % json format version of the above file
-%     elseif strcmp(node,'MPD2')==1
-%       MPD2_read_calvals % json format version of the above file
-%     elseif strcmp(node,'MPD3')==1
-%       MPD3_read_calvals % json format version of the above file
-%     elseif strcmp(node,'MPD4')==1
-%       MPD4_read_calvals % json format version of the above file
-%     elseif strcmp(node,'MPD5')==1
-%       MPD5_read_calvals % json format version of the above file
-%     end
-    folder_in=folder;
-    date_in = date;
-    MPD_Analysis_function_NetCDF_v4(folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
-    %DIAL_Analysis_function_NetCDF(folder, date, MCS, write_data_folder, flag, node, ...
-    %    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog)%
-  
+folder = files;
+date = textscan(folder(end-5:end), '%6f'); date=date{1};  % read date of file
+MPD_read_calvals
+folder_in=folder;
+date_in = date;
+MPD_Analysis_function_NetCDF_v4(folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
+   
+
 end

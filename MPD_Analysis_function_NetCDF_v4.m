@@ -263,42 +263,46 @@ range = single(0:gate:(size(Online,2)-1)*gate);
   if flag.afterpulse == 1   % afterpulse correction
    % 10-Mar-2020 data; 
    % afterpulse_start = 32458; afterpulse_stop = 34413;
-   % 16-Mar-2020 data; 
+   % 16-Mar-2020 data; MPD03_afterpulse_20200316.mat
    % afterpulse_start = 32363; afterpulse_stop = 33068;
-   % afterpulse_num = (afterpulse_stop-afterpulse_start)+1; 
-   % afterpulse_off = sum(Offline(afterpulse_start:afterpulse_stop,:))./afterpulse_num;
-   % afterpulse_on = sum(Online(afterpulse_start:afterpulse_stop,:))./afterpulse_num;
-   % skip = round(200/gate);  % don't fit outgoing pulse, cut ranges < ~200 m
-   % ap_spline_off = spline(range(skip:end),afterpulse_off(skip:end),range);
-   % ap_spline_on = spline(range(skip:end),afterpulse_on(skip:end),range);
-   % back_off = mean(ap_spline_off(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
-   % back_on = mean(ap_spline_on(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
-   % afterpulse_sub_off = (bsxfun(@minus, afterpulse_off, back_off)); 
-   % afterpulse_sub_on = (bsxfun(@minus, afterpulse_on, back_on));
-   % ap_spline_sub_off = (bsxfun(@minus, ap_spline_off, back_off)); 
-   % ap_spline_sub_on= (bsxfun(@minus, ap_spline_on, back_on));
-   % 
-   % figure(1001)
-   % semilogy(range(skip:end), afterpulse_sub_off(skip:end), 'bo')
-   % hold on
-   % semilogy(range(skip:end), afterpulse_sub_on(skip:end), 'ro')
-   % semilogy(range, ap_spline_sub_off, 'b--')
-   % semilogy(range, ap_spline_sub_on, 'r--')
-   % hold off
-   % legend('afterpulse_{off}', 'afterpulse_{on}', 'spline_{off}', 'spline_{on}') 
-   % %ylim([5 100])
-   % xlim([0 1000])
-   % ylabel('counts')
-   % xlabel('range (m)')
-   % grid on
+   % 24-Mar-2020 data; MPD03_afterpulse_20200324.mat
+   % afterpulse_start = 30257; afterpulse_stop = 31334; 
    
-   % save('MPD3_baseline_subtraction', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
-   % save('MPD3_baseline_subtraction_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
+%    afterpulse_num = (afterpulse_stop-afterpulse_start)+1; 
+%    afterpulse_off = sum(Offline(afterpulse_start:afterpulse_stop,:))./afterpulse_num;
+%    afterpulse_on = sum(Online(afterpulse_start:afterpulse_stop,:))./afterpulse_num;
+%    skip = round(10/gate);  % don't fit outgoing pulse, cut ranges < ~200 m
+%    ap_spline_off = spline(range(skip:end),afterpulse_off(skip:end),range);
+%    ap_spline_on = spline(range(skip:end),afterpulse_on(skip:end),range);
+%    back_off = mean(ap_spline_off(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
+%    back_on = mean(ap_spline_on(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
+%    afterpulse_sub_off = (bsxfun(@minus, afterpulse_off, back_off)); 
+%    afterpulse_sub_on = (bsxfun(@minus, afterpulse_on, back_on));
+%    ap_spline_sub_off = (bsxfun(@minus, ap_spline_off, back_off)); 
+%    ap_spline_sub_on= (bsxfun(@minus, ap_spline_on, back_on));
+%    
+%    figure(1001)
+%    semilogy(range(skip:end), afterpulse_sub_off(skip:end), 'bo')
+%    hold on
+%    semilogy(range(skip:end), afterpulse_sub_on(skip:end), 'ro')
+%    semilogy(range, ap_spline_sub_off, 'b--')
+%    semilogy(range, ap_spline_sub_on, 'r--')
+%    hold off
+%    legend('afterpulse_{off}', 'afterpulse_{on}', 'spline_{off}', 'spline_{on}') 
+%    %ylim([5 100])
+%    xlim([0 1000])
+%    ylabel('counts')
+%    xlabel('range (m)')
+%    grid on
+   
+   % save('MPD03_afterpulse_20200324', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
+   % save('MPD03_afterpulse_20200324_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
     
-   % load 'MPD3_baseline_subtraction' ap_spline_sub_off ap_spline_sub_on
-   % if flag.near == 1
-   %   load 'MPD3_baseline_subtraction_near' ap_spline_sub_off ap_spline_sub_on
-   % end
+    afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25);   
+    if flag.near == 1
+      afterpulse_filename = strcat(afterpulse_filename, '_near');  
+    end
+    load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on')
    
     % read the afterpulse nc file identified in the json file 
     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -327,26 +331,25 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    
     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
     range_act = range + range_shift; % %actual range points 
-   % 
-   % figure(1004)
-   % semilogy(ap_range, afterpulse_off, 'bo-')
-   % hold on
-   % semilogy(ap_range, afterpulse_on, 'b+-')
-   % semilogy(range_act, ap_spline_sub_off, 'ro-')
-   % semilogy(range_act, ap_spline_sub_on, 'r+-')
-   % hold off
-   % legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
-   % %ylim([5 100])
-   % xlim([-200 15500])
-   % ylabel('counts')
-   % xlabel('range (m)')
-   % grid on
    
-   %grid to the current range
-   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
-   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
-   %ap_spline_sub_off = afterpulse_off';
-   %ap_spline_sub_on = afterpulse_on';
+   figure(1004)
+   semilogy(ap_range, afterpulse_off, 'bo-')
+   hold on
+   semilogy(ap_range, afterpulse_on, 'b+-')
+   semilogy(range_act, ap_spline_sub_off, 'ro-')
+   semilogy(range_act, ap_spline_sub_on, 'r+-')
+   hold off
+   legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
+   %ylim([5 100])
+   xlim([-200 1000])
+   ylabel('counts')
+   xlabel('range (m)')
+   grid on
+   grid minor 
+   
+   %grid to the current range and substitude nc file for mat file
+  % ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
+  % ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
    
     Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
     Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 

@@ -24,7 +24,7 @@ elseif strcmp(node,'MPD5')==1
   blank_range = 525;
 end
 
-%t_date = '10-Mar-2020' % used for testing
+%t_date = '24-Mar-2020' % used for testing
 wavemeter_offset = double(0); 
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
 
