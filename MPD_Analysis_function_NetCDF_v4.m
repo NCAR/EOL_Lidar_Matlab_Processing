@@ -265,9 +265,9 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    % afterpulse_start = 32458; afterpulse_stop = 34413;
    % 16-Mar-2020 data; MPD03_afterpulse_20200316.mat
    % afterpulse_start = 32363; afterpulse_stop = 33068;
-   % 24-Mar-2020 data; MPD03_afterpulse_20200324.mat
-   % afterpulse_start = 30257; afterpulse_stop = 31334; 
-   
+   %24-Mar-2020 data; MPD03_afterpulse_20200324.mat
+%    afterpulse_start = 30257; afterpulse_stop = 31334; 
+%    
 %    afterpulse_num = (afterpulse_stop-afterpulse_start)+1; 
 %    afterpulse_off = sum(Offline(afterpulse_start:afterpulse_stop,:))./afterpulse_num;
 %    afterpulse_on = sum(Online(afterpulse_start:afterpulse_stop,:))./afterpulse_num;
@@ -295,8 +295,8 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %    xlabel('range (m)')
 %    grid on
    
-   % save('MPD03_afterpulse_20200324', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
-   % save('MPD03_afterpulse_20200324_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
+   %save('MPD03_afterpulse_20200324', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
+   %save('MPD03_afterpulse_20200324_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
     
     afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25);   
     if flag.near == 1
