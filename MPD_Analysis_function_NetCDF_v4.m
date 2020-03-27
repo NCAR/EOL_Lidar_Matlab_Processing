@@ -195,8 +195,8 @@ for ii=1:size(lambda_all,1)
     end
 end
 
-lambda_on = median(lambda_all)
-lambda_off = median(lambda_all_off)
+lambda_on = median(lambda_all);
+lambda_off = median(lambda_all_off);
  
 % if nanstd(lambda_all) >= 5e-4    
 %    h = msgbox('Online wavelength not stable during time period', 'Warning','warn');
@@ -244,15 +244,6 @@ lambda_off = median(lambda_all_off)
  Online = single(Online_Raw_Data(:,10:end)); 
  Offline = single(Offline_Raw_Data(:,10:end));
  
-% add a check for out of tolerance wavelength +/- 0.4575 pm (0.915 pm width is 400 MHz)
-% this isn't the right way to do this for a few reasons
-% first it is blanking this data at the end instead of just filtering it out before smoothing 
-% tolerance = 0.5/1000; % 
-% tol_idx = ((lambda_all-lambda>tolerance)|(lambda_all-lambda<-tolerance)); %index of where bad data is
-% tol_idx_mat = repmat(tol_idx, 1, size(Online,2));
-% Online(tol_idx_mat)=NaN;
-% Offline(tol_idx_mat)=NaN;
-
 % vector in meters
 range = single(0:gate:(size(Online,2)-1)*gate);
 %range = range+timing_range_correction;  %make range correction from trigger timing
@@ -265,7 +256,7 @@ range = single(0:gate:(size(Online,2)-1)*gate);
    % afterpulse_start = 32458; afterpulse_stop = 34413;
    % 16-Mar-2020 data; MPD03_afterpulse_20200316.mat
    % afterpulse_start = 32363; afterpulse_stop = 33068;
-   %24-Mar-2020 data; MPD03_afterpulse_20200324.mat
+   % 24-Mar-2020 data; MPD03_afterpulse_20200324.mat
 %    afterpulse_start = 30257; afterpulse_stop = 31334; 
 %    
 %    afterpulse_num = (afterpulse_stop-afterpulse_start)+1; 
@@ -294,15 +285,15 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %    ylabel('counts')
 %    xlabel('range (m)')
 %    grid on
-   
-   %save('MPD03_afterpulse_20200324', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
-   %save('MPD03_afterpulse_20200324_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
-    
-    afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25);   
-    if flag.near == 1
-      afterpulse_filename = strcat(afterpulse_filename, '_near');  
-    end
-    load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on')
+%   
+%   %save('MPD03_afterpulse_20200324', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
+%   %save('MPD03_afterpulse_20200324_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
+%    
+%    afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25);   
+%    if flag.near == 1
+%      afterpulse_filename = strcat(afterpulse_filename, '_near');  
+%    end
+%    load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on')
    
     % read the afterpulse nc file identified in the json file 
     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -328,36 +319,36 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
     afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
 
-   
     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
     range_act = range + range_shift; % %actual range points 
-   
-   figure(1004)
-   semilogy(ap_range, afterpulse_off, 'bo-')
-   hold on
-   semilogy(ap_range, afterpulse_on, 'b+-')
-   semilogy(range_act, ap_spline_sub_off, 'ro-')
-   semilogy(range_act, ap_spline_sub_on, 'r+-')
-   hold off
-   legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
-   %ylim([5 100])
-   xlim([-200 1000])
-   ylabel('counts')
-   xlabel('range (m)')
-   grid on
-   grid minor 
+
+%     figure(1004)
+%     semilogy(ap_range, afterpulse_off, 'bo-')
+%     hold on
+%     semilogy(ap_range, afterpulse_on, 'b+-')
+%     semilogy(range_act, ap_spline_sub_off, 'ro-')
+%     semilogy(range_act, ap_spline_sub_on, 'r+-')
+%     hold off
+%     legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
+%     %ylim([5 100])
+%     xlim([-200 1000])
+%     ylabel('counts')
+%     xlabel('range (m)')
+%     grid on
+%     grid minor 
    
    %grid to the current range and substitude nc file for mat file
    ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
    ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
    
-    Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
-    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
-    figure(1002)
-    semilogy(range, Online(100,:), 'b')
-    hold on
-    semilogy(range, Online_ap_sub(100,:), 'r')
-    hold off
+   Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
+   Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
+
+%     figure(1002)
+%     semilogy(range, Online(100,:), 'b')
+%     hold on
+%     semilogy(range, Online_ap_sub(100,:), 'r')
+%     hold off
     
     Online = Online_ap_sub;
     Offline = Offline_ap_sub;
@@ -378,14 +369,11 @@ if flag.pileup == 1
   Offline = Offline.*C_Offline;
 end
 
-%clear Online_Raw_Data Offline_Raw_Data data_on data_off
+% clear Online_Raw_Data Offline_Raw_Data data_on data_off
 
  i = size(Online, 1);
  j = size(Online, 2);
 
-
-
- 
  
 %% Background subtraction %take the values from 14.25km to 15km for background  
 
@@ -419,16 +407,13 @@ end
 
 % geometric overlap correction from Zemax model
   O_x = [50;100;200;300;400;500;750;1000;1250;1500; 2000;3000;4000;5000;6000;8000;12000];
-if (flag.near==1) && (strcmp(node,'MPD4') == 1)
-  O_y = [2.47E-2; 9.90E-2; 3.99E-1; 8.72E-1; 1.00E+0; 1.00E+0 ;1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0];
-else
-  O_y = [7e-7; 1.5e-5; 2.77e-4; 1.38e-3; 3.98e-3; 8.89e-3; 3.72e-2; 1.06e-1; 2.08e-1; 3.39e-1; 6.61e-1; 9.53e-1; 9.74e-1; 9.86e-1; 9.92e-1; 1.00E+0; 1.00E+0];
-end
+  if (flag.near==1) && (strcmp(node,'MPD4') == 1)
+    O_y = [2.47E-2; 9.90E-2; 3.99E-1; 8.72E-1; 1.00E+0; 1.00E+0 ;1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0];
+  else
+    O_y = [7e-7; 1.5e-5; 2.77e-4; 1.38e-3; 3.98e-3; 8.89e-3; 3.72e-2; 1.06e-1; 2.08e-1; 3.39e-1; 6.61e-1; 9.53e-1; 9.74e-1; 9.86e-1; 9.92e-1; 1.00E+0; 1.00E+0];
+  end
   O = interp1(O_x, O_y, range, 'linear','extrap');
 
- % O_x = [100;200;300;400;500;750;1000;1250;1500; 2000;3000;4000;5000;6000;8000;12000];
- % O_y = [0; 1.36897E-05; 5.28302E-04; 2.36897E-03; 6.96017E-03; 3.68973E-02; 1.11740E-01; 2.15933E-01; 3.41719E-01; 6.01677E-01; 9.93711E-01; 9.97904E-01; 1.00000E+00; 9.93711E-01; 9.68553E-01; 9.24528E-01];
- % O = interp1(O_x, O_y, range, 'linear','extrap');
   
   RB_overlap_on = bsxfun(@rdivide,  RB_on, O);
   RB_overlap = bsxfun(@rdivide,  RB, O);
@@ -500,8 +485,6 @@ end
    hold off 
    ylim([0 1000])
    title('Summed range corrected and gridded counts')
-  
- 
  
  % regular averaging
   Online_Temp_Spatial_Avg = Online_sum2./profiles2ave.wv./delta_r_index;
@@ -516,8 +499,7 @@ end
    semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
    hold off
    ylim([0 1000])
-   title('Background subtracted raw counts, not shifted')
-     
+   title('Background subtracted raw counts, not shifted')  
 
    figure(104)
    semilogx(Offline_Temp_Spatial_Avg(round(p_hour/24*size(Offline_sum2,1)),:), range, 'b')
