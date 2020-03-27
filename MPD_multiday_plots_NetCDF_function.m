@@ -49,28 +49,27 @@ else
    serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
 end
 
-
 if strcmp(node,'MPD1')==1
-    cd(strcat(serv_path, 'wvdial_1_processed_data/Matlab')) % point to the directory where data is stored 
+    cd(strcat(serv_path, 'wvdial_1_processed_data/Matlab'))  
     plot_dir = (strcat(serv_path, 'wvdial_1_processed_data/Plots'));
   elseif strcmp(node,'MPD2')==1
     cd(strcat(serv_path, 'wvdial_2_processed_data/Matlab'))
     plot_dir = (strcat(serv_path, 'wvdial_2_processed_data/Plots'));
   elseif strcmp(node,'MPD3')==1
-    %cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data') % point to the directory where data is stored 
     cd(strcat(serv_path, 'wvdial_3_processed_data/Matlab'))
     plot_dir = (strcat(serv_path, 'wvdial_3_processed_data/Plots'));
     if flag.afterpulse == 1
-      %cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data_afterpulse_corrected') % point to the directory where data is stored   
       cd(strcat(serv_path, 'wvdial_3_processed_data/Matlab/afterpulse'))
       plot_dir = (strcat(serv_path, 'wvdial_3_processed_data/Matlab/afterpulse'));
     end
   elseif strcmp(node,'MPD4')==1
-    %cd('/Volumes/documents/WV_DIAL_data/MPD4_processed_data') % point to the directory where data is stored 
     cd(strcat(serv_path, 'wvdial_4_processed_data/Matlab'))
     plot_dir = (strcat(serv_path, 'wvdial_4_processed_data/Plots'));
+    if flag.afterpulse == 1
+      cd(strcat(serv_path, 'wvdial_4_processed_data/Matlab/afterpulse'))
+      plot_dir = (strcat(serv_path, 'wvdial_4_processed_data/Matlab/afterpulse'));
+    end
   elseif strcmp(node,'MPD5')==1
-    %cd('/Volumes/documents/WV_DIAL_data/MPD5_processed_data') % point to the directory where data is stored 
     cd(strcat(serv_path, 'wvdial_5_processed_data/Matlab'))
     plot_dir = (strcat(serv_path, 'wvdial_5_processed_data/Plots'));
 end

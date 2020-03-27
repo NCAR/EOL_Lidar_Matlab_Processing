@@ -15,8 +15,8 @@ for n=1:1
         % save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr
      %   MPD_process_NetCDF_function(0,1,0,0,0,0,'MPD4',file) % MPD #4 (high range) 
      %   MPD_process_NetCDF_function(0,1,0,0,1,0,'MPD4',file) % MPD #4(low range) 
-        MPD_process_NetCDF_function(0,1,0,0,0,1,'MPD4',file) % MPD #3 (high range with afterpulse)
-        MPD_process_NetCDF_function(0,1,0,0,1,1,'MPD4',file) % MPD #3 (low range with afterpulse)
+        MPD_process_NetCDF_function(0,1,0,0,0,1,'MPD4',file) % MPD #4 (high range with afterpulse)
+        MPD_process_NetCDF_function(0,1,0,0,1,1,'MPD4',file) % MPD #4 (low range with afterpulse)
         
      %   MPD_process_NetCDF_function(0,1,0,0,0,0,'MPD3',file) % MPD #3 (high gain) 
      %   MPD_process_NetCDF_function(0,1,0,0,1,0,'MPD3',file) % MPD #3 (low gain)
