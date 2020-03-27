@@ -18,7 +18,7 @@ elseif strcmp(node,'MPD3')==1
   blank_range = 300;
 elseif strcmp(node,'MPD4')==1
   dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial4_calvals.json')],'SimplifyCell',1);
-  blank_range = 300;
+  blank_range = 225;
 elseif strcmp(node,'MPD5')==1
   dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial5_calvals.json')],'SimplifyCell',1);
   blank_range = 525;
