@@ -291,11 +291,11 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %   % save('MPD03_afterpulse_20200331', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
 %   % save('MPD03_afterpulse_20200331_near', 'ap_spline_sub_off', 'ap_spline_sub_on'); 
 %    
-%     afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25);   
-%     if flag.near == 1
-%       afterpulse_filename = strcat(afterpulse_filename, '_near');  
-%     end
-%     load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on')   
+     afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25);   
+     if flag.near == 1
+       afterpulse_filename = strcat(afterpulse_filename, '_near');  
+     end
+     load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on')   
 
 
     % read the afterpulse nc file identified in the json file 
@@ -325,27 +325,27 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
     range_act = range + range_shift; % %actual range points 
 
-%     figure(1004)
-%     semilogy(ap_range, afterpulse_off, 'bo-')
-%     hold on
-%     semilogy(ap_range, afterpulse_on, 'b+-')    
-% %     semilogy(ap_range, afterpulse_off, 'ro-')
-% %     semilogy(ap_range, afterpulse_on, 'r+-')  
-%     semilogy(range_act, ap_spline_sub_off, 'ro-')
-%     semilogy(range_act, ap_spline_sub_on, 'r+-')
-%     hold off
-%     legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
-%    % legend('high-gain_{off}', 'high-gain_{on}', 'low-gain_{off}', 'low-gain_{on}') 
-%     %ylim([5 100])
-%     xlim([-200 1000])
-%     ylabel('counts')
-%     xlabel('range (m)')
-%     grid on
-%     grid minor 
+     figure(1004)
+     semilogy(ap_range, afterpulse_off, 'bo-')
+     hold on
+     semilogy(ap_range, afterpulse_on, 'b+-')    
+%     semilogy(ap_range, afterpulse_off, 'ro-')
+%     semilogy(ap_range, afterpulse_on, 'r+-')  
+     semilogy(range_act, ap_spline_sub_off, 'ro-')
+     semilogy(range_act, ap_spline_sub_on, 'r+-')
+     hold off
+     legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
+%    legend('high-gain_{off}', 'high-gain_{on}', 'low-gain_{off}', 'low-gain_{on}') 
+    ylim([1e-2 1e5])
+    xlim([-200 4000])
+    ylabel('counts')
+    xlabel('range (m)')
+    grid on
+    grid minor 
    
    %grid to the current range and substitude nc file for mat file
-   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
-   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
+ %  ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
+ %  ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
    
    Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
