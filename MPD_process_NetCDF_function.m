@@ -1,7 +1,7 @@
 function[] = MPD_process_NetCDF_function(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
 %clear all; 
 %close all
-%start_date = '20200324';
+%start_date = '20200401';
 %save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
@@ -18,11 +18,11 @@ flag.int = 0; % interpolate nans in nanmoving_average
 flag.mark_gaps = 1; % sets gaps in data to NaNs
 flag.OF = 1; % correct for geometric overlap functions
 flag.near = near; %process the near range channel (or low gain)
-flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD#3 only)
+flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD 3 & 4 only)
 
 flag.plot_data = 1;  % need to have this one to save the figs
-flag.troubleshoot = 0; % shows extra plots used for troubleshooting
-p_hour = 12; % hour to show troubleshooting profiles
+flag.troubleshoot = 1; % shows extra plots used for troubleshooting
+p_hour = 14.42; % hour to show troubleshooting profiles
 
 ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor 
 ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
