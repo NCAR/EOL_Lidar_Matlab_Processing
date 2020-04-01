@@ -1,8 +1,8 @@
 function[] = MPD_process_NetCDF_function(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
 %clear all; 
 %close all
-%start_date = '20200401';
-%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; 
+%start_date = '20200331';
+%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 0; afterpulse=1; node='MPD3'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -21,7 +21,7 @@ flag.near = near; %process the near range channel (or low gain)
 flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD 3 & 4 only)
 
 flag.plot_data = 1;  % need to have this one to save the figs
-flag.troubleshoot = 1; % shows extra plots used for troubleshooting
+flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 14.42; % hour to show troubleshooting profiles
 
 ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor 
