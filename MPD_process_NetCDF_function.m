@@ -2,7 +2,7 @@ function[] = MPD_process_NetCDF_function(save_quicklook, save_data, save_netCDF,
 %clear all; 
 %close all
 %start_date = '20200331';
-%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 0; afterpulse=1; node='MPD3'; daystr=start_date; 
+%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -64,14 +64,12 @@ elseif strcmp(node,'MPD5')==1
  catalog = '/pub/incoming/catalog/operations';
 end
 
-
 folder = files;
 date = textscan(folder(end-5:end), '%6f'); date=date{1};  % read date of file
 MPD_read_calvals
 folder_in=folder;
 date_in = date;
 MPD_Analysis_function_NetCDF_v4(folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
-   
+    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)   
 
 end
