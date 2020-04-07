@@ -1,26 +1,26 @@
 addpath('./jsonlab')
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-   serv_path = '/export/fog1/rsfdata/MPD/calibration/'; % when running on server
+   cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/'; % when running on server
 elseif strcmp(getenv('HOSTNAME'),'')
-    serv_path = '../'; % running locally 
+    cal_serv_path = '../'; % running locally 
 else
-   serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
+   cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
 end
 
 if strcmp(node,'MPD1')==1
-  dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial1_calvals.json')],'SimplifyCell',1);
+  dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial1_calvals.json')],'SimplifyCell',1);
   blank_range = 375; % 
 elseif strcmp(node,'MPD2')==1
-  dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial2_calvals.json')],'SimplifyCell',1);
+  dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial2_calvals.json')],'SimplifyCell',1);
   blank_range = 375;
 elseif strcmp(node,'MPD3')==1
-  dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial3_calvals.json')],'SimplifyCell',1);
+  dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial3_calvals.json')],'SimplifyCell',1);
   blank_range = 300;
 elseif strcmp(node,'MPD4')==1
-  dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial4_calvals.json')],'SimplifyCell',1);
+  dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial4_calvals.json')],'SimplifyCell',1);
   blank_range = 300;
 elseif strcmp(node,'MPD5')==1
-  dat=loadjson([strcat(serv_path, 'eol-lidar-calvals/calvals/dial5_calvals.json')],'SimplifyCell',1);
+  dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial5_calvals.json')],'SimplifyCell',1);
   blank_range = 525;
 end
 

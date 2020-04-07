@@ -1,5 +1,5 @@
 % example batch process
-start_date = '20200406';
+start_date = '20200405';
 stop_date = '20200406';
 
 start_day = datenum(start_date,'yyyymmdd');
@@ -13,14 +13,8 @@ for n=1:1
       for k=start_day:stop_day
         file = datestr(k, 'yyyymmdd');  
         % save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr
- %       MPD_process_NetCDF_function(0,1,0,0,0,0,'MPD4',file) % MPD #4 (high range) 
- %       MPD_process_NetCDF_function(0,1,0,0,1,0,'MPD4',file) % MPD #4(low range) 
-        MPD_process_NetCDF_function(0,1,0,0,0,1,'MPD4',file) % MPD #4 (high range with afterpulse)
-        MPD_process_NetCDF_function(0,1,0,0,1,1,'MPD4',file) % MPD #4 (low range with afterpulse)   
-        MPD_process_NetCDF_function(0,1,0,0,0,0,'MPD3',file) % MPD #3 (high gain) 
-        MPD_process_NetCDF_function(0,1,0,0,1,0,'MPD3',file) % MPD #3 (low gain)
-        MPD_process_NetCDF_function(0,1,0,0,0,1,'MPD3',file) % MPD #3 (high gain with afterpulse)
-        MPD_process_NetCDF_function(0,1,0,0,1,1,'MPD3',file) % MPD #3 (low gain with afterpulse)
+        MPD_process_NetCDF_function(0,1,0,0,0,0,'MPD4',file) % MPD #4 
+        MPD_process_NetCDF_function(0,1,0,0,0,0,'MPD3',file) % MPD #3 
       end
     end
 
