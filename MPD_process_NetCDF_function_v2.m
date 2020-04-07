@@ -60,7 +60,7 @@ catalog = '/pub/incoming/catalog/operations';
   if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
     blank_range = 187.5; % low range 
   end
-  MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+  MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 
   % process the main ch with afterpulse correction    
@@ -73,7 +73,7 @@ catalog = '/pub/incoming/catalog/operations';
   if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
     blank_range = 187.5; % low range 
   end
-  MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+  MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
     
 end

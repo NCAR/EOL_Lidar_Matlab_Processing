@@ -13,8 +13,8 @@ for n=1:1
       for k=start_day:stop_day
         file = datestr(k, 'yyyymmdd');  
         % save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr
-        MPD_process_NetCDF_function(0,1,0,0,0,0,'MPD4',file) % MPD #4 
-        MPD_process_NetCDF_function(0,1,0,0,0,0,'MPD3',file) % MPD #3 
+        MPD_process_NetCDF_function_v2(0,1,0,0,0,0,'MPD4',file) % MPD #4 
+        MPD_process_NetCDF_function_v2(0,1,0,0,0,0,'MPD3',file) % MPD #3 
       end
     end
 
