@@ -253,12 +253,15 @@ range = single(0:gate:(size(Online,2)-1)*gate);
  
   if flag.afterpulse == 1   % afterpulse correction
    
-%  read my vesrion of the afterpulse calibration files      
-%      afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25);   
+%  read my vesrion of the afterpulse calibration files which are now using rates     
+%      afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
+%      load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_spline_sub_near_off', 'ap_spline_sub_near_on');  
+%      ap_spline_sub_off = p_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
+%      ap_spline_sub_on = ap_spline_sub_on*MCS.accum*MCS.bin_duration*1e-9;  
 %      if flag.near == 1
-%        afterpulse_filename = strcat(afterpulse_filename, '_near');  
-%      end
-%      load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on')  
+%        ap_spline_sub_off = p_spline_sub_near_off*MCS.accum*MCS.bin_duration*1e-9;
+%        ap_spline_sub_on = ap_spline_sub_near_on*MCS.accum*MCS.bin_duration*1e-9;  
+%      end  
       
     % read the afterpulse nc file identified in the json file 
     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
