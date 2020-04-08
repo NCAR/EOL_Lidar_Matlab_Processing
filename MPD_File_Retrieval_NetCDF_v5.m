@@ -1,10 +1,10 @@
-function[online_merged,offline_merged,on_near_merged, off_near_merged, folder,flag] = MPD_File_Retrieval_NetCDF_v5(flag, bins, folder, read_time_in)
+function[online_merged,offline_merged,on_near_merged, off_near_merged, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder, read_time_in)
 
-%dd = pwd; % get the current path
+dd = pwd; % get the current path
 %cd /scr/eldora1/wvdial_2_data/2018
 %folder = '20180818';
 cd(folder)
-MCS.dirListing = dir(strcat('MCSsample','*')); %ncdisp('MCSsample000000.nc', '/', 'min') 
+MCSsample.dirListing = dir(strcat('MCSsample','*')); %ncdisp('MCSsample000000.nc', '/', 'min') 
 LL.dirListing = dir(strcat('LLsample','*')); %ncdisp('LLsample000000.nc', '/', 'min')
 %Etalon.dirListing = dir(strcat('Etalonsample','*')); %ncdisp('Etalonsample000000.nc', '/', 'min')
 HKeep.dirListing = dir(strcat('HKeepsample','*')); %ncdisp('HKeepsample000000.nc', '/', 'min')
@@ -13,21 +13,31 @@ WS.dirListing = dir(strcat('WSsample','*')); %ncdisp('WSsample000000.nc', '/', '
 
 d=1;
 
-for d = 1:length(MCS.dirListing)
+for d = 1:length(MCSsample.dirListing)
   %read in the MCS photo count data  
-  MCS.filename=MCS.dirListing(d).name;
-  MCS.data = ncread(MCS.filename,'Data'); 
-  MCS.time = ncread(MCS.filename,'time'); 
-  MCS.channel = ncread(MCS.filename,'Channel'); 
+  MCSsample.filename=MCSsample.dirListing(d).name;
+  MCSsample.data = ncread(MCSsample.filename,'Data'); 
+  MCSsample.time = ncread(MCSsample.filename,'time'); 
+  MCSsample.channel = ncread(MCSsample.filename,'Channel'); 
+  
+  MCSsample.nsPerBin = ncread(MCSsample.filename,'nsPerBin'); 
+  MCSsample.NBins = ncread(MCSsample.filename,'NBins'); 
+  MCSsample.ProfilesPerHist = ncread(MCSsample.filename,'ProfilesPerHist'); 
+  
+  MCS.bins = median(MCSsample.NBins);  % overide the number from the calfiles
+  MCS.bin_duration = median(MCSsample.nsPerBin);  % overide the number from the calfiles
+  MCS.accum = median(MCSsample.ProfilesPerHist);   % overide the number from the calfiles
+  
+  
  % MCS.channel_name = h5read(MCS.filename,'/ChannelAssignment'); 
   if d>1   % sum the days nc data files into a single array
-    MCS.time1=[MCS.time1;MCS.time];
-    MCS.data1=[MCS.data1;MCS.data];
-    MCS.channel1=[MCS.channel1;MCS.channel];
+    MCSsample.time1=[MCSsample.time1;MCSsample.time];
+    MCSsample.data1=[MCSsample.data1;MCSsample.data];
+    MCSsample.channel1=[MCSsample.channel1;MCSsample.channel];
   else
-    MCS.time1=MCS.time;
-    MCS.data1=MCS.data;
-    MCS.channel1=MCS.channel;
+    MCSsample.time1=MCSsample.time;
+    MCSsample.data1=MCSsample.data;
+    MCSsample.channel1=MCSsample.channel;
   end
 end
 
@@ -130,14 +140,14 @@ end
 
 
 % combine time and data 
-MCS.all = [MCS.time1,MCS.data1];
+MCSsample.all = [MCSsample.time1,MCSsample.data1];
 % parse out the channels
-MCS.online = MCS.all(MCS.channel1==0,:); % 0 is the online
-MCS.offline = MCS.all(MCS.channel1==8,:); % 8, first demux channel is offline
-MCS.combined = MCS.all(MCS.channel1==2,:); % 2 is the combined HSRL channel
-MCS.molecular = MCS.all(MCS.channel1==3,:); % 3 is the molecular HSRL channel
-MCS.on_near = MCS.all(MCS.channel1==1,:); % 2 is the combined HSRL channel
-MCS.off_near = MCS.all(MCS.channel1==9,:); % 3 is the molecular HSRL channel
+MCSsample.online = MCSsample.all(MCSsample.channel1==0,:); % 0 is the online
+MCSsample.offline = MCSsample.all(MCSsample.channel1==8,:); % 8, first demux channel is offline
+MCSsample.combined = MCSsample.all(MCSsample.channel1==2,:); % 2 is the combined HSRL channel
+MCSsample.molecular = MCSsample.all(MCSsample.channel1==3,:); % 3 is the molecular HSRL channel
+MCSsample.on_near = MCSsample.all(MCSsample.channel1==1,:); % 2 is the combined HSRL channel
+MCSsample.off_near = MCSsample.all(MCSsample.channel1==9,:); % 3 is the molecular HSRL channel
 
 
 
@@ -161,22 +171,22 @@ end
 
 % grid to a fixed time base
 ave_time = read_time_in;  % time grid in seconds
-time_grid = (floor(min(MCS.time1)):1/60/60*(ave_time):ceil(max(MCS.time1)))';
+time_grid = (floor(min(MCSsample.time1)):1/60/60*(ave_time):ceil(max(MCSsample.time1)))';
 LL.online_grid = interp1(LL.online(:,1), LL.online(:,2:end), time_grid, 'nearest', 'extrap'); 
 LL.offline_grid = interp1(LL.offline(:,1), LL.offline(:,2:end), time_grid, 'nearest', 'extrap'); 
 %LL.hsrl_grid = interp1(LL.hsrl(:,1), LL.hsrl(:,2:end), time_grid, 'nearest', 'extrap');
-  [x, ia, ic] = unique(MCS.online(:,1),'rows');  % remove duplicate time points
-  uA = MCS.online(ia,:);  % apply those to the other rows
-MCS.online_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-  [x, ia, ic] = unique(MCS.offline(:,1),'rows');  % remove duplicate time points
-  uA = MCS.offline(ia,:);  % apply those to the other rows
-MCS.offline_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-  [x, ia, ic] = unique(MCS.on_near(:,1),'rows');  % remove duplicate time points
-  uA = MCS.on_near(ia,:);  % apply those to the other rows
-MCS.on_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-  [x, ia, ic] = unique(MCS.off_near(:,1),'rows');  % remove duplicate time points
-  uA = MCS.off_near(ia,:);  % apply those to the other rows
-MCS.off_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+  [x, ia, ic] = unique(MCSsample.online(:,1),'rows');  % remove duplicate time points
+  uA = MCSsample.online(ia,:);  % apply those to the other rows
+MCSsample.online_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+  [x, ia, ic] = unique(MCSsample.offline(:,1),'rows');  % remove duplicate time points
+  uA = MCSsample.offline(ia,:);  % apply those to the other rows
+MCSsample.offline_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+  [x, ia, ic] = unique(MCSsample.on_near(:,1),'rows');  % remove duplicate time points
+  uA = MCSsample.on_near(ia,:);  % apply those to the other rows
+MCSsample.on_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+  [x, ia, ic] = unique(MCSsample.off_near(:,1),'rows');  % remove duplicate time points
+  uA = MCSsample.off_near(ia,:);  % apply those to the other rows
+MCSsample.off_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
 %MCS.combined_grid = interp1(MCS.combined(:,1), MCS.combined(:,2:end), time_grid, 'nearest', 'extrap'); 
 %MCS.molecular_grid = interp1(MCS.molecular(:,1), MCS.molecular(:,2:end), time_grid, 'nearest', 'extrap');
 if isfield(HKeep,'time') == 1
@@ -202,20 +212,20 @@ end
 
 % combine all of the data into original data format
 if isfield(HKeep,'time') == 1 && isfield(WS,'time') == 1
-  online_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCS.online_grid];
-  offline_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCS.offline_grid];
-  on_near_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCS.on_near_grid];
-  off_near_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCS.off_near_grid];
+  online_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.online_grid];
+  offline_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.offline_grid];
+  on_near_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.on_near_grid];
+  off_near_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.off_near_grid];
 else
-  online_merged = [time_grid, LL.online_grid, Pow.online, MCS.online_grid];
-  offline_merged = [time_grid, LL.offline_grid, Pow.offline, MCS.offline_grid];
-  on_near_merged = [time_grid, LL.online_grid, Pow.online, MCS.on_near_grid];
-  off_near_merged = [time_grid, LL.offline_grid, Pow.offline, MCS.off_near_grid];
+  online_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.online_grid];
+  offline_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.offline_grid];
+  on_near_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.on_near_grid];
+  off_near_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.off_near_grid];
 end
 %hsrl_com_merged = [time_grid, LL.hsrl_grid, Pow.online, WS.online, MCS.combined_grid];
 %hsrl_mol_merged = [time_grid, LL.hsrl_grid, HKeep.temp1, WS.online, MCS.molecular_grid];
 
-%cd(dd) % point back to original directory
+cd(dd) % point back to original directory
 
 end
 

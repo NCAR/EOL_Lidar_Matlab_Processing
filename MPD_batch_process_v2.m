@@ -1,6 +1,6 @@
 % example batch process
-start_date = '20200405';
-stop_date = '20200406';
+start_date = '20200407';
+stop_date = '20200407';
 
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
@@ -9,6 +9,7 @@ flag.process = 1;
 flag.plot = 1;
 
 for n=1:1
+tStart = tic   
     if flag.process == 1
       for k=start_day:stop_day
         file = datestr(k, 'yyyymmdd');  
@@ -18,8 +19,8 @@ for n=1:1
       end
     end
 
-    start_date = '20200324';
-    stop_date = '20200406';
+    start_date = '20200325';
+    stop_date = '20200407';
 
     if flag.plot == 1
       % save_figs, save_data, near, afterpulse, node, daystr, daystr2
@@ -32,4 +33,5 @@ for n=1:1
       MPD_multiday_plots_NetCDF_function(1,0,0,1,'MPD3', start_date, stop_date) % MPD #3 (high gain with afterpulse)
       MPD_multiday_plots_NetCDF_function(1,0,1,1,'MPD3', start_date, stop_date) % MPD #3 (low gain with afterpulse)
     end
+tElapsed = toc(tStart) 
 end

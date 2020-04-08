@@ -1,8 +1,8 @@
-function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
-%clear all; 
-%close all
-%start_date = '20200331';
-%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; 
+%function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
+clear all; 
+close all
+start_date = '20200316';
+save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -47,8 +47,9 @@ catalog = '/pub/incoming/catalog/operations';
   folder_in=folder;
   date_in = date;
   read_time_in = 2; % set read data in time increments of seconds (default it 2sec) 
+  
 % read in all the data
-  [data_on, data_off, data_near_on, data_near_off, folder_in] = MPD_File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+  [data_on, data_off, data_near_on, data_near_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
    
 % process the main ch without afterpulse correction 
   write_data_folder = strcat(serv_path, 'wvdial_', nodeStr, '_processed_data/Matlab'); 
