@@ -15,6 +15,8 @@ d=1;
 
 for d = 1:length(MCSsample.dirListing)
   %read in the MCS photo count data  
+  length(MCSsample.dirListing)
+  MCSsample.dirListing
   MCSsample.filename=MCSsample.dirListing(d).name;
   MCSsample.data = ncread(MCSsample.filename,'Data'); 
   MCSsample.time = ncread(MCSsample.filename,'time'); 

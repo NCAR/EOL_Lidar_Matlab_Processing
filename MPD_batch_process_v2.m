@@ -1,5 +1,5 @@
 % example batch process
-start_date = '20200407';
+start_date = '20200408';
 stop_date = '20200409';
 
 start_day = datenum(start_date,'yyyymmdd');
