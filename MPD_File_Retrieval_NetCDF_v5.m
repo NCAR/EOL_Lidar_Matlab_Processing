@@ -142,11 +142,11 @@ end
 MCSsample.all = [MCSsample.time1,MCSsample.data1];
 % parse out the channels based on searches for channel mapping and populate
 % if it exists
-index.wvonline = find(contains(MCSsample.ChannelAssignment,'WVOnline'))-1;
+index.wvonline = find(contains(MCSsample.ChannelAssignment,'WVOnline') & not(contains(MCSsample.ChannelAssignment,'WVOnlineLow')))-1;
 if isempty(index.wvonline) == 0
    MCSsample.online = MCSsample.all(MCSsample.channel1==index.wvonline,:); % 
 end
-index.wvoffline = find(contains(MCSsample.ChannelAssignment,'WVOffline'))-1;
+index.wvoffline = find(contains(MCSsample.ChannelAssignment,'WVOffline') & not(contains(MCSsample.ChannelAssignment,'WVOfflineLow')))-1;
 if isempty(index.wvoffline) == 0
    MCSsample.offline = MCSsample.all(MCSsample.channel1==index.wvoffline,:); % 
 end
