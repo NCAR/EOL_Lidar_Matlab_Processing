@@ -1,8 +1,8 @@
-function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr)
-%clear all; 
-%close all
-%start_date = '20200407';
-%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; near= 1; afterpulse=1; node='MPD3'; daystr=start_date; 
+%function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
+clear all; 
+close all
+start_date = '20200216';
+save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_OFF'; node='MPD3'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -17,8 +17,8 @@ flag.decimate = 0; % decimate all data to half the wv resoltuion
 flag.int = 0; % interpolate nans in nanmoving_average
 flag.mark_gaps = 1; % sets gaps in data to NaNs
 flag.OF = 1; % correct for geometric overlap functions
-flag.near = near; %process the near range channel (or low gain)
-flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD 3 & 4 only)
+%flag.near = near; %process the near range channel (or low gain)
+%flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD 3 & 4 only)
 
 flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
@@ -49,31 +49,42 @@ read_time_in = 2; % set read data in time increments of seconds (default it 2sec
   
 % read in all the data
  [data_on, data_off, data_near_on, data_near_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
-   
+
+ 
 % process the main ch without afterpulse correction 
+if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
   write_data_folder = strcat(serv_path, 'wvdial_', nodeStr, '_processed_data/Matlab'); 
   flag.near = 0; flag.afterpulse = 0; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
-  % process the near/low ch  
+end
+
+% process the near/low ch
+if strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1  
   flag.near = 1; flag.afterpulse = 0; 
   if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
     blank_range = 187.5; % low range 
   end
   MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
+end
 
-  % process the main ch with afterpulse correction    
+% process the main ch with afterpulse correction 
+if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
   write_data_folder = strcat(serv_path, 'wvdial_', nodeStr, '_processed_data/Matlab/afterpulse');   
   flag.near = 0; flag.afterpulse = 1; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
-  % process the near/low ch    
+end
+
+% process the near/low ch with afterpulse correction 
+if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1) && strcmp(correction,'AP_ON') == 1    
   flag.near = 1; flag.afterpulse = 1;
   if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
     blank_range = 187.5; % low range 
   end
   MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
+end
     
 %end

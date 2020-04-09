@@ -19,7 +19,7 @@ for d = 1:length(MCSsample.dirListing)
   MCSsample.data = ncread(MCSsample.filename,'Data'); 
   MCSsample.time = ncread(MCSsample.filename,'time'); 
   MCSsample.channel = ncread(MCSsample.filename,'Channel'); 
-  
+  MCSsample.ChannelAssignment = h5read(MCSsample.filename,'/ChannelAssignment');   % note the special type of read
   MCSsample.nsPerBin = ncread(MCSsample.filename,'nsPerBin'); 
   MCSsample.NBins = ncread(MCSsample.filename,'NBins'); 
   MCSsample.ProfilesPerHist = ncread(MCSsample.filename,'ProfilesPerHist'); 
@@ -28,8 +28,7 @@ for d = 1:length(MCSsample.dirListing)
   MCS.bin_duration = median(MCSsample.nsPerBin);  % overide the number from the calfiles
   MCS.accum = median(MCSsample.ProfilesPerHist);   % overide the number from the calfiles
   
-  
- % MCS.channel_name = h5read(MCS.filename,'/ChannelAssignment'); 
+
   if d>1   % sum the days nc data files into a single array
     MCSsample.time1=[MCSsample.time1;MCSsample.time];
     MCSsample.data1=[MCSsample.data1;MCSsample.data];
@@ -141,13 +140,26 @@ end
 
 % combine time and data 
 MCSsample.all = [MCSsample.time1,MCSsample.data1];
-% parse out the channels
-MCSsample.online = MCSsample.all(MCSsample.channel1==0,:); % 0 is the online
-MCSsample.offline = MCSsample.all(MCSsample.channel1==8,:); % 8, first demux channel is offline
-MCSsample.combined = MCSsample.all(MCSsample.channel1==2,:); % 2 is the combined HSRL channel
-MCSsample.molecular = MCSsample.all(MCSsample.channel1==3,:); % 3 is the molecular HSRL channel
-MCSsample.on_near = MCSsample.all(MCSsample.channel1==1,:); % 2 is the combined HSRL channel
-MCSsample.off_near = MCSsample.all(MCSsample.channel1==9,:); % 3 is the molecular HSRL channel
+% parse out the channels based on searches for channel mapping and populate
+% if it exists
+index.wvonline = find(contains(MCSsample.ChannelAssignment,'WVOnline'))-1;
+if isempty(index.wvonline) == 0
+   MCSsample.online = MCSsample.all(MCSsample.channel1==index.wvonline,:); % 
+end
+index.wvoffline = find(contains(MCSsample.ChannelAssignment,'WVOffline'))-1;
+if isempty(index.wvoffline) == 0
+   MCSsample.offline = MCSsample.all(MCSsample.channel1==index.wvoffline,:); % 
+end
+index.wvonline_near = find(contains(MCSsample.ChannelAssignment,'WVOnlineLow'))-1;
+if isempty(index.wvonline_near) == 0
+   MCSsample.on_near = MCSsample.all(MCSsample.channel1==index.wvonline_near,:); % 
+end
+index.wvoffline_near = find(contains(MCSsample.ChannelAssignment,'WVOfflineLow'))-1;
+if isempty(index.wvoffline_near) == 0
+   MCSsample.off_near = MCSsample.all(MCSsample.channel1==index.wvoffline_near,:); % 
+end
+%MCSsample.combined = MCSsample.all(MCSsample.channel1==2,:); % 2 is the combined HSRL channel
+%MCSsample.molecular = MCSsample.all(MCSsample.channel1==3,:); % 3 is the molecular HSRL channel
 
 
 
@@ -175,18 +187,35 @@ time_grid = (floor(min(MCSsample.time1)):1/60/60*(ave_time):ceil(max(MCSsample.t
 LL.online_grid = interp1(LL.online(:,1), LL.online(:,2:end), time_grid, 'nearest', 'extrap'); 
 LL.offline_grid = interp1(LL.offline(:,1), LL.offline(:,2:end), time_grid, 'nearest', 'extrap'); 
 %LL.hsrl_grid = interp1(LL.hsrl(:,1), LL.hsrl(:,2:end), time_grid, 'nearest', 'extrap');
+
+if isempty(index.wvonline) == 0
   [x, ia, ic] = unique(MCSsample.online(:,1),'rows');  % remove duplicate time points
   uA = MCSsample.online(ia,:);  % apply those to the other rows
-MCSsample.online_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+  MCSsample.online_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+end
+
+if isempty(index.wvoffline) == 0
   [x, ia, ic] = unique(MCSsample.offline(:,1),'rows');  % remove duplicate time points
   uA = MCSsample.offline(ia,:);  % apply those to the other rows
-MCSsample.offline_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+  MCSsample.offline_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+end
+
+if isempty(index.wvonline_near) == 0
   [x, ia, ic] = unique(MCSsample.on_near(:,1),'rows');  % remove duplicate time points
   uA = MCSsample.on_near(ia,:);  % apply those to the other rows
-MCSsample.on_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+  MCSsample.on_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+else
+  MCSsample.on_near_grid = zeros(size(MCSsample.online_grid));
+end
+
+if isempty(index.wvoffline_near) == 0
   [x, ia, ic] = unique(MCSsample.off_near(:,1),'rows');  % remove duplicate time points
   uA = MCSsample.off_near(ia,:);  % apply those to the other rows
-MCSsample.off_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+  MCSsample.off_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+else
+  MCSsample.off_near_grid = zeros(size(MCSsample.offline_grid));
+end
+
 %MCS.combined_grid = interp1(MCS.combined(:,1), MCS.combined(:,2:end), time_grid, 'nearest', 'extrap'); 
 %MCS.molecular_grid = interp1(MCS.molecular(:,1), MCS.molecular(:,2:end), time_grid, 'nearest', 'extrap');
 if isfield(HKeep,'time') == 1

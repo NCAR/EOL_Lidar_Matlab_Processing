@@ -1,6 +1,6 @@
 % example batch process
 start_date = '20200407';
-stop_date = '20200407';
+stop_date = '20200408';
 
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
@@ -13,14 +13,14 @@ tStart = tic
     if flag.process == 1
       for k=start_day:stop_day
         file = datestr(k, 'yyyymmdd');  
-        % save_quicklook, save_data, save_netCDF, save_catalog, near, afterpulse, node, daystr
-        MPD_process_NetCDF_function_v2(0,1,0,0,0,0,'MPD4',file) % MPD #4 
-        MPD_process_NetCDF_function_v2(0,1,0,0,0,0,'MPD3',file) % MPD #3 
+        % save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr 
+        MPD_process_NetCDF_function_v2(0,1,0,0,'ALL','AP_ON','MPD4',file) % MPD #4 
+        MPD_process_NetCDF_function_v2(0,1,0,0,'ALL','AP_ON','MPD3',file) % MPD #3 
       end
     end
 
-    start_date = '20200325';
-    stop_date = '20200407';
+    start_date = '20200326';
+    stop_date = '20200408';
 
     if flag.plot == 1
       % save_figs, save_data, near, afterpulse, node, daystr, daystr2
