@@ -4,19 +4,17 @@ dd = pwd; % get the current path
 %cd /scr/eldora1/wvdial_2_data/2018
 %folder = '20180818';
 cd(folder)
-MCSsample.dirListing = dir(strcat('MCSsample','*')); %ncdisp('MCSsample000000.nc', '/', 'min') 
-LL.dirListing = dir(strcat('LLsample','*')); %ncdisp('LLsample000000.nc', '/', 'min')
+MCSsample.dirListing = dir(strcat('MCS','*')); %ncdisp('MCSsample000000.nc', '/', 'min') 
+LL.dirListing = dir(strcat('LL','*')); %ncdisp('LLsample000000.nc', '/', 'min')
 %Etalon.dirListing = dir(strcat('Etalonsample','*')); %ncdisp('Etalonsample000000.nc', '/', 'min')
-HKeep.dirListing = dir(strcat('HKeepsample','*')); %ncdisp('HKeepsample000000.nc', '/', 'min')
-Pow.dirListing = dir(strcat('Powsample','*')); %ncdisp('Powsample000000.nc', '/', 'min')
-WS.dirListing = dir(strcat('WSsample','*')); %ncdisp('WSsample000000.nc', '/', 'min')
+HKeep.dirListing = dir(strcat('HKeep','*')); %ncdisp('HKeepsample000000.nc', '/', 'min')
+Pow.dirListing = dir(strcat('Pow','*')); %ncdisp('Powsample000000.nc', '/', 'min')
+WS.dirListing = dir(strcat('WS','*')); %ncdisp('WSsample000000.nc', '/', 'min')
 
 d=1;
 
 for d = 1:length(MCSsample.dirListing)
   %read in the MCS photo count data  
-  length(MCSsample.dirListing)
-  MCSsample.dirListing
   MCSsample.filename=MCSsample.dirListing(d).name;
   MCSsample.data = ncread(MCSsample.filename,'Data'); 
   MCSsample.time = ncread(MCSsample.filename,'time'); 
