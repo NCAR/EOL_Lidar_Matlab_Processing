@@ -7,19 +7,19 @@ else
    cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
 end
 
-if strcmp(node,'MPD1')==1
+if strcmp(node,'MPD01')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial1_calvals.json')],'SimplifyCell',1);
   blank_range = 375; % 
-elseif strcmp(node,'MPD2')==1
+elseif strcmp(node,'MPD02')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial2_calvals.json')],'SimplifyCell',1);
   blank_range = 375;
-elseif strcmp(node,'MPD3')==1
+elseif strcmp(node,'MPD03')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial3_calvals.json')],'SimplifyCell',1);
   blank_range = 300;
-elseif strcmp(node,'MPD4')==1
+elseif strcmp(node,'MPD04')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial4_calvals.json')],'SimplifyCell',1);
   blank_range = 300;
-elseif strcmp(node,'MPD5')==1
+elseif strcmp(node,'MPD05')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial5_calvals.json')],'SimplifyCell',1);
   blank_range = 525;
 end

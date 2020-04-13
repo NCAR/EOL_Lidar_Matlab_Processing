@@ -1,8 +1,8 @@
 function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
 %clear all; 
 %close all
-%start_date = '20200408';
-%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'ALL'; correction = 'AP_ON'; node='MPD3'; daystr=start_date; 
+%start_date = '20200409';
+%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD04'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -37,7 +37,7 @@ else
 end
 
 nodeStr = extractAfter(node, 'MPD');
-files = strcat(serv_path, 'wvdial_', nodeStr, '_data/2020/', daystr);
+files = strcat(serv_path, 'mpd_', nodeStr, '_data/2020/', daystr);
 catalog = '/pub/incoming/catalog/operations';
 
 folder = files;
@@ -53,16 +53,54 @@ read_time_in = 2; % set read data in time increments of seconds (default it 2sec
  
 % process the main ch without afterpulse correction 
 if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
-  write_data_folder = strcat(serv_path, 'wvdial_', nodeStr, '_processed_data/Matlab'); 
+  write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
   flag.near = 0; flag.afterpulse = 0; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 end
 
+% % experiment to combine the low and high range channels 
+%     gate = round((MCS.bin_duration*1e-9*3e8/2)*100)/100;
+% 
+%     data_on_header = (data_on(:,1:9));
+%     data_on_data =  (data_on(:,10:end));
+%     data_on_background = mean(data_on_data(:,end-round(1200/gate):end),2)-0; % final ~1.2km background
+%     data_on_back_sub = (bsxfun(@minus, data_on_data, data_on_background));
+%     data_near_on_data =  (data_near_on(:,10:end));
+%     data_near_on_background = mean(data_near_on_data(:,end-round(1200/gate):end),2)-0; % final ~1.2km background
+%     data_near_on_back_sub = (bsxfun(@minus, data_near_on_data, data_near_on_background));
+%     data_comb_on = [data_on_header, (data_on_back_sub + data_near_on_back_sub)];
+% 
+%     data_off_header = (data_off(:,1:9));
+%     data_off_data =  (data_off(:,10:end));
+%     data_off_background = mean(data_off_data(:,end-round(1200/gate):end),2)-0; % final ~1.2km background
+%     data_off_back_sub = (bsxfun(@minus, data_off_data, data_off_background));
+%     data_near_off_data =  (data_near_off(:,10:end));
+%     data_near_off_background = mean(data_near_off_data(:,end-round(1200/gate):end),2)-0; % final ~1.2km background
+%     data_near_off_back_sub = (bsxfun(@minus, data_near_off_data, data_near_off_background));
+%     data_comb_off = [data_off_header, (data_off_back_sub + data_near_off_back_sub)];
+% 
+%     % process the combined low and high ch without afterpulse correction 
+%     if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
+%       if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
+%         blank_range = 187.5; % low range 
+%       end
+%         write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+%       flag.near = 0; flag.afterpulse = 0; 
+%       MPD_Analysis_function_NetCDF_v5(data_comb_on, data_comb_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+%             profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
+%     end
+
+
+% ylim([0 3])
+% grid on
+% grid minor
+
+
 % process the near/low ch
 if strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1  
   flag.near = 1; flag.afterpulse = 0; 
-  if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
+  if strcmp(node,'MPD04') == 1 % MPD4 is using a low range channel
     blank_range = 187.5; % low range 
   end
   MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
@@ -71,7 +109,7 @@ end
 
 % process the main ch with afterpulse correction 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
-  write_data_folder = strcat(serv_path, 'wvdial_', nodeStr, '_processed_data/Matlab/afterpulse');   
+  write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');   
   flag.near = 0; flag.afterpulse = 1; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
@@ -80,8 +118,8 @@ end
 % process the near/low ch with afterpulse correction 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1) && strcmp(correction,'AP_ON') == 1    
   flag.near = 1; flag.afterpulse = 1;
-  if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
-    blank_range = 187.5; % low range 
+  if strcmp(node,'MPD04') == 1 % MPD4 is using a low range channel
+    blank_range = 150; 
   end
   MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%

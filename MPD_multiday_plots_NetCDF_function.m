@@ -49,29 +49,29 @@ else
    serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
 end
 
-if strcmp(node,'MPD1')==1
-    cd(strcat(serv_path, 'wvdial_1_processed_data/Matlab'))  
-    plot_dir = (strcat(serv_path, 'wvdial_1_processed_data/Plots'));
-  elseif strcmp(node,'MPD2')==1
-    cd(strcat(serv_path, 'wvdial_2_processed_data/Matlab'))
-    plot_dir = (strcat(serv_path, 'wvdial_2_processed_data/Plots'));
-  elseif strcmp(node,'MPD3')==1
-    cd(strcat(serv_path, 'wvdial_3_processed_data/Matlab'))
-    plot_dir = (strcat(serv_path, 'wvdial_3_processed_data/Plots'));
+if strcmp(node,'MPD01')==1
+    cd(strcat(serv_path, 'mpd_01_processed_data/Matlab'))  
+    plot_dir = (strcat(serv_path, 'mpd_01_processed_data/Plots'));
+  elseif strcmp(node,'MPD02')==1
+    cd(strcat(serv_path, 'mpd_02_processed_data/Matlab'))
+    plot_dir = (strcat(serv_path, 'mpd_02_processed_data/Plots'));
+  elseif strcmp(node,'MPD03')==1
+    cd(strcat(serv_path, 'mpd_03_processed_data/Matlab'))
+    plot_dir = (strcat(serv_path, 'mpd_03_processed_data/Plots'));
     if flag.afterpulse == 1
-      cd(strcat(serv_path, 'wvdial_3_processed_data/Matlab/afterpulse'))
-      plot_dir = (strcat(serv_path, 'wvdial_3_processed_data/Matlab/afterpulse'));
+      cd(strcat(serv_path, 'mpd_03_processed_data/Matlab/afterpulse'))
+      plot_dir = (strcat(serv_path, 'mpd_03_processed_data/Matlab/afterpulse'));
     end
-  elseif strcmp(node,'MPD4')==1
-    cd(strcat(serv_path, 'wvdial_4_processed_data/Matlab'))
-    plot_dir = (strcat(serv_path, 'wvdial_4_processed_data/Plots'));
+  elseif strcmp(node,'MPD04')==1
+    cd(strcat(serv_path, 'mpd_04_processed_data/Matlab'))
+    plot_dir = (strcat(serv_path, 'mpd_4_processed_data/Plots'));
     if flag.afterpulse == 1
-      cd(strcat(serv_path, 'wvdial_4_processed_data/Matlab/afterpulse'))
-      plot_dir = (strcat(serv_path, 'wvdial_4_processed_data/Matlab/afterpulse'));
+      cd(strcat(serv_path, 'mpd_04_processed_data/Matlab/afterpulse'))
+      plot_dir = (strcat(serv_path, 'mpd_04_processed_data/Matlab/afterpulse'));
     end
-  elseif strcmp(node,'MPD5')==1
-    cd(strcat(serv_path, 'wvdial_5_processed_data/Matlab'))
-    plot_dir = (strcat(serv_path, 'wvdial_5_processed_data/Plots'));
+  elseif strcmp(node,'MPD05')==1
+    cd(strcat(serv_path, 'mpd_05_processed_data/Matlab'))
+    plot_dir = (strcat(serv_path, 'mpd_05_processed_data/Plots'));
 end
 
 
