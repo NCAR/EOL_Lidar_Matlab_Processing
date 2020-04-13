@@ -64,7 +64,7 @@ if strcmp(node,'MPD01')==1
     end
   elseif strcmp(node,'MPD04')==1
     cd(strcat(serv_path, 'mpd_04_processed_data/Matlab'))
-    plot_dir = (strcat(serv_path, 'mpd_4_processed_data/Plots'));
+    plot_dir = (strcat(serv_path, 'mpd_04_processed_data/Plots'));
     if flag.afterpulse == 1
       cd(strcat(serv_path, 'mpd_04_processed_data/Matlab/afterpulse'))
       plot_dir = (strcat(serv_path, 'mpd_04_processed_data/Matlab/afterpulse'));
