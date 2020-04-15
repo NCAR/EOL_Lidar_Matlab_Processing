@@ -98,7 +98,7 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 %   % this is a way to process the near range data instead of the normal
 %   data_on = near_on;
 %   data_off = near_off;
-%   if strcmp(node,'MPD4') == 1 % MPD4 is using a low range channel
+%   if strcmp(node,'MPD04') == 1 % MPD04 is using a low range channel
 %     blank_range = 187.5; % low range 
 %   end
 %else
@@ -378,7 +378,7 @@ end
 
 % geometric overlap correction from Zemax model
   O_x = [50;100;200;300;400;500;750;1000;1250;1500; 2000;3000;4000;5000;6000;8000;12000];
-  if (flag.near==1) && (strcmp(node,'MPD4') == 1)
+  if (flag.near==1) && (strcmp(node,'MPD04') == 1)
     O_y = [2.47E-2; 9.90E-2; 3.99E-1; 8.72E-1; 1.00E+0; 1.00E+0 ;1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0];
   else
     O_y = [7e-7; 1.5e-5; 2.77e-4; 1.38e-3; 3.98e-3; 8.89e-3; 3.72e-2; 1.06e-1; 2.08e-1; 3.39e-1; 6.61e-1; 9.53e-1; 9.74e-1; 9.86e-1; 9.92e-1; 1.00E+0; 1.00E+0];
