@@ -1,7 +1,7 @@
 function[] = MPD_multiday_plots_NetCDF_function(save_figs, save_data, near, afterpulse, node, daystr, daystr2)
 %clear all; 
-%start_date = '20200315';
-%stop_date = '20200324';
+%start_date = '20190405';
+%stop_date = '20190410';
 %save_figs = 1; save_data=0; near= 0; afterpulse=0; node='MPD3'; daystr=start_date; daystr2=stop_date;
 close all;
 tic
@@ -571,4 +571,4 @@ end
 
 cd(dd) % point back to original directory 
 toc
-end
+%end

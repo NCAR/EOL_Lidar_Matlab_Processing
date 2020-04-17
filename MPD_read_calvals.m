@@ -24,18 +24,23 @@ elseif strcmp(node,'MPD05')==1
   blank_range = 525;
 end
 
-%t_date = '16-Feb-2020' % used for testing
+%t_date = '04-Apr-2019' % used for testing
 wavemeter_offset = double(0); 
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
 
-for i=1:size(dat.Afterpulse_File,2)
-if (t_date >= datetime(dat.Afterpulse_File(i).date,'InputFormat','d-MMM-yyyy H:m')) == 1
-    Afterpulse_File = dat.Afterpulse_File(i).value;
+if isfield(dat, 'Afterpulse_File') == 1
+    for i=1:size(dat.Afterpulse_File,2)
+    if (t_date >= datetime(dat.Afterpulse_File(i).date,'InputFormat','d-MMM-yyyy H:m')) == 1
+        Afterpulse_File = dat.Afterpulse_File(i).value;
+    end
+    end
+    if exist('Afterpulse_File')==0  % if there is no afterpulse cal file then make a 
+        Afterpulse_File = 'No Afterpulse Cal'
+    end
+else
+     Afterpulse_File = 'No Afterpulse Cal' 
 end
-end
-if exist('Afterpulse_File')==0  % if there is no afterpulse cal file then make a 
-    Afterpulse_File = 'No Afterpulse Cal'
-end
+
    
 
 for i=1:size(dat.MCS_bins,2)
