@@ -1,8 +1,8 @@
-function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
-%clear all; 
-%close all
-%start_date = '20200409';
-%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD04'; daystr=start_date; 
+%function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
+clear all; 
+close all
+start_date = '20190405';
+save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD04'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -37,7 +37,8 @@ else
 end
 
 nodeStr = extractAfter(node, 'MPD');
-files = strcat(serv_path, 'mpd_', nodeStr, '_data/2020/', daystr);
+year_folder = cell2mat(textscan(daystr,'%4c', 1));
+files = strcat(serv_path, 'mpd_', nodeStr, '_data/', year_folder,'/', daystr);
 catalog = '/pub/incoming/catalog/operations';
 
 folder = files;
