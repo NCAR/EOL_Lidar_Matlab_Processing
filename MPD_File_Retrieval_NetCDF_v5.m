@@ -16,7 +16,8 @@ d=1;
 for d = 1:length(MCSsample.dirListing)
   %read in the MCS photo count data  
   MCSsample.filename=MCSsample.dirListing(d).name;
-  MCSsample.data = ncread(MCSsample.filename,'Data'); 
+ % MCSsample.data = ncread(MCSsample.filename,'Data'); 
+  MCSsample.data = h5read(MCSsample.filename,'/Data');  % changed to the h5read
   MCSsample.time = ncread(MCSsample.filename,'time'); 
   MCSsample.channel = ncread(MCSsample.filename,'Channel'); 
   MCSsample.ChannelAssignment = h5read(MCSsample.filename,'/ChannelAssignment');   % note the special type of read
