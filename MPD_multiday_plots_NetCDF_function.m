@@ -74,6 +74,9 @@ if strcmp(node,'MPD01')==1
     plot_dir = (strcat(serv_path, 'mpd_05_processed_data/Plots'));
 end
 
+nodeStr = extractAfter(node, 'MPD');
+write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+
 
 %gate = round((bin_duration*1e-9*3e8/2)*10)/10
 
@@ -182,6 +185,7 @@ end
   
  if flag.save_data == 1
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
+  cd(write_data_folder)
   name=strcat(date, '_combined');
   if strcmp(node,'MPD1')==1
       MPD01.N_avg_comb = N_avg_comb;

@@ -39,6 +39,7 @@ end
 nodeStr = extractAfter(node, 'MPD');
 year_folder = cell2mat(textscan(daystr,'%4c', 1));
 files = strcat(serv_path, 'mpd_', nodeStr, '_data/', year_folder,'/', daystr);
+
 catalog = '/pub/incoming/catalog/operations';
 
 folder = files;
