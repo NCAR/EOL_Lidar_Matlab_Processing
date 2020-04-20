@@ -187,31 +187,31 @@ end
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
   cd(write_data_folder)
   name=strcat(date, '_combined');
-  if strcmp(node,'MPD1')==1
+  if strcmp(node,'MPD01')==1
       MPD01.N_avg_comb = N_avg_comb;
       MPD01.RB_comb = RB_comb;
       MPD01.range = range;
       MPD01.time = duration;
       save(name, 'MPD01')
-  elseif strcmp(node,'MPD2')==1
+  elseif strcmp(node,'MPD02')==1
       MPD02.N_avg_comb = N_avg_comb;
       MPD02.RB_comb = RB_comb;
       MPD02.range = range;
       MPD02.time = duration;
       save(name, 'MPD02')
-  elseif strcmp(node,'MPD3')==1
+  elseif strcmp(node,'MPD03')==1
       MPD03.N_avg_comb = N_avg_comb;
       MPD03.RB_comb = RB_comb;
       MPD03.range = range;
       MPD03.time = duration;
       save(name, 'MPD03')
-  elseif strcmp(node,'MPD4')==1
+  elseif strcmp(node,'MPD04')==1
       MPD04.N_avg_comb = N_avg_comb;
       MPD04.RB_comb = RB_comb;
       MPD04.range = range;
       MPD04.time = duration;
       save(name, 'MPD04')
-   elseif strcmp(node,'MPD5')==1
+   elseif strcmp(node,'MPD05')==1
       MPD05.N_avg_comb = N_avg_comb;
       MPD05.RB_comb = RB_comb;
       MPD05.range = range;
