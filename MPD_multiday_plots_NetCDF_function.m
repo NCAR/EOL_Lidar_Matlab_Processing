@@ -75,7 +75,7 @@ if strcmp(node,'MPD01')==1
 end
 
 nodeStr = extractAfter(node, 'MPD');
-write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab') 
 
 
 %gate = round((bin_duration*1e-9*3e8/2)*10)/10
