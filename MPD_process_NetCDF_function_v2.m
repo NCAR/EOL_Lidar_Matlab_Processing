@@ -57,7 +57,7 @@ read_time_in = 2; % set read data in time increments of seconds (default it 2sec
 % process the main ch without afterpulse correction 
 if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
-  if (strcmp(node,'MPD04') == 1) && (serial_date >= 737903) % MPD04 is using a low range channel
+  if (strcmp(node,'MPD04') == 1) && (serial_date >= 737902) % MPD04 is using a low range channel
     blank_range = 187.5; % low range 
   end
   flag.near = 0; flag.afterpulse = 0; 
@@ -65,39 +65,8 @@ if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 end
 
-% % experiment to combine the low and high range channels 
-%     gate = round((MCS.bin_duration*1e-9*3e8/2)*100)/100;
-% 
-%     data_on_header = (data_on(:,1:9));
-%     data_on_data =  (data_on(:,10:end));
-%     data_on_background = mean(data_on_data(:,end-round(1200/gate):end),2)-0; % final ~1.2km background
-%     data_on_back_sub = (bsxfun(@minus, data_on_data, data_on_background));
-%     data_near_on_data =  (data_near_on(:,10:end));
-%     data_near_on_background = mean(data_near_on_data(:,end-round(1200/gate):end),2)-0; % final ~1.2km background
-%     data_near_on_back_sub = (bsxfun(@minus, data_near_on_data, data_near_on_background));
-%     data_comb_on = [data_on_header, (data_on_back_sub + data_near_on_back_sub)];
-% 
-%     data_off_header = (data_off(:,1:9));
-%     data_off_data =  (data_off(:,10:end));
-%     data_off_background = mean(data_off_data(:,end-round(1200/gate):end),2)-0; % final ~1.2km background
-%     data_off_back_sub = (bsxfun(@minus, data_off_data, data_off_background));
-%     data_near_off_data =  (data_near_off(:,10:end));
-%     data_near_off_background = mean(data_near_off_data(:,end-round(1200/gate):end),2)-0; % final ~1.2km background
-%     data_near_off_back_sub = (bsxfun(@minus, data_near_off_data, data_near_off_background));
-%     data_comb_off = [data_off_header, (data_off_back_sub + data_near_off_back_sub)];
-% 
-%     % process the combined low and high ch without afterpulse correction 
-%     if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
-%       if strcmp(node,'MPD04') == 1 % MPD04 is using a low range channel
-%         blank_range = 187.5; % low range 
-%       end
-%         write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
-%       flag.near = 0; flag.afterpulse = 0; 
-%       MPD_Analysis_function_NetCDF_v5(data_comb_on, data_comb_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-%             profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
-%     end
 
-% 
+%% change plots when runnning locally to focus on lower ranges 
 %ylim([0 3])
 %grid on
 %grid minor
@@ -117,7 +86,7 @@ end
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');   
   flag.near = 0; flag.afterpulse = 1; 
-  if (strcmp(node,'MPD04') == 1) && (serial_date >= 737903) % MPD04 is using a low range channel
+  if (strcmp(node,'MPD04') == 1) && (serial_date >= 737902) % MPD04 is using a low range channel
     blank_range = 187.5; % low range 
   end
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...

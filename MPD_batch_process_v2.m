@@ -16,7 +16,7 @@ tStart = tic
       for k=start_day:stop_day
         file = datestr(k, 'yyyymmdd');  
         % save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr 
-        MPD_process_NetCDF_function_v2(0,1,0,0,'ALL','AP_ON','MPD04',file) % MPD 04 
+        MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD04',file) % MPD 04 
         MPD_process_NetCDF_function_v2(0,1,0,0,'ALL','AP_ON','MPD03',file) % MPD 03 
         
 %         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD01',file) 
