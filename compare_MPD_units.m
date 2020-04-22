@@ -26,8 +26,8 @@ load(strcat(date,'_combined.mat'))
 WV_min = 0;
 WV_max = 6;
 bins = WV_max*10; % bin size is x 0.1 x 0.1 g/m^2
-bins = WV_max*25; % bin size is x 0.1 x 0.1 g/m^2
-bin_min = 1;
+%bins = WV_max*40; % bin size is x 0.1 x 0.1 g/m^2
+bin_min = 2;
 bin_max = 2500;
 
 xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
@@ -72,13 +72,16 @@ for k=1:4 %row
         %h.XLimits = [WV_min WV_max];
         %h.YLimits = [WV_min WV_max];
         %ax.Colormap = 'parula';
-        ax.ColorScale = 'log'; 
+       % ax.ColorScale = 'log'; 
         ax.CLim = [bin_min bin_max];
         ax.CLim = [1 5000];
         ax.XGrid = 'on';
         ax.YGrid = 'on';
         colormap('parula')
-        %colorbar(gca,'off')
+        oldcmap = colormap;
+        colormap( flipud(oldcmap) );
+
+        colorbar(gca,'off')
      %   plot(x0,y90, 'r:')
      %   plot(x0,y110, 'r:')
         xlim([WV_min WV_max])
@@ -90,14 +93,16 @@ for k=1:4 %row
      % Display fit infor on graph
 %     text(0.5, 9.5, ['samples = ' num2str(num_samples(1))], 'FontSize', 6, 'Color', 'r')
 %     text(0.5, 8.75, ['y = ' num2str(fit(1),3) '*x + ' num2str(fit(2),3)], 'FontSize', 6, 'Color', 'r')
-     text(0.5, 5.75, ['Corr = ' num2str(Corr(2),3)], 'FontSize', 6, 'Color', 'r')
-     text(0.5, 5.25, ['StDev = ' num2str(StDev(2),3) 'g m^{-3}'], 'FontSize', 6, 'Color', 'r')
+     text(0.25, 5.75, ['Corr = ' num2str(Corr(2),3)], 'FontSize', 8, 'Color', 'r')
+     text(0.25, 5.25, ['StDev = ' num2str(StDev(2),3) 'g m^{-3}'], 'FontSize', 8, 'Color', 'r')
      hold on
      hold on 
      plot(xx0,y0, 'k-') % plot the 1:1 line
      plot(xfit,y_est,'r--','LineWidth',2)  % plot the least squared fit line
      hold off
  
+     hp4 = get(subplot(4,4,16),'Position')
+     colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  (hp4(2)+hp4(3))*3]) % x , y, width, height
       end
     end
 end

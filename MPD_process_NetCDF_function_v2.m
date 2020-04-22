@@ -1,8 +1,8 @@
 function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
 %clear all; 
 %close all
-%start_date = '20190405';
-%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD04'; daystr=start_date; 
+%start_date = '20200422';
+%save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_Off'; node='MPD04'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -47,6 +47,7 @@ date = textscan(folder(end-5:end), '%6f'); date=date{1};  % read date of file
 MPD_read_calvals % read in the calvals
 folder_in=folder;
 date_in = date;
+serial_date = datenum(num2str(date_in),'yymmdd');
 read_time_in = 2; % set read data in time increments of seconds (default it 2sec) 
   
 % read in all the data
@@ -56,6 +57,9 @@ read_time_in = 2; % set read data in time increments of seconds (default it 2sec
 % process the main ch without afterpulse correction 
 if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+  if (strcmp(node,'MPD04') == 1) && (serial_date >= 737903) % MPD04 is using a low range channel
+    blank_range = 187.5; % low range 
+  end
   flag.near = 0; flag.afterpulse = 0; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
@@ -93,10 +97,10 @@ end
 %             profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 %     end
 
-
-% ylim([0 3])
-% grid on
-% grid minor
+% 
+%ylim([0 3])
+%grid on
+%grid minor
 
 
 % process the near/low ch
@@ -113,6 +117,9 @@ end
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');   
   flag.near = 0; flag.afterpulse = 1; 
+  if (strcmp(node,'MPD04') == 1) && (serial_date >= 737903) % MPD04 is using a low range channel
+    blank_range = 187.5; % low range 
+  end
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 end
@@ -127,4 +134,4 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1) && strcmp(corr
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 end
     
-%end
+end
