@@ -540,11 +540,12 @@ if flag.save_figs==1
   end
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
-%  FigH = figure(3);
-%  % set(gca,'Fontsize',36,'Fontweight','b');
-%  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
-%  name=strcat(date, 'background_multi'); 
-%  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+  FigH = figure(3);
+  set(gca,'Fontsize',font_size,'Fontweight','b');
+  % set(gca,'Fontsize',36,'Fontweight','b');
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
+  name=strcat(date, 'background_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
 %  FigH = figure(5);
 % %  set(gca,'Fontsize',36,'Fontweight','b');

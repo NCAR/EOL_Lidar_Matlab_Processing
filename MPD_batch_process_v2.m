@@ -1,6 +1,6 @@
 % example batch process
- start_date = '20200422';
- stop_date = '20200422';
+ start_date = '20200430';
+ stop_date = '20200501';
 % start_date = '20190405';
 % stop_date = '20190410';
 
@@ -28,8 +28,8 @@ tStart = tic
       end
     end
 
-   start_date = '20200409';
-   stop_date = '20200422';
+   start_date = '20200418';
+   stop_date = '20200501';
 %      start_date = '20190405';
 %      stop_date = '20190410';
 
@@ -43,13 +43,13 @@ tStart = tic
 %     MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD05', start_date, stop_date)        
       
       MPD_multiday_plots_NetCDF_function(1,0,0,0,'MPD04', start_date, stop_date) % MPD 04 (high range) 
-      MPD_multiday_plots_NetCDF_function(1,0,1,0,'MPD04', start_date, stop_date) % MPD 04 (low range)
-      MPD_multiday_plots_NetCDF_function(1,0,0,1,'MPD04', start_date, stop_date) % MPD 04 (high range with afterpulse) 
-      MPD_multiday_plots_NetCDF_function(1,0,1,1,'MPD04', start_date, stop_date) % MPD 04 (low range with afterpulse)  
+%      MPD_multiday_plots_NetCDF_function(1,0,1,0,'MPD04', start_date, stop_date) % MPD 04 (low range)
+%      MPD_multiday_plots_NetCDF_function(1,0,0,1,'MPD04', start_date, stop_date) % MPD 04 (high range with afterpulse) 
+%      MPD_multiday_plots_NetCDF_function(1,0,1,1,'MPD04', start_date, stop_date) % MPD 04 (low range with afterpulse)  
       MPD_multiday_plots_NetCDF_function(1,0,0,0,'MPD03', start_date, stop_date) % MPD 03 (high gain)
-      MPD_multiday_plots_NetCDF_function(1,0,1,0,'MPD03', start_date, stop_date) % MPD 03 (low gain)
+%      MPD_multiday_plots_NetCDF_function(1,0,1,0,'MPD03', start_date, stop_date) % MPD 03 (low gain)
       MPD_multiday_plots_NetCDF_function(1,0,0,1,'MPD03', start_date, stop_date) % MPD 03 (high gain with afterpulse)
-      MPD_multiday_plots_NetCDF_function(1,0,1,1,'MPD03', start_date, stop_date) % MPD 03 (low gain with afterpulse)
+%      MPD_multiday_plots_NetCDF_function(1,0,1,1,'MPD03', start_date, stop_date) % MPD 03 (low gain with afterpulse)
     end
 tElapsed = toc(tStart) 
 end
