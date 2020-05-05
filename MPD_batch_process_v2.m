@@ -1,6 +1,6 @@
 % example batch process
- start_date = '20200430';
- stop_date = '20200501';
+ start_date = '20200501';
+ stop_date = '20200504';
 % start_date = '20190405';
 % stop_date = '20190410';
 
@@ -28,8 +28,8 @@ tStart = tic
       end
     end
 
-   start_date = '20200418';
-   stop_date = '20200501';
+   start_date = '20200421';
+   stop_date = '20200504';
 %      start_date = '20190405';
 %      stop_date = '20190410';
 

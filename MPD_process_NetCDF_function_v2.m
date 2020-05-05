@@ -57,7 +57,8 @@ read_time_in = 2; % set read data in time increments of seconds (default it 2sec
 % process the main ch without afterpulse correction 
 if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
-  if (strcmp(node,'MPD04') == 1) && (serial_date >= 737902) % MPD04 is using a low range channel
+  if ((strcmp(node,'MPD04') == 1) && (serial_date >= 737902)) || ...
+     ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) % MPD04 and 03 use combined low range channels
     blank_range = 187.5; % low range 
   end
   flag.near = 0; flag.afterpulse = 0; 
