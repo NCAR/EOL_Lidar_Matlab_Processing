@@ -59,7 +59,7 @@ if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
   if ((strcmp(node,'MPD04') == 1) && (serial_date >= 737902)) || ...
      ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) % MPD04 and 03 use combined low range channels
-    blank_range = 187.5; % low range 
+    blank_range = 150; % low range 
   end
   flag.near = 0; flag.afterpulse = 0; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
@@ -74,34 +74,35 @@ end
 
 
 % process the near/low ch
-if strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1  
-  flag.near = 1; flag.afterpulse = 0; 
-  if strcmp(node,'MPD04') == 1 % MPD04 is using a low range channel
-    blank_range = 187.5; % low range 
-  end
-  MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
-end
+%if strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1  
+%  flag.near = 1; flag.afterpulse = 0; 
+%  if strcmp(node,'MPD04') == 1 % MPD04 is using a low range channel
+%    blank_range = 187.5; % low range 
+%  end
+%  MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+%        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
+%end
 
 % process the main ch with afterpulse correction 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');   
   flag.near = 0; flag.afterpulse = 1; 
-  if (strcmp(node,'MPD04') == 1) && (serial_date >= 737902) % MPD04 is using a low range channel
-    blank_range = 187.5; % low range 
+  if ((strcmp(node,'MPD04') == 1) && (serial_date >= 737902)) || ... 
+     ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) % MPD04 and 03 use combined low range channels
+    blank_range = 150; % low range 
   end
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 end
 
 % process the near/low ch with afterpulse correction 
-if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1) && strcmp(correction,'AP_ON') == 1    
-  flag.near = 1; flag.afterpulse = 1;
-  if strcmp(node,'MPD04') == 1 % MPD04 is using a low range channel
-    blank_range = 150; 
-  end
-  MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
-end
+%if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WVLow') == 1) && strcmp(correction,'AP_ON') == 1    
+%  flag.near = 1; flag.afterpulse = 1;
+%  if strcmp(node,'MPD04') == 1 % MPD04 is using a low range channel
+%    blank_range = 150; 
+%  end
+%  MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+%        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
+%end
     
 end
