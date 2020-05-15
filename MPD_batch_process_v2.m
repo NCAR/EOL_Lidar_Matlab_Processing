@@ -1,13 +1,13 @@
 % example batch process
- start_date = '20200505';
- stop_date = '20200506';
+ start_date = '20200513';
+ stop_date = '20200515';
 % start_date = '20190405';
 % stop_date = '20190410';
 
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
 k=start_day;
-flag.process = 1;
+flag.process = 0;
 flag.plot = 1;
 
 for n=1:1
@@ -28,8 +28,8 @@ tStart = tic
       end
     end
 
-   start_date = '20200423';
-   stop_date = '20200506';
+   start_date = '20200502';
+   stop_date = '20200515';
 %      start_date = '20190405';
 %      stop_date = '20190410';
 
