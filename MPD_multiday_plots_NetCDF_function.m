@@ -153,11 +153,15 @@ for i=1:days
   %       OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
   %       range_limit = range_limit_N_avg2/2
-         range_lim2 = size(range)   
+         size(range)   
       end
     range_lim1 = size(N_avg_comb,2) % catch any changes in range
-   % range_lim2 = size(N_avg,2) % catch any changes in range
-    range_limit = min([range_lim1 range_lim2])
+    if gate < 75
+      range_lim2 = size(N_avg,2)/2 % catch any changes in range
+    else
+      range_lim2 = size(N_avg,2) % catch any changes in range
+    end
+      range_limit = min([range_lim1 range_lim2])
     
     
     N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg_grid(2:end,1:range_limit));
