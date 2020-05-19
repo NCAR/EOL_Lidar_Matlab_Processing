@@ -157,7 +157,7 @@ for i=1:days
       end
     range_lim1 = size(N_avg_comb,2) % catch any changes in range
     if gate < 75
-      range_lim2 = size(N_avg,2)/2 % catch any changes in range
+      range_lim2 = size(N_avg,2)/4 % catch any changes in range
     else
       range_lim2 = size(N_avg,2) % catch any changes in range
     end
