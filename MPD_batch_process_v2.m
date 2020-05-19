@@ -7,7 +7,7 @@
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
 k=start_day;
-flag.process = 1;
+flag.process = 0;
 flag.plot = 1;
 
 for n=1:1
