@@ -153,7 +153,7 @@ for i=1:days
          range = range_grid_75;
          range_limit = range_limit_N_avg2/2
       end
-    range_lim1 = size(N_avg_comb,1) % catch any changes in range
+    range_lim1 = size(N_avg_comb,2) % catch any changes in range
     range_lim2 = size(N_avg,2) % catch any changes in range
     range_limit = min([range_lim1 range_lim2])
     
