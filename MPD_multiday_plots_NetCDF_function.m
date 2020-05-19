@@ -100,7 +100,7 @@ for i=1:days
         load(strcat(date, '.mat'))
       end
     end 
-    range_limit_N_avg = size(N_avg,2)
+    range_limit_N_avg = size(N_avg,2);
     % grid everything to a 75 m gate size 
       if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit_N_avg-1)*gate; 
@@ -141,7 +141,7 @@ for i=1:days
         load(strcat(date, '.mat'))
       end
     end  
-    range_limit_N_avg2 = size(N_avg,2)
+    range_limit_N_avg2 = size(N_avg,2);
    % if range_limit_ch < range_limit
    %     range_limit = range_limit_ch;
    % end
@@ -157,11 +157,11 @@ for i=1:days
       end
     range_lim1 = size(N_avg_comb,2) % catch any changes in range
     if gate < 75
-      range_lim2 = size(N_avg,2)/4 % catch any changes in range
+      range_lim2 = size(N_avg,2)/(75/gate) % catch any changes in range
     else
       range_lim2 = size(N_avg,2) % catch any changes in range
     end
-      range_limit = min([range_lim1 range_lim2])
+      range_limit = min([range_lim1 range_lim2]);
     
     
     N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg_grid(2:end,1:range_limit));
