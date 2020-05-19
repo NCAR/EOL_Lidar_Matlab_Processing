@@ -124,9 +124,9 @@ location %write the location to the screen
 wavemeter_offset %write the calibration offset to the screen 
 
 %calcuate the accumuation time per MCS dwell 
-time_per_column = MCS.accum*((MCS.bins*MCS.bin_duration)+MCS.accum_delay)/1e9; % acummulation time in seconds
-profiles2ave.wv = 2*round(((ave_time.wv*60/time_per_column)+1)/2);   
-profiles2ave.rb = 2*round(((ave_time.rb*60/time_per_column)+1)/2); 
+time_per_column = MCS.accum*((MCS.bins*MCS.bin_duration)+MCS.accum_delay)/1e9 % acummulation time in seconds
+profiles2ave.wv = 2*round(((ave_time.wv*60/time_per_column)+1)/2)   
+profiles2ave.rb = 2*round(((ave_time.rb*60/time_per_column)+1)/2) 
 load('diff_geo_cor_170810.mat');
 %timing_range_correction = ((1.25+1/2)-0.5/2)*150;  % changed hardware timing to start after pulse through
 %timing_range_correction = (1.25-0.2+0.5/2-1.0/2)*150;% Delay of MCS - delay of TOSA trigger + MCS bin duration/2 - pulse duration/2
