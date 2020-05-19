@@ -108,7 +108,7 @@ for i=1:days
          RB_grid = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
        %  OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
-         range_limit = range_limit_N_avg/2
+ %        range_limit = range_limit_N_avg/2
      end
     N_avg_comb=N_avg_grid;
     RB_comb=RB_grid;
@@ -151,9 +151,9 @@ for i=1:days
          RB_grid = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
   %       OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
-         range_limit = range_limit_N_avg2/2
+  %       range_limit = range_limit_N_avg2/2
       end
-    range_lim1 = size(N_avg_comb,2) % catch any changes in range
+    range_lim1 = size(N_avg_comb,1) % catch any changes in range
     range_lim2 = size(N_avg,2) % catch any changes in range
     range_limit = min([range_lim1 range_lim2])
     
