@@ -140,13 +140,13 @@ for i=1:days
         load(strcat(date, '.mat'))
       end
     end  
-    range_limit_N_avg2 = size(N_avg,2)
+    range_limit_ch = size(N_avg,2);
    % if range_limit_ch < range_limit
    %     range_limit = range_limit_ch;
    % end
     % grid everything to a 75 m gate size 
       if gate < 75
-         range_grid_75 = 0:range_grid_size:(range_limit_N_avg2-1)*gate; 
+         range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
          N_avg_grid = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
          RB_grid = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
   %       OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
