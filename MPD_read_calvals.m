@@ -125,6 +125,8 @@ wavemeter_offset %write the calibration offset to the screen
 
 %calcuate the accumuation time per MCS dwell 
 time_per_column = MCS.accum*((MCS.bins*MCS.bin_duration)+MCS.accum_delay)/1e9 % acummulation time in seconds
+% this should have the PRF right?  getting the wrong values
+time_per_column = 2.0 %override for now
 profiles2ave.wv = 2*round(((ave_time.wv*60/time_per_column)+1)/2)   
 profiles2ave.rb = 2*round(((ave_time.rb*60/time_per_column)+1)/2) 
 load('diff_geo_cor_170810.mat');
