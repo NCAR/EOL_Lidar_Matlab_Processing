@@ -33,9 +33,9 @@ bin_min = 2;
 bin_max = 2500;
 
 % make sure they same set to same range 
-  range_limit = min([size(MPD03.N_avg_comb,2) size(MPD03.N_avg_comb,2)])
-  MPD03.N_avg_comb = real(MPD03.N_avg_comb(:,1:range_limit));   
-  MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
+%  range_limit = min([size(MPD03.N_avg_comb,2) size(MPD03.N_avg_comb,2)])
+%  MPD03.N_avg_comb = real(MPD03.N_avg_comb(:,1:range_limit));   
+%  MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
 
 
 xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
@@ -64,8 +64,8 @@ m=1;
 %k=3;
 %m=3;
 
-for k=1:1 %4 %row
-    for m=1:1 %4  %column
+for k=1:4 %row
+    for m=1:4  %column
       if (m>=k)== 1
         
         % calculate the best fit (in a least-squares sense) and the correlation coefficient
