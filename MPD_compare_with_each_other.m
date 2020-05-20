@@ -61,8 +61,8 @@ figure('Position',Scrsize);
 k=1;
 m=1;
 
-k=3;
-m=3;
+%k=3;
+%m=3;
 
 for k=1:1 %4 %row
     for m=1:1 %4  %column
