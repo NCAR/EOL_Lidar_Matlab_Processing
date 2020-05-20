@@ -1,8 +1,8 @@
 clear all; close all;
 
 dd = pwd; % get the current path
-%date = '10 Apr 2019'; % Last day of a five-unit side-by-side test  
-date = '20 May 2020'; %   
+date = '10 Apr 2019'; % Last day of a five-unit side-by-side test  
+%date = '20 May 2020'; %   
 
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -14,16 +14,16 @@ else
 end
 
 
-%cd(strcat(serv_path, 'mpd_01_processed_data/Matlab')) % point to the directory where data is stored 
-%load(strcat(date,'_combined.mat'))
-%cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) % point to the directory where data is stored  
-%load(strcat(date,'_combined.mat'))
+cd(strcat(serv_path, 'mpd_01_processed_data/Matlab')) % point to the directory where data is stored 
+load(strcat(date,'_combined.mat'))
+cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) % point to the directory where data is stored  
+load(strcat(date,'_combined.mat'))
 cd(strcat(serv_path, 'mpd_03_processed_data/Matlab')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
 cd(strcat(serv_path, 'mpd_04_processed_data/Matlab')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
-%cd(strcat(serv_path, 'mpd_05_processed_data/Matlab')) % point to the directory where data is stored 
-%load(strcat(date,'_combined.mat'))
+cd(strcat(serv_path, 'mpd_05_processed_data/Matlab')) % point to the directory where data is stored 
+load(strcat(date,'_combined.mat'))
     
 WV_min = 0;
 WV_max = 8;
@@ -38,11 +38,11 @@ bin_max = 2500;
   MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
 
 
-%xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
-%xx{2} = real(reshape(MPD02.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
-xx{1} = real(reshape(MPD03.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
-xx{2} = real(reshape(MPD04.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
-%xx{5} = real(reshape(MPD05.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
+xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
+xx{2} = real(reshape(MPD02.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
+xx{3} = real(reshape(MPD03.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
+xx{4} = real(reshape(MPD04.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
+xx{5} = real(reshape(MPD05.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
 
 xx0 = WV_min:1:WV_max;
 y0 = WV_min:1:WV_max;
@@ -61,9 +61,12 @@ figure('Position',Scrsize);
 k=1;
 m=1;
 
-%for k=1:1 %4 %row
-%    for m=1:1 %4  %column
-%      if (m>=k)== 1
+k=3;
+m=3;
+
+for k=1:1 %4 %row
+    for m=1:1 %4  %column
+      if (m>=k)== 1
         
         % calculate the best fit (in a least-squares sense) and the correlation coefficient
         idx = (isnan(xx{k})|isnan(xx{m+1})); %remove the NaNs
@@ -92,7 +95,7 @@ m=1;
         oldcmap = colormap;
         colormap( flipud(oldcmap) );
 
-%        colorbar(gca,'off')
+        colorbar(gca,'off')
      %   plot(x0,y90, 'r:')
      %   plot(x0,y110, 'r:')
         xlim([WV_min WV_max])
@@ -111,11 +114,11 @@ m=1;
      plot(xfit,y_est,'r--','LineWidth',2)  % plot the least squared fit line
      hold off
  
-%     hp4 = get(subplot(4,4,16),'Position')
-%     colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  (hp4(2)+hp4(3))*3]) % x , y, width, height
-%      end
-%    end
-%end
+     hp4 = get(subplot(4,4,16),'Position')
+     colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  (hp4(2)+hp4(3))*3]) % x , y, width, height
+      end
+    end
+end
 
 
 cd(strcat(serv_path, 'mpd_03_processed_data/Plots')) % point to the directory where data is stored 
