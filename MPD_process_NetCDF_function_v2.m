@@ -49,7 +49,9 @@ folder_in=folder;
 date_in = date;
 serial_date = datenum(num2str(date_in),'yymmdd');
 read_time_in = 2; % set read data in time increments of seconds (default it 2sec) 
-  
+profiles2ave.wv = 2*round(((ave_time.wv*60/read_time_in)+1)/2)   
+profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
+
 % read in all the data
  [data_on, data_off, data_near_on, data_near_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
 
