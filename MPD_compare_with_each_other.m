@@ -1,8 +1,8 @@
 clear all; close all;
 
 dd = pwd; % get the current path
-date = '10 Apr 2019'; % Last day of a five-unit side-by-side test  
-%date = '20 May 2020'; %   
+%date = '10 Apr 2019'; % Last day of a five-unit side-by-side test  
+date = '20 May 2020'; %   
 
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -14,43 +14,40 @@ else
 end
 
 
-cd(strcat(serv_path, 'mpd_01_processed_data/Matlab')) % point to the directory where data is stored 
-load(strcat(date,'_combined.mat'))
-cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) % point to the directory where data is stored  
-load(strcat(date,'_combined.mat'))
+%cd(strcat(serv_path, 'mpd_01_processed_data/Matlab')) % point to the directory where data is stored 
+%load(strcat(date,'_combined.mat'))
+%cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) % point to the directory where data is stored  
+%load(strcat(date,'_combined.mat'))
 cd(strcat(serv_path, 'mpd_03_processed_data/Matlab')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
 cd(strcat(serv_path, 'mpd_04_processed_data/Matlab')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
-cd(strcat(serv_path, 'mpd_05_processed_data/Matlab')) % point to the directory where data is stored 
-load(strcat(date,'_combined.mat'))
+%cd(strcat(serv_path, 'mpd_05_processed_data/Matlab')) % point to the directory where data is stored 
+%load(strcat(date,'_combined.mat'))
     
 WV_min = 0;
 WV_max = 8;
 bins = WV_max*10; % bin size is x 0.1 x 0.1 g/m^2
 %bins = WV_max*40; % bin size is x 0.1 x 0.1 g/m^2
-bin_min = 2;
-bin_max = 2500;
+bin_min = 1;
+bin_max = 4000;
 
 % make sure they same set to same range 
-%  range_limit = min([size(MPD03.N_avg_comb,2) size(MPD03.N_avg_comb,2)])
-%  MPD03.N_avg_comb = real(MPD03.N_avg_comb(:,1:range_limit));   
-%  MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
+  range_limit = min([size(MPD03.N_avg_comb,2) size(MPD03.N_avg_comb,2)])
+  MPD03.N_avg_comb = real(MPD03.N_avg_comb(:,1:range_limit));   
+  MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
 
 
-xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
-xx{2} = real(reshape(MPD02.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
+%xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
+%xx{2} = real(reshape(MPD02.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
 xx{3} = real(reshape(MPD03.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
 xx{4} = real(reshape(MPD04.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
-xx{5} = real(reshape(MPD05.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
+%xx{5} = real(reshape(MPD05.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
 
 xx0 = WV_min:1:WV_max;
 y0 = WV_min:1:WV_max;
 y90 = WV_min:1*0.9:WV_max*0.9;
 y110 = WV_min:1*1.1:WV_max*1.1;
-
-size(xx{1})
-size(xx{2})
 
 scrsz = get(0,'ScreenSize');
 Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
@@ -61,20 +58,23 @@ figure('Position',Scrsize);
 k=1;
 m=1;
 
-%k=3;
-%m=3;
+k=3; % these are set for just looking at MPD03 and MPD04
+m=3;
 
-for k=1:4 %row
-    for m=1:4  %column
-      if (m>=k)== 1
+%for k=1:4 %row
+%    for m=1:4  %column
+%      if (m>=k)== 1
         
         % calculate the best fit (in a least-squares sense) and the correlation coefficient
         idx = (isnan(xx{k})|isnan(xx{m+1})); %remove the NaNs
         num_samples = size(xx{k}(~idx), 2); 
-        fit = polyfit(xx{k}(~idx),xx{m+1}(~idx),1);
-        [Corr, P_test] = corrcoef(xx{k}(~idx),xx{m+1}(~idx))
-        Cov = cov(xx{k}(~idx),xx{m+1}(~idx));
-        StDev = sqrt((cov(xx{k}(~idx),xx{m+1}(~idx))))
+        X = [xx{k}(~idx)' xx{m+1}(~idx)'];
+        fit = polyfit(X(:,1),X(:,2),1);
+        [Corr, P_test] = corrcoef(X)
+        Cov = cov(X)
+        %[R,s1] = corrcov(Cov) %statistical toolbox method to find R and std in one step
+        StDev = sqrt((cov(X)))
+        %StDev = sqrt(diag(Cov))
         % Evaluate fit equation using polyval
         y_est = polyval(fit,xfit);  
           
@@ -88,14 +88,14 @@ for k=1:4 %row
         %ax.Colormap = 'parula';
        % ax.ColorScale = 'log'; 
         ax.CLim = [bin_min bin_max];
-        ax.CLim = [1 5000];
+%        ax.CLim = [1 5000];
         ax.XGrid = 'on';
         ax.YGrid = 'on';
         colormap('parula')
         oldcmap = colormap;
         colormap( flipud(oldcmap) );
 
-        colorbar(gca,'off')
+%        colorbar(gca,'off')
      %   plot(x0,y90, 'r:')
      %   plot(x0,y110, 'r:')
         xlim([WV_min WV_max])
@@ -105,20 +105,20 @@ for k=1:4 %row
      %   ylabel(gca, 'absolute humidity')
         
      % Display fit infor on graph
-     text(0.25, WV_max-0.5, ['samples = ' num2str(num_samples(1))], 'FontSize', 8, 'Color', 'r')
-     text(0.25, WV_max-1.0, ['y = ' num2str(fit(1),3) '*x + ' num2str(fit(2),3)], 'FontSize', 8, 'Color', 'r')
-     text(0.25, WV_max-1.5, ['Corr = ' num2str(Corr(2),3)], 'FontSize', 8, 'Color', 'r')
-     text(0.25, WV_max-2.0, ['StDev = ' num2str(StDev(2),3) 'g m^{-3}'], 'FontSize', 8, 'Color', 'r')
+     text(WV_min+0.25, WV_max-0.5, ['samples = ' num2str(num_samples(1))], 'FontSize', 8, 'Color', 'r')
+     text(WV_min+0.25, WV_max-1.0, ['y = ' num2str(fit(1),3) '*x + ' num2str(fit(2),3)], 'FontSize', 8, 'Color', 'r')
+     text(WV_min+0.25, WV_max-1.5, ['Corr = ' num2str(Corr(2),3)], 'FontSize', 8, 'Color', 'r')
+     text(WV_min+0.25, WV_max-2.0, ['StDev = ' num2str(StDev(2),3) 'g m^{-3}'], 'FontSize', 8, 'Color', 'r')
      hold on
      plot(xx0,y0, 'k-') % plot the 1:1 line
      plot(xfit,y_est,'r--','LineWidth',2)  % plot the least squared fit line
      hold off
  
-     hp4 = get(subplot(4,4,16),'Position')
-     colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  (hp4(2)+hp4(3))*3]) % x , y, width, height
-      end
-    end
-end
+%     hp4 = get(subplot(4,4,16),'Position')
+%     colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  (hp4(2)+hp4(3))*3]) % x , y, width, height
+%      end
+%    end
+%end
 
 
 cd(strcat(serv_path, 'mpd_03_processed_data/Plots')) % point to the directory where data is stored 

@@ -1,5 +1,5 @@
 % example batch process
- start_date = '20200519';
+ start_date = '20200520';
  stop_date = '20200520';
 % start_date = '20190405';
 % stop_date = '20190410';
