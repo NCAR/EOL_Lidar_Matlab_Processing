@@ -77,7 +77,7 @@ RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
 %Spatial averaging (range average) in bins.  
 gate = round((MCS.bin_duration*1e-9*3e8/2)*100)/100
 
-delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
+delta_r_index =  37.5/gate; % this is the cumlative sum photons gate spacing 
 %delta_r_index =  1; % proces at the native gate spacing
 delta_r = delta_r_index*gate*100; % delta r in cm
 r1 = round(1500/gate); % index for smoothing range 1 (1500m)
