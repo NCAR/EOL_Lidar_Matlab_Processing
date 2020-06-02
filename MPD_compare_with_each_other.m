@@ -26,7 +26,7 @@ load(strcat(date,'_combined.mat'))
 %load(strcat(date,'_combined.mat'))
     
 WV_min = 0;
-WV_max = 8;
+WV_max = 10;
 bins = WV_max*10; % bin size is x 0.1 x 0.1 g/m^2
 %bins = WV_max*40; % bin size is x 0.1 x 0.1 g/m^2
 bin_min = 1;
