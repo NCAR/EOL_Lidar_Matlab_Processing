@@ -4,7 +4,7 @@ dd = pwd; % get the current path
 %cd /scr/eldora1/wvdial_2_data/2018
 %folder = '20180818';
 cd(folder)
-MCSsample.dirListing = dir(strcat('MCS','*')); %ncdisp('MCSsample000000.nc', '/', 'min') 
+MCSsample.dirListing = dir(strcat('MCS','*')); %ncdisp('MCS_03_20200519_010000.nc', '/', 'min') 
 LL.dirListing = dir(strcat('LL','*')); %ncdisp('LLsample000000.nc', '/', 'min')
 %Etalon.dirListing = dir(strcat('Etalonsample','*')); %ncdisp('Etalonsample000000.nc', '/', 'min')
 HKeep.dirListing = dir(strcat('HKeep','*')); %ncdisp('HKeepsample000000.nc', '/', 'min')
@@ -40,6 +40,10 @@ for d = 1:length(MCSsample.dirListing)
     MCSsample.channel1=MCSsample.channel;
   end
 end
+
+%MCS.time_step = mean(diff(MCSsample.time1))*60*60
+%figure(100)
+%plot((diff(MCSsample.time1))*60*60)
 
 for d = 1:length(LL.dirListing)
   %read in the laser locking wavelength data 
