@@ -48,7 +48,7 @@ MPD_read_calvals % read in the calvals
 folder_in=folder;
 date_in = date;
 serial_date = datenum(num2str(date_in),'yymmdd');
-read_time_in = 0.1; % set read data in time increments of seconds (default it 2sec) 
+read_time_in = 0.5; % set read data in time increments of seconds (default it 2sec) 
 profiles2ave.wv = 2*round(((ave_time.wv*60/read_time_in)+1)/2)   
 profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
 
