@@ -1,5 +1,5 @@
 % example batch process
- start_date = '20200714';
+ start_date = '20200710';
  stop_date = '20200716';
 % start_date = '20190405';
 % stop_date = '20190410';
@@ -16,8 +16,8 @@ tStart = tic
       for k=start_day:stop_day
         file = datestr(k, 'yyyymmdd');  
         % save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr 
-        MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD04',file) % MPD 04 
-        MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) % MPD 03 
+%        MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD04',file) % MPD 04 
+%        MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) % MPD 03 
         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD01',file) % MPD 01 
         
 %         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD01',file) 
@@ -30,8 +30,8 @@ tStart = tic
     end
 
 %  start_date = '20200506';
-  start_date = '20200707';
-  stop_date = '20200714';
+  start_date = '20200710';
+  stop_date = '20200716';
 %      start_date = '20190405';
 %      stop_date = '20190410';
 
