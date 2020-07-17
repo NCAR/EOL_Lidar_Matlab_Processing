@@ -2,7 +2,7 @@ clear all; close all;
 
 dd = pwd; % get the current path
 %date = '10 Apr 2019'; % Last day of a five-unit side-by-side test  
-date = '02 Jun 2020'; %   
+date = '29 Jun 2020'; %   
 
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -26,7 +26,7 @@ load(strcat(date,'_combined.mat'))
 %load(strcat(date,'_combined.mat'))
     
 WV_min = 0;
-WV_max = 10;
+WV_max = 8;
 bins = WV_max*10; % bin size is x 0.1 x 0.1 g/m^2
 %bins = WV_max*40; % bin size is x 0.1 x 0.1 g/m^2
 bin_min = 1;
