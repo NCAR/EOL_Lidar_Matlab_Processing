@@ -41,9 +41,7 @@ for d = 1:length(MCSsample.dirListing)
   end
 end
 
-%MCS.time_step = mean(diff(MCSsample.time1))*60*60
-%figure(100)
-%plot((diff(MCSsample.time1))*60*60)
+
 
 for d = 1:length(LL.dirListing)
   %read in the laser locking wavelength data 
@@ -150,21 +148,36 @@ MCSsample.all = [MCSsample.time1,MCSsample.data1];
 index.wvonline = find(contains(MCSsample.ChannelAssignment,'WVOnline') & not(contains(MCSsample.ChannelAssignment,'WVOnlineLow')))-1;
 if isempty(index.wvonline) == 0
    MCSsample.online = MCSsample.all(MCSsample.channel1==index.wvonline,:); % 
+   MCSsample.online_time = MCSsample.time1(MCSsample.channel1==index.wvonline,:); % 
 end
 index.wvoffline = find(contains(MCSsample.ChannelAssignment,'WVOffline') & not(contains(MCSsample.ChannelAssignment,'WVOfflineLow')))-1;
 if isempty(index.wvoffline) == 0
    MCSsample.offline = MCSsample.all(MCSsample.channel1==index.wvoffline,:); % 
+   MCSsample.offline_time = MCSsample.time1(MCSsample.channel1==index.wvoffline,:); % 
 end
 index.wvonline_near = find(contains(MCSsample.ChannelAssignment,'WVOnlineLow'))-1;
 if isempty(index.wvonline_near) == 0
    MCSsample.on_near = MCSsample.all(MCSsample.channel1==index.wvonline_near,:); % 
+   MCSsample.on_near_time = MCSsample.time1(MCSsample.channel1==index.wvonline_near,:); %  
 end
 index.wvoffline_near = find(contains(MCSsample.ChannelAssignment,'WVOfflineLow'))-1;
 if isempty(index.wvoffline_near) == 0
    MCSsample.off_near = MCSsample.all(MCSsample.channel1==index.wvoffline_near,:); % 
+   MCSsample.off_near_time = MCSsample.time1(MCSsample.channel1==index.wvoffline_near,:); % 
 end
 %MCSsample.combined = MCSsample.all(MCSsample.channel1==2,:); % 2 is the combined HSRL channel
 %MCSsample.molecular = MCSsample.all(MCSsample.channel1==3,:); % 3 is the molecular HSRL channel
+
+
+%MCS.time_step = mean(diff(MCSsample.time1))*60*60
+%figure(100)
+%plot((diff(MCSsample.online_time))*60*60)
+%median((diff(MCSsample.online_time))*60*60)
+figure(101)
+plot((diff(MCSsample.offline_time))*60*60)
+median((diff(MCSsample.offline_time))*60*60)
+
+
 
 
 

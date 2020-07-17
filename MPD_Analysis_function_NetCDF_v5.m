@@ -598,6 +598,13 @@ else
   T0 = 273+30; % surface temperature
 end
 
+if isnan(T0)
+    T0 = 295;
+end
+if isnan(P0)
+    P0=0.83;
+end
+
   T = T0-0.0065.*range; % set to match the sounding
 
 % pressure in atmospheres

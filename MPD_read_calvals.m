@@ -9,11 +9,11 @@ end
 
 if strcmp(node,'MPD01')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial1_calvals.json')],'SimplifyCell',1);
-  blank_range = 375; % 
+  blank_range = 300; % 
 %  blank_range = 525; % 
 elseif strcmp(node,'MPD02')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial2_calvals.json')],'SimplifyCell',1);
-  blank_range = 375;
+  blank_range = 300;
 %  blank_range = 525;
 elseif strcmp(node,'MPD03')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial3_calvals.json')],'SimplifyCell',1);
@@ -25,7 +25,8 @@ elseif strcmp(node,'MPD04')==1
 %  blank_range = 525;
 elseif strcmp(node,'MPD05')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial5_calvals.json')],'SimplifyCell',1);
-  blank_range = 525;
+  blank_range = 300;
+%  blank_range = 525;
 end
 
 %t_date = '04-Apr-2019' % used for testing

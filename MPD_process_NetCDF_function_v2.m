@@ -60,7 +60,8 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
 if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
   if ((strcmp(node,'MPD04') == 1) && (serial_date >= 737902)) || ...
-     ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) % MPD04 and 03 use combined low range channels
+     ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) || ...
+     ((strcmp(node,'MPD01') == 1) && (serial_date >= 737916)) 
     blank_range = 150; % low range 
   end
   flag.near = 0; flag.afterpulse = 0; 
