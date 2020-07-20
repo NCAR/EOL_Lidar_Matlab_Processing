@@ -127,6 +127,7 @@ for i=1:days
       p_on = P_on;
       p_off = P_off;
       t_bench = T_bench;
+      t_base = T_base
     end
   else
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
@@ -174,6 +175,7 @@ for i=1:days
       p_on = vertcat(p_on, P_on(2:end,:));  
       p_off = vertcat(p_off, P_off(2:end,:)); 
       t_bench = vertcat(t_bench, T_bench(2:end,:));  
+      t_base = vertcat(t_base, T_base(2:end,:));  
     end
   end
 end
@@ -437,9 +439,10 @@ if flag.replot==1
    subplot2=subplot(2,1,2,'Parent',figure1,'YGrid','on', 'XGrid','on');
    box(subplot2,'on');
    hold(subplot2,'all');
-   %plot(duration, T_bench,'r', 'LineWidth',1, 'DisplayName','T bench')
+   plot(duration, t_bench,'g-', 'LineWidth',1, 'DisplayName','T bench')
+   plot(duration, t_base,'g', 'LineWidth',1, 'DisplayName','T base')
    plot(duration, surf_T, 'b', 'LineWidth',1, 'DisplayName','Surface T')
-   axis([fix(min(duration)) ceil(max(duration)) -inf inf]);   % -20 40])
+   axis([fix(min(duration)) ceil(max(duration)) 0 40]);% -inf inf]);   % -20 40])
       YTick = [-25 0 25 50];
    ylabel('temperature, C', 'Fontsize', WS_font_size, 'Fontweight', 'b'); 
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
