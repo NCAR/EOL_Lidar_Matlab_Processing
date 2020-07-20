@@ -15,7 +15,7 @@ flag.near = near;  % read in the near range channel (0=off 1=on)
 flag.afterpulse = afterpulse; % read in the afterpulse corrected data (0=off 1=on)
 
 font_size = 28; % use this for 2019b version
-WS_font_size = 12; % use this for 2019b version
+WS_font_size = 28; %12; % use this for 2019b version
 %font_size = 36; % use this for 2018a version
 %font_size = 14; % use this for 2015a version
 %font_size = 16; % use this for 2015a versionexit
@@ -127,7 +127,7 @@ for i=1:days
       p_on = P_on;
       p_off = P_off;
       t_bench = T_bench;
-      t_base = T_base
+      t_base = T_base;
     end
   else
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
