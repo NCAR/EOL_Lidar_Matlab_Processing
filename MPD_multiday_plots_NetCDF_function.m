@@ -474,7 +474,7 @@ if flag.replot==1
    % plot Surface pressure right y-axis of the lower plot
    ax(4) = axes('Position',get(ax(2),'Position'));
    plot(duration, surf_P, 'k-','LineWidth', 1, 'DisplayName','Surf P') 
-   axis([fix(min(duration)) ceil(max(duration)) -inf inf])
+   axis([fix(min(duration)) ceil(max(duration)) 0.8 1.0]);% -inf inf]); 
    set(ax(4),'Color','none')
    set(ax(4),'YAxisLocation','right')
    set(ax(4),'XAxisLocation','bottom')
