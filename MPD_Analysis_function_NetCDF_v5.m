@@ -390,7 +390,7 @@ end
     O_y = 0.1*O_y_near + 0.9.*O_y_primary;
   end
   
-  O_x = O_x + 300;  
+  O_x = O_x + 150; % add pulse legnth offset to geometeric overlap function (replace with real pulse duration)
   O = interp1(O_x, O_y, range, 'linear','extrap');
 
   
