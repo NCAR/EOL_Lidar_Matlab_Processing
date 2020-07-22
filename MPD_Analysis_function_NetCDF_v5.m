@@ -387,7 +387,7 @@ end
   end
 % used combined geometric overlap correction from Zemax model starting in March 2020
   if ((serial_date >= 737902))
-    O_y = 0.05*O_y_near + 0.95.*O_y_primary;
+    O_y = 0.01*O_y_near + 0.99.*O_y_primary;
   end
   
   O_x = O_x + 150; % add pulse legnth offset to geometeric overlap function (replace with real pulse duration)
