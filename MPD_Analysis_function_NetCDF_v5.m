@@ -381,9 +381,9 @@ end
   O_y_near = [2.47E-2; 9.90E-2; 3.99E-1; 8.72E-1; 1.00E+0; 1.00E+0 ;1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0];
   O_y_primary = [7e-7; 1.5e-5; 2.77e-4; 1.38e-3; 3.98e-3; 8.89e-3; 3.72e-2; 1.06e-1; 2.08e-1; 3.39e-1; 6.61e-1; 9.53e-1; 9.74e-1; 9.86e-1; 9.92e-1; 1.00E+0; 1.00E+0];
   if (flag.near==1) 
-    Oy = Oy_near;
+    O_y = O_y_near;
   else
-    Oy = Oy_primary;
+    O_y = O_y_primary;
   end
 % used combined geometric overlap correction from Zemax model starting in March 2020
   if ((serial_date >= 737902))
