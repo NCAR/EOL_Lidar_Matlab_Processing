@@ -73,10 +73,16 @@ for d = 1:length(HKeep.dirListing)
   HKeep.time = ncread(HKeep.filename,'time');
   HKeep.temp = ncread(HKeep.filename,'Temperature');
   if d>1   % sum the days nc data files into a single array
-    try  % catch addition of thermocouple error this will only allow three thermocouples to be read
+   % if size(HKeep.temp,2) == size(HKeep.temp1,2) % catch addition of thermocouple error
+   %   HKeep.time1 = [HKeep.time1; HKeep.time];
+   %   HKeep.temp1 = [HKeep.temp1; HKeep.temp];
+   % end
+    try
       HKeep.time1 = [HKeep.time1; HKeep.time];
-      HKeep.temp1 = [HKeep.temp1(:,1:3); HKeep.temp(:,1:3)];
+      HKeep.temp1 = [HKeep.temp1; HKeep.temp];
     catch
+      HKeep.time1 = [HKeep.time1; HKeep.time];
+      HKeep.temp1 = [HKeep.temp1; HKeep.temp];
     end
   else
       HKeep.time1 = HKeep.time;
