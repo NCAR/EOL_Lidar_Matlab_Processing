@@ -479,7 +479,7 @@ if flag.replot==1
    set(ax(4),'YAxisLocation','right')
    set(ax(4),'XAxisLocation','bottom')
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   ylabel('surface pressure, atm', 'Fontsize', WS_font_size, 'Fontweight', 'b');  
+   ylabel('Pressure, atm', 'Fontsize', WS_font_size, 'Fontweight', 'b');  
    set(gca,'Fontsize',WS_font_size,'Fontweight','b');
    legend('show')
    set(legend(ax(3)),'Color','white')
