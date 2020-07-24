@@ -430,7 +430,7 @@ if flag.replot==1
   %plot(duration, (i_on),'r','LineWidth',2, 'DisplayName','i_{on}')
   plot(duration, (lambda_comb_on),'g-','LineWidth',2,'DisplayName','Lambda_{on}') % these plot diode Temps
   %plot(duration, (t_hsrl),'g','LineWidth',2, 'DisplayName','T_{hsrl}')
-   axis([fix(min(duration)) ceil(max(duration)) 828 828.4])
+   axis([fix(min(duration)) ceil(max(duration)) 828.1 828.3])
    YTick = [100 120 140 160 180];
    ylabel('wavelength, nm', 'Fontsize', WS_font_size, 'Fontweight', 'b');  
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
