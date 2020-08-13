@@ -63,7 +63,8 @@ if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1
      ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) || ...
      ((strcmp(node,'MPD01') == 1) && (serial_date >= 737988)) || ...
      ((strcmp(node,'MPD05') == 1) && (serial_date >= 738014))
-    blank_range = 150; % low range 
+    blank_range = 150; % low range
+    blank_range
   end
   flag.near = 0; flag.afterpulse = 0; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
