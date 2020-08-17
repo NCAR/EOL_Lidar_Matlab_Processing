@@ -1,5 +1,5 @@
 % example batch process
- start_date = '20200813';
+ start_date = '20200815';
  stop_date = '20200817';
 
 start_day = datenum(start_date,'yyyymmdd');
@@ -17,7 +17,7 @@ tStart = tic
 %         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD01',file) 
 %         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD02',file) 
 %         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) 
-         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD04',file)  
+%         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD04',file)  
          MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)         
       end
     end
@@ -30,7 +30,7 @@ tStart = tic
 %      MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD01', start_date, stop_date) 
 %      MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD02', start_date, stop_date) 
 %      MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD03', start_date, stop_date) 
-      MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD04', start_date, stop_date) 
+%      MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD04', start_date, stop_date) 
       MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD05', start_date, stop_date) 
     end
 tElapsed = toc(tStart) 
