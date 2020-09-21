@@ -75,9 +75,9 @@ for d = 1:length(HKeep.dirListing)
   if d>1   % sum the days nc data files into a single array
     try  % catch addition of thermocouple error this will only allow three thermocouples to be read
       HKeep.time1 = [HKeep.time1; HKeep.time];
-      HKeep.temp1 = [HKeep.temp1(:,1:3); HKeep.temp(:,1:3)];
+      HKeep.temp1 = [HKeep.temp1(:,1:end); HKeep.temp(:,1:end)];
     catch
-      HKeep.temp1 = [HKeep.temp1(:,1:3); [HKeep.temp(:,1:1) HKeep.temp(:,1:1) HKeep.temp(:,1:1)]];
+      HKeep.temp1 = [[HKeep.temp1(:,1:1) HKeep.temp1(:,1:1) HKeep.temp1(:,1:1)]; [HKeep.temp(:,1:1) HKeep.temp(:,1:1) HKeep.temp(:,1:1)]];
     end
   else
       HKeep.time1 = HKeep.time;
