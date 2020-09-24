@@ -177,8 +177,9 @@ end
 %median((diff(MCSsample.online_time))*60*60)
 figure(101)
 plot((diff(MCSsample.offline_time))*60*60)
-median((diff(MCSsample.offline_time))*60*60)
-
+offline_timestep = median((diff(MCSsample.offline_time))*60*60)
+online_timestep = median((diff(MCSsample.online_time))*60*60)
+read_time_in = min(offline_timestep, online_timestep)
 
 if isfield(LL,'time') == 1
   LL.all = [LL.time1, LL.wavelength1, LL.wavediff1, LL.current1];

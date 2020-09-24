@@ -77,7 +77,7 @@ for d = 1:length(HKeep.dirListing)
       HKeep.time1 = [HKeep.time1; HKeep.time];
       HKeep.temp1 = [HKeep.temp1(:,1:end); HKeep.temp(:,1:end)];
     catch
-      HKeep.temp1 = [[HKeep.temp1(:,1:3) ]; [HKeep.temp(:,1:1) HKeep.temp(:,1:1) HKeep.temp(:,1:1)]];
+      HKeep.temp1 = [[HKeep.temp1(:,1:1) HKeep.temp1(:,1:1) HKeep.temp1(:,1:1)]; [HKeep.temp(:,1:1) HKeep.temp(:,1:1) HKeep.temp(:,1:1)]];
     end
   else
       HKeep.time1 = HKeep.time;
@@ -178,7 +178,8 @@ end
 figure(101)
 plot((diff(MCSsample.offline_time))*60*60)
 median((diff(MCSsample.offline_time))*60*60)
-
+meonline_timestep= median((diff(MCSsample.online_time))*60*60)
+read_time_in = min(
 
 if isfield(LL,'time') == 1
   LL.all = [LL.time1, LL.wavelength1, LL.wavediff1, LL.current1];
