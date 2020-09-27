@@ -2,7 +2,7 @@ clear all; close all;
 
 dd = pwd; % get the current path
 %date = '10 Apr 2019'; % Last day of a five-unit side-by-side test  
-date = '25 Sep 2020'; %   
+date = '27 Sep 2020'; %   
 
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
