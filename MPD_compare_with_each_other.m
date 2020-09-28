@@ -38,7 +38,7 @@ bin_max = 4000;
   MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
 
 % clip the range bin
-for kk = 3:10     %cutoff the 75m range bins from 3bin(225m) to 10bin(750m)
+for kk = 1:10     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
 kk
 MPD01.N_avg_comb(:,1:kk) = NaN; 
 MPD02.N_avg_comb(:,1:kk) = NaN; 
