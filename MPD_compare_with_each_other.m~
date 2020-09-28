@@ -38,8 +38,12 @@ bin_max = 4000;
   MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
 
 % clip the range bin
-for m = 3:10
-MPD02.N_avg_comb(:,1:m) = NaN;  %cutoff the 75m range bins from 3(225)
+for l = 3:10     %cutoff the 75m range bins from 3bin(225m) to 10bin(750m)
+MPD01.N_avg_comb(:,1:l) = NaN; 
+MPD02.N_avg_comb(:,1:l) = NaN; 
+MPD03.N_avg_comb(:,1:l) = NaN; 
+MPD04.N_avg_comb(:,1:m) = NaN; 
+MPD05.N_avg_comb(:,1:m) = NaN; 
 
 
 xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
