@@ -134,7 +134,7 @@ cd(strcat(serv_path, 'mpd_03_processed_data/Plots')) % point to the directory wh
 FigH = figure(1);
 %set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-name=strcat(date, 'Self_comparison_hist_multi', kk); 
+name=strcat(date, 'Self_comparison_hist_multi', num2str(kk)); 
 print(FigH, name, '-dpng', '-r300') % set at the screen resolution 
 
 close all
