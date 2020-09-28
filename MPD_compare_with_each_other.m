@@ -38,13 +38,13 @@ bin_max = 4000;
   MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
 
 % clip the range bin
-for ll = 3:10     %cutoff the 75m range bins from 3bin(225m) to 10bin(750m)
-ll
-MPD01.N_avg_comb(:,1:ll) = NaN; 
-MPD02.N_avg_comb(:,1:ll) = NaN; 
-MPD03.N_avg_comb(:,1:ll) = NaN; 
-MPD04.N_avg_comb(:,1:ll) = NaN; 
-MPD05.N_avg_comb(:,1:ll) = NaN; 
+for kk = 3:10     %cutoff the 75m range bins from 3bin(225m) to 10bin(750m)
+kk
+MPD01.N_avg_comb(:,1:kk) = NaN; 
+MPD02.N_avg_comb(:,1:kk) = NaN; 
+MPD03.N_avg_comb(:,1:kk) = NaN; 
+MPD04.N_avg_comb(:,1:kk) = NaN; 
+MPD05.N_avg_comb(:,1:kk) = NaN; 
 
 
 xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
@@ -134,8 +134,10 @@ cd(strcat(serv_path, 'mpd_03_processed_data/Plots')) % point to the directory wh
 FigH = figure(1);
 %set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-name=strcat(date, 'Self_comparison_hist_multi_', ll); 
+name=strcat(date, 'Self_comparison_hist_multi', kk); 
 print(FigH, name, '-dpng', '-r300') % set at the screen resolution 
+
+close all
 
 end
 
