@@ -1,4 +1,4 @@
-function[] = MPD_multiday_plots_NetCDF_function(save_figs, save_data, near, afterpulse, node, daystr, daystr2)
+function[] = MPD_multiday_plots_NetCDF_function(save_figs, save_data, near, afterpulse, node, daystr, daystr2, skip)
 %clear all; 
 %start_date = '20190405';
 %stop_date = '20190410';
@@ -9,7 +9,7 @@ dd = pwd; % get the current path
 
 date = datestr(datenum(daystr,'yyyymmdd'), 'dd mmm yyyy');
 days = (datenum(daystr2,'yyyymmdd') - datenum(daystr,'yyyymmdd'))+1;
-skip = 2;
+%skip = 2;
 
 flag.near = near;  % read in the near range channel (0=off 1=on)
 flag.afterpulse = afterpulse; % read in the afterpulse corrected data (0=off 1=on)
