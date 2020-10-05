@@ -1,12 +1,12 @@
 % example batch process
 
- start_date = '20201001';
- stop_date = '20201001';
+ start_date = '20201002';
+ stop_date = '20201005';
 
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
 k=start_day;
-flag.process = 0;
+flag.process = 1;
 flag.plot = 1;
 
 for n=1:1
@@ -23,11 +23,12 @@ tStart = tic
       end
     end
 
-  start_date = '20200925';
-  stop_date = '20201001';
+  start_date = '20200929';
+  stop_date = '20201005';
 
     if flag.plot == 1
-      % save_figs, save_data, near/low, afterpulse, node, daystr, daystr2,skip
+      % save_figs, save_data, near/low, afterpulse, node, daystr, daystr2,
+      % skip(tick marks at every day 1, other day, 2 etc)
       MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD01', start_date, stop_date, 1) 
       MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD02', start_date, stop_date, 1) 
       MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD03', start_date, stop_date, 1) 

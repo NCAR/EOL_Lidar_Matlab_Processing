@@ -264,7 +264,7 @@ if flag.replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 10]);
+ caxis([0 8]);
  colormap(jet)
  %colormap(C)
  %colormap(perula)
