@@ -564,9 +564,9 @@ end
     
   if flag.gradient_filter == 1
     [FX,FY] = gradient(Offline_Temp_Spatial_Avg);
-    Offline_Temp_Spatial_Avg(FX<-(2000*(MCS.bin_duration*MCS.accum)/500/14200)) = nan; % remove falling edge of clouds
-    Offline_Temp_Spatial_Avg(FX> (2000*(MCS.bin_duration*MCS.accum)/500/14200)) = nan; % remove leading edge of clouds   
-    
+    Offline_Temp_Spatial_Avg(FX<-(1000*(MCS.bin_duration*MCS.accum)/500/14200)) = nan; % remove falling edge of clouds
+    Offline_Temp_Spatial_Avg(FX> (1000*(MCS.bin_duration*MCS.accum)/500/14200)) = nan; % remove leading edge of clouds   
+    % the default is 2000*(MCS.bin_duration*MCS.accum)/500/14200) 
     if flag.troubleshoot == 1
       imagesc(time_grid,range./1e3, FX');
       axis xy; colorbar('EastOutside'); caxis([-1000 1000]);   
