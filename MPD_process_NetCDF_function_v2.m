@@ -10,7 +10,7 @@ flag.save_netCDF = save_netCDF; % save files netCDF format
 flag.save_catalog = save_catalog; % upload quicklook (and data) to field catalog
 
 flag.mask_data = 1;  % mask applied to data based on error analysis threshold
-flag.gradient_filter = 1;  % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
+flag.gradient_filter = 0;  % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
 flag.pileup = 1; % use pileup correction for detectors
 flag.WS = 1; % use the surface weather station data to calcuate spectroscopy
 flag.decimate = 0; % decimate all data to half the wv resoltuion
