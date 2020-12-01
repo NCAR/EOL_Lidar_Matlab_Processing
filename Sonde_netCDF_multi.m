@@ -5,7 +5,8 @@ flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
 %d=pwd;
 %cd('/Volumes/documents/WV_DIAL_data/SGP_sondes/') % point to the directory where data is stored
 %cd('/scr/sci/tammy/mpd/sgp/soundings/')
-cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
+%cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
+cd('/Users/spuler/Desktop/mpd_05_processed_data/Sondes')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
@@ -14,9 +15,9 @@ jj=1;
 for jj = 1:size(sondefilename,2)
     cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
    % add the following three lines for Raman 
-    range_grid_size = 60;  
-    N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
-    duration = comb_Raman_duration;
+   % range_grid_size = 60;  
+   % N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
+   % duration = comb_Raman_duration;
    [xx(jj,:), yy(jj,:)] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, flag); 
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
     %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
@@ -24,7 +25,8 @@ for jj = 1:size(sondefilename,2)
     
     
 % create a line plot of the sonde vs MPD data
-scrsz = get(0,'ScreenSize');
+%scrsz = get(0,'ScreenSize');
+scrsz = [1  1  1920 1200]
 Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
 font_size = 14;
 WV_min = 0;
@@ -49,6 +51,8 @@ y_MPD05(y_MPD05<-WV_max*3)=NaN; % remove points 3x outside of plot range
 y_MPD05(y_MPD05>WV_max*3)=NaN; % remove points 3x outside of plot range 
 x_sonde(x_sonde<-WV_max*3)=NaN; % remove points 3x outside of plot range 
 x_sonde(x_sonde>WV_max*3)=NaN; % remove points 3xoutside of plot range 
+
+y_MPD05=real(y_MPD05); % add to catch non-real values
 
 % calculate the best fit (in a least-squares sense) and the correlation coefficient
 idx = (isnan(y_MPD05)|isnan(x_sonde)); %remove the NaNs
@@ -125,7 +129,8 @@ plot(xx0,yy0, 'k-')  % plot the 1:1 line
 plot(xx,y_est,'r--','LineWidth',2) % plot the least squared fit line
 hold off
 
-cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+%cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stor
 FigH = figure(7);
 set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
@@ -133,7 +138,8 @@ name=strcat(date, 'Sonde_hist_multi');
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 
 
-cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+%cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stor
 FigH = figure(8);
 set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
