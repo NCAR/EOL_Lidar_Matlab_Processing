@@ -32,9 +32,9 @@ elseif strcmp(node,'MPD04')==1
   end
 elseif strcmp(node,'MPD05')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial5_calvals.json')],'SimplifyCell',1);
-  if (serial_date >= 738014) % day the WFOV channel was installed
+  %if (serial_date >= 738014) % day the WFOV channel was installed
        blank_range = 150;
-  end
+  %end
 end
 
 
