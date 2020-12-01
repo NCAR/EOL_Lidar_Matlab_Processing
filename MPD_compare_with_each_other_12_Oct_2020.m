@@ -39,7 +39,7 @@ bin_max = 4000;
 
 % remove the lowest range bin which has the surface station data
 % then use the loop to clip the ranges back in 75m increments
-j=4
+j=1
 %for j = 1:10     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
 %jj
 MPD01.N_avg_comb(:,1:j) = NaN; 
@@ -49,7 +49,7 @@ MPD04.N_avg_comb(:,1:j) = NaN;
 MPD05.N_avg_comb(:,1:j) = NaN;
 
 % just for 12 Oct 2020 remove the lowest 600m from MPD 05 during 
-% MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
+ MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
 
  %Scrnsize = get(0,'screensize')
  % plot Narrow water vapor in g/m^3
