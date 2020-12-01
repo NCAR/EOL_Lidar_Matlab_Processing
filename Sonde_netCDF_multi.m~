@@ -73,8 +73,8 @@ fit = flip(mdl.Coefficients.Estimate')
 xx = WV_min:0.1:WV_max;
 y_est = polyval(fit,xx);
 
-figure(7); %Frequency histogram 
-ax = subplot(1,1,1);
+figure(7) %Frequency histogram 
+        ax=subplot(4,4,((k-1)*4)+m);
 %figure('Position',Scrsize);
 % this is temporary (the python code should remove these 
 binscatter(x_sonde,y_MPD05, [bins bins]);    
@@ -82,9 +82,9 @@ binscatter(x_sonde,y_MPD05, [bins bins]);
   %hh.NumBins =[bins bins];
   %hh.XLimits = [WV_min WV_max];
   %hh.YLimits = [WV_min WV_max];
-ax.CLim = [0 50];
-ax.XGrid = 'on';
-axh.YGrid = 'on';
+CLim = [0 50];
+XGrid = 'on';
+YGrid = 'on';
 colormap('parula')
 oldcmap = colormap;
 colormap( flipud(oldcmap) );

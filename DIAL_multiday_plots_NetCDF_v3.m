@@ -61,7 +61,7 @@ days = 7; skip = 1;
 days = 32; skip = 4;
 %days = 72; skip = 9;
 %days = 96; skip = 12;
-blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
+blank = 600; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 
 %DIAL=4;
 %date = '16 Aug 2019'; % Comparison test new butterfly DBR + TWA transmitter 
