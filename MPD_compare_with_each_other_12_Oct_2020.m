@@ -49,7 +49,7 @@ MPD04.N_avg_comb(:,1:j) = NaN;
 MPD05.N_avg_comb(:,1:j) = NaN;
 
 % just for 12 Oct 2020 remove the lowest 600m from MPD 05 during 
- MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
+% MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
 
  %Scrnsize = get(0,'screensize')
  % plot Narrow water vapor in g/m^3
