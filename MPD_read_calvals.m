@@ -9,6 +9,7 @@ end
 
 %  blank_range = 525; % This was the original blank range in 2019
   blank_range = 300; %  This was the blank range prior to adding the WFOV receiver in summer of 2020
+  blank_range = 150; %  For testing turn off the blanking
 
 if strcmp(node,'MPD01')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial1_calvals.json')],'SimplifyCell',1);
