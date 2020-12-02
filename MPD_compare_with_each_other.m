@@ -39,7 +39,7 @@ bin_max = 4000;
 
 % remove the lowest range bin which has the surface station data
 % then use the loop to clip the ranges back in 75m increments
-j=7
+j=1
 %for j = 1:10     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
 %jj
 MPD01.N_avg_comb(:,1:j) = NaN; 
