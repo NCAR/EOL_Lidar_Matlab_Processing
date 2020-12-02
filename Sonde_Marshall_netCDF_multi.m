@@ -1,12 +1,13 @@
 
-elevation= 317.0; %MPD05 was at 317m elevation at SGP
-flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
+elevation= 1745; %MPD03 was at 1745m elevation at Marshall Field Site
+flag.plot_overlay = 0; %plot sondes on the time vs hieght AH plot
 
 %d=pwd;
 %cd('/Volumes/documents/WV_DIAL_data/SGP_sondes/') % point to the directory where data is stored
 %cd('/scr/sci/tammy/mpd/sgp/soundings/')
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
-cd('/Users/spuler/Desktop/mpd_05_processed_data/Sondes')
+%cd('/Users/spuler/Desktop/mpd_05_processed_data/Sondes')
+cd('/Users/spuler/Desktop/mpd_03_processed_data/Sondes')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
@@ -18,7 +19,8 @@ for jj = 1:size(sondefilename,2)
    % range_grid_size = 60;  
    % N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
    % duration = comb_Raman_duration;
-   [xx(jj,:), yy(jj,:)] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, flag); 
+   [xx(jj,:), yy(jj,:)] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, flag); 
+   %[xx(jj,:), yy(jj,:)] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, flag); 
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
     %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
  end
@@ -30,7 +32,7 @@ scrsz = [1  1  1920 1200]
 Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
 font_size = 14;
 WV_min = 0;
-WV_max = 20;
+WV_max = 8;
 bins = WV_max*4; % bin size is x 0.1 x 0.1 g/m^2
 %bin_min = 1;
 %bin_max = 400;
@@ -133,7 +135,8 @@ plot(xx,y_est,'r--','LineWidth',2) % plot the least squared fit line
 hold off
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
-cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stor
+%cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/')
+cd('/Users/spuler/Desktop/mpd_03_processed_data/Plots/')
 FigH = figure(7);
 set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
@@ -142,7 +145,8 @@ print(FigH, name, '-dpng', '-r0') % set at the screen resolution
 
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
-cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stor
+%cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') 
+cd('/Users/spuler/Desktop/mpd_03_processed_data/Plots/')
 FigH = figure(8);
 set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);

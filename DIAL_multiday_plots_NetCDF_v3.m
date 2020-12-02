@@ -35,7 +35,7 @@ tic
 %date = '05 Apr 2019'; % Five-unit side-by-side test  
 %days = 5; skip = 1;
 
-%DIAL=3;
+DIAL=3;
 %date = '11 Jun 2018'; %  
 %days = 176; skip = 11;  % shoot for about 14 ticks
 %date = '05 Aug 2018'; %  
@@ -44,6 +44,11 @@ tic
 %days = 60; skip = 5;  % shoot for about 14 ticks
 %date = '05 Apr 2019'; % Five-unit side-by-side test  
 %days = 5; skip = 1;
+
+date = '07 Oct 2020'; % Move out to Marshall 12 Oct
+days = 50; skip = 5;  % shoot for about 14 ticks
+blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
+
 
 %DIAL=4;
 %date = '08 Aug 2018'; %  
@@ -55,13 +60,13 @@ tic
 %date = '05 Apr 2019'; % Five-unit side-by-side test  
 %days = 5; skip = 1;
 
-DIAL=5;
-date = '18 Apr 2019'; % SGP test  
-days = 7; skip = 1;
-days = 32; skip = 4;
-%days = 72; skip = 9;
-%days = 96; skip = 12;
-blank = 600; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
+% DIAL=5;
+% date = '18 Apr 2019'; % SGP test  
+% days = 7; skip = 1;
+% days = 32; skip = 4;
+% %days = 72; skip = 9;
+% %days = 96; skip = 12;
+% blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 
 %DIAL=4;
 %date = '16 Aug 2019'; % Comparison test new butterfly DBR + TWA transmitter 
@@ -125,10 +130,11 @@ if DIAL==1
   bin_duration = 250;  % ns (this change from 500 to 250 for DIAL#2 on 2014)
   %near_field = 1;  % now the HSRL channel
  elseif DIAL==3
-  cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data') % point to the directory where data is stored 
-  if flag.afterpulse == 1
-    cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data_afterpulse_corrected') % point to the directory where data is stored   
-  end
+  %cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data') % point to the directory where data is stored 
+  %if flag.afterpulse == 1
+  %  cd('/Volumes/documents/WV_DIAL_data/MPD3_processed_data_afterpulse_corrected') % point to the directory where data is stored   
+  %end
+  cd('/Users/spuler/Desktop/mpd_03_processed_data/Matlab') % point to the directory where data is stored 
 elseif DIAL==4
   cd('/Volumes/documents/WV_DIAL_data/MPD4_processed_data') % point to the directory where data is stored 
  elseif DIAL==5
@@ -572,6 +578,7 @@ if flag.save_figs==1
   %cd('/Users/spuler/Desktop/WV_DIAL_data/plots/') % point to the directory where data is stored 
   %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
   cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stored   
+  cd('/Users/spuler/Desktop/mpd_03_processed_data/Plots/') % point to the directory where data is stored 
   date=datestr(nanmean(time_new), 'yyyymmdd');
   
   %Scrnsize = [scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2]; % use for standard plots

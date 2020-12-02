@@ -1,42 +1,48 @@
-function[sonde_AH_grid, MPD_AH] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, flag) 
+function[sonde_AH_grid, MPD_AH] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, flag) 
 
 %sondedir
 
 filename = [sondedir sondefilename{jj}]; 
 %filename = '/scr/sci/tammy/mpd/sgp/soundings/sgpsondewnpnC1.b1.20190429.023100.cdf';
 %filename = '/Users/spuler/downloads/sgpsondewnpnC1.b1.20190501.083100.cdf';
-filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201016_163106.nc';
-date = filename(end-15:end-10);
-n = datenum(date, 'yymmdd');
+%filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201016_163106.nc';
+%filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201007_183911.nc';
+
+sonde_date = filename(end-15:end-10);
+sonde_time = filename(end-8:end-3);
+n = datenum([sonde_date sonde_time], 'yymmddHHMMSS');
+datestr(n)
 
 ncid = netcdf.open(filename, 'NC_NOWRITE');
   %ncdisp(filename, '/', 'min') % use this to display all variables
-  %ncdisp(filename) % use this to display all variables
+  ncdisp(filename) % use this to display all variables
     
- variable{1} = 'base_time'; % time (seconds since 1970-1-1)
- variable{2} = 'time_offset'; % time (seconds since 1970-1-1)
+ variable{1} = 'time'; % time (seconds since 1970-1-1)
+ %variable{2} = 'time_offset'; % time (seconds since 1970-1-1)
  variable{3} = 'alt'; % altitude above mean sea level (m)
  variable{4} = 'pres'; % pressure (hPa or mbar)
  variable{5} = 'tdry'; %Dry Bulb Temperature (C)
  variable{6} = 'rh'; % relative humidity (%)
  variable{7} = 'lat'; % latitude
  variable{8} = 'lon'; % longitude 
+ variable{9} = 'reference_alt'; 
   
  base_time  = ncread(filename,variable{1});   
- sonde_time = ncread(filename,variable{2});   
+ %sonde_time = ncread(filename,variable{2}); 
  sonde_alt = ncread(filename,variable{3});
  sonde_P = ncread(filename,variable{4});  
  sonde_T = ncread(filename,variable{5});  
  sonde_RH = ncread(filename,variable{6}); 
  sonde_lat = ncread(filename,variable{7}); 
  sonde_lon = ncread(filename,variable{8}); 
+ reference_alt = ncread(filename,variable{9});  
  
 netcdf.close(ncid);
 
 %convert sonde from Unix time to date number (days since Jan 0 0000) 
-duration_sonde = datenum(datetime(int64(sonde_time) + int64(base_time), 'convertfrom', 'posixtime'));
+%duration_sonde = datenum(datetime(int64(sonde_time) + int64(base_time), 'convertfrom', 'posixtime'));
 %sonde_offset_min = 30;
-%duration_sonde = duration_sonde + sonde_offset_min/24/60;
+duration_sonde = n +  base_time/24/60/60;
 sonde_AGL = sonde_alt - elevation;
 
 %figure(101)
