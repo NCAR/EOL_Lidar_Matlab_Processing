@@ -2,7 +2,7 @@ clear all; close all;
 
 dd = pwd; % get the current path
 date = '10 Apr 2019'; % Last day of a five-unit side-by-side test  
-%date = '12 Oct 2020'; %   
+date = '12 Oct 2020'; %   
 
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -47,6 +47,10 @@ MPD02.N_avg_comb(:,1:j) = NaN;
 MPD03.N_avg_comb(:,1:j) = NaN; 
 MPD04.N_avg_comb(:,1:j) = NaN; 
 MPD05.N_avg_comb(:,1:j) = NaN; 
+
+% just for 06 or 12 Oct 2020 remove the lowest 600m from MPD 05 during when
+% WFOV receiver was blocked
+%MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
 
 
 xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
@@ -139,7 +143,7 @@ set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
 name=strcat(date, 'Self_comparison_hist_multi', num2str(j)); 
 print(FigH, name, '-dpng', '-r300') % set at the screen resolution 
 
-close all
+%close all
 
 %end
 

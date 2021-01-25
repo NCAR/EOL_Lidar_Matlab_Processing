@@ -11,7 +11,7 @@
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
 k=start_day;
-flag.process = 1;
+flag.process = 0;
 flag.plot = 1;
 
 for n=1:1
@@ -28,8 +28,8 @@ tStart = tic
       end
     end
 
- % start_date = '20201012';
- % stop_date = '20201201';
+  start_date = '20200929';
+  stop_date =  '20201005';
 
     if flag.plot == 1
       % save_figs, save_data, near/low, afterpulse, node, daystr, daystr2,

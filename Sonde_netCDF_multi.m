@@ -6,7 +6,8 @@ flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
 %cd('/Volumes/documents/WV_DIAL_data/SGP_sondes/') % point to the directory where data is stored
 %cd('/scr/sci/tammy/mpd/sgp/soundings/')
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
-cd('/Users/spuler/Desktop/mpd_05_processed_data/Sondes')
+serv_path = '/Users/spuler/Desktop';
+cd(strcat(serv_path,'/mpd/sgp/Sondes/'))
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
@@ -15,9 +16,13 @@ jj=1;
 for jj = 1:size(sondefilename,2)
     cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
    % add the following three lines for Raman 
-   % range_grid_size = 60;  
-   % N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
-   % duration = comb_Raman_duration;
+       % range_grid_size = 60;  
+       % N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
+       % duration = comb_Raman_duration;
+   % add the following lines for Python processing of the MPD 
+      range_grid_size = 37.4736;  
+      N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
+      duration = comb_AH_duration;
    [xx(jj,:), yy(jj,:)] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, flag); 
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
     %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
@@ -148,3 +153,7 @@ set(gca,'Fontsize',30,'Fontweight','b'); %
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
 name=strcat(date, 'Sonde_multi'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+
+
+ 
+print(FigH, name, '-dpng', '-r0') % set at the screen resolution

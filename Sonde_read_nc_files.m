@@ -5,7 +5,7 @@ function[sonde_AH_grid, MPD_AH] = Sonde_read_nc_files(jj, elevation, sondedir, s
 filename = [sondedir sondefilename{jj}]; 
 %filename = '/scr/sci/tammy/mpd/sgp/soundings/sgpsondewnpnC1.b1.20190429.023100.cdf';
 %filename = '/Users/spuler/downloads/sgpsondewnpnC1.b1.20190501.083100.cdf';
-filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201016_163106.nc';
+%filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201016_163106.nc';
 date = filename(end-15:end-10);
 n = datenum(date, 'yymmdd');
 

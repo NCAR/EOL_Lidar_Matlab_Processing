@@ -1,8 +1,9 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
 max_error = 5; %masking level for Raman Lidar data based on mixing ratio error 
-serv_path = '/Volumes/eol/sci/';
-cd(strcat(serv_path,'spuler/mpd/sgp/raman_lidar/'))
+serv_path = '/Volumes/eol/sci/spuler';
+serv_path = '/Users/spuler/Desktop';
+cd(strcat(serv_path,'/mpd/sgp/raman_lidar/'))
 [Ramanfilename, Ramandir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 jj=1;
 %cd= d;

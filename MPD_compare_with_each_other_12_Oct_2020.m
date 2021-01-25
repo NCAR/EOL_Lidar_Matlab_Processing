@@ -37,19 +37,38 @@ bin_max = 4000;
   MPD03.N_avg_comb = real(MPD03.N_avg_comb(:,1:range_limit));   
   MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
 
-% remove the lowest range bin which has the surface station data
-% then use the loop to clip the ranges back in 75m increments
-j=1
-%for j = 1:10     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
-%jj
-MPD01.N_avg_comb(:,1:j) = NaN; 
-MPD02.N_avg_comb(:,1:j) = NaN; 
-MPD03.N_avg_comb(:,1:j) = NaN; 
-MPD04.N_avg_comb(:,1:j) = NaN;
-MPD05.N_avg_comb(:,1:j) = NaN;
+  
+% just for 06 or 12 Oct 2020 remove the lowest 600m from MPD 05 during when
+% WFOV receiver was blocked
+MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
+  
 
-% just for 12 Oct 2020 remove the lowest 600m from MPD 05 during 
- MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
+ p_start = 6250;
+ p_stop = p_start+500; 
+ 
+%blank the data at 225m 
+%MPD05.N_avg_comb(p_start:p_stop,1:1) = NaN;  
+ 
+% plot profiles 
+MPD01_AH_profile = nanmean(MPD01.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
+MPD02_AH_profile = nanmean(MPD02.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
+MPD03_AH_profile = nanmean(MPD03.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
+MPD04_AH_profile = nanmean(MPD04.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
+MPD05_AH_profile = nanmean(MPD05.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
+figure(101)
+plot(MPD01_AH_profile, MPD01.range./1e3, '-o', 'DisplayName','MPD01'); 
+hold on
+plot(MPD02_AH_profile, MPD02.range./1e3, '-o', 'DisplayName','MPD02'); 
+plot(MPD03_AH_profile, MPD03.range./1e3, '-o', 'DisplayName','MPD03'); 
+plot(MPD04_AH_profile, MPD04.range./1e3, '-o', 'DisplayName','MPD04'); 
+plot(MPD05_AH_profile, MPD05.range./1e3, '-o', 'DisplayName','MPD05'); 
+hold off
+axis([0 8 0 3.5])
+xlabel('Absolute Humidity (g m^{-3})','fontweight','b','fontsize',12);
+ylabel('Height (km, AGL)','fontweight','b','fontsize',12);
+legend('show', 'Location','southwest')
+
+ MPD05.N_avg_comb(p_start:p_stop,1:1) = NaN; 
 
  %Scrnsize = get(0,'screensize')
  % plot Narrow water vapor in g/m^3
@@ -68,6 +87,29 @@ MPD05.N_avg_comb(:,1:j) = NaN;
  colormap(jet)
   ylabel('Height (km, AGL)','fontweight','b','fontsize',12); 
 
+  font_size = 28; % use this for 2019b version
+  scrsz = [1  1  1024 768];
+  Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plot
+  FigH = figure(1);
+  set(gca,'Fontsize',font_size,'Fontweight','b'); % use for Perdigao BAMS plots 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
+  name=strcat(date, 'H2O_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+
+
+% remove the lowest range bin which has the surface station data
+% then use the loop to clip the ranges back in 75m increments
+j=1
+%for j = 1:10     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
+%jj
+MPD01.N_avg_comb(:,1:j) = NaN; 
+MPD02.N_avg_comb(:,1:j) = NaN; 
+MPD03.N_avg_comb(:,1:j) = NaN; 
+MPD04.N_avg_comb(:,1:j) = NaN;
+MPD05.N_avg_comb(:,1:j) = NaN;
+
+% just for 12 Oct 2020 remove the lowest 600m from MPD 05 during 
+% MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
  
 xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
 xx{2} = real(reshape(MPD02.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);

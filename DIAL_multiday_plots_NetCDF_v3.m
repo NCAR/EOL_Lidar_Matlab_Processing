@@ -60,13 +60,14 @@ blank = 150; % has to be in increments of 75 (the default blank in the processin
 %date = '05 Apr 2019'; % Five-unit side-by-side test  
 %days = 5; skip = 1;
 
-% DIAL=5;
-% date = '18 Apr 2019'; % SGP test  
+ DIAL=5;
+ date = '19 Apr 2019'; % SGP test  
 % days = 7; skip = 1;
-% days = 32; skip = 4;
+ days = 32; skip = 4;
+ days = 12; skip = 2;
 % %days = 72; skip = 9;
 % %days = 96; skip = 12;
-% blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
+blank = 525; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 
 %DIAL=4;
 %date = '16 Aug 2019'; % Comparison test new butterfly DBR + TWA transmitter 
