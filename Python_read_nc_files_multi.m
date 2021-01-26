@@ -2,10 +2,13 @@
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
 %serv_path = '/Users/spuler/Desktop';
-serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
-cd(strcat(serv_path,'/mpd_03_processed_data'))
+%serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
+%cd(strcat(serv_path,'/mpd_05_processed_data'))
 %cd(strcat(serv_path,'/mpd/sgp/mpd05'))
-%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/MPDSGP/t_res_10min/';
+serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
+cd(strcat(serv_path, '/MPDSGP/t_res_10min/'));  %This was the original SGP 10 min data
+%cd(strcat(serv_path,'/MPD_Gen5_Pub/'));
+
 %cd(strcat(serv_path))
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 jj=1;
@@ -14,9 +17,9 @@ range_grid_size = 75;  %set the size of the range gridding
 
  variable{1} = 'Absolute_Humidity';
  variable{2} = 'time_Absolute_Humidity';
-variable{2} = 'time';
+%variable{2} = 'time';
  variable{3} = 'range_Absolute_Humidity';
- variable{3} = 'range';
+% variable{3} = 'range';
  variable{4} = 'Absolute_Humidity_mask';
  
  variable{5} = 'Attenuated_Backscatter';
