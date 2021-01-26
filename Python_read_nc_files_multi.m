@@ -1,8 +1,12 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
-serv_path = '/Volumes/eol/sci/spuler';
-serv_path = '/Users/spuler/Desktop';
-cd(strcat(serv_path,'/mpd/sgp/mpd05'))
+%serv_path = '/Volumes/eol/sci/spuler';
+%serv_path = '/Users/spuler/Desktop';
+serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
+cd(strcat(serv_path,'/mpd_03_processed_data'))
+%cd(strcat(serv_path,'/mpd/sgp/mpd05'))
+%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/MPDSGP/t_res_10min/';
+%cd(strcat(serv_path))
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 jj=1;
 %cd= d;
@@ -10,7 +14,9 @@ range_grid_size = 75;  %set the size of the range gridding
 
  variable{1} = 'Absolute_Humidity';
  variable{2} = 'time_Absolute_Humidity';
+variable{2} = 'time';
  variable{3} = 'range_Absolute_Humidity';
+ variable{3} = 'range';
  variable{4} = 'Absolute_Humidity_mask';
  
  variable{5} = 'Attenuated_Backscatter';
@@ -72,8 +78,9 @@ Z = real(comb_AH)';
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); 
   caxis([0 16]);
+  caxis([0 6]);
   axis([fix(min(x)) ceil(max(x)) 0 6])
-  title({'MPD05 Absolute Humidity (g m^{-3})'},...
+  title({'MPD Absolute Humidity (g m^{-3})'},...
        'fontweight','b','fontsize',font_size)
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
   %datetick('x','HH:MM:SS');
@@ -92,12 +99,13 @@ Z = real(comb_AH)';
   %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plots
  % cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
  
-  scrsz = [1  1  1920 1200]
-  Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/4];  
+  scrsz = [1  1  1920 1200];
+ % Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/4];  
+  Scrsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plots
 
   FigH = figure(1);
-  set(gca,'Fontsize',18,'Fontweight','b'); 
+  set(gca,'Fontsize',36,'Fontweight','b'); 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-  name=strcat('Fig1_Raman'); 
+  name=strcat(date, 'Python_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  

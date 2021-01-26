@@ -45,10 +45,10 @@ x_no_surface = xx(:,2:end); % Sondes (assume as truth)
 y_no_surface = yy(:,2:end); % MPD
 
 %calculate the RMS using the sonde data as truty
-RMSE_numerator = nansum((x_no_surface - y_no_surface).^2);
-RMSE_demoninator = sum(~isnan((x_no_surface - y_no_surface).^2));
-RMSE = sqrt(RMSE_numerator./RMSE_demoninator);
-RMSPE = nanmean((x_no_surface - y_no_surface)./x_no_surface).^2;
+RMSE_numerator = nansum((x_no_surface - x_no_surface).^2);
+RMSE_demoninator = sum(~isnan((x_no_surface - x_no_surface).^2));
+RMSE = RMSE_numerator./RMSE_demoninator;
+RMSPE = nanmean((y_no_surface - x_no_surface).^2);
 range_grid = 0:range_grid_size/1000:(size(RMSE,2)-1)*range_grid_size/1000;
 figure(20)
 subplot(1,2,1)

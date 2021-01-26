@@ -145,13 +145,14 @@ if flag.plot_overlay == 1
   figure(115)
   plot(sonde_AH_grid, range_grid)
   hold on
-  plot(MPD_AH, range_grid, 'ro')
+  plot(MPD_AH, range_grid)
   hold off
   xlim([0 15])
   ylim([0 6])
   grid on
 
-  Scrsize=[1 1 800 800];
+  scrsz = [1  1  1920 1200]
+ Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
   FigH = figure(115);
   set(gca,'Fontsize',30,'Fontweight','b'); % 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
