@@ -1,4 +1,4 @@
-function[sonde_AH_grid, MPD_AH] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, flag) 
+function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, flag) 
 
 %sondedir
 
@@ -131,38 +131,41 @@ if flag.plot_overlay == 1
 end
 
 % grid sonde data vs range 
-range_grid = 0:range_grid_size/1000:5.7;
+range_grid = 0:range_grid_size/1000:6;
 [sonde_AGL_km, index] = unique(sonde_AGL/1000); 
 sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'nearest');
 % find the closes time index for the MPD water vapor
 [minValue, closestIndex] = min(abs(min(duration_sonde)-duration))
-MPD_AH = N_avg_comb(closestIndex,1:(5700/range_grid_size)+1).*1e6./6.022E23.*18.015;
-%MPD_AH = N_avg_comb(closestIndex,1:(5700/range_grid_size)+1);
-%MPD_AH = N_avg_comb(closestIndex,1:(6000/range_grid_size)).*1e6./6.022E23.*18.015;
+MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
+MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'nearest');
 
 if flag.plot_overlay == 1
   % overlay sonde vs MPD
   figure(115)
   plot(sonde_AH_grid, range_grid)
   hold on
-  plot(MPD_AH, range_grid)
+  plot(MPD_AH_grid, range_grid, 'ro')
   hold off
-  xlim([0 15])
+  xlim([0 10])
   ylim([0 6])
+  % grid(gca,'minor')
   grid on
-
-  scrsz = [1  1  1920 1200]
- Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
+  set(gca, 'YMinorTick','on', 'YMinorGrid','on')
+  xlabel('Absolute humidity (g m^{-3})'); 
+  ylabel('Range (km)'); 
+  
+  Scrsize=[1 1 800 800];
+  cd('/Users/spuler/Desktop/mpd/Plots/')
   FigH = figure(115);
   set(gca,'Fontsize',30,'Fontweight','b'); % 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-  name=strcat(sonde_date, 'Sonde_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+  name=strcat(sonde_date, 'Sonde_profile'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
   
 end
 
 
 
-pause
+%pause
 

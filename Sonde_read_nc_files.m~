@@ -1,4 +1,4 @@
-function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in, flag) 
+function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in, flag) 
 
 %sondedir
 
@@ -6,43 +6,37 @@ filename = [sondedir sondefilename{jj}];
 %filename = '/scr/sci/tammy/mpd/sgp/soundings/sgpsondewnpnC1.b1.20190429.023100.cdf';
 %filename = '/Users/spuler/downloads/sgpsondewnpnC1.b1.20190501.083100.cdf';
 %filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201016_163106.nc';
-%filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201007_183911.nc';
-
-sonde_date = filename(end-15:end-10);
-sonde_time = filename(end-8:end-3);
-n = datenum([sonde_date sonde_time], 'yymmddHHMMSS');
-datestr(n)
+date = filename(end-15:end-10);
+n = datenum(date, 'yymmdd');
 
 ncid = netcdf.open(filename, 'NC_NOWRITE');
   %ncdisp(filename, '/', 'min') % use this to display all variables
-  ncdisp(filename) % use this to display all variables
+  %ncdisp(filename) % use this to display all variables
     
- variable{1} = 'time'; % time (seconds since 1970-1-1)
- %variable{2} = 'time_offset'; % time (seconds since 1970-1-1)
+ variable{1} = 'base_time'; % time (seconds since 1970-1-1)
+ variable{2} = 'time_offset'; % time (seconds since 1970-1-1)
  variable{3} = 'alt'; % altitude above mean sea level (m)
  variable{4} = 'pres'; % pressure (hPa or mbar)
  variable{5} = 'tdry'; %Dry Bulb Temperature (C)
  variable{6} = 'rh'; % relative humidity (%)
  variable{7} = 'lat'; % latitude
  variable{8} = 'lon'; % longitude 
- variable{9} = 'reference_alt'; 
   
  base_time  = ncread(filename,variable{1});   
- %sonde_time = ncread(filename,variable{2}); 
+ sonde_time = ncread(filename,variable{2});   
  sonde_alt = ncread(filename,variable{3});
  sonde_P = ncread(filename,variable{4});  
  sonde_T = ncread(filename,variable{5});  
  sonde_RH = ncread(filename,variable{6}); 
  sonde_lat = ncread(filename,variable{7}); 
  sonde_lon = ncread(filename,variable{8}); 
- reference_alt = ncread(filename,variable{9});  
  
 netcdf.close(ncid);
 
 %convert sonde from Unix time to date number (days since Jan 0 0000) 
-%duration_sonde = datenum(datetime(int64(sonde_time) + int64(base_time), 'convertfrom', 'posixtime'));
+duration_sonde = datenum(datetime(int64(sonde_time) + int64(base_time), 'convertfrom', 'posixtime'));
 %sonde_offset_min = 30;
-duration_sonde = n +  base_time/24/60/60;
+%duration_sonde = duration_sonde + sonde_offset_min/24/60;
 sonde_AGL = sonde_alt - elevation;
 
 %figure(101)
@@ -131,40 +125,25 @@ if flag.plot_overlay == 1
 end
 
 % grid sonde data vs range 
-range_grid = 0:range_grid_size/1000:6;
+range_grid = 0:range_grid_size/1000:5.9;
 [sonde_AGL_km, index] = unique(sonde_AGL/1000); 
 sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'nearest');
 % find the closes time index for the MPD water vapor
 [minValue, closestIndex] = min(abs(min(duration_sonde)-duration))
 MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
-try
-  MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'nearest');
-end
+MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'nearest');
 
 if flag.plot_overlay == 1
   % overlay sonde vs MPD
   figure(115)
   plot(sonde_AH_grid, range_grid)
   hold on
-  plot(MPD_AH_grid, range_grid, 'ro')
+  plot(MPD_AH_grid, range_grid)
   hold off
-  xlim([0 10])
+  xlim([0 20])
   ylim([0 6])
-  % grid(gca,'minor')
-  grid on
-  set(gca, 'YMinorTick','on', 'YMinorGrid','on')
-  xlabel('Absolute humidity (g m^{-3})'); 
-  ylabel('Range (km)'); 
-  
-  Scrsize=[1 1 800 800];
-  cd('/Users/spuler/Desktop/mpd/Plots/')
-  FigH = figure(115);
-  set(gca,'Fontsize',30,'Fontweight','b'); % 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-  name=strcat(sonde_date, 'Sonde_profile'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-  
-  
+
+
 end
 
 

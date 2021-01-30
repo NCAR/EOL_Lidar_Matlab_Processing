@@ -1,25 +1,28 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
-%serv_path = '/Users/spuler/Desktop';
+serv_path = '/Users/spuler/Desktop';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
 %cd(strcat(serv_path,'/mpd_05_processed_data'))
-%cd(strcat(serv_path,'/mpd/sgp/mpd05'))
-serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
-cd(strcat(serv_path, '/MPDSGP/t_res_10min/'));  %This was the original SGP 10 min data
+%cd(strcat(serv_path,'/mpd/Marshall/mpd03_10min')) % this is the 10min averaged data
+%cd(strcat(serv_path,'/mpd/Marshall/mpd03_5min'))
+cd(strcat(serv_path,'/mpd/sgp/mpd05'))
+%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
+%cd(strcat(serv_path, '/MPDSGP/t_res_10min/'));  %This was the original SGP 10 min data
 %cd(strcat(serv_path,'/MPD_Gen5_Pub/'));
 
 %cd(strcat(serv_path))
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 jj=1;
 %cd= d;
-range_grid_size = 75;  %set the size of the range gridding
+%range_grid_size = 75;  %set the size of the range gridding
+low_range_mask = 525;
 
  variable{1} = 'Absolute_Humidity';
  variable{2} = 'time_Absolute_Humidity';
-%variable{2} = 'time';
+ variable{2} = 'time';
  variable{3} = 'range_Absolute_Humidity';
-% variable{3} = 'range';
+ variable{3} = 'range';
  variable{4} = 'Absolute_Humidity_mask';
  
  variable{5} = 'Attenuated_Backscatter';
@@ -38,7 +41,6 @@ for jj = 1:size(Pythonfilename,2)
     AH_time{jj} = ncread(filename,variable{2}); 
     AH_alt{jj} = ncread(filename,variable{3});
     AH_mask{jj} = ncread(filename,variable{4}); 
-    
     AH{jj}(AH_mask{jj} == 1) = nan;
   netcdf.close(ncid); 
   %convert from Unix time to date number (days since Jan 0 0000) 
@@ -46,10 +48,13 @@ for jj = 1:size(Pythonfilename,2)
 
   %range_grid = (0:75:12000);
   %AH_grid{jj} = interp1( AH{jj}(:,1) ,AH{jj}(:,2:end), range_grid, 'nearest', 'extrap'); 
-  
-  
  % for jj=1:12  (there are problems with the data for the first three days)
-      
+
+  % mask the lowest gates if desired
+  low_mask = repmat(AH_alt{jj}, 1, size(AH{jj}, 2)); 
+  AH{jj}(low_mask < low_range_mask)= nan;
+ 
+ 
   if jj == 1
       comb_AH_duration = AH_duration{jj};
       comb_AH = AH{jj}';
@@ -59,6 +64,9 @@ for jj = 1:size(Pythonfilename,2)
       max_range = min(cellfun('size',AH_alt,1))
       comb_AH = [comb_AH(:,1:max_range); AH{jj}(1:max_range,:)'];
   end
+  
+  % remove non-physical values AH < - 0.5 (allow for some slight negative noise)
+  comb_AH(comb_AH < -0.5)= nan;
   
  % end
   

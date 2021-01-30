@@ -1,13 +1,11 @@
-
 elevation= 317.0; %MPD05 was at 317m elevation at SGP
-flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
+flag.plot_overlay = 0; %plot sondes on the time vs hieght AH plot
 
 %d=pwd;
-%cd('/Volumes/documents/WV_DIAL_data/SGP_sondes/') % point to the directory where data is stored
 %cd('/scr/sci/tammy/mpd/sgp/soundings/')
-cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
-%serv_path = '/Users/spuler/Desktop';
-%cd(strcat(serv_path,'/mpd/sgp/Sondes/'))
+%cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
+serv_path = '/Users/spuler/Desktop';
+cd(strcat(serv_path,'/mpd/sgp/Sondes/'))
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
@@ -16,22 +14,23 @@ jj=1;
 for jj = 1:size(sondefilename,2)
     cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
    % add the following three lines for Raman 
-       % range_grid_size = 60;  
-       % N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
-       % duration = comb_Raman_duration;
+     % range_grid_size = 60;  
+     % N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
+     % duration = comb_Raman_duration;
    % add the following lines for Python processing of the MPD 
-      range_grid_size = 37.4736;  
+      range_grid_size = 37.5;  
       N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
       duration = comb_AH_duration;
-   [xx(jj,:), yy(jj,:)] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, flag); 
+      range_grid_in = AH_alt{1}'; 
+   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, flag); 
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
-    %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
+   %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
  end
     
     
 % create a line plot of the sonde vs MPD data
 %scrsz = get(0,'ScreenSize');
-scrsz = [1  1  1920 1200]
+scrsz = [1  1  1920 1200];
 Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
 font_size = 14;
 WV_min = 0;
@@ -45,17 +44,18 @@ x_no_surface = xx(:,2:end); % Sondes (assume as truth)
 y_no_surface = yy(:,2:end); % MPD
 
 %calculate the RMS using the sonde data as truty
-RMSE_numerator = nansum((x_no_surface - y_no_surface).^2);
-RMSE_demoninator = sum(~isnan((x_no_surface - y_no_surface).^2));
+RMSE_numerator = nansum((xx - yy).^2);
+RMSE_demoninator = sum(~isnan((xx - yy).^2));
 RMSE = sqrt(RMSE_numerator./RMSE_demoninator);
-RMSPE = nanmean((x_no_surface - y_no_surface)./x_no_surface).^2;
-range_grid = 0:range_grid_size/1000:(size(RMSE,2)-1)*range_grid_size/1000;
+RMSPE = nanmean((xx - yy)./xx).^2;
+
 figure(20)
 subplot(1,2,1)
 plot(RMSE, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); %   
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
+  xlim([0 3]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Absolute humidity RMSE (g m^{-3})'); 
 subplot(1,2,2)
@@ -63,13 +63,9 @@ plot(RMSE_demoninator, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); % 
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
+  xlim([0 70]);
   ylabel('Altitude, AGL (km)'); 
-  xlabel('Number of samples used in RMSE'); 
-FigH = figure(20);
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
-name=strcat(date, 'RMSE'); 
-print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-
+  xlabel('Samples used in RMSE'); 
 
 % reshape into one long array
 x_sonde = reshape(x_no_surface,1,[]); %sondes
@@ -102,8 +98,8 @@ fit = flip(mdl.Coefficients.Estimate')
 
 
 % Evaluate fit equation using polyval
-xx = WV_min:0.1:WV_max;
-y_est = polyval(fit,xx);
+xrange = WV_min:0.1:WV_max;
+y_est = polyval(fit,xrange);
 
 figure(7); %Frequency histogram 
 ax = subplot(1,1,1);
@@ -139,7 +135,7 @@ text(1, 16, ['StDev = ' num2str(StDev,3) 'g m^{-3}'], 'FontSize', 22, 'Color', '
 
 hold on
 plot(xx0,yy0, 'k-')  % plot the 1:1 line
-plot(xx,y_est,'r--','LineWidth',2)  % plot the least squared fit line
+plot(xrange,y_est,'r--','LineWidth',2)  % plot the least squared fit line
 hold off
 
 figure(8)
@@ -161,26 +157,32 @@ text(1, 16, ['StDev = ' num2str(StDev,3) 'g m^{-3}'], 'FontSize', 22, 'Color', '
 % Add trend line to plot
 hold on
 plot(xx0,yy0, 'k-')  % plot the 1:1 line
-plot(xx,y_est,'r--','LineWidth',2) % plot the least squared fit line
+plot(xrange,y_est,'r--','LineWidth',2) % plot the least squared fit line
 hold off
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
-cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stor
-FigH = figure(7);
+cd('/Users/spuler/Desktop/mpd/Plots/') % point to the directory where data is stor
+
+
+FigH = figure(1);
 set(gca,'Fontsize',30,'Fontweight','b'); % 
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 6000 600]);
+name=strcat(date, 'AH_multi'); 
+print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+
+FigH = figure(7);
+set(gca,'Fontsize',24,'Fontweight','b'); % 
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
 name=strcat(date, 'Sonde_hist_multi'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 
-
-%cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
-cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stor
 FigH = figure(8);
-set(gca,'Fontsize',30,'Fontweight','b'); % 
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+set(gca,'Fontsize',24,'Fontweight','b'); % 
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
 name=strcat(date, 'Sonde_multi'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 
-
- 
-print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+FigH = figure(20);
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
+name=strcat(date, 'RMSE'); 
+print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
