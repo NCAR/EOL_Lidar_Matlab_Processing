@@ -92,7 +92,7 @@ Z = real(comb_Raman_AH)';
   %datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
   Scrnsize = [scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/1.5]; % use for standard plots
   Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plots
-  cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+  %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
   FigH = figure(1);
   set(gca,'Fontsize',36,'Fontweight','b'); 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);

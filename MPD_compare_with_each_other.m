@@ -2,8 +2,11 @@ clear all; close all;
 
 dd = pwd; % get the current path
 date = '10 Apr 2019'; % Last day of a five-unit side-by-side test  
-date = '12 Oct 2020'; %   
+%date = '2019-Apr-10'; %  Python date 
+%ate = '05 Oct 2020'; %   
+%date = '2020-Oct-05'; %  Python date 
 
+mask_range_level = 500;
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
@@ -14,15 +17,24 @@ else
 end
 
 
-cd(strcat(serv_path, 'mpd_01_processed_data/Matlab')) % point to the directory where data is stored 
+cd(strcat(serv_path, 'mpd_01_processed_data/Matlab')) % point to the directory where data is stored
+%cd(strcat(serv_path, '/mpd/intercomparison/mpd01')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
-cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) % point to the directory where data is stored  
+
+cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) % point to the directory where data is stored
+%cd(strcat(serv_path, '/mpd/intercomparison/mpd02')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
-cd(strcat(serv_path, 'mpd_03_processed_data/Matlab')) % point to the directory where data is stored 
+
+cd(strcat(serv_path, 'mpd_03_processed_data/Matlab')) % point to the directory where data is stored
+%cd(strcat(serv_path, '/mpd/intercomparison/mpd03')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
-cd(strcat(serv_path, 'mpd_04_processed_data/Matlab')) % point to the directory where data is stored 
+
+cd(strcat(serv_path, 'mpd_04_processed_data/Matlab')) % point to the directory where data is stored
+%cd(strcat(serv_path, '/mpd/intercomparison/mpd04')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
-cd(strcat(serv_path, 'mpd_05_processed_data/Matlab')) % point to the directory where data is stored 
+
+cd(strcat(serv_path, 'mpd_05_processed_data/Matlab')) % point to the directory where data is stored
+%cd(strcat(serv_path, '/mpd/intercomparison/mpd05')) % point to the directory where data is stored 
 load(strcat(date,'_combined.mat'))
     
 WV_min = 0;
@@ -37,20 +49,129 @@ bin_max = 4000;
   MPD03.N_avg_comb = real(MPD03.N_avg_comb(:,1:range_limit));   
   MPD04.N_avg_comb = real(MPD04.N_avg_comb(:,1:range_limit)); 
 
+% just for 05 Oct 2020 remove the lowest 600m from MPD 05 during when
+% WFOV receiver was blocked
+% MPD05.N_avg_comb(4800:7500,1:8) = NaN;  
+  
+% plot Narrow water vapor in g/m^3
+ figure('Position',[1,1,2048,760])
+ %Z = double(real(N_avg_comb'.*1e6./6.022E23.*18.015));  %number density in mol/cm3(1e6 cm3/m3)/(N_A mol/mole)*(18g/mole)
+ % Z(isnan(Z)) = -1;
+ set(gcf,'renderer','zbuffer');
+ x = MPD05.time;
+ y = MPD05.range./1e3;
+ 
+ subplot(5,1,1)
+ Z_AH = double(real(MPD01.N_avg_comb'.*1e6./6.022E23.*18.015));
+ h = pcolor(x,y,Z_AH);
+ set(h, 'EdgeColor', 'none');
+ colorbar('EastOutside');
+ axis([fix(min(x)) ceil(max(x)) 0 6])
+ caxis([0 8]);
+ colormap(jet)
+ ylabel('Height (km, AGL)','fontweight','b','fontsize',12);
+ datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ hh = title({['MPD01, Water Vapor (g m^{-3})']},'fontweight','b','fontsize',12);
+ set(gca,'Fontsize',10,'Fontweight','b'); % 
+ 
+ subplot(5,1,2)
+ Z_AH = double(real(MPD02.N_avg_comb'.*1e6./6.022E23.*18.015));
+ h = pcolor(x,y,Z_AH);
+ set(h, 'EdgeColor', 'none');
+ colorbar('EastOutside');
+ axis([fix(min(x)) ceil(max(x)) 0 6])
+ caxis([0 8]);
+ colormap(jet)
+ ylabel('Height (km, AGL)','fontweight','b','fontsize',12);
+ datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ hh = title({['MPD02, Water Vapor (g m^{-3})']},'fontweight','b','fontsize',12);
+ set(gca,'Fontsize',10,'Fontweight','b'); % 
+ 
+ subplot(5,1,3)
+ Z_AH = double(real(MPD03.N_avg_comb'.*1e6./6.022E23.*18.015));
+ h = pcolor(x,y,Z_AH);
+ set(h, 'EdgeColor', 'none');
+ colorbar('EastOutside');
+ axis([fix(min(x)) ceil(max(x)) 0 6])
+ caxis([0 8]);
+ colormap(jet)
+ ylabel('Height (km, AGL)','fontweight','b','fontsize',12);
+ datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ hh = title({['MPD03, Water Vapor (g m^{-3})']},'fontweight','b','fontsize',12);
+ set(gca,'Fontsize',10,'Fontweight','b'); % 
+ 
+ subplot(5,1,4)
+ Z_AH = double(real(MPD04.N_avg_comb'.*1e6./6.022E23.*18.015));
+ h = pcolor(x,y,Z_AH);
+ set(h, 'EdgeColor', 'none');
+ colorbar('EastOutside');
+ axis([fix(min(x)) ceil(max(x)) 0 6])
+ caxis([0 8]);
+ colormap(jet)
+ ylabel('Height (km, AGL)','fontweight','b','fontsize',12);
+ datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ hh = title({['MPD04, Water Vapor (g m^{-3})']},'fontweight','b','fontsize',12);
+ set(gca,'Fontsize',10,'Fontweight','b'); % 
+ 
+ subplot(5,1,5)
+ Z_AH = double(real(MPD05.N_avg_comb'.*1e6./6.022E23.*18.015));
+ h = pcolor(x,y,Z_AH);
+ set(h, 'EdgeColor', 'none');
+ colorbar('EastOutside');
+ axis([fix(min(x)) ceil(max(x)) 0 6])
+ caxis([0 8]);
+ colormap(jet)
+ ylabel('Height (km, AGL)','fontweight','b','fontsize',12); 
+ datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ hh = title({['MPD05, Water Vapor (g m^{-3})']},'fontweight','b','fontsize',12);
+ set(gca,'Fontsize',10,'Fontweight','b'); % 
+ 
+ 
+scrsz = [1  1  1920 1200]
+Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
+cd('/Users/spuler/Desktop') % point to the directory where data is stor
+FigH = figure(1);
+%$set(gca,'Fontsize',30,'Fontweight','b'); % 
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+name=strcat('Python_Gen5_intercomparison');
+print(FigH, name, '-dpng', '-r300')  
+ 
+  
 % remove the lowest range bin which has the surface station data
 % then use the loop to clip the ranges back in 75m increments
 j=1
 %for j = 1:10     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
 %jj
-MPD01.N_avg_comb(:,1:j) = NaN; 
-MPD02.N_avg_comb(:,1:j) = NaN; 
-MPD03.N_avg_comb(:,1:j) = NaN; 
-MPD04.N_avg_comb(:,1:j) = NaN; 
-MPD05.N_avg_comb(:,1:j) = NaN; 
 
-% just for 06 or 12 Oct 2020 remove the lowest 600m from MPD 05 during when
+range_mask = repmat(MPD05.range, size(MPD05.time,1),1); 
+
+MPD01.N_avg_comb(range_mask<=mask_range_level) = NaN; 
+MPD02.N_avg_comb(range_mask<=mask_range_level) = NaN; 
+MPD03.N_avg_comb(range_mask<=mask_range_level) = NaN; 
+MPD04.N_avg_comb(range_mask<=mask_range_level) = NaN; 
+MPD05.N_avg_comb(range_mask<=mask_range_level) = NaN; 
+
+% just for 05 Oct 2020 remove the lowest 600m from MPD 05 during when
 % WFOV receiver was blocked
-%MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
+% MPD05.N_avg_comb(4800:7500,1:8) = NaN; 
+
+
+Corr_R_start = 300; % 4 start at 300 m
+Corr_R_thick = 150;
+Corr_R_inc = 300; % 4*75 = 300 m bins
+Corr_R_stop = 6000; % end at 6000 m
+
+j= Corr_R_start;
+
+for j = Corr_R_start:Corr_R_inc:Corr_R_stop     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
+count=1
+
+
+MPD01.N_avg_slice = MPD01.N_avg_comb((range_mask < j-Corr_R_thick/2) |  (range_mask > j+Corr_R_thick/2)); 
+MPD02.N_avg_comb(range_mask<=mask_range_level) = NaN; 
+MPD03.N_avg_comb(range_mask<=mask_range_level) = NaN; 
+MPD04.N_avg_comb(range_mask<=mask_range_level) = NaN; 
+MPD05.N_avg_comb(range_mask<=mask_range_level) = NaN;
 
 
 xx{1} = real(reshape(MPD01.N_avg_comb,1,[]).*1e6./6.022E23.*18.015);
@@ -136,10 +257,10 @@ for k=1:4 %row
 end
 
 
-cd(strcat(serv_path, 'mpd_03_processed_data/Plots')) % point to the directory where data is stored 
-FigH = figure(1);
+%cd(strcat(serv_path, 'mpd_03_processed_data/Plots')) % point to the directory where data is stored 
+FigH = figure(2);
 %set(gca,'Fontsize',30,'Fontweight','b'); % 
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
 name=strcat(date, 'Self_comparison_hist_multi', num2str(j)); 
 print(FigH, name, '-dpng', '-r300') % set at the screen resolution 
 

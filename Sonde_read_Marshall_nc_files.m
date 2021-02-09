@@ -1,4 +1,4 @@
-function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in, flag) 
+function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in,  comb_AH_var, flag) 
 
 %sondedir
 
@@ -137,16 +137,28 @@ sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'nearest');
 % find the closes time index for the MPD water vapor
 [minValue, closestIndex] = min(abs(min(duration_sonde)-duration))
 MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
+MPD_AH_var =  comb_AH_var(closestIndex,:);
 try
   MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'nearest');
+  MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'nearest');
 end
 
 if flag.plot_overlay == 1
   % overlay sonde vs MPD
   figure(115)
+
   plot(sonde_AH_grid, range_grid)
   hold on
+
   plot(MPD_AH_grid, range_grid, 'ro')
+  
+  eb(1) = errorbar(MPD_AH_grid, range_grid, MPD_AH_var_grid, 'horizontal', 'LineStyle', 'none', 'HandleVisibility','off');
+  set(eb, 'color', 'r', 'LineWidth', 1)
+  
+  %shadedErrorBar(range_grid, MPD_AH_grid, MPD_AH_var_grid); 
+  %set(gca,'YDir','reverse');
+  %camroll(90)
+  
   hold off
   xlim([0 10])
   ylim([0 6])
@@ -156,6 +168,7 @@ if flag.plot_overlay == 1
   xlabel('Absolute humidity (g m^{-3})'); 
   ylabel('Range (km)'); 
   
+   
   Scrsize=[1 1 800 800];
   cd('/Users/spuler/Desktop/mpd/Plots/')
   FigH = figure(115);
@@ -164,10 +177,13 @@ if flag.plot_overlay == 1
   name=strcat(sonde_date, 'Sonde_profile'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
+  save(name, 'range_grid', 'sonde_AH_grid', 'MPD_AH_grid', 'MPD_AH_var_grid')
+  
+  
   
 end
 
 
 
-%pause
+pause
 

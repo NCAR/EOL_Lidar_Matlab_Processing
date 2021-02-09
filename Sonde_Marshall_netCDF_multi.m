@@ -22,7 +22,7 @@ for jj = 1:size(sondefilename,2)
       N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
       duration = comb_AH_duration;
       range_grid_in = AH_alt{1}';
-   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, flag); 
+   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in,  comb_AH_var, flag); 
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
    %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
  end

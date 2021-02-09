@@ -157,7 +157,7 @@ if flag.plot_overlay == 1
   FigH = figure(115);
   set(gca,'Fontsize',30,'Fontweight','b'); % 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-  name=strcat(sonde_date, 'Sonde_profile'); 
+  name=strcat(date, 'Sonde_profile'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
   

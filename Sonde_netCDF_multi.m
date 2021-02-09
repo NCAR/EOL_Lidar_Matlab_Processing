@@ -13,10 +13,11 @@ jj=1;
 
 for jj = 1:size(sondefilename,2)
     cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
-   % add the following three lines for Raman 
-     % range_grid_size = 60;  
-     % N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
-     % duration = comb_Raman_duration;
+   % add the following four lines for Raman 
+    %  range_grid_size = 60;  
+    %  N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
+    %  duration = comb_Raman_duration;
+    %  range_grid_in = Raman_alt{1}'.*1000; 
    % add the following lines for Python processing of the MPD 
       range_grid_size = 37.5;  
       N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
@@ -124,6 +125,7 @@ xlim([WV_min WV_max]);
 %set(gca,'Fontsize',font_size,'Fontweight','b');
 ylim([WV_min WV_max]); 
 ylabel('MPD05 absolute humidity (g m^{-3})'); 
+%ylabel('SGP Raman Lidar absolute humidity (g m^{-3})'); 
 xlabel('Radiosonde absolute humidity (g m^{-3})'); 
 set(gca,'Fontsize',font_size,'Fontweight','b');
 % Display fit infor on graph
@@ -147,6 +149,7 @@ xlim([WV_min WV_max]);
 %set(gca,'Fontsize',font_size,'Fontweight','b');
 ylim([WV_min WV_max]); 
 ylabel('MPD05 absolute humidity (g m^{-3})'); 
+%ylabel('SGP Raman Lidar absolute humidity (g m^{-3})'); 
 xlabel('Radiosonde absolute humidity (g m^{-3})'); 
 set(gca,'Fontsize',font_size,'Fontweight','b');
 % Display fit infor on graph
