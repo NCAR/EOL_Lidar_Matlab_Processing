@@ -23,7 +23,7 @@ print(FigH, name, '-dpng', '-r300')
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
 cd('/Users/spuler/Desktop') % point to the directory where data is stor
-FigH = figure(1);
+FigH = figure(28);
 set(gca,'Fontsize',24,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
 name=strcat('MPD_Net_Demo_Raman_sonde');
