@@ -6,10 +6,9 @@ date = '2019-Apr-10'; %  Python date
 %date = '05 Oct 2020'; %   
 date = '2020-Oct-05'; %  Python date 
 
-% p_start = 2900; %1-Oct-2020 profile WFOV blocked
+ p_start = 2900; %1-Oct-2020 profile WFOV blocked
 % p_start = 6200; %3-Oct-2020 profile WFOV open
-% p_stop = p_start+250; 
-
+ p_stop = p_start+250; 
 
 plot_histograms = 0; 
 mask_range_level = 0;

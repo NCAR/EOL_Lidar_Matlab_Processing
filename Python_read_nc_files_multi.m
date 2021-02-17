@@ -1,27 +1,28 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
-serv_path = '/Users/spuler/Desktop';
+%serv_path = '/Users/spuler/Desktop';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
 %cd(strcat(serv_path,'/mpd_05_processed_data'))
-cd(strcat(serv_path,'/mpd/Marshall/mpd03_10min')) % this is the 10min averaged data
+serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
+%cd(strcat(serv_path,'/mpd/Marshall/mpd03_10min')) % this is the 10min averaged data
 %cd(strcat(serv_path,'/mpd/Marshall/mpd03_5min'))
 %cd(strcat(serv_path,'/mpd/sgp/mpd05'))
-%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
 %cd(strcat(serv_path, '/MPDSGP/t_res_10min/'));  %This was the original SGP 10 min data
-%cd(strcat(serv_path,'/MPD_Gen5_Pub/'));
+cd(strcat(serv_path,'/MPD_Gen5_Pub/'));
+d_read_data = pwd; % get the current path
 
-%cd(strcat(serv_path,'/mpd/intercomparison/mpd05'))
-flag.save_data = 0;  %save data at end of processing (0=off 1=on)
-%MPD = 5;
+serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
+cd(strcat(serv_path,'/mpd_05_processed_data/Matlab'))
+flag.save_data = 1;  %save data at end of processing (0=off 1=on)
+MPD = 5;
 low_range_mask = 0;
+d_save_data = pwd; % get the current path
 
-%cd(strcat(serv_path))
+
+cd(d_read_data);
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 jj=1;
-%cd= d;
-%range_grid_size = 75;  %set the size of the range gridding
-
 
  variable{1} = 'Absolute_Humidity';
  %variable{2} = 'time_Absolute_Humidity';
@@ -35,8 +36,6 @@ jj=1;
 % variable{5} = 'Attenuated_Backscatter';
 % variable{6} = 'time_Attenuated_Backscatter ';
 % variable{7} = 'range_Attenuated_Backscatter';
- 
-  
      
 
 for jj = 1:size(Pythonfilename,2)
@@ -124,22 +123,20 @@ Z = real(comb_AH)';
   %Scrnsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plots
  % cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
  
-  scrsz = [1  1  1920 1200];
- % Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1 scrsz(4)/4];  
-  Scrsize = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.30 scrsz(4)/2]; % use for ILRC really long plots
-
+ 
   FigH = figure(1);
-  set(gca,'Fontsize',36,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+  set(gca,'Fontsize',16,'Fontweight','b'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1600 400]);
   name=strcat(date, 'Python_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+%  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  
 
  if flag.save_data == 1
-       
- range = AH_alt{1}'; 
- N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
- duration = comb_AH_duration;
+  
+  cd(d_save_data);     
+  range = AH_alt{1}'; 
+  N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
+  duration = comb_AH_duration;
 
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
   name=strcat(date, '_combined');

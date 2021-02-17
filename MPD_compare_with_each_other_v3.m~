@@ -4,14 +4,9 @@ dd = pwd; % get the current path
 %date = '10 Apr 2019'; % Last day of a five-unit side-by-side test 
 date = '2019-Apr-10'; %  Python date 
 %date = '05 Oct 2020'; %   
-date = '2020-Oct-05'; %  Python date 
+%date = '2020-Oct-05'; %  Python date 
 
-% p_start = 2900; %1-Oct-2020 profile WFOV blocked
-% p_start = 6200; %3-Oct-2020 profile WFOV open
-% p_stop = p_start+250; 
-
-
-plot_histograms = 0; 
+plot_histograms = 1; 
 mask_range_level = 0;
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -48,7 +43,6 @@ load(strcat(date,'_combined.mat'))
 % WFOV receiver was blocked
 % MPD05.N_avg_comb(4800:7500,1:8) = NaN;  % matlab
 % MPD05.N_avg_comb(2475:3675,1:17) = NaN;   %python 
-% MPD05.N_avg_comb( p_start:p_stop,1:25) = NaN;   %python 
 
 WV_min = 0;
 WV_max = 8;
@@ -145,26 +139,6 @@ name=strcat('Python_Gen5_intercomparison');
 print(FigH, name, '-dpng', '-r300')  
  
   
-% plot profiles 
-MPD01_AH_profile = nanmean(MPD01.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
-MPD02_AH_profile = nanmean(MPD02.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
-MPD03_AH_profile = nanmean(MPD03.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
-MPD04_AH_profile = nanmean(MPD04.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
-MPD05_AH_profile = nanmean(MPD05.N_avg_comb(p_start:p_stop,:),1).*1e6./6.022E23.*18.015; 
-figure(101)
-plot(MPD01_AH_profile, MPD01.range./1e3, '-o', 'DisplayName','MPD01'); 
-hold on
-plot(MPD02_AH_profile, MPD02.range./1e3, '-o', 'DisplayName','MPD02'); 
-plot(MPD03_AH_profile, MPD03.range./1e3, '-o', 'DisplayName','MPD03'); 
-plot(MPD04_AH_profile, MPD04.range./1e3, '-o', 'DisplayName','MPD04'); 
-plot(MPD05_AH_profile, MPD05.range./1e3, '-o', 'DisplayName','MPD05'); 
-hold off
-axis([0 8 0 3.5])
-xlabel('Absolute Humidity (g m^{-3})','fontweight','b','fontsize',12);
-ylabel('Height (km, AGL)','fontweight','b','fontsize',12);
-legend('show', 'Location','southwest')
-
-
 % remove the lowest range bin which has the surface station data
 % then use the loop to clip the ranges back in 75m increments
 %j=1
@@ -194,47 +168,46 @@ MPD05.N_avg_comb(range_mask<=mask_range_level) = NaN;
 %xx{5}(xx{5}>10|xx{5}<-0.5)=NaN;
 
 
-%   Corr_R_start = 150; 
-%   Corr_R_thick = 150;
-%   Corr_R_inc = 150; 
-%   Corr_R_stop = 4000; % end at 6000 m
-%   j= Corr_R_start;
-%    
-%  for j = Corr_R_start:Corr_R_inc:Corr_R_stop     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
-%    count=1
-% 
-%    
-%    MPD01.N_avg_slice = MPD01.N_avg_comb;
-%    MPD02.N_avg_slice = MPD02.N_avg_comb;
-%    MPD03.N_avg_slice = MPD03.N_avg_comb;
-%    MPD04.N_avg_slice = MPD04.N_avg_comb;
-%    MPD05.N_avg_slice = MPD05.N_avg_comb;
-%    
-%    MPD01.N_avg_slice((range_mask <= j-Corr_R_thick/2) | (range_mask >= j+Corr_R_thick/2))= NaN; 
-%    MPD02.N_avg_slice((range_mask <= j-Corr_R_thick/2) | (range_mask >= j+Corr_R_thick/2))= NaN; 
-%    MPD03.N_avg_slice((range_mask <= j-Corr_R_thick/2) | (range_mask >= j+Corr_R_thick/2))= NaN; 
-%    MPD04.N_avg_slice((range_mask <= j-Corr_R_thick/2) | (range_mask >= j+Corr_R_thick/2))= NaN; 
-%    MPD05.N_avg_slice((range_mask <= j-Corr_R_thick/2) | (range_mask >= j+Corr_R_thick/2))= NaN; 
-% 
-%    
-%    subplot(5,1,5)
-%    Z_AH = double(real(MPD05.N_avg_slice'.*1e6./6.022E23.*18.015));
-%    h = pcolor(x,y,Z_AH);
-%    set(h, 'EdgeColor', 'none');
-%    colorbar('EastOutside');
-%    axis([fix(min(x)) ceil(max(x)) 0 6])
-%    caxis([0 8]);
-%    colormap(jet)
-%    ylabel('Height (km, AGL)','fontweight','b','fontsize',12); 
-%    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-%    hh = title({['MPD05, Water Vapor (g m^{-3})']},'fontweight','b','fontsize',12);
-%    set(gca,'Fontsize',10,'Fontweight','b'); %   
+  Corr_R_start = 150; % 4 start at 300 m
+  Corr_R_thick = 150;
+  Corr_R_inc = 150; % 4*75 = 300 m bins
+  Corr_R_stop = 4000; % end at 6000 m
+  j= Corr_R_start;
    
-%    xx{1} = real(reshape(MPD01.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
-%    xx{2} = real(reshape(MPD02.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
-%    xx{3} = real(reshape(MPD03.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
-%    xx{4} = real(reshape(MPD04.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
-%    xx{5} = real(reshape(MPD05.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
+ for j = Corr_R_start:Corr_R_inc:Corr_R_stop     %cutoff the 75m range bins from 1bin(75m) to 10bin(750m)
+   count=1
+
+   
+   MPD05.N_avg_slice = MPD05.N_avg_comb;
+   
+   
+   MPD01.N_avg_slice = MPD01.N_avg_comb((range_mask >= j-Corr_R_thick/2) &  (range_mask <= j+Corr_R_thick/2));   
+   MPD02.N_avg_slice = MPD02.N_avg_comb((range_mask >= j-Corr_R_thick/2) &  (range_mask <= j+Corr_R_thick/2));
+   MPD03.N_avg_slice = MPD03.N_avg_comb((range_mask >= j-Corr_R_thick/2) &  (range_mask <= j+Corr_R_thick/2)); 
+   MPD04.N_avg_slice = MPD04.N_avg_comb((range_mask >= j-Corr_R_thick/2) &  (range_mask <= j+Corr_R_thick/2));
+   MPD05.N_avg_slice((range_mask >= j-Corr_R_thick/2) )= NaN; 
+
+   
+ subplot(5,1,5)
+ Z_AH = double(real(MPD05.N_avg_slice'.*1e6./6.022E23.*18.015));
+ h = pcolor(x,y,Z_AH);
+ set(h, 'EdgeColor', 'none');
+ colorbar('EastOutside');
+ axis([fix(min(x)) ceil(max(x)) 0 6])
+ caxis([0 8]);
+ colormap(jet)
+ ylabel('Height (km, AGL)','fontweight','b','fontsize',12); 
+ datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ hh = title({['MPD05, Water Vapor (g m^{-3})']},'fontweight','b','fontsize',12);
+ set(gca,'Fontsize',10,'Fontweight','b'); % 
+   
+   
+   
+   xx{1} = real(reshape(MPD01.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
+   xx{2} = real(reshape(MPD02.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
+   xx{3} = real(reshape(MPD03.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
+   xx{4} = real(reshape(MPD04.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
+   xx{5} = real(reshape(MPD05.N_avg_slice,1,[]).*1e6./6.022E23.*18.015);
 
    xx0 = WV_min:1:WV_max;
    y0 = WV_min:1:WV_max;
@@ -298,8 +271,8 @@ MPD05.N_avg_comb(range_mask<=mask_range_level) = NaN;
          % plot(x0,y110, 'r:')
            xlim([WV_min WV_max])
            ylim([WV_min WV_max])
-           title(['WV x=',num2str(k),' y=', num2str(m+1)])
-         %  title(['WV x=',num2str(k),' y=', num2str(m+1), ', range ', num2str(j)])
+         %  title(['WV x=',num2str(k),' y=', num2str(m+1)])
+           title(['WV x=',num2str(k),' y=', num2str(m+1), ', range ', num2str(j)])
          % xlabel(gca, 'absolute humidity')
          % ylabel(gca, 'absolute humidity')
         
@@ -317,37 +290,37 @@ MPD05.N_avg_comb(range_mask<=mask_range_level) = NaN;
            colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  (hp4(2)+hp4(3))*3]) % x , y, width, height
          end
   
-%        j/Corr_R_inc  
-%        data{count,j/Corr_R_inc} = Corr(2);
-%        count=count+1
+       j/Corr_R_inc  
+       data{count,j/Corr_R_inc} = Corr(2);
+       count=count+1
          
          end
       end
     end
-%  end
+ end
   
   
-%   % Plot the data
-%    Test_Range = Corr_R_start:Corr_R_inc:Corr_R_stop;
-%    for k=1:1:size(data,2)
-%      Mean_Cov{k} = nanmean([data{:,k}]);
-%      Std_Cov{k} = nanstd([data{:,k}]);
-%    end
-% 
-%   figure(202)
-%   hold on
-%   plot([Mean_Cov{:}], Test_Range/1000, 'r', 'LineWidth', 2, 'DisplayName', 'Gen4 2019 test')
-%   hold on
-%   eb(1) = errorbar([Mean_Cov{:}],Test_Range/1000,[Std_Cov{:}], 'horizontal', 'LineStyle', 'none', 'HandleVisibility','off');
-%   set(eb, 'color', 'r', 'LineWidth', 2)
-%   grid on
-%   %ylim([0 3.5])
-%   %xlim([0 1])
-%   axis([0 1 0 4])
-%   xlabel('Correlation Coefficient','fontweight','b','fontsize',12);
-%   ylabel('Height (km, AGL)','fontweight','b','fontsize',12);
-%   set(gca,'Fontsize',16,'Fontweight','b'); % 
-%   legend
+  % Plot the data
+   Test_Range = Corr_R_start:Corr_R_inc:Corr_R_stop;
+   for k=1:1:size(data,2)
+     Mean_Cov{k} = nanmean([data{:,k}]);
+     Std_Cov{k} = nanstd([data{:,k}]);
+   end
+
+  figure(202)
+  hold on
+  plot([Mean_Cov{:}], Test_Range/1000, 'r', 'LineWidth', 2, 'DisplayName', 'Gen4 2019 test')
+  hold on
+  eb(1) = errorbar([Mean_Cov{:}],Test_Range/1000,[Std_Cov{:}], 'horizontal', 'LineStyle', 'none', 'HandleVisibility','off');
+  set(eb, 'color', 'r', 'LineWidth', 2)
+  grid on
+  %ylim([0 3.5])
+  %xlim([0 1])
+  axis([0 1 0 4])
+  xlabel('Correlation Coefficient','fontweight','b','fontsize',12);
+  ylabel('Height (km, AGL)','fontweight','b','fontsize',12);
+  set(gca,'Fontsize',16,'Fontweight','b'); % 
+  legend
 
 %cd(strcat(serv_path, 'mpd_03_processed_data/Plots')) % point to the directory where data is stored
 FigH = figure(3);
