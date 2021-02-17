@@ -6,7 +6,7 @@ dd = pwd; % get the current path
 %date = '05 Oct 2020'; %   
 date = '2020-Oct-05'; %  Python date 
 
-plot_histograms = 1; 
+plot_histograms = 0; 
 mask_range_level = 0;
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
