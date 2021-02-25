@@ -1,7 +1,7 @@
 clear all; close all
 
 serv_path = '/Users/spuler/Desktop';
-cd(strcat(serv_path,'/mpd/V01')) 
+cd(strcat(serv_path,'/mpd/V01')) %test_1
 %cd(strcat(serv_path,'/mpd/V02')) 
 
 [Etalonfilename, Etalondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -44,7 +44,7 @@ figure(2)
 plot(WavemeterTime{1},WavemeterWavelength{1})
 
   figure(3) 
-  % AO1=2.25, 4x, SM, FWHM=x.xpm
+  % AO1=2.25, 4x, SM, FWHM=8.6pm
   wave_comb = vertcat(WavelengthTime{1:4});   
   signal_comb = vertcat(DetectorSignal{1:4});   
   [C,ia,idx] = unique(wave_comb );  %find the unique wavelengths and their indices 
@@ -53,7 +53,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   idx = find(mean_signal > max(mean_signal)/2);
   idx_diff = find(diff(idx)>2);
   FWHM = C(idx(1)+idx_diff)- C(idx(1))
-  semilogy(C-.004,mean_signal, 'ko', ...      
+  plot(C-.004,mean_signal, 'ko', ...      
      'DisplayName', ['AOI=', num2str(AOI{1}), num2str(Expansion{1}), num2str(FiberType{1})])
   legend
 
@@ -67,12 +67,12 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   idx = find(mean_signal > max(mean_signal)/2);
   idx_diff = find(diff(idx)>2);
   FWHM = C(idx(1)+idx_diff)- C(idx(1))
-  semilogy(C,mean_signal, 'ro', ...    
+  plot(C,mean_signal, 'ro', ...    
      'DisplayName', ['AOI= ', num2str(AOI{5}), num2str(Expansion{5}), num2str(FiberType{5})])
   legend
   hold off
 
-  % AO1=2.25, 2x, MM, FWHM=x.xpm
+  % AO1=2.25, 2x, MM, FWHM=17.6pm
   hold on
   wave_comb = vertcat(WavelengthTime{9:12});   
   signal_comb = vertcat(DetectorSignal{9:12});
@@ -82,7 +82,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   idx = find(mean_signal > max(mean_signal)/2);
   idx_diff = find(diff(idx)>2);
   FWHM = C(idx(1)+idx_diff)- C(idx(1))
-  semilogy(C,mean_signal, 'go', ...   
+  plot(C,mean_signal, 'go', ...   
     'DisplayName', ['AOI=', num2str(AOI{9}), num2str(Expansion{9}), num2str(FiberType{9})])
   legend  
   hold off
@@ -97,7 +97,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   idx = find(mean_signal > max(mean_signal)/2);
   idx_diff = find(diff(idx)>2);
   FWHM = C(idx(1)+idx_diff)- C(idx(1))
-  semilogy(C,mean_signal, 'bo', ...   
+  plot(C,mean_signal, 'bo', ...   
     'DisplayName', ['AOI=', num2str(AOI{13}), num2str(Expansion{13}), num2str(FiberType{13})])
   legend
   hold off
@@ -127,7 +127,7 @@ xlim([769.74  769.79])
   idx = find(mean_signal > max(mean_signal)/2);
   idx_diff = find(diff(idx)>3);
   FWHM = C(idx(1)+idx_diff)- C(idx(1))
-  semilogy(C,mean_signal, 'b+', ...   
+  plot(C,mean_signal, 'b+', ...   
     'DisplayName', ['AOI=', num2str(AOI{20}), num2str(Expansion{20}), num2str(FiberType{20})])
   legend
   hold off
@@ -142,7 +142,7 @@ xlim([769.74  769.79])
   idx = find(mean_signal > max(mean_signal)/2);
   idx_diff = find(diff(idx)>3);
   FWHM = C(idx(1)+idx_diff)- C(idx(1))
-  semilogy(C,mean_signal, 'g+', ...     
+  plot(C,mean_signal, 'g+', ...     
     'DisplayName', ['AOI=', num2str(AOI{23}), num2str(Expansion{23}), num2str(FiberType{23})])
   legend
   hold off
@@ -157,7 +157,7 @@ xlim([769.74  769.79])
   idx = find(mean_signal > max(mean_signal)/2);
   idx_diff = find(diff(idx)>3);
   FWHM = C(idx(1)+idx_diff)- C(idx(1))
-  semilogy(C,mean_signal, 'r+', ... 
+  plot(C,mean_signal, 'r+', ... 
     'DisplayName', ['AOI=', num2str(AOI{27}), num2str(Expansion{27}), num2str(FiberType{27})])
   legend
   hold off
@@ -172,7 +172,7 @@ xlim([769.74  769.79])
   idx = find(mean_signal > max(mean_signal)/2);
   idx_diff = find(diff(idx)>3);
   FWHM = C(idx(1)+idx_diff)- C(idx(1))
-   semilogy(C,mean_signal, 'k+', ... 
+  plot(C,mean_signal, 'k+', ... 
     'DisplayName', ['AOI=', num2str(AOI{33}), num2str(Expansion{33}), num2str(FiberType{33})])
   legend  
   hold off
