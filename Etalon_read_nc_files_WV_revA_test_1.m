@@ -1,7 +1,7 @@
 clear all; close all
 
 serv_path = '/Users/spuler/Desktop';
-cd(strcat(serv_path,'/mpd/Etalon/O2_V01_test_2')) 
+cd(strcat(serv_path,'/mpd/Etalon/WV_revA_test_1')) 
 d = pwd;
 
 [Etalonfilename, Etalondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -45,25 +45,24 @@ figure(2)
 plot(WavemeterTime{1},WavemeterWavelength{1})
 
   figure(3) 
-  % AO1=0.0, 2x, MM, T=20.0, FWHM=9.5pm, FSR=0.3122nm
-  ind_start = 1;   ind_end = 1;
-  step = 0.0005 %spline step size in nm
+  % AO1=0.0, 4x, MM, T=20.0, FWHM=3.9pm, FSR=99.5pmm
+  ind_start = 1;   ind_end = 4;
+  step = 0.00025 %spline step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
-  hold on
   plot(C,mean_signal, 'ko', ...      
      'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,4),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
-  %hold on
-  %  plot(xx, s, 'r') 
-  %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
+%   hold on
+%     plot(xx, s, 'r') 
+%     plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
   FWHM
   FSR
   legend
   
-  % AO1=0.0, 2x, SM, T=20.0, FWHM=8.8pm, FSR=0.3124
-  ind_start = 2;   ind_end = 3;
-  step = 0.00055 %spline step size in nm
+  % AO1=0.0, 2x, MM, T=20.0, FWHM=4.7pm, FSR=99.4pm
+  ind_start = 5;   ind_end = 5;
+  step = 0.00025 %spline step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
@@ -77,9 +76,9 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   FSR
   legend
 
-  % AO1=0.0, 4x, MM, T=20.0, FWHM=9.0pm, FSR=0.3127
-  ind_start = 4;   ind_end = 6;
-  step = 0.00075 %spline step size in nm
+  % AO1=2.17, 2x, MM, T=20.0, FWHM=16.0pm, FSR=98.2pm 
+  ind_start = 6;   ind_end = 6;
+  step = 0.00025 %spline step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
@@ -93,9 +92,9 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   FSR
   legend
   
-  % AO1=2.1, 4x, MM, T=20.0, FWHM=14.5pm, FSR=0.3120
+  % AO1=2.17, 2x, MM, T=20.0, FWHM=16.2pm, FSR=95.8pm  **Overfilled
   ind_start = 7;   ind_end = 7;
-  step = 0.0004 %spline step size in nm
+  step = 0.00025 %spline step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
@@ -109,9 +108,9 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   FSR
   legend
   
-  % AO1=2.1, 2x, MM, T=20.0, FWHM=17.5pm, FSR=0.3120
+  % AO1=2.17, 4x, MM, T=20.0, FWHM=12.8pm, FSR=99.8pm **Overfilled
   ind_start = 8;   ind_end = 8;
-  step = 0.0005 %spline step size in nm
+  step = 0.00025; %spline step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
@@ -125,9 +124,9 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   FSR
   legend
 
-  % AO1=2.1, 2x, MM, T=20.0, FWHM=16.5pm, FSR=0.3120nm  ** overfilled launch
+  % AO1=2.17, 4x, MM, T=20.0, FWHM=12.5pm, FSR=100.8pm  
   ind_start = 9;   ind_end = 9;
-  step = 0.0006 %spline step size in nm
+  step = 0.00025; %spline step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
@@ -141,9 +140,9 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   FSR
   legend
   
-  % AO1=2.1, 4x, MM, T=20.0, FWHM=13.9pm, FSR=0.3120nm ** overfilled launch
-  ind_start = 10;   ind_end = 10;
-  step = 0.0004 %spline step size in nm
+  % AO1=0, 4x, MM, T=20.0, FWHM=4.3pm, FSR=99.5pm **Overfilled
+  ind_start = 10;   ind_end = 12;
+  step = 0.00025 %spline step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
@@ -158,16 +157,97 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   legend
   
   
+  % AO1=0, 2x, MM, T=20.0, FWHM=4.2pm, FSR=99.4pm **Overfilled
+  ind_start = 13;   ind_end = 13;
+  step = 0.00025 %spline step size in nm
+  cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
+  [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
+  cd(d)
+  hold on
+  plot(C,mean_signal, 'k+', ...      
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,4),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
+  %hold on
+  %  plot(xx, s, 'r') 
+  %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
+  FWHM
+  FSR
+  legend
+  
+  % AO1=0, 2x, MM, T=27.0, FWHM=5.0pm, FSR=99.4pm 
+  ind_start = 14;   ind_end = 14;
+  step = 0.00025 %spline step size in nm
+  cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
+  [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
+  cd(d)
+  hold on
+  plot(C,mean_signal, 'r+', ...      
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,4),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
+  %hold on
+  %  plot(xx, s, 'r') 
+  %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
+  FWHM
+  FSR
+  legend
+  
+  % AO1=0, 2x, MM, T=27.0, FWHM=4.7pm, FSR=99.5pm   **OF
+  ind_start = 15;   ind_end = 15;
+  step = 0.00025 %spline step size in nm
+  cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
+  [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
+  cd(d)
+  hold on
+  plot(C,mean_signal, 'g+', ...      
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,4),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
+  %hold on
+  %  plot(xx, s, 'r') 
+  %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
+  FWHM
+  FSR
+  legend
+  
+  % AO1=0, 4x, MM, T=27.0, FWHM=5.5pm, FSR=99.4pm   **OF
+  ind_start = 16;   ind_end = 16;
+  step = 0.00025 %spline step size in nm
+  cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
+  [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
+  cd(d)
+  hold on
+  plot(C,mean_signal, 'b+', ...      
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,4),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
+  %hold on
+  %  plot(xx, s, 'r') 
+  %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
+  FWHM
+  FSR
+  legend
+  
+  % AO1=0, 4x, MM, T=27.0, FWHM=5.7pm, FSR=99.6pm   
+  ind_start = 17;   ind_end = 17;
+  step = 0.00025 %spline step size in nm
+  cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
+  [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
+  cd(d)
+  hold on
+  plot(C,mean_signal, 'm+', ...      
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,4),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
+  %hold on
+  %  plot(xx, s, 'r') 
+  %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
+  FWHM
+  FSR
+  legend
+  
+  
 grid on
-title('Etalon V01')
+title('WV Etalon SN OP-10275')
 ylabel('rel. trans. power'); 
 xlabel('wavelength (nm)'); 
-xlim([769.72  770.2])
+%xlim([769.72  770.2])
 ylim([1e-6 4e-4])
 set(gca,'Fontsize',20,'Fontweight','b'); %
 
- xlim([769.65  770.25])
- ylim([1e-6 3e-4])
+xlim([828.14  828.32])
+% ylim([1e-6 3e-4])
 
  
   
@@ -175,7 +255,7 @@ set(gca,'Fontsize',20,'Fontweight','b'); %
   FigH = figure(3);
 %   set(gca,'Fontsize',36,'Fontweight','b'); 
    set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1  1  1600 1200]);
-   name=strcat('Etalon_V01_test2'); 
+   name=strcat('WV_Etalon_10275_test1_select'); 
    print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  
 %   FigH = figure(4);

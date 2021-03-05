@@ -1,7 +1,7 @@
 clear all; close all
 
 serv_path = '/Users/spuler/Desktop';
-cd(strcat(serv_path,'/mpd/V02_test_2')) 
+cd(strcat(serv_path,'/mpd/Etalon/O2_V02_test_2')) 
 d = pwd;
 
 [Etalonfilename, Etalondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -53,7 +53,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'ko', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -70,7 +70,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'ro', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -86,7 +86,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'go', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -94,18 +94,19 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   FSR
   legend
   
-  % AO1=0.0, 4x, MM, T=26.8, FWHM=8.5pm
-  ind_start = 5;   ind_end = 8;
-  step = 0.0008 %spline step size in nm
+ % figure(4)
+  % AO1=0.0, 4x, MM, T=26.8, FWHM=8.2pm, FSR 312.0 pm
+  ind_start = 5;   ind_end = 7;
+  step = 0.00075 %pchip step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
   hold on
   plot(C,mean_signal, 'bo', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
-%   hold on
-%     plot(xx, s, 'r') 
-%     plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
+  hold on
+    plot(xx, s, 'r') 
+    plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
   FWHM
   FSR
   legend
@@ -113,13 +114,13 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   
   % AO1=0.0, 4x, MM, T=31.6, FWHM=8.0pm
   ind_start = 9;   ind_end = 9;
-  step = 0.0005 %spline step size in nm
+  step = 0.00028; %pchip step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
   hold on
   plot(C,mean_signal, 'mo', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -127,18 +128,19 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   FSR
   legend
 
-  % AO1=0.0, 2x, MM, T=31.6, FWHM=8.0pm
+  %figure(4)
+  % AO1=0.0, 2x, MM, T=31.6, FWHM=8.3pm FSR 312.1
   ind_start = 10;   ind_end = 11;
-  step = 0.0005 %spline step size in nm
+  step = 0.000275; %pchip step size in nm
   cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
   hold on
   plot(C,mean_signal, 'co', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
-  %hold on
-  %  plot(xx, s, 'r') 
-  %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=',  num2str(EtalonTemperature{ind_start}), char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
+  hold on
+   plot(xx, s, 'k') 
+   plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
   FWHM
   FSR
   legend

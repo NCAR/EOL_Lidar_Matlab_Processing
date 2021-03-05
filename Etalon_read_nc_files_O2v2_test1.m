@@ -1,7 +1,7 @@
 clear all; close all
 
 serv_path = '/Users/spuler/Desktop';
-cd(strcat(serv_path,'/mpd/V02')) 
+cd(strcat(serv_path,'/mpd/Etalon/O2_V02')) 
 d = pwd;
 
 [Etalonfilename, Etalondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -53,7 +53,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   [C,mean_signal,FWHM, FSR, s, xx,locs, loc, val] = etlaon_fit(ind_start,ind_end, WavelengthTime,DetectorSignal, step);
   cd(d)
   plot(C,mean_signal, 'ko', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -70,7 +70,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'ro', ...      
-        'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+        'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -87,7 +87,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on;
   plot(C,mean_signal, 'go', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -103,7 +103,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'bo', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -120,7 +120,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'mo', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'k') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -136,7 +136,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'co', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -152,7 +152,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'yo', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
@@ -168,7 +168,7 @@ plot(WavemeterTime{1},WavemeterWavelength{1})
   cd(d)
   hold on
   plot(C,mean_signal, 'k+', ...      
-     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'nm FSR'])
+     'DisplayName',    [num2str(AOI{ind_start}), char(176), 'AOI, ', num2str(Expansion{ind_start}), ', ', num2str(FiberType{ind_start}), ', T=24.6', char(176),'C, ', num2str(FWHM,2),'pm FWHM, ', num2str(FSR,4),'pm FSR'])
   %hold on
   %  plot(xx, s, 'r') 
   %  plot(xx(locs(loc)),val,'rv', 'MarkerFaceColor', 'r');
