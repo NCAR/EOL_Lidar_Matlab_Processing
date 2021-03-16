@@ -24,11 +24,11 @@ A_2 = 14; %cm^2
 figure(2)
 loglog(O_y_primary, O_x, 'b', 'DisplayName','Primary', 'LineWidth', 2)
 hold on
-loglog(O_y_near*A_2/A_1, O_x, 'r', 'DisplayName','Near', 'LineWidth', 2)
-loglog((O_y_primary*0.9 + O_y_near*.1*A_2/A_1), O_x, 'k', 'DisplayName','Combined', 'LineWidth', 2)
+loglog(O_y_near*A.1/A.2, O_x, 'r', 'DisplayName','Near', 'LineWidth', 2)
+loglog(O_y_primary*0.9 + O_y_near*.1*A.1/A.2, O_x, 'k', 'DisplayName','Combined', 'LineWidth', 2)
 grid on
 ylabel('Range (m)'); 
-xlabel('Relative Signal'); 
+xlabel('Overlap function'); 
 legend('Location', 'NorthWest');
 axis([1e-7 2e0 50 12000])
 
@@ -39,8 +39,8 @@ axis([1e-7 2e0 50 12000])
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
 cd('/Users/spuler/Desktop') % point to the directory where data is stor
-FigH = figure(2);
-set(gca,'Fontsize',24,'Fontweight','b'); % 
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
+FigH = figure(1);
+set(gca,'Fontsize',30,'Fontweight','b'); % 
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800Scrsize);
 name=strcat('Gen5_overlap_function');
 print(FigH, name, '-dpng', '-r300') 
