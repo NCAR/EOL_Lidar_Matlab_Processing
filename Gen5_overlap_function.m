@@ -25,7 +25,10 @@ figure(2)
 loglog(O_y_primary, O_x, 'b', 'DisplayName','Primary', 'LineWidth', 2)
 hold on
 loglog(O_y_near*A_2/A_1, O_x, 'r', 'DisplayName','Near', 'LineWidth', 2)
-loglog((O_y_primary*0.9 + O_y_near*.1*A_2/A_1), O_x, 'k', 'DisplayName','Combined', 'LineWidth', 2)
+%loglog((O_y_primary*0.9 + O_y_near*.1*A_2/A_1), O_x, 'm', 'DisplayName','Combined', 'LineWidth', 2)
+loglog(((O_y_primary*A_1*0.9 + O_y_near*A_2*0.1)/(A_1*0.9+A_2*0.1)), O_x, 'k', 'DisplayName','Combined', 'LineWidth', 2)
+
+
 grid on
 ylabel('Range (m)'); 
 xlabel('Relative Signal'); 
@@ -42,5 +45,5 @@ cd('/Users/spuler/Desktop') % point to the directory where data is stor
 FigH = figure(2);
 set(gca,'Fontsize',24,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
-name=strcat('Gen5_overlap_function');
+name=strcat('Gen5_relative_overlap_function');
 print(FigH, name, '-dpng', '-r300') 
