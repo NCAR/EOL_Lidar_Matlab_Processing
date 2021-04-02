@@ -102,7 +102,7 @@ Z = real(comb_AH)';
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); 
   caxis([0 16]);
-  caxis([0 6]);
+  %caxis([0 6]);
   axis([fix(min(x)) ceil(max(x)) 0 6])
   title({'MPD Absolute Humidity (g m^{-3})'},...
        'fontweight','b','fontsize',font_size)

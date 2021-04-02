@@ -67,7 +67,41 @@ plot(RMSE_demoninator, range_grid)
   xlim([0 70]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Samples used in RMSE'); 
-
+% calcuate the Mean Bias Error
+mean_error_numerator = nansum(xx - yy);
+mean_error_demoninator = sum(~isnan((xx - yy)));
+mean_error = (mean_error_numerator./mean_error_demoninator);
+  
+figure(21)
+subplot(1,3,1)
+plot(mean_error, range_grid)
+  set(gca,'Fontsize',20,'Fontweight','b'); %   
+  grid on
+  set(gca,'XMinorGrid','on','YMinorGrid','on')
+  xlim([-1.5 1.5]);
+  ylim([0,6]);
+  ylabel('Altitude, AGL (km)'); 
+  xlabel('Mean Error (g m^{-3})'); 
+subplot(1,3,2)
+plot(RMSE, range_grid)
+  set(gca,'Fontsize',20,'Fontweight','b'); %   
+  grid on
+  set(gca,'XMinorGrid','on','YMinorGrid','on')
+  xlim([0 3]);
+  ylim([0,6]);
+  ylabel('Altitude, AGL (km)'); 
+  xlabel('RMSE (g m^{-3})');
+subplot(1,3,3)
+plot(RMSE_demoninator, range_grid)
+  set(gca,'Fontsize',20,'Fontweight','b'); % 
+  grid on
+  set(gca,'XMinorGrid','on','YMinorGrid','on')
+  xlim([0 70]);
+  ylim([0,6]);
+  ylabel('Altitude, AGL (km)'); 
+  xlabel('Samples used');
+  
+  
 % reshape into one long array
 x_sonde = reshape(x_no_surface,1,[]); %sondes
 y_MPD05 = reshape(y_no_surface,1,[]); %MPD
@@ -189,3 +223,8 @@ FigH = figure(20);
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
 name=strcat(date, 'RMSE'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+
+FigH = figure(21);
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
+name=strcat(date, 'error_RMSE'); 
+print(FigH, name, '-dpng', '-r0') % set at the screen resolution
