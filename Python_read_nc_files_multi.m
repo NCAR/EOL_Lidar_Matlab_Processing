@@ -1,18 +1,18 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
-%serv_path = '/Users/spuler/Desktop';
+serv_path = '/Users/spuler/Desktop';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
 %cd(strcat(serv_path,'/mpd_05_processed_data'))
-serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
-%cd(strcat(serv_path,'/mpd/Marshall/mpd03_10min')) % this is the 10min averaged data
+%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
+cd(strcat(serv_path,'/mpd/Marshall/mpd03_10min')) % this is the 10min averaged data
 %cd(strcat(serv_path,'/mpd/Marshall/mpd03_5min'))
-%cd(strcat(serv_path,'/mpd/sgp/mpd05'))
+cd(strcat(serv_path,'/mpd/sgp/mpd05'))
 %cd(strcat(serv_path, '/MPDSGP/t_res_10min/'));  %This was the original SGP 10 min data
-cd(strcat(serv_path,'/MPD_Gen5_Pub/'));
+%cd(strcat(serv_path,'/MPD_Gen5_Pub/'));
 d_read_data = pwd; % get the current path
 
-serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
+%serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
 cd(strcat(serv_path,'/mpd_05_processed_data/Matlab'))
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
 MPD = 5;

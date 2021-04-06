@@ -3,9 +3,9 @@ flag.plot_overlay = 0; %plot sondes on the time vs hieght AH plot
 
 %d=pwd;
 %cd('/scr/sci/tammy/mpd/sgp/soundings/')
-cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
-%serv_path = '/Users/spuler/Desktop';
-%cd(strcat(serv_path,'/mpd/sgp/Sondes/'))
+%cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
+serv_path = '/Users/spuler/Desktop';
+cd(strcat(serv_path,'/mpd/sgp/Sondes/'))
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
@@ -44,34 +44,16 @@ bins = WV_max*4; % bin size is x 0.1 x 0.1 g/m^2
 x_no_surface = xx(:,2:end); % Sondes (assume as truth) 
 y_no_surface = yy(:,2:end); % MPD
 
-%calculate the RMS using the sonde data as truty
-RMSE_numerator = nansum((xx - yy).^2);
-RMSE_demoninator = sum(~isnan((xx - yy).^2));
+%calculate the RMS using the sonde data as truth
+RMSE_numerator = nansum((yy - xx).^2);
+RMSE_demoninator = sum(~isnan((yy - xx).^2));
 RMSE = sqrt(RMSE_numerator./RMSE_demoninator);
-RMSPE = nanmean((xx - yy)./xx).^2;
-
-figure(20)
-subplot(1,2,1)
-plot(RMSE, range_grid)
-  set(gca,'Fontsize',20,'Fontweight','b'); %   
-  grid on
-  set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 3]);
-  ylabel('Altitude, AGL (km)'); 
-  xlabel('Absolute humidity RMSE (g m^{-3})'); 
-subplot(1,2,2)
-plot(RMSE_demoninator, range_grid)
-  set(gca,'Fontsize',20,'Fontweight','b'); % 
-  grid on
-  set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 70]);
-  ylabel('Altitude, AGL (km)'); 
-  xlabel('Samples used in RMSE'); 
+RMSPE = nanmean((yy - xx)./xx).^2;
 % calcuate the Mean Bias Error
-mean_error_numerator = nansum(xx - yy);
-mean_error_demoninator = sum(~isnan((xx - yy)));
+mean_error_numerator = nansum(yy - xx);
+mean_error_demoninator = sum(~isnan((yy - xx)));
 mean_error = (mean_error_numerator./mean_error_demoninator);
-  
+
 figure(21)
 subplot(1,3,1)
 plot(mean_error, range_grid)
@@ -217,11 +199,6 @@ FigH = figure(8);
 set(gca,'Fontsize',24,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
 name=strcat(date, 'Sonde_multi'); 
-print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-
-FigH = figure(20);
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
-name=strcat(date, 'RMSE'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 
 FigH = figure(21);

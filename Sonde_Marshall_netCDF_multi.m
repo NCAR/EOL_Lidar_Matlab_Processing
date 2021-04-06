@@ -44,36 +44,15 @@ x_no_surface = xx(:,2:end); % Sondes (assume as truth)
 y_no_surface = yy(:,2:end); % MPD  
 
 %calculate the RMS using the sonde data as truth
-RMSE_numerator = nansum((xx - yy).^2);
-RMSE_demoninator = sum(~isnan((xx - yy).^2));
+RMSE_numerator = nansum((yy - xx).^2);
+RMSE_demoninator = sum(~isnan((yy - xx).^2));
 RMSE = sqrt(RMSE_numerator./RMSE_demoninator);
-RMSPE = nanmean((xx - yy)./xx).^2;
+RMSPE = nanmean((yy - xx)./xx).^2;
 % calcuate the Mean Bias Error
-mean_error_numerator = nansum(xx - yy);
-mean_error_demoninator = sum(~isnan((xx - yy)));
+mean_error_numerator = nansum(yy - xx);
+mean_error_demoninator = sum(~isnan((yy - xx)));
 mean_error = (mean_error_numerator./mean_error_demoninator);
 
-figure(20)
-subplot(1,2,1)
-plot(RMSE, range_grid)
-  set(gca,'Fontsize',20,'Fontweight','b'); %   
-  grid on
-  set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 3]);
-  ylim([0,6]);
-  ylabel('Altitude, AGL (km)'); 
-  xlabel('Absolute humidity RMSE (g m^{-3})'); 
-subplot(1,2,2)
-plot(RMSE_demoninator, range_grid)
-  set(gca,'Fontsize',20,'Fontweight','b'); % 
-  grid on
-  set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 70]);
-  ylim([0,6]);
-  ylabel('Altitude, AGL (km)'); 
-  xlabel('Samples used in RMSE'); 
-
-  
 figure(21)
 subplot(1,3,1)
 plot(mean_error, range_grid)
@@ -217,11 +196,6 @@ FigH = figure(8);
 set(gca,'Fontsize',24,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
 name=strcat(date, 'Sonde_multi'); 
-print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-
-FigH = figure(20);
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
-name=strcat(date, 'RMSE'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 
 FigH = figure(21);
