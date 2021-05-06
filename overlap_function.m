@@ -22,7 +22,7 @@ hold off
 % the sigal is relative to the overlap function, O, and the Area
 A_1 = 935; %cm^2 primary
 A_2 = 14; %cm^2 WFOV near
-eta = 0.9
+eta = 0.90
 A_near_p = A_2/A_1
 
 
@@ -52,6 +52,6 @@ hold off
   FigH = figure(2);
    set(gca,'Fontsize',24,'Fontweight','b'); 
    set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1  1  800 600]);
-   name=strcat('relative_signal'); 
+   name=strcat('overlap_relative_signal'); 
    print(FigH, name, '-dpng', '-r0') % set at the screen resoluti
 
