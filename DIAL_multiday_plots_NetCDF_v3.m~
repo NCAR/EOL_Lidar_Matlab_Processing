@@ -63,11 +63,11 @@ blank = 150; % has to be in increments of 75 (the default blank in the processin
  DIAL=5;
  date = '20 Jun 2021';   
 % days = 7; skip = 1;
- days = 9; skip = 1;
+ days = 9; skip = 4;
 % days = 12; skip = 2;
 % %days = 72; skip = 9;
 % %days = 96; skip = 12;
-blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
+%blank = 525; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 
 %DIAL=4;
 %date = '16 Aug 2019'; % Comparison test new butterfly DBR + TWA transmitter 
@@ -228,7 +228,6 @@ for i=1:days
     range_limit = min([range_lim1 range_lim2]);
     
     N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg(2:end,1:range_limit));
-    N_error_comb = vertcat(N_error_comb(:,1:range_limit), N_error(2:end,1:range_limit));
     RB_comb = vertcat(RB_comb(:,1:range_limit), RB(2:end,1:range_limit));
  %   OD_comb= vertcat(OD_comb(:,1:range_limit), OD(2:end,1:range_limit));
     duration = vertcat(duration, time_new(2:end));

@@ -3,7 +3,7 @@ clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
 serv_path = '/Users/lroot/Desktop';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
-cd(strcat(serv_path,'/mpd/mpd_05_processed_data/python'))
+%cd(strcat(serv_path,'/mpd_05_processed_data'))
 %serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
 %cd(strcat(serv_path,'/mpd/Marshall/mpd03_5min'))
 %cd(strcat(serv_path, '/MPDSGP/t_res_10min/'));  %This was the original SGP 10 min data
@@ -99,7 +99,7 @@ Z = real(comb_AH)';
   h = pcolor(x, y, Z);
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); 
-  caxis([0 12]);
+  caxis([0 16]);
   %caxis([0 6]);
   axis([fix(min(x)) ceil(max(x)) 0 6])
   title({'MPD Absolute Humidity (g m^{-3})'},...

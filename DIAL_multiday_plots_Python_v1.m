@@ -10,17 +10,13 @@ tic
 %DIAL=4;
 
 DIAL=5;
-date = '17 Apr 2019'; % Five-unit side-by-side test 
+date = '20 Jun 2021'; % Five-unit side-by-side test 
 %days = 4; skip = 1;
-days = 32; skip = 4;
-days = 72; skip = 8;
-days = 96; skip = 12;
-date = '19 Apr 2019'; % Five-unit side-by-side test 
-days = 12; skip = 1;
+days = 9; skip = 1;
 %dirname = '/Volumes/documents/WV_DIAL_data/MPD5_python_5min_125m_processed_data_low_res';
 %range_grid_size = 300;  %set the size of the range gridding
 %dirname = '/Volumes/documents/WV_DIAL_data/MPD5_python_5min_125m_processed_data';
-dirname = '/Volumes/documents/WV_DIAL_data/MPD5_python_10min_150m_processed_data';
+dirname = '/Users/lroot/Desktop/mpd/mpd_05_processed_data/python';
 range_grid_size = 75;  %set the size of the range gridding
   
 font_size = 36; % use this for 2018a version
