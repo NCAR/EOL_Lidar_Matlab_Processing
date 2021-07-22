@@ -1,21 +1,16 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
-serv_path = '/Users/lroot/Desktop';
-%serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
-cd(strcat(serv_path,'/mpd/mpd_05_processed_data/python'))
-%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data';
-%cd(strcat(serv_path,'/mpd/Marshall/mpd03_5min'))
-%cd(strcat(serv_path, '/MPDSGP/t_res_10min/'));  %This was the original SGP 10 min data
-%cd(strcat(serv_path,'/MPD_Gen5_Pub/'));
+serv_path = '/Volumes/documents';
+cd(strcat(serv_path,'/mpd_data/mpd_05_processed_data/python'))
 d_read_data = pwd; % get the current path
 
-%serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
 cd(strcat(serv_path,'/mpd/Plots'))
 d_save_data = pwd; %set the plot save path
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
 node = 'MPD05';
 low_range_mask = 0;
+skip = 1
 
 cd(d_read_data);
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -28,9 +23,9 @@ jj=1;
  variable{3} = 'Absolute_Humidity'; 
  variable{4} = 'Absolute_Humidity_mask';
  variable{5} = 'Absolute_Humidity_variance'; 
- variable{6} = 'Aerosol_Backscatter_Coefficient';
- variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
- variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
+% variable{6} = 'Aerosol_Backscatter_Coefficient';
+% variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
+% variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
     
 
 for jj = 1:size(Pythonfilename,2)
@@ -49,9 +44,9 @@ for jj = 1:size(Pythonfilename,2)
     AH{jj}(AH_mask{jj} == 1) = nan;
     AH_var{jj}(AH_mask{jj} == 1) = nan; 
     
-    ABC{jj}  = ncread(filename,variable{6});   
-    ABC_mask{jj} = ncread(filename,variable{7}); 
-    ABC_var{jj} = ncread(filename,variable{8});
+ %   ABC{jj}  = ncread(filename,variable{6});   
+ %   ABC_mask{jj} = ncread(filename,variable{7}); 
+ %   ABC_var{jj} = ncread(filename,variable{8});
   %  ABC{jj}(ABC_mask{jj} == 1) = nan;
   %  ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
     
@@ -72,16 +67,16 @@ for jj = 1:size(Pythonfilename,2)
       comb_duration = duration{jj};
       comb_AH = AH{jj}';
       comb_AH_var = AH_var{jj}';
-      comb_ABC = ABC{jj}';
-      comb_ABC_var = ABC_var{jj}';
+%       comb_ABC = ABC{jj}';
+%       comb_ABC_var = ABC_var{jj}';
   else
       comb_duration = [comb_duration; duration{jj}];
       % find the maximum range to accumulate (in case it changes)
       max_range = min(cellfun('size',alt,1))
       comb_AH = [comb_AH(:,1:max_range); AH{jj}(1:max_range,:)'];
       comb_AH_var = [comb_AH_var(:,1:max_range); AH_var{jj}(1:max_range,:)'];
-      comb_ABC = [comb_ABC(:,1:max_range); ABC{jj}(1:max_range,:)'];
-      comb_ABC_var = [comb_ABC_var(:,1:max_range); ABC_var{jj}(1:max_range,:)'];
+%       comb_ABC = [comb_ABC(:,1:max_range); ABC{jj}(1:max_range,:)'];
+%       comb_ABC_var = [comb_ABC_var(:,1:max_range); ABC_var{jj}(1:max_range,:)'];
   end
   
   % remove non-physical values AH < - 0.5 (allow for some slight negative noise)
@@ -99,7 +94,6 @@ font_size = 14;
 x = comb_duration;
 y = double(alt{1}(1:max_range,1)')/1000;
 Z = real(comb_AH)';
-skip = 1
 xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/skip)+1 );
 
 
@@ -123,29 +117,29 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   colormap(jet)
   set(gca,'Fontsize',font_size,'Fontweight','b');
  
- % plot the atmospheric backscatter coefficient 
-  Z = real(comb_ABC)';
-  figure2 = figure('Position',plot_size1);
-  set(gcf,'renderer','zbuffer');
-  h = pcolor(x, y, Z);
-  set(h, 'EdgeColor', 'none'); 
-  axis xy; colorbar('EastOutside'); 
-  caxis([0 12]);
-  caxis([1e-8 1e-3]);
-  axis([fix(min(x)) ceil(max(x)) 0 6])
-  %  shading interp
-  set(gca, 'XTick',  xData)
-  set(gca,'TickDir','out');
-  set(gca,'TickLength',[0.005; 0.0025]);
-  set(gca,'Zscale', 'log')
-  set(gca,'Colorscale', 'log')
-  set(gca,'Zscale', 'linear')
-  hh = title({[node, ' Aerosol Backscatter Coefficient m^{-1} sr^{-1}']},...
-       'fontweight','b','fontsize',font_size);     
-  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-  datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-  colormap(jet)
-  set(gca,'Fontsize',font_size,'Fontweight','b');
+%  % plot the atmospheric backscatter coefficient 
+%   Z = real(comb_ABC)';
+%   figure2 = figure('Position',plot_size1);
+%   set(gcf,'renderer','zbuffer');
+%   h = pcolor(x, y, Z);
+%   set(h, 'EdgeColor', 'none'); 
+%   axis xy; colorbar('EastOutside'); 
+%   caxis([0 12]);
+%   caxis([1e-8 1e-3]);
+%   axis([fix(min(x)) ceil(max(x)) 0 6])
+%   %  shading interp
+%   set(gca, 'XTick',  xData)
+%   set(gca,'TickDir','out');
+%   set(gca,'TickLength',[0.005; 0.0025]);
+%   set(gca,'Zscale', 'log')
+%   set(gca,'Colorscale', 'log')
+%   set(gca,'Zscale', 'linear')
+%   hh = title({[node, ' Aerosol Backscatter Coefficient m^{-1} sr^{-1}']},...
+%        'fontweight','b','fontsize',font_size);     
+%   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+%   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+%   colormap(jet)
+%   set(gca,'Fontsize',font_size,'Fontweight','b');
  
  
  
@@ -163,11 +157,11 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   name=strcat(date, node, ' WV_Python_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
-  FigH = figure(2);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, node, ' RB_Python_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+%   FigH = figure(2);
+%   set(gca,'Fontsize',16,'Fontweight','b'); 
+%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
+%   name=strcat(date, node, ' RB_Python_multi'); 
+%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
   
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 

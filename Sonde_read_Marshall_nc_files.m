@@ -1,4 +1,4 @@
-function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in,  comb_AH_var, flag) 
+function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_Marshall_nc_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in,  comb_AH_var,  sonde_end_int, flag) 
 
 %sondedir
 
@@ -136,12 +136,43 @@ range_grid = 0:range_grid_size/1000:6;
 sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'nearest');
 % find the closes time index for the MPD water vapor
 [minValue, closestIndex] = min(abs(min(duration_sonde)-duration))
-MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
-MPD_AH_var =  comb_AH_var(closestIndex,:);
-try
-  MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'nearest');
-  MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'nearest');
+[minValue, closestIndex_end] = min(abs(min(duration_sonde+sonde_end_int/24/60)-duration))
+%MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
+%MPD_AH_var =  comb_AH_var(closestIndex,:);
+MPD_AH = nanmean(N_avg_comb(closestIndex:closestIndex_end,:),1).*1e6./6.022E23.*18.015;
+if flag.data_type == 0
+  MPD_AH_var =  nanmean(comb_AH_var(closestIndex:closestIndex_end,:),1)./sqrt(sonde_end_int/10); %assumes 10 min in the Matlab data
+else
+  MPD_AH_var =  nanmean(comb_AH_var(closestIndex:closestIndex_end,:),1);
 end
+% remove isolated points
+test = ~isnan(MPD_AH);
+test2 = movmean(test, 5);
+test3 = (test2>0.2);
+test4 = (test==1 & test3==1);
+
+try
+MPD_AH_grid = interp1(range_grid_in(test4)/1000, MPD_AH(test4), range_grid, 'linear');
+MPD_AH_var_grid = interp1(range_grid_in(test4)/1000, MPD_AH_var(test4), range_grid, 'linear');
+% MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'linear');
+%MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'linear');
+end
+
+% don't plot data above a large gap in information (don't use clouds)
+if flag.data_type == 0
+  range_index = find(test2<=0.2, 1, 'first')
+  MPD_AH_grid(range_index:end) = nan;
+  MPD_AH_var_grid(range_index:end) = nan;
+end
+% figure(501)
+% plot(MPD_AH, range/1000, 'bo')
+% hold on
+% plot(MPD_AH_grid, range_grid, 'r+')
+% plot(sonde_AH_grid, range_grid)
+% ylim([0 9])
+% xlim([0 5])
+
+
 
 if flag.plot_overlay == 1
   % overlay sonde vs MPD
@@ -160,7 +191,7 @@ if flag.plot_overlay == 1
   %camroll(90)
   
   hold off
-  xlim([0 10])
+  xlim([0 5])
   ylim([0 6])
   % grid(gca,'minor')
   grid on
@@ -170,14 +201,15 @@ if flag.plot_overlay == 1
   
    
   Scrsize=[1 1 800 800];
-  cd('/Users/spuler/Desktop/mpd/Plots/')
+ % cd('/Users/spuler/Desktop/mpd/Plots/')
+  cd('/Users/lroot/Desktop/mpd/Plots/') 
   FigH = figure(115);
   set(gca,'Fontsize',30,'Fontweight','b'); % 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
   name=strcat(sonde_date, 'Sonde_profile'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
-  save(name, 'range_grid', 'sonde_AH_grid', 'MPD_AH_grid', 'MPD_AH_var_grid')
+ % save(name, 'range_grid', 'sonde_AH_grid', 'MPD_AH_grid', 'MPD_AH_var_grid')
   
   
   
@@ -185,5 +217,5 @@ end
 
 
 
-pause
+%pause
 

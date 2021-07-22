@@ -6,15 +6,15 @@
 % stop_date = '20190519'; %32 days
 % start_date = '20190405'; %first 5 unit intercomparison
 % stop_date = '20190410'; 
- start_date = '20210620'; %first 5 unit intercomparison
- stop_date = '20210628';  
+ start_date = '20210720'; %first 5 unit intercomparison
+ stop_date = '20210721';  
 
  
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
 k=start_day;
 flag.process = 1;
-flag.plot = 1;
+flag.plot = 0;
 
 for n=1:1
 tStart = tic   
@@ -24,7 +24,7 @@ tStart = tic
         % save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr 
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD01',file) 
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD02',file) 
-        % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) 
+         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) 
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD04',file)  
          MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)         
       end

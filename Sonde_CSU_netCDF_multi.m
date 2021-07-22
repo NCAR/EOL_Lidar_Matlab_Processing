@@ -1,6 +1,6 @@
 elevation= 1574; %MPD05 was at 1574m elevation at Christman Field Site
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.data_type = 1;  % 0=matlab WV, 1=python WV, 2=raman WV
+flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV
 sonde_end_int = 30; % integration time (in min) for the MPD 
 
 %d=pwd;
@@ -23,15 +23,15 @@ for jj = 1:size(sondefilename,2)
       duration = comb_Raman_duration;
    elseif flag.data_type == 1  % add the following lines for Python processing of the MPD 
       %range_grid_size = 37.5; 
-      range_grid_size = diff(AH_alt{1}');
+      range_grid_size = diff(alt{1}');
       range_grid_size = range_grid_size(1,1)
       N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
-      duration = comb_AH_duration;
-      range_grid_in = AH_alt{1}';
+      duration = comb_duration;
+      range_grid_in = alt{1}';
    elseif flag.data_type == 0
        range_grid_size = diff(range(1:2)) 
        range_grid_in = range;
-      comb_AH_var = N_error_comb.*1e6./6.022E23.*18.015;
+       comb_AH_var = N_error_comb.*1e6./6.022E23.*18.015;
    end
    [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, flag); 
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
@@ -88,7 +88,7 @@ plot(RMSE_demoninator, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); % 
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 70]);
+  xlim([0 25]);
   ylim([0,6]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Samples used');

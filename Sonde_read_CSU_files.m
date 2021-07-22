@@ -1,8 +1,9 @@
-function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, flag) 
+function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, plot_path, flag) 
 
 %sondedir
 
 filename = [sondedir sondefilename{jj}]; 
+%filename = [sondedir sondefilename(1)]; 
 %filename = '/scr/sci/tammy/mpd/sgp/soundings/sgpsondewnpnC1.b1.20190429.023100.cdf';
 %filename = '/Users/spuler/downloads/sgpsondewnpnC1.b1.20190501.083100.cdf';
 %filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201016_163106.nc';
@@ -23,7 +24,7 @@ fclose(fileID);
 
   
 
- sonde_time = str2double(dataArray{1,1});  % elapsed time (s)
+ sonde_t = str2double(dataArray{1,1});  % elapsed time (s)
  sonde_alt = str2double(dataArray{1,2});  % height above MSL (m)
  sonde_alt = str2double(dataArray{1,12});
  sonde_P = str2double(dataArray{1,3}); % P (hPa)
@@ -32,7 +33,7 @@ fclose(fileID);
  sonde_lat = str2double(dataArray{1,10});
  sonde_lon = str2double(dataArray{1,11});
 
- sonde_time = sonde_time(3:end,1);
+ sonde_t = sonde_t(3:end,1);
  sonde_alt = sonde_alt(3:end,1);
  sonde_P = sonde_P(3:end,1);
  sonde_T = sonde_T(3:end,1);
@@ -43,7 +44,7 @@ fclose(fileID);
 %duration_sonde = datenum(datetime(int64(sonde_time) + int64(base_time), 'convertfrom', 'posixtime'));
 %sonde_offset_min = 30;
 
-duration_sonde = n + sonde_time/24/60/60;
+duration_sonde = n + sonde_t/24/60/60;
 sonde_AGL = sonde_alt - elevation;
 
 
@@ -135,28 +136,36 @@ end
 % grid sonde data vs range 
 range_grid = 0:range_grid_size/1000:6;
 [sonde_AGL_km, index] = unique(sonde_AGL/1000); 
-sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'nearest');
+sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'linear');
 % find the closes time index for the MPD water vapor
 [minValue, closestIndex] = min(abs(min(duration_sonde)-duration))
 [minValue, closestIndex_end] = min(abs(min(duration_sonde+sonde_end_int/24/60)-duration))
 %MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
 %MPD_AH_var =  comb_AH_var(closestIndex,:);
-MPD_AH = nanmean(N_avg_comb(closestIndex:closestIndex_end,:)).*1e6./6.022E23.*18.015;
-MPD_AH_var =  nanmean(comb_AH_var(closestIndex:closestIndex_end,:));
+MPD_AH = nanmean(N_avg_comb(closestIndex:closestIndex_end,:),1).*1e6./6.022E23.*18.015;
+MPD_AH_var =  nanmean(comb_AH_var(closestIndex:closestIndex_end,:),1)./sqrt(sonde_end_int/10);
+
+
+% remove isolated points
+test = ~isnan(MPD_AH);
+test2 = movmean(test, 4);
+test3 = (test2>0.25);
+test4 = (test==1 & test3==1);
 
 try
-  MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'nearest');
-  MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'nearest');
+MPD_AH_grid = interp1(range_grid_in(test4)/1000, MPD_AH(test4), range_grid, 'linear');
+MPD_AH_var_grid = interp1(range_grid_in(test4)/1000, MPD_AH_var(test4), range_grid, 'linear');
+% MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'linear');
+%MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'linear');
 end
 
 if flag.plot_overlay == 1
   % overlay sonde vs MPD
   figure(115)
-
   plot(sonde_AH_grid, range_grid)
   hold on
-
   plot(MPD_AH_grid, range_grid, 'ro')
+  %plot(MPD_AH, range/1000, 'g*')
   
   eb(1) = errorbar(MPD_AH_grid, range_grid, MPD_AH_var_grid, 'horizontal', 'LineStyle', 'none', 'HandleVisibility','off');
   set(eb, 'color', 'r', 'LineWidth', 1)
@@ -176,11 +185,12 @@ if flag.plot_overlay == 1
   
    
   Scrsize=[1 1 800 800];
-  cd('/Users/lroot/Desktop/mpd/Plots/')
+  %cd('/Users/lroot/Desktop/mpd/Plots/')
+  cd(plot_path)
   FigH = figure(115);
   set(gca,'Fontsize',30,'Fontweight','b'); % 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-  name=strcat(sonde_date, 'Sonde_profile'); 
+  name=strcat(sonde_date, '_', sonde_time, 'Sonde_profile'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
  % save(name, 'range_grid', 'sonde_AH_grid', 'MPD_AH_grid', 'MPD_AH_var_grid')
