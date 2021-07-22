@@ -11,10 +11,11 @@ days = 120; skip = 12;
 
 node = 'MPD05';
 date = '20 Jun 2021';   
-%%days = 4; skip = 1;
-days = 31; skip = 2;
+days = 32; skip = 4;
+date = '18 Jul 2021';  
+days = 4; skip = 1;
 
-
+serv_path = '/Volumes/documents';
 plot_path = '/Volumes/documents/mpd_data/Plots/';
 blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 flag.near = 0;  % read in the near range channel (0=off 1=on)
@@ -42,15 +43,15 @@ C = importdata('NCAR_C_Map.mat');
 dd=pwd;
 
 if strcmp(node,'MPD01')==1
-  cd('/Volumes/documents/Desktop/mpd/mpd_01_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_01_processed_data//Matlab')) 
  elseif strcmp(node,'MPD02')==1
-  cd('/Volumes/documents/Desktop/mpd/mpd_02_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_02_processed_data//Matlab')) 
  elseif strcmp(node,'MPD03')==1
-  cd('/Volumes/documents/mpd/mpd_03_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_03_processed_data//Matlab')) 
  elseif strcmp(node,'MPD04')==1
-  cd('/Volumes/documents/mpd/mpd_04_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_04_processed_data//Matlab'))
  elseif strcmp(node,'MPD05')==1
-  cd('/Volumes/documents/mpd/mpd_05_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_05_processed_data//Matlab'))
 end
 
 %gate = round((bin_duration*1e-9*3e8/2)*10)/10
@@ -246,8 +247,8 @@ if flag.replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- %caxis([0 12]);
- caxis([0 5]);
+ caxis([0 12]);
+ %caxis([0 5]);
  colormap(jet)
  %colormap(C)
  %colormap(perula)

@@ -3,9 +3,12 @@ tic
 
  node = 'MPD05';
  date = '20210620';   
- days = 31; skip = 2;
-
+ days = 32; skip = 4;
+ date = '20210718';  
+ days = 4; skip = 1;
+ 
 serv_path = '/Volumes/documents';
+plot_path = '/Volumes/documents/mpd_data/Plots/'; 
 flag.near = 0;  % read in the near range channel (0=off 1=on)
 font_size = 36; % use this for 2018a version
 
@@ -374,8 +377,8 @@ if flag.save_figs==1
   %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
   %cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stored   
   %cd('/Users/lroot/Desktop/mpd/Plots/') % point to the directory where data is stored 
-  cd('/Volumes/documents/mpd/Plots/') % point to the directory where data is stored 
-   
+  cd(plot_path) % point to the directory where data is stored 
+
  
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b');  
