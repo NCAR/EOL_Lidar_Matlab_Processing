@@ -47,8 +47,9 @@ for i=1:days
     if exist(strcat('mpd05.', date, '.Matlab.mat'))==2
       load(strcat('mpd05.', date, '.Matlab.mat'),'Retrievals','Data')  
       % reading in the 'Data' variable slows down the read considerably
-      % save the file as save(strcat('mpd05.', date, '.Matlab.mat'), '-struct', 'Retreivals','Data');
-      % then can load with the following line more quickly  
+      % save the file as save(strcat('mpd05.', date, '.Matlab.mat'), '-struct', 'Data');
+      % then can load with the following line more quickly
+      loadedVars = load(strcat('mpd05.', date, '.Matlab.mat'),'Retrievals','WeatherStation');  
     end
     Temp_comb = Retrievals.Temperature.Value';
     Temp_comb_avg = Retrievals.Temperature.Smoothed';

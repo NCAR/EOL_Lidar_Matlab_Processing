@@ -1,7 +1,7 @@
 elevation= 1574; %MPD05 was at 1574m elevation at Christman Field Site
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
 flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV
-sonde_end_int = 75; % integration time (in min) for the MPD 
+sonde_end_int = 30; % integration time (in min) for the MPD 
 
 %d=pwd;
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
@@ -33,7 +33,8 @@ for jj = 1:size(sondefilename,2)
      %  comb_AH_var = N_error_comb.*1e6./6.022E23.*18.015;
    end
    %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, flag); 
-   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb_avg, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag); 
+   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb_avg, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag); 
+   %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag);
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
    %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
  end

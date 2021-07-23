@@ -10,7 +10,7 @@ d_save_data = pwd; %set the plot save path
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
 node = 'MPD05';
 low_range_mask = 0;
-skip = 4
+skip = 2
 
 cd(d_read_data);
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -43,7 +43,10 @@ for jj = 1:size(Pythonfilename,2)
     AH_var{jj} = ncread(filename,variable{5}); 
     AH{jj}(AH_mask{jj} == 1) = nan;
     AH_var{jj}(AH_mask{jj} == 1) = nan; 
-    
+    % mask the absolute humidity data based on its variance
+    AH{jj}(AH_var{jj} >= 5) = nan;
+    AH_var{jj}(AH_var{jj} >= 5) = nan; 
+        
    ABC{jj}  = ncread(filename,variable{6});   
    ABC_mask{jj} = ncread(filename,variable{7}); 
    ABC_var{jj} = ncread(filename,variable{8});

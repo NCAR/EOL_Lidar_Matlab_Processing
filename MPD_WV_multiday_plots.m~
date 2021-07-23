@@ -11,11 +11,12 @@ days = 120; skip = 12;
 
 node = 'MPD05';
 date = '20 Jun 2021';   
-%%days = 4; skip = 1;
-days = 31; skip = 2;
+days = 32; skip = 4;
+date = '18 Jul 2021';  
+days = 4; skip = 1;
 
-
-plot_path = '/Volumes/documents/mpd_/Plots/';
+serv_path = '/Volumes/documents';
+plot_path = '/Volumes/documents/mpd_data/Plots/';
 blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 flag.near = 0;  % read in the near range channel (0=off 1=on)
 flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
@@ -42,15 +43,15 @@ C = importdata('NCAR_C_Map.mat');
 dd=pwd;
 
 if strcmp(node,'MPD01')==1
-  cd('/Volumes/documents/Desktop/mpd/mpd_01_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_01_processed_data//Matlab')) 
  elseif strcmp(node,'MPD02')==1
-  cd('/Volumes/documents/Desktop/mpd/mpd_02_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_02_processed_data//Matlab')) 
  elseif strcmp(node,'MPD03')==1
-  cd('/Volumes/documents/mpd/mpd_03_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_03_processed_data//Matlab')) 
  elseif strcmp(node,'MPD04')==1
-  cd('/Volumes/documents/mpd/mpd_04_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_04_processed_data//Matlab'))
  elseif strcmp(node,'MPD05')==1
-  cd('/Volumes/documents/mpd/mpd_05_processed_data/Matlab') % point to the directory where data is stored 
+    cd(strcat(serv_path,'/mpd_data/mpd_05_processed_data//Matlab'))
 end
 
 %gate = round((bin_duration*1e-9*3e8/2)*10)/10
@@ -84,6 +85,7 @@ for i=1:days
       if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
+   %      T = interp1(range, T, range_grid_75, 'linear', 'extrap')';
          N_error = interp1(range, N_error', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
          OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
@@ -91,6 +93,7 @@ for i=1:days
          range_limit = range_limit/2;
      end
     N_avg_comb=N_avg;
+ %   T_array = T;
     N_error_comb=N_error;
     RB_comb=RB;
     background_comb_on = background_on;
@@ -128,8 +131,10 @@ for i=1:days
       if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
+         T = surf_T-0.0065*range;
+
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
-  %       OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
+  %      OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
          range_limit = range_limit_ch/2;
       end
@@ -138,6 +143,7 @@ for i=1:days
     range_limit = min([range_lim1 range_lim2]);
     
     N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg(2:end,1:range_limit));
+ %   T_array = vertcat(T_array(:,1:range_limit), T(2:end,1:range_limit));
     N_error_comb = vertcat(N_error_comb(:,1:range_limit), N_error(2:end,1:range_limit));
     RB_comb = vertcat(RB_comb(:,1:range_limit), RB(2:end,1:range_limit));
  %   OD_comb= vertcat(OD_comb(:,1:range_limit), OD(2:end,1:range_limit));
@@ -246,8 +252,8 @@ if flag.replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- %caxis([0 12]);
- caxis([0 5]);
+ caxis([0 12]);
+ %caxis([0 5]);
  colormap(jet)
  %colormap(C)
  %colormap(perula)

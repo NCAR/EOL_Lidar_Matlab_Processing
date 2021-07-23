@@ -1,8 +1,9 @@
-function[sonde_T_grid, MPD_T_grid, range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename, Temp_comb, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag) 
+function[sonde_AH_grid, MPD_AH_grid, range_grid] = Sonde_read_CSU_files_T_lapse(jj, elevation, sondedir, sondefilename, N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, T_lapse, plot_path, flag) 
 
 %sondedir
 
 filename = [sondedir sondefilename{jj}]; 
+%filename = [sondedir sondefilename(1)]; 
 %filename = '/scr/sci/tammy/mpd/sgp/soundings/sgpsondewnpnC1.b1.20190429.023100.cdf';
 %filename = '/Users/spuler/downloads/sgpsondewnpnC1.b1.20190501.083100.cdf';
 %filename = '/Users/spuler/Desktop/mpd_03_processed_data/Sondes/Marshall_Field_Site_20201016_163106.nc';
@@ -85,8 +86,8 @@ sonde_MR=w;
 
 if flag.plot_overlay == 1
   figure(110)
-  plot(sonde_T+273, sonde_AGL/1000)
-  xlim([240 320])
+  plot(sonde_AH, sonde_AGL/1000)
+  xlim([0 12])
   ylim([0 6])
 
 %  figure(111)
@@ -95,10 +96,10 @@ if flag.plot_overlay == 1
 %  ylim([0 6])
   
   figure(113)
-  scatter(duration_sonde, sonde_AGL/1000, 15, sonde_T+273, '+');
+  scatter(duration_sonde, sonde_AGL/1000, 15, sonde_AH, '+');
   colormap(jet)
   ylim([0 6])
-  caxis([240 320])
+  caxis([0 12])
   colorbar
 
   %if flag.MR == 1
@@ -112,9 +113,9 @@ if flag.plot_overlay == 1
   % Sonde absolute humidity
   figure(1)  %overlay the sondes on the multiday on the next 4 lines
   hold on
-   scatter(duration_sonde, sonde_AGL/1000, 15, sonde_T+273, '+');
+   scatter(duration_sonde, sonde_AGL/1000, 15, sonde_AH, '+');
   ylim([0 6])
-  caxis([240 320])
+  caxis([0 12])
   colormap(jet)
   %end
   
@@ -135,37 +136,68 @@ if flag.plot_overlay == 1
   %xlim([0 12])
   ylim([0 6])
   
-  
+
 end
 
 % grid sonde data vs range 
 range_grid = 0:range_grid_size/1000:6;
 [sonde_AGL_km, index] = unique(sonde_AGL/1000); 
-sonde_T_grid =interp1(sonde_AGL_km, sonde_T(index)+273.15, range_grid, 'linear');
+sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'linear');
+sonde_T_grid =interp1(sonde_AGL_km, sonde_T(index), range_grid, 'linear');
 % find the closes time index for the MPD water vapor
 [minValue, closestIndex] = min(abs(min(duration_sonde)-duration))
 [minValue, closestIndex_end] = min(abs(min(duration_sonde+sonde_end_int/24/60)-duration))
 %MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
 %MPD_AH_var =  comb_AH_var(closestIndex,:);
-MPD_T_lapse = nanmean(T_lapse(closestIndex:closestIndex_end,:),1)+273.15;
-MPD_T = nanmean(Temp_comb(closestIndex:closestIndex_end,:));
-%MPD_T_var =  nanmedian(comb_AH_var(closestIndex:closestIndex_end,:))./sqrt(sonde_end_int/10);
+MPD_T_lapse = nanmean(T_lapse(closestIndex:closestIndex_end,:),1);
+MPD_AH = nanmean(N_avg_comb(closestIndex:closestIndex_end,:),1).*1e6./6.022E23.*18.015;
+MPD_AH_var =  nanmean(comb_AH_var(closestIndex:closestIndex_end,:),1)./sqrt(sonde_end_int/10);
+
+
+% remove isolated points
+test = ~isnan(MPD_AH);
+test2 = movmean(test, 4);
+test3 = (test2>0.25);
+test4 = (test==1 & test3==1);
 
 try
-    MPD_T_lapse_grid = interp1(range_grid_in/1000, MPD_T_lapse, range_grid, 'linear');  
-    MPD_T_grid = interp1(range_grid_in(~isnan(MPD_T))/1000, MPD_T(~isnan(MPD_T)), range_grid, 'nearest');
-%  MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'linear');
+MPD_T_lapse_grid = interp1(range_grid_in/1000, MPD_T_lapse, range_grid, 'linear');   
+MPD_AH_grid = interp1(range_grid_in(test4)/1000, MPD_AH(test4), range_grid, 'linear');
+MPD_AH_var_grid = interp1(range_grid_in(test4)/1000, MPD_AH_var(test4), range_grid, 'linear');
+% MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'linear');
+%MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'linear');
 end
 
 if flag.plot_overlay == 1
   % overlay sonde vs MPD
   figure(115)
-  plot(sonde_T_grid, range_grid)
+  plot(sonde_AH_grid, range_grid)
   hold on
-  plot(MPD_T_grid, range_grid, 'ro')
-  %plot the sonde T vs a standard lapse rate and surface station
-  plot(MPD_T_lapse_grid, range_grid, 'g+')
+  plot(MPD_AH_grid, range_grid, 'ro')
+  %plot(MPD_AH, range/1000, 'g*')
+  
+  eb(1) = errorbar(MPD_AH_grid, range_grid, MPD_AH_var_grid, 'horizontal', 'LineStyle', 'none', 'HandleVisibility','off');
+  set(eb, 'color', 'r', 'LineWidth', 1)
+  
+  %shadedErrorBar(range_grid, MPD_AH_grid, MPD_AH_var_grid); 
+  %set(gca,'YDir','reverse');
+  %camroll(90)
+  
   hold off
+  xlim([0 12])
+  ylim([0 6])
+  % grid(gca,'minor')
+  grid on
+  set(gca, 'YMinorTick','on', 'YMinorGrid','on')
+  xlabel('Absolute humidity (g m^{-3})'); 
+  ylabel('Range (km)'); 
+  
+  %plot the sonde T vs a standard lapse rate and surface station
+  figure(116)
+  plot(sonde_T_grid+273.15, range_grid)
+  hold on
+  plot(MPD_T_lapse_grid+273.15, range_grid, 'g+')
+    hold off
   xlim([240 320])
   ylim([0 6])
   % grid(gca,'minor')
@@ -174,22 +206,21 @@ if flag.plot_overlay == 1
   xlabel('Temperature (K)'); 
   ylabel('Range (km)'); 
   
-
-
-  
-  
+   
   Scrsize=[1 1 800 800];
   %cd('/Users/lroot/Desktop/mpd/Plots/')
-  %cd('/Volumes/documents/mpd/Plots/')
   cd(plot_path)
-  
   FigH = figure(115);
   set(gca,'Fontsize',30,'Fontweight','b'); % 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-  name=strcat(sonde_date, '_', sonde_time, 'Sonde_temp_profile'); 
+  name=strcat(sonde_date, '_', sonde_time, 'Sonde_profile'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
-
+  FigH = figure(116);
+  set(gca,'Fontsize',30,'Fontweight','b'); % 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+  name=strcat(sonde_date, '_', sonde_time, 'T_profile'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
  % save(name, 'range_grid', 'sonde_AH_grid', 'MPD_AH_grid', 'MPD_AH_var_grid')
   

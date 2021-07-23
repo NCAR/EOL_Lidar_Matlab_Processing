@@ -1,9 +1,9 @@
 clear all; close all;
 tic
 
-node = 'MPD03';
-date = '16 Oct 2020';   
-days = 120; skip = 12;
+% node = 'MPD03';
+% date = '16 Oct 2020';   
+% days = 120; skip = 12;
 
 % node = 'MPD04';
 % date = '07 Jul 2021';   
@@ -12,8 +12,8 @@ days = 120; skip = 12;
 node = 'MPD05';
 date = '20 Jun 2021';   
 days = 32; skip = 4;
-date = '18 Jul 2021';  
-days = 4; skip = 1;
+%date = '18 Jul 2021';  
+%days = 4; skip = 1;
 
 serv_path = '/Volumes/documents';
 plot_path = '/Volumes/documents/mpd_data/Plots/';
@@ -126,11 +126,11 @@ for i=1:days
    %     range_limit = range_limit_ch;
    % end
     % grid everything to a 75 m gate size 
-      if gate < 75
+    if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
-  %       OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
+  %      OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
          range_limit = range_limit_ch/2;
       end
@@ -161,7 +161,7 @@ for i=1:days
 end
 
 %stop
-
+T_lapse = surf_T-0.0065*range; %create an array of the T based on 6.5ºC/km lapse rate
 
 % remove the lowest bins 
 N_avg_comb(:,2:blank/75) = NaN; 
