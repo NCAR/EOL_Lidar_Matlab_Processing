@@ -1,9 +1,9 @@
 clear all; close all;
 tic
 
-node = 'MPD03';
-date = '16 Oct 2020';   
-days = 120; skip = 12;
+% node = 'MPD03';
+% date = '16 Oct 2020';   
+% days = 120; skip = 12;
 
 % node = 'MPD04';
 % date = '07 Jul 2021';   
@@ -11,8 +11,8 @@ days = 120; skip = 12;
 
 node = 'MPD05';
 date = '20 Jun 2021';   
-days = 32; skip = 4;
-date = '18 Jul 2021';  
+days = 36; skip = 4;
+date = '22 Jul 2021';  
 days = 4; skip = 1;
 
 serv_path = '/Volumes/documents';
@@ -76,8 +76,8 @@ for i=1:days
         load(strcat(date, '_near.mat'))
       end
     else
-      if exist(strcat(date, '.mat'))==2
-        load(strcat(date, '.mat'))
+      if exist(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))==2
+        load(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))
       end
     end 
     range_limit = size(N_avg,2);
@@ -85,7 +85,6 @@ for i=1:days
       if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
-   %      T = interp1(range, T, range_grid_75, 'linear', 'extrap')';
          N_error = interp1(range, N_error', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
          OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
@@ -93,7 +92,6 @@ for i=1:days
          range_limit = range_limit/2;
      end
     N_avg_comb=N_avg;
- %   T_array = T;
     N_error_comb=N_error;
     RB_comb=RB;
     background_comb_on = background_on;
@@ -128,11 +126,9 @@ for i=1:days
    %     range_limit = range_limit_ch;
    % end
     % grid everything to a 75 m gate size 
-      if gate < 75
+    if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
-         T = surf_T-0.0065*range;
-
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
   %      OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
@@ -143,7 +139,6 @@ for i=1:days
     range_limit = min([range_lim1 range_lim2]);
     
     N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg(2:end,1:range_limit));
- %   T_array = vertcat(T_array(:,1:range_limit), T(2:end,1:range_limit));
     N_error_comb = vertcat(N_error_comb(:,1:range_limit), N_error(2:end,1:range_limit));
     RB_comb = vertcat(RB_comb(:,1:range_limit), RB(2:end,1:range_limit));
  %   OD_comb= vertcat(OD_comb(:,1:range_limit), OD(2:end,1:range_limit));
@@ -166,7 +161,7 @@ for i=1:days
 end
 
 %stop
-
+T_lapse = surf_T-0.0065*range; %create an array of the T based on 6.5ºC/km lapse rate
 
 % remove the lowest bins 
 N_avg_comb(:,2:blank/75) = NaN; 

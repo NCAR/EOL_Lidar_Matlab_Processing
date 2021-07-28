@@ -12,8 +12,8 @@ tic
 node = 'MPD05';
 date = '20 Jun 2021';   
 days = 36; skip = 4;
-%date = '22 Jul 2021';  
-%days = 4; skip = 1;
+date = '22 Jul 2021';  
+days = 4; skip = 1;
 
 serv_path = '/Volumes/documents';
 plot_path = '/Volumes/documents/mpd_data/Plots/';
@@ -76,8 +76,8 @@ for i=1:days
         load(strcat(date, '_near.mat'))
       end
     else
-      if exist(strcat(date, '.mat'))==2
-        load(strcat(date, '.mat'))
+      if exist(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))==2
+        load(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))
       end
     end 
     range_limit = size(N_avg,2);
@@ -117,8 +117,8 @@ for i=1:days
         load(strcat(date, '_near.mat'))
       end
     else
-      if exist(strcat(date, '.mat'))==2
-        load(strcat(date, '.mat'))
+      if exist(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))==2
+        load(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))
       end
     end  
     range_limit_ch = size(N_avg,2);
