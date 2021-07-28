@@ -1,6 +1,6 @@
 elevation= 1574; %MPD05 was at 1574m elevation at Christman Field Site
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.data_type = 1;  % 0=matlab WV, 1=python WV, 2=raman WV
+flag.data_type =0;  % 0=matlab WV, 1=python WV, 2=raman WV
 sonde_end_int = 30; % integration time (in min) for the MPD 
 WV_min = 0;
 WV_max = 12;
@@ -87,7 +87,7 @@ plot(RMSE_demoninator, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); % 
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 25]);
+  xlim([0 40]);
   ylim([0,6]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Samples used');

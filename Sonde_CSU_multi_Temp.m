@@ -89,7 +89,7 @@ plot(RMSE_demoninator, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); % 
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 25]);
+  xlim([0 40]);
   ylim([0,6]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Samples used');
