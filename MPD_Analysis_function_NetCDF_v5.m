@@ -1,5 +1,6 @@
 function[] = MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)
+    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, ...
+    elevation, location)
 
 %% notes
 %Amin Nehrir (original author)
@@ -961,10 +962,12 @@ end
    
    if flag.WS == 1
      save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error',...
-     'Surf_T', 'Surf_P', 'Surf_RH', 'Surf_AH', 'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off', 'gate')
+     'Surf_T', 'Surf_P', 'Surf_RH', 'Surf_AH', 'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off', 'gate', ...
+     'elevation', 'location')
    else
      save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error', ...
-     'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off', 'gate')
+     'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off', 'gate', ...
+     'elevation', 'location')
    end
  end
  
