@@ -31,7 +31,7 @@ ave_time.gr = 0.5; % gridding time (in minutes) for the output files (HK data at
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
 elseif strcmp(getenv('HOSTNAME'),'')
-    serv_path = '/Users/spuler/Desktop/'; % when running on server   
+    serv_path = '/Users/document/'; % when running on server   
 else 
    serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
 end
@@ -61,7 +61,7 @@ if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
   flag.near = 0; flag.afterpulse = 0; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, ...
+        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File,...
         elevation, location)%
 end
 
