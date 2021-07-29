@@ -109,8 +109,8 @@ end
 
 for i=1:size(dat.Location,2)
 if (t_date >= datetime(dat.Location(i).date,'InputFormat','d-MMM-yyyy H:m')) == 1
-    location = dat.Location(i).location;
-    elevation = dat.Location(i).elevation;
+    MPD_location = dat.Location(i).location;
+    MPD_elevation = dat.Location(i).elevation;
 end
 end
 
@@ -133,8 +133,8 @@ if (t_date >= datetime(dat.Laser_Pulse_Delay(i).date,'InputFormat','d-MMM-yyyy H
 end
 end
 
-location %write the location to the screen 
-elevation %write the location to the screen 
+MPD_location %write the location to the screen 
+MPD_elevation %write the location to the screen 
 wavemeter_offset %write the calibration offset to the screen 
 
 %calcuate the accumuation time per MCS dwell 
