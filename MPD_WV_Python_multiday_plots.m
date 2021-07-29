@@ -1,11 +1,11 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
-serv_path = '/Volumes/documents';
-cd(strcat(serv_path,'/mpd_data/mpd_05_processed_data/python'))
+serv_path = '/Volumes/documents/MPD';
+cd(strcat(serv_path,'/mpd_05_processed_data/python'))
 d_read_data = pwd; % get the current path
 
-cd(strcat(serv_path,'/mpd_data/Plots'))
+cd(strcat(serv_path,'/Plots'))
 d_save_data = pwd; %set the plot save path
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
 node = 'MPD05';

@@ -51,7 +51,7 @@ MPD_read_calvals % read in the calvals
 read_time_in = 2; % set read data in time increments of seconds (default it 2sec) 
 profiles2ave.wv = 2*round(((ave_time.wv*60/read_time_in)+1)/2)   
 profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
-MPD_elevation 
+
 
 % read in all the data
  [data_on, data_off, data_near_on, data_near_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
@@ -91,7 +91,7 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correct
     blank_range = 150; % low range 
   end
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
+        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)%
 end
 
 % process the near/low ch with afterpulse correction 

@@ -6,8 +6,8 @@ WV_min = 0;
 WV_max = 12;
 
 %d=pwd;
-cd('/Volumes/documents/mpd_data/Sondes_CSU')
-plot_path = '/Volumes/documents/mpd_data/Plots/';
+cd('/Volumes/documents/MPD/Sondes_CSU')
+plot_path = '/Volumes/documents/MPD/Plots/';
 %cd('/Volumes/eol/sci/voemel/data/radiosondes/boulder/ncdf')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio

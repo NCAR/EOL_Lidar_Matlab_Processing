@@ -5,8 +5,8 @@ sonde_end_int = 30; % integration time (in min) for the MPD
 
 %d=pwd;
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
-cd('/Volumes/documents/mpd_data/Sondes_CSU')
-plot_path = '/Volumes/documents/mpd_data/Plots/';
+cd('/Volumes/documents/MPD/Sondes_CSU')
+plot_path = '/Volumes/documents/MPD/Plots/';
 %cd('/Volumes/eol/sci/voemel/data/radiosondes/boulder/ncdf')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio

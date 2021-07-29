@@ -12,11 +12,11 @@ tic
 node = 'MPD05';
 date = '20 Jun 2021';   
 days = 38; skip = 4;
-%date = '22 Jul 2021';  
-%days = 4; skip = 1;
+date = '25 Jul 2021';  
+days = 4; skip = 1;
 
-serv_path = '/Volumes/documents';
-plot_path = '/Volumes/documents/mpd_data/Plots/';
+serv_path = '/Volumes/documents/MPD/';
+plot_path = '/Volumes/documents/MPD/Plots/';
 blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 flag.near = 0;  % read in the near range channel (0=off 1=on)
 flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
@@ -43,15 +43,15 @@ C = importdata('NCAR_C_Map.mat');
 dd=pwd;
 
 if strcmp(node,'MPD01')==1
-    cd(strcat(serv_path,'/mpd_data/mpd_01_processed_data//Matlab')) 
+    cd(strcat(serv_path,'/mpd_01_processed_data//Matlab')) 
  elseif strcmp(node,'MPD02')==1
-    cd(strcat(serv_path,'/mpd_data/mpd_02_processed_data//Matlab')) 
+    cd(strcat(serv_path,'/mpd_02_processed_data//Matlab')) 
  elseif strcmp(node,'MPD03')==1
-    cd(strcat(serv_path,'/mpd_data/mpd_03_processed_data//Matlab')) 
+    cd(strcat(serv_path,'/mpd_03_processed_data//Matlab')) 
  elseif strcmp(node,'MPD04')==1
-    cd(strcat(serv_path,'/mpd_data/mpd_04_processed_data//Matlab'))
+    cd(strcat(serv_path,'/mpd_04_processed_data//Matlab'))
  elseif strcmp(node,'MPD05')==1
-    cd(strcat(serv_path,'/mpd_data/mpd_05_processed_data//Matlab'))
+    cd(strcat(serv_path,'/mpd_05_processed_data//Matlab'))
 end
 
 %gate = round((bin_duration*1e-9*3e8/2)*10)/10

@@ -4,12 +4,12 @@ tic
  node = 'MPD05';
  date = '20210620';   
  days = 36; skip = 4;
-% date = '20210722';  
-% days = 4; skip = 1;
+ date = '20210725';  
+ days = 4; skip = 1;
  lapse_rate = 0.0085;
      
-serv_path = '/Volumes/documents';
-plot_path = '/Volumes/documents/mpd_data/Plots/'; 
+serv_path = '/Volumes/documents/MPD';
+plot_path = '/Volumes/documents/MPD/Plots/'; 
 %flag.near = 0;  % read in the near range channel (0=off 1=on)
 font_size = 36; % use this for 2018a version
 
@@ -28,15 +28,15 @@ C = importdata('NCAR_C_Map.mat');
 dd=pwd;
 
 if strcmp(node,'MPD01')==1
-   cd(strcat(serv_path,'/mpd_data/mpd_01_processed_data//Matlab_temp'))
+   cd(strcat(serv_path,'/mpd_01_processed_data//Matlab_temp'))
  elseif strcmp(node,'MPD02')==1
-   cd(strcat(serv_path,'/mpd_data/mpd_02_processed_data//Matlab_temp'))
+   cd(strcat(serv_path,'/mpd_02_processed_data//Matlab_temp'))
  elseif strcmp(node,'MPD03')==1
-   cd(strcat(serv_path,'/mpd_data/mpd_03_processed_data//Matlab_temp'))
+   cd(strcat(serv_path,'/mpd_03_processed_data//Matlab_temp'))
  elseif strcmp(node,'MPD04')==1
-   cd(strcat(serv_path,'/mpd_data/mpd_04_processed_data//Matlab_temp'))
+   cd(strcat(serv_path,'/mpd_04_processed_data//Matlab_temp'))
  elseif strcmp(node,'MPD05')==1
-   cd(strcat(serv_path,'/mpd_data/mpd_05_processed_data//Matlab_temp'))
+   cd(strcat(serv_path,'/mpd_05_processed_data//Matlab_temp'))
 end
 
 i=1;
