@@ -2,7 +2,7 @@ function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netC
 clear all; 
 close all
 start_date = '20210728';
-save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_Off'; node='MPD05'; daystr=start_date; 
+save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_Off'; node='MPD03'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -31,7 +31,7 @@ ave_time.gr = 0.5; % gridding time (in minutes) for the output files (HK data at
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
 elseif strcmp(getenv('HOSTNAME'),'')
-    serv_path = '/Volumes/documents/MPD/'; % when running on server   
+    serv_path = '/Users/document/'; % when running on server   
 else 
    serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
 end
