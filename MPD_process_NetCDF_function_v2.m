@@ -61,7 +61,7 @@ if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
   flag.near = 0; flag.afterpulse = 0; 
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, elevation, location)%
+        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, elevation)%
 end
 
 
