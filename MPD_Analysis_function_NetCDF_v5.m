@@ -1,6 +1,5 @@
 function[] = MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File,...
-    elevation, location)
+    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)
 
 %% notes
 %Amin Nehrir (original author)
