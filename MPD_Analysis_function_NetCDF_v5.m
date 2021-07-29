@@ -603,17 +603,17 @@ if flag.WS == 1
    % T0 = median(Surf_T)+273.15
    % P0 = median(Surf_P)
 else
-  T0 = 273+30; % surface temperature
+  T0 = 273.15+22; % if no surface station assume 22C
 end
 
 if isnan(T0)
     T0 = 295;
 end
 if isnan(P0)
-    P0=0.83;
+    P0=0.83;  % if no surface station assume 0.83 atm
 end
 
-  T = T0-0.0065.*range; % set to match the sounding
+  T = T0-0.0065.*range; % moist adiabatic lapse rate (dry adiabatic would be 0.0098C/m)
 
 % pressure in atmospheres
   %P0  = 0.83; % surface pressure in Boulder

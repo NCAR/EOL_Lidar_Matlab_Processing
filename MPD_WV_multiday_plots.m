@@ -11,9 +11,9 @@ tic
 
 node = 'MPD05';
 date = '20 Jun 2021';   
-days = 36; skip = 4;
-date = '22 Jul 2021';  
-days = 4; skip = 1;
+days = 38; skip = 4;
+%date = '22 Jul 2021';  
+%days = 4; skip = 1;
 
 serv_path = '/Volumes/documents';
 plot_path = '/Volumes/documents/mpd_data/Plots/';
@@ -71,15 +71,15 @@ i=1;
 for i=1:days
   if i==1  
     % load the near range data or regular data depending on flag  
-    if flag.near == 1
-      if exist(strcat(date, '_near.mat'))==2
-        load(strcat(date, '_near.mat'))
+    %if flag.near == 1
+    %  if exist(strcat(date, '_near.mat'))==2
+    %    load(strcat(date, '_near.mat'))
+    %  end
+    %else
+      if exist(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))==2
+        load(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))
       end
-    else
-      if exist(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))==2
-        load(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))
-      end
-    end 
+%    end 
     range_limit = size(N_avg,2);
     % grid everything to a 75 m gate size 
       if gate < 75
@@ -112,21 +112,21 @@ for i=1:days
     end
   else
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
-    if flag.near == 1
-      if exist(strcat(date, '_near.mat'))==2
-        load(strcat(date, '_near.mat'))
+ %   if flag.near == 1
+ %     if exist(strcat(date, '_near.mat'))==2
+ %       load(strcat(date, '_near.mat'))
+ %     end
+ %   else
+      if exist(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))==2
+        load(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))
       end
-    else
-      if exist(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))==2
-        load(strcat(node, '.', datestr(date, 'yymmdd'), '.Matlab.mat'))
-      end
-    end  
+ %   end  
     range_limit_ch = size(N_avg,2);
    % if range_limit_ch < range_limit
    %     range_limit = range_limit_ch;
    % end
-    % grid everything to a 75 m gate size 
-    if gate < 75
+   % grid everything to a 75 m gate size 
+      if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
