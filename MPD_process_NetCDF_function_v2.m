@@ -90,7 +90,7 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correct
     blank_range = 150; % low range 
   end
   MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, elevation, location)%
+        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, elevation)%
 end
 
 % process the near/low ch with afterpulse correction 
