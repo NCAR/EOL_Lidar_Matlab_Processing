@@ -6,8 +6,8 @@
 % stop_date = '20190519'; %32 days
 % start_date = '20190405'; %first 5 unit intercomparison
 % stop_date = '20190410'; 
- start_date = '20210728'; %first 5 unit intercomparison
- stop_date = '20210728';  
+ start_date = '20210809'; %first 5 unit intercomparison
+ stop_date = '20210816';  
 
  
 start_day = datenum(start_date,'yyyymmdd');

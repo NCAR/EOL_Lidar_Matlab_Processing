@@ -141,9 +141,9 @@ sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'nearest');
 %MPD_AH_var =  comb_AH_var(closestIndex,:);
 MPD_AH = nanmean(N_avg_comb(closestIndex:closestIndex_end,:),1).*1e6./6.022E23.*18.015;
 if flag.data_type == 0
-  MPD_AH_var =  nanmean(comb_AH_var(closestIndex:closestIndex_end,:),1)./sqrt(sonde_end_int/10); %assumes 10 min in the Matlab data
+  MPD_AH_var =  nanmedian(comb_AH_var(closestIndex:closestIndex_end,:),1)./sqrt(sonde_end_int/10); %assumes 10 min in the Matlab data
 else
-  MPD_AH_var =  nanmean(comb_AH_var(closestIndex:closestIndex_end,:),1);
+  MPD_AH_var =  nanmedian(comb_AH_var(closestIndex:closestIndex_end,:),1);
 end
 % remove isolated points
 test = ~isnan(MPD_AH);

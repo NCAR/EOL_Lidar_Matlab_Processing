@@ -4,7 +4,7 @@ tic
  node = 'MPD05';
  date = '20210620';   
  days = 36; skip = 4;
- date = '20210725';  
+ date = '20210803';  
  days = 4; skip = 1;
  lapse_rate = 0.0085;
      

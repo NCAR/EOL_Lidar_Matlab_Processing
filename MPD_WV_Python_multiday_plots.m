@@ -10,7 +10,7 @@ d_save_data = pwd; %set the plot save path
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
 node = 'MPD05';
 low_range_mask = 0;
-skip = 2
+skip = 1
 
 cd(d_read_data);
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -30,7 +30,8 @@ jj=1;
 
 for jj = 1:size(Pythonfilename,2)
   filename = Pythonfilename{jj};
-  date = filename(end-15:end-10);
+%  date = filename(end-15:end-10);
+  date = filename(7:12);
   n = datenum(date, 'yymmdd');
   ncid = netcdf.open(filename, 'NC_NOWRITE');
     %ncdisp(filename, '/', 'min') % use this to display all variables
@@ -42,16 +43,17 @@ for jj = 1:size(Pythonfilename,2)
     AH_mask{jj} = ncread(filename,variable{4}); 
     AH_var{jj} = ncread(filename,variable{5}); 
     AH{jj}(AH_mask{jj} == 1) = nan;
-    AH_var{jj}(AH_mask{jj} == 1) = nan; 
+    %AH_var{jj}(AH_mask{jj} == 1) = nan; 
     % mask the absolute humidity data based on its variance
+    AH{jj}(AH{jj} >= 12.5) = nan;
     AH{jj}(AH_var{jj} >= 5) = nan;
     AH_var{jj}(AH_var{jj} >= 5) = nan; 
         
-   ABC{jj}  = ncread(filename,variable{6});   
-   ABC_mask{jj} = ncread(filename,variable{7}); 
-   ABC_var{jj} = ncread(filename,variable{8});
-   ABC{jj}(ABC_mask{jj} == 1) = nan;
-   ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
+    ABC{jj}  = ncread(filename,variable{6});   
+    ABC_mask{jj} = ncread(filename,variable{7}); 
+    ABC_var{jj} = ncread(filename,variable{8});
+    ABC{jj}(ABC_mask{jj} == 1) = nan;
+    ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
     
   netcdf.close(ncid); 
   %convert from Unix time to date number (days since Jan 0 0000) 

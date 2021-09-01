@@ -11,9 +11,9 @@ tic
 
 node = 'MPD05';
 date = '20 Jun 2021';   
-days = 38; skip = 4;
-date = '25 Jul 2021';  
-days = 4; skip = 1;
+days = 58; skip = 4;
+%date = '11 Aug 2021';  
+%days = 4; skip = 1;
 
 serv_path = '/Volumes/documents/MPD/';
 plot_path = '/Volumes/documents/MPD/Plots/';

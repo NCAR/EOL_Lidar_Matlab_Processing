@@ -1,11 +1,12 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
-serv_path = '/Volumes/documents';
-cd(strcat(serv_path,'/mpd_data/mpd_05_processed_data/python'))
+serv_path = '/Volumes/documents/MPD';
+% cd(strcat(serv_path,'/mpd_05_processed_data/python'))
+cd(strcat(serv_path,'/mpd_05_processed_data/PTV'))
 d_read_data = pwd; % get the current path
 
-cd(strcat(serv_path,'/mpd_data/Plots'))
+cd(strcat(serv_path,'/Plots'))
 d_save_data = pwd; %set the plot save path
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
 node = 'MPD05';
@@ -22,15 +23,16 @@ jj=1;
  variable{2} = 'range';
  variable{3} = 'Absolute_Humidity'; 
  variable{4} = 'Absolute_Humidity_mask';
- variable{5} = 'Absolute_Humidity_variance'; 
- variable{6} = 'Aerosol_Backscatter_Coefficient';
- variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
- variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
+%  variable{5} = 'Absolute_Humidity_variance'; 
+%  variable{6} = 'Aerosol_Backscatter_Coefficient';
+%  variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
+%  variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
     
 
 for jj = 1:size(Pythonfilename,2)
   filename = Pythonfilename{jj};
-  date = filename(end-15:end-10);
+%  date = filename(end-15:end-10);
+  date = filename(7:12);
   n = datenum(date, 'yymmdd');
   ncid = netcdf.open(filename, 'NC_NOWRITE');
     %ncdisp(filename, '/', 'min') % use this to display all variables
@@ -40,15 +42,18 @@ for jj = 1:size(Pythonfilename,2)
   
     AH{jj}  = ncread(filename,variable{3});  
     AH_mask{jj} = ncread(filename,variable{4}); 
-    AH_var{jj} = ncread(filename,variable{5}); 
+%     AH_var{jj} = ncread(filename,variable{5}); 
     AH{jj}(AH_mask{jj} == 1) = nan;
-    AH_var{jj}(AH_mask{jj} == 1) = nan; 
-    
- %   ABC{jj}  = ncread(filename,variable{6});   
- %   ABC_mask{jj} = ncread(filename,variable{7}); 
- %   ABC_var{jj} = ncread(filename,variable{8});
-  %  ABC{jj}(ABC_mask{jj} == 1) = nan;
-  %  ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
+%     AH_var{jj}(AH_mask{jj} == 1) = nan; 
+    % mask the absolute humidity data based on its variance
+%     AH{jj}(AH_var{jj} >= 5) = nan;
+%     AH_var{jj}(AH_var{jj} >= 5) = nan; 
+        
+%     ABC{jj}  = ncread(filename,variable{6});   
+%     ABC_mask{jj} = ncread(filename,variable{7}); 
+%     ABC_var{jj} = ncread(filename,variable{8});
+%     ABC{jj}(ABC_mask{jj} == 1) = nan;
+%     ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
     
   netcdf.close(ncid); 
   %convert from Unix time to date number (days since Jan 0 0000) 
@@ -66,7 +71,7 @@ for jj = 1:size(Pythonfilename,2)
   if jj == 1
       comb_duration = duration{jj};
       comb_AH = AH{jj}';
-      comb_AH_var = AH_var{jj}';
+%       comb_AH_var = AH_var{jj}';
 %       comb_ABC = ABC{jj}';
 %       comb_ABC_var = ABC_var{jj}';
   else
@@ -74,7 +79,7 @@ for jj = 1:size(Pythonfilename,2)
       % find the maximum range to accumulate (in case it changes)
       max_range = min(cellfun('size',alt,1))
       comb_AH = [comb_AH(:,1:max_range); AH{jj}(1:max_range,:)'];
-      comb_AH_var = [comb_AH_var(:,1:max_range); AH_var{jj}(1:max_range,:)'];
+%       comb_AH_var = [comb_AH_var(:,1:max_range); AH_var{jj}(1:max_range,:)'];
 %       comb_ABC = [comb_ABC(:,1:max_range); ABC{jj}(1:max_range,:)'];
 %       comb_ABC_var = [comb_ABC_var(:,1:max_range); ABC_var{jj}(1:max_range,:)'];
   end
