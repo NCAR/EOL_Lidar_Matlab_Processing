@@ -9,7 +9,7 @@ WV_max = 5;
 
 %d=pwd;
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
-cd('/Users/lroot/Desktop/mpd/Sondes_Marshall')
+%cd('/Users/lroot/Desktop/mpd/Sondes_Marshall')
 cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/Marshall')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio

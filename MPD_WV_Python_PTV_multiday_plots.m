@@ -1,11 +1,13 @@
 %cd /scr/sci/spuler/mpd/sgp/raman_lidar
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
-serv_path = '/Volumes/documents/MPD';
+%serv_path = '/Volumes/documents/MPD';
+serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';  % need to use finder and connect to server 'smb://cit.ucar.edu/eol'
 % cd(strcat(serv_path,'/mpd_05_processed_data/python'))
 cd(strcat(serv_path,'/mpd_05_processed_data/PTV'))
 d_read_data = pwd; % get the current path
 
+serv_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd';
 cd(strcat(serv_path,'/Plots'))
 d_save_data = pwd; %set the plot save path
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
@@ -23,10 +25,13 @@ jj=1;
  variable{2} = 'range';
  variable{3} = 'Absolute_Humidity'; 
  variable{4} = 'Absolute_Humidity_mask';
-%  variable{5} = 'Absolute_Humidity_variance'; 
+% variable{5} = 'Absolute_Humidity_variance'; 
+ variable{5} = 'Absolute_Humidity_uncertainty'; 
 %  variable{6} = 'Aerosol_Backscatter_Coefficient';
 %  variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
 %  variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
+ variable{9} = 'Absolute_Humidity_ic1';  % intitial conditions starting at 0 g/m^3 
+ variable{10} = 'Absolute_Humidity_ic2'; % intitial conditions starting at 20 g/m^3 
     
 
 for jj = 1:size(Pythonfilename,2)
@@ -41,12 +46,16 @@ for jj = 1:size(Pythonfilename,2)
     alt{jj} = ncread(filename,variable{2});
   
     AH{jj}  = ncread(filename,variable{3});  
+%    ic1{jj}  = ncread(filename,variable{9});  
+%    ic2{jj}  = ncread(filename,variable{10});  
+%    AH{jj} = (ic1{jj} + ic2{jj})/2; 
+     
     AH_mask{jj} = ncread(filename,variable{4}); 
-%     AH_var{jj} = ncread(filename,variable{5}); 
+    AH_var{jj} = ncread(filename,variable{5}); 
     AH{jj}(AH_mask{jj} == 1) = nan;
 %     AH_var{jj}(AH_mask{jj} == 1) = nan; 
     % mask the absolute humidity data based on its variance
-%     AH{jj}(AH_var{jj} >= 5) = nan;
+     AH{jj}(AH_var{jj} >= 1.5) = nan;
 %     AH_var{jj}(AH_var{jj} >= 5) = nan; 
         
 %     ABC{jj}  = ncread(filename,variable{6});   

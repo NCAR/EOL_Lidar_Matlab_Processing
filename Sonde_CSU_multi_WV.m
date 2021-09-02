@@ -1,13 +1,15 @@
 elevation= 1574; %MPD05 was at 1574m elevation at Christman Field Site
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.data_type = 1;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
+flag.data_type = 3;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
 sonde_end_int = 15; % integration time (in min) for the MPD 
 WV_min = 0;
 WV_max = 15;
 
 %d=pwd;
-cd('/Volumes/documents/MPD/Sondes_CSU')
-plot_path = '/Volumes/documents/MPD/Plots/';
+%cd('/Volumes/documents/MPD/Sondes_CSU')
+%plot_path = '/Volumes/documents/MPD/Plots/';
+cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/CSU_PrePRECIP')
+plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots';
 %cd('/Volumes/eol/sci/voemel/data/radiosondes/boulder/ncdf')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
@@ -15,8 +17,8 @@ jj=1;
 %cd= d;
 
 for jj = 1:size(sondefilename,2)
-    %cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
-    cd('/Users/lroot/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+    cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+    %cd('/Users/lroot/Documents/GitHub/EOL_Lidar_Matlab_processing/')
    if flag.data_type == 2    % add the following three lines for Raman 
       range_grid_size = 60;  
       N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
