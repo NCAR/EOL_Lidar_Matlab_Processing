@@ -1,8 +1,8 @@
-function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
-% clear all; 
-% close all
-% start_date = '20210728';
-% save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_Off'; node='MPD05'; daystr=start_date; 
+%function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
+clear all; 
+close all
+start_date = '20210721';
+save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_Off'; node='MPD05'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -24,16 +24,18 @@ flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 14.42; % hour to show troubleshooting profiles
 
-ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor 
-ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
-ave_time.gr = 0.5; % gridding time (in minutes) for the output files (HK data at 2 sec)
+ave_time.wv = 20.0; % averaging time (in minutes) for the water vapor 
+ave_time.rb = 20.0; % averaging time (in minutes) for the relative backscatter
+ave_time.gr = 2.0; % gridding time (in minutes) for the output files (native is 2 sec)
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
 elseif strcmp(getenv('HOSTNAME'),'')
-    serv_path = '/Volumes/documents/MPD/'; % when running on server   
+    %serv_path = '/Volumes/documents/MPD/'; % when running on server 
+    serv_path = '/Volumes/fog1/rsfdata/MPD/'; % when running on server
 else 
-   serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
+  % serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; % 
+   serv_path = '/Volumes/fog1/rsfdata/MPD/'; % 
 end
 
 nodeStr = extractAfter(node, 'MPD')
@@ -54,9 +56,9 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
 
 
 % read in all the data
- [data_on, data_off, data_near_on, data_near_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+ %[data_on, data_off, data_near_on, data_near_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+ [data_on, data_off, data_O2_on_comb, data_O2_off_comb, data_O2_on_mol, data_O2_off_mol, MCS] = MPD_File_Retrieval_NetCDF_v6(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
 
- 
 % process the main ch without afterpulse correction 
 if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
@@ -65,7 +67,26 @@ if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)%
 end
 
+% process the oxygen channels
+if strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1  
+  write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+  flag.near = 0; flag.afterpulse = 0; 
+  gates2ave = 1; %number of gates to average
+ [O2_online_comb, O2_offline_comb, range, RB_comb, time_comb, Surf_T, Surf_P] =  MPD_Analysis_function_O2_v1(data_O2_on_comb, data_O2_off_comb, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+        profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave);%
+ [O2_online_mol, O2_offline_mol, range, RB_mol,  time_mol] =  MPD_Analysis_function_O2_v1(data_O2_on_mol, data_O2_off_mol, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+        profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave);%
+ [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
+        O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag);
+ [N_WV, N_WV_error] = MPD_WV_analysis_function_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
+        profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation);
+ O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
+        time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile);
+end 
+ 
 
+ 
+ 
 %% change plots when runnning locally to focus on lower ranges 
 %ylim([0 3])
 %grid on
@@ -81,6 +102,7 @@ end
 %  MPD_Analysis_function_NetCDF_v5(data_near_on, data_near_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
 %        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 %end
+
 
 % process the main ch with afterpulse correction 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
@@ -104,4 +126,4 @@ end
 %        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File)%
 %end
     
-end
+%end

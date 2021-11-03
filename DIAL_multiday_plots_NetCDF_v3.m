@@ -61,7 +61,7 @@ tic
 %days = 5; skip = 1;
 
  node = 'MPD05';
- date = '03 Jul 2021';   
+ date = '15 Aug 2021';   
 % days = 7; skip = 1;
  days = 4; skip = 1;
 % days = 12; skip = 2;
@@ -132,8 +132,9 @@ if strcmp(node,'MPD01')==1
   cd('/Volumes/documents/WV_DIAL_data/MPD4_processed_data') % point to the directory where data is stored 
  elseif strcmp(node,'MPD05')==1
   %cd('/Volumes/documents/WV_DIAL_data/MPD5_processed_data') % point to the directory where data is stored 
-   %cd('/Users/spuler/Desktop/mpd_05_processed_data/Matlab') % point to the directory where data is stored 
-   cd('/Users/lroot/Desktop/mpd/mpd_05_processed_data/Matlab') % point to the directory where data is stored 
+  %cd('/Users/spuler/Desktop/mpd_05_processed_data/Matlab') % point to the directory where data is stored 
+  %cd('/Users/lroot/Desktop/mpd/mpd_05_processed_data/Matlab') % point to the directory where data is stored
+  cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_05_processed_data/Matlab') % point to the directory where data is stored 
 end
 
 

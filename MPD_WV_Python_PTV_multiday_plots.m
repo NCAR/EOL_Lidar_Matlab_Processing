@@ -169,6 +169,7 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   set(gca,'Fontsize',16,'Fontweight','b'); 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
   name=strcat(date, node, ' WV_Python_multi'); 
+  %  name=strcat(' MSU_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
 %   FigH = figure(2);

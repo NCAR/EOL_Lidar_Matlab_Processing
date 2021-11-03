@@ -1,5 +1,5 @@
-function[] = MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)
+function[N_avg, N_error] = MPD_WV_analysis_function_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
+    profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)
 
 %% notes
 %Amin Nehrir (original author)
@@ -596,32 +596,10 @@ line_indices = Hitran.file(1:size(Hitran.file,1),1)>WNmin & Hitran.file(1:size(H
 
 line = double(Hitran.file(line_indices, 1:size(Hitran.file,2)));
 
-%Calculate temperature and pressure profile
-if flag.WS == 1
-    T0 = nanmedian(Surf_T)+273.15
-    P0 = nanmedian(Surf_P)
-   % T0 = median(Surf_T)+273.15
-   % P0 = median(Surf_P)
-else
-  T0 = 273.15+22; % if no surface station assume 22C
-end
-
-if isnan(T0)
-    T0 = 295;
-end
-if isnan(P0)
-    P0=0.83;  % if no surface station assume 0.83 atm
-end
-
-  T = T0-0.0065.*range; % moist adiabatic lapse rate (dry adiabatic would be 0.0098C/m)
-
-% pressure in atmospheres
-  %P0  = 0.83; % surface pressure in Boulder
-  %P0  = 0.929; % surface pressure in Ellis KS
-%  P = P0.*(T0./T).^-5.5;   % set this value to match sounding
-  P = P0.*(T0./T).^-5.2199;   % set this value to match sounding
-  %p_s = 7.75e-3.*exp(-range./3000).*P; % estimate of the partial pressure of wv for self broadening
-
+%Get median temperature and pressure profile for the day
+T_med=median(T,1);
+P_med=median(P,1);
+  
 Hitran.T00 = 296;              % HITRAN reference temperature [K]
 Hitran.P00 = 1;                % HITRAN reference pressure [atm]
 Hitran.nu0_0 = line(:,1);      % absorption line center wavenumber from HITRAN [cm^-1]
@@ -654,9 +632,9 @@ for i = 1:size(Online_Temp_Spatial_Avg,2); % calculate the absorption cross sect
   
     %nu0 = nu0_0-.0428.*P(i);    %Pressure shift
     %nu0 = nu0_0+delta.*P(i);     %calculate the pressure shifts for selected lines as function of range
-    Hitran.nu0 = Hitran.nu0_0+Hitran.delta.*(P(i)./Hitran.P00); % unclear if it should be Pi/P00
+    Hitran.nu0 = Hitran.nu0_0+Hitran.delta.*(P_med(i)./Hitran.P00); % unclear if it should be Pi/P00
     %gammal = gammal0.*P(i).*((T00./T(i)).^alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
-    Hitran.gammal = Hitran.gammal0.*(P(i)./Hitran.P00).*((Hitran.T00./T(i)).^Hitran.alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
+    Hitran.gammal = Hitran.gammal0.*(P_med(i)./Hitran.P00).*((Hitran.T00./T_med(i)).^Hitran.alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
     % revise pressure broadened halfwidth to include correction for self broadening term 
     %gammal = ((P(i)-p_s(i)).*gammal0 + p_s(i).*gamma_s).*((T00./T(i)).^alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
    
@@ -664,7 +642,7 @@ for i = 1:size(Online_Temp_Spatial_Avg,2); % calculate the absorption cross sect
     const.k_B = 1.3806488e-23; % (J/K)
     const.c = 299792458; % (m/s) (exact)
    
-    Hitran.gammad = (Hitran.nu0).*((2.0.*const.k_B.*T(i).*log(2.0))./(const.m.*const.c^2)).^(0.5);  %Calculate HWHM Doppler linewidth at T(i)
+    Hitran.gammad = (Hitran.nu0).*((2.0.*const.k_B.*T_med(i).*log(2.0))./(const.m.*const.c^2)).^(0.5);  %Calculate HWHM Doppler linewidth at T(i)
     
     % term 1 in the Voigt profile
     y = (Hitran.gammal./Hitran.gammad).*((log(2.0)).^(0.5));
@@ -687,7 +665,7 @@ for i = 1:size(Online_Temp_Spatial_Avg,2); % calculate the absorption cross sect
     integral_on = z_on;
     integral_off = z_off;
     %Calculate linestrength at temperature T
-    S = Hitran.S0.*((Hitran.T00./T(i)).^(1.5)).*exp(1.439.*Hitran.E.*((1./Hitran.T00)-(1./T(i))));
+    S = Hitran.S0.*((Hitran.T00./T_med(i)).^(1.5)).*exp(1.439.*Hitran.E.*((1./Hitran.T00)-(1./T_med(i))));
     %term3= (1-exp(-1.4388.*nu0_0./T(i)))./(1-exp(-1.4388.*nu0_0./T00));
     %S = S0.*((T00./T(i)).^(1.5)).*exp(1.4388.*E.*((1./T00)-(1./T(i)))).*term3;
       
@@ -949,119 +927,6 @@ end
 
 %% save data
   
- if flag.save_data == 1
-  %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
-  %cd('/Volumes/documents/WV_DIAL_data/processed_data') % point to the directory where data is stored 
-   cd(write_data_folder)
-   if flag.near == 1
-     name=strcat(date_plot,'_near');   
-   else
-    name=strcat(node,"_", datestr(date_plot, 'yymmdd'), "_Matlab");
-   end
-   
-   if flag.WS == 1
-     save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error',...
-     'Surf_T', 'Surf_P', 'Surf_RH', 'Surf_AH', 'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off', 'gate', ...
-     'MPD_elevation')
-   else
-     save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error', ...
-     'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off', 'gate', ...
-     'MPD_elevation')
-   end
- end
- 
- if flag.save_netCDF == 1  % save the data as an nc file
-    % convert NaN fill values (and Inf) to -1 flag
-    time_new(isnan(time_new)==1) = -1;  % NaNs converted to -1 flag
-    N_avg(isnan(N_avg)==1) = -1; 
-    N_error(isnan(N_error)==1) = -1; 
-    N_avg(isinf(N_avg)==1) = -1;  
-    N_error(isinf(N_error)==1) = -1;  
-    Offline_Temp_Spatial_Avg(isinf(Offline_Temp_Spatial_Avg)==1) = -1;  
-    Online_Temp_Spatial_Avg(isinf(Online_Temp_Spatial_Avg)==1) = -1; 
-    time_unix = (time_new-datenum(1970,1,1))*86400; % convert to unix time
-   
-    cdf_name = strcat('wv_dial.', datestr(date_plot, 'yymmdd'));
-    ncid = netcdf.create([cdf_name '.nc'],'CLOBBER');       
-    % define the dimensions and variables
-    % netcdf.reDef(ncid);
-    dimid1 = netcdf.defDim(ncid,'time',netcdf.getConstant('NC_UNLIMITED'));
-    %dimid1 = netcdf.defDim(ncid,'time', length(time_new));
-    dimid2 = netcdf.defDim(ncid, 'range', length(range));
-    dimid3 = netcdf.defDim(ncid, 'lambda', length(lambda_on));
-    
-    myvarID1 = netcdf.defVar(ncid,'time','double',dimid1);
-      netcdf.putAtt(ncid, myvarID1, 'units', 'days since January 0, 0000')
-    myvarID2 = netcdf.defVar(ncid,'range','float',dimid2);
-      netcdf.putAtt(ncid, myvarID2, 'units', 'meters')
-    myvarID3 = netcdf.defVar(ncid,'N_avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID3, 'long_name', 'water_vapor_number_density')
-      netcdf.putAtt(ncid, myvarID3, 'units', 'molecules/cm^3')
-      netcdf.putAtt(ncid, myvarID3, 'FillValue', '-1')
-    myvarID4 = netcdf.defVar(ncid,'N_error','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID4, 'long_name', 'water_vapor_number_density_error')
-      netcdf.putAtt(ncid, myvarID4, 'units', 'molecules/cm^3')
-      netcdf.putAtt(ncid, myvarID4, 'FillValue', '-1')
-    myvarID5 = netcdf.defVar(ncid,'P','float', dimid2);
-      netcdf.putAtt(ncid, myvarID5, 'long_name', 'pressure')
-      netcdf.putAtt(ncid, myvarID5, 'units', 'atm')
-    myvarID6 = netcdf.defVar(ncid,'T','float', dimid2);
-      netcdf.putAtt(ncid, myvarID6, 'long_name', 'temperature')
-      netcdf.putAtt(ncid, myvarID6, 'units', 'degK')
-   myvarID7 = netcdf.defVar(ncid,'RB','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID7, 'long_name', 'relative_backscatter')
-      netcdf.putAtt(ncid, myvarID7, 'units', 'arbitrary_units')
-      netcdf.putAtt(ncid, myvarID7, 'FillValue', '-1')
-   myvarID8 = netcdf.defVar(ncid,'time_unix','double',dimid1);
-      netcdf.putAtt(ncid, myvarID8, 'long_name', 'unix time')
-      netcdf.putAtt(ncid, myvarID8, 'units', 'seconds since 00:00:00 UTC, January 1, 1970')
-      netcdf.putAtt(ncid, myvarID8, 'FillValue', '-1')
-   myvarID9 = netcdf.defVar(ncid,'Offline_Temp_Spatial_Avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID9, 'long_name', 'offline counts')
-      netcdf.putAtt(ncid, myvarID9, 'units', 'counts')
-      netcdf.putAtt(ncid, myvarID9, 'FillValue', '-1')
-    myvarID10 = netcdf.defVar(ncid,'Online_Temp_Spatial_Avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID10, 'long_name', 'online counts')
-      netcdf.putAtt(ncid, myvarID10, 'units', 'counts')
-      netcdf.putAtt(ncid, myvarID10, 'FillValue', '-1')
-    myvarID11 = netcdf.defVar(ncid,'lambda_on','float', dimid3);
-      netcdf.putAtt(ncid, myvarID11, 'long_name', 'online wavelength')
-      netcdf.putAtt(ncid, myvarID11, 'units', 'nm')
-      netcdf.putAtt(ncid, myvarID11, 'FillValue', '-1')
-    myvarID12 = netcdf.defVar(ncid,'lambda_off','float', dimid3);
-      netcdf.putAtt(ncid, myvarID11, 'long_name', 'offline wavelength')
-      netcdf.putAtt(ncid, myvarID11, 'units', 'nm')
-      netcdf.putAtt(ncid, myvarID11, 'FillValue', '-1')
-      
-    netcdf.endDef(ncid)  
-
-    % save the variables to the file
-    
-    netcdf.putVar(ncid,myvarID1,0,length(time_new),time_new);   
-    netcdf.putVar(ncid,myvarID2,range);   
-    netcdf.putVar(ncid,myvarID3,[0,0],size(N_avg'),N_avg');  
-    netcdf.putVar(ncid,myvarID4,[0,0],size(N_error'),N_error');
-    netcdf.putVar(ncid,myvarID5,P);   
-    netcdf.putVar(ncid,myvarID6,T);
-    netcdf.putVar(ncid,myvarID7,[0,0],size(RB'),RB');
-    netcdf.putVar(ncid,myvarID8,time_unix);
-    netcdf.putVar(ncid,myvarID9,[0,0],size(Offline_Temp_Spatial_Avg'),Offline_Temp_Spatial_Avg');  
-    netcdf.putVar(ncid,myvarID10,[0,0],size(Online_Temp_Spatial_Avg'),Online_Temp_Spatial_Avg');
-    netcdf.putVar(ncid,myvarID11,lambda_on); 
-    netcdf.putVar(ncid,myvarID12,lambda_off); 
-    
-    
-  netcdf.close(ncid);
-
-  % original data save to ascii format for Dave Turner   
-  %   name=strcat(date, 'wv_number_density.txt');
-  %   wv_number_density = [time_new, double(N_avg)]; 
-  %   save(name, 'wv_number_density', '-ascii', '-double'); 
-  %   name=strcat(date, 'wv_number_density_error.txt');  
-  %   wv_number_density_error = [time_new, double(N_error)]; 
-  %   save(name, 'wv_number_density_error', '-ascii', '-double');
-  
- end
  
  %% plot data
 
@@ -1123,7 +988,7 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   set(gca,'TickLength',[0.005; 0.0025]);
   colorbar('EastOutside');
   axis([fix(min(time_new)) fix(min(time_new))+1 0 6])
-  caxis([0 6]);
+  caxis([0 12]);
   datetick('x','HH','keeplimits', 'keepticks');
   colormap(C)
   %shading interp
@@ -1305,103 +1170,17 @@ toc
 cd(dd) % point back to original directory
 
 
-%% use this for troubleshooting raw data
+  
 
-%troubleshoot = 0;
-if flag.troubleshoot == 1;
-
- %figure(3)
- %semilogx(N_avg(fix(end*14/24),:), range(1,1:end-1)./1e3, 'r')
- %ylim([0 6])
- %title('DIAL profile at about 14:00 MDT')
- %xlabel('Water Vapor Number Density (cm^{-3})');
- %ylabel('range(km)'); 
-
-%column integrated water vapor...just testing
-% pw=sum(N_avg(:,750/7.5:3500/7.5),2)./6.022e23*225*100;
-
-% find high gradient errors that occur near cloud boundaries   
-[FX,FY] = gradient(N_avg);
-figure('Position',plot_size1);
-imagesc(time_new,range./1e3, FX');
-axis xy; colorbar('EastOutside'); caxis([-5e16 5e16]);  % model assumes there will be ~2E17 at ground and 2E15 at 8km 
-title({[date,' Vertical Gradient']},...
-     'fontweight','b','fontsize',16)
-ylabel('Altitude (km)','fontweight','b','fontsize',20); 
-datetick('x','HH','keeplimits');
-axis([fix(min(time_new)) fix(min(time_new))+1 0 7])
-colormap(C)  
-
-figure('Position',plot_size1);
-imagesc(time_new,range./1e3, FY');
-axis xy; colorbar('EastOutside'); caxis([-5e16 5e16]);  % model assumes there will be ~2E17 at ground and 2E15 at 8km 
-title({[date_plot,' Horizontal Gradient']},...
-     'fontweight','b','fontsize',16)
-ylabel('Altitude (km)','fontweight','b','fontsize',20); 
-datetick('x','HH','keeplimits');
-axis([fix(min(time_new)) fix(min(time_new))+1 0 7])
-colormap(C)  
-    
- %plot column OD
- figure('Position',[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/2])
- imagesc(time_new,range./1e3,real(OD')); 
- set(gca,'Fontsize',30,'Fontweight','b');
- axis xy;
- colorbar('EastOutside');
- axis([fix(min(time_new)) fix(min(time_new))+1 0 12])
- caxis([-0.1 2]);
- datetick('x','HH','keeplimits');
- colormap(C)
- title({[date_plot,'  Column Optical Depth']},...
-      'fontweight','b','fontsize',30)
- xlabel('Time (UTC)','fontweight','b','fontsize',30); 
- ylabel('Height (km, AGL)','fontweight','b','fontsize',30); 
- set(gca,'XMinorTick','off');
- set(gca,'YMinorTick','off');
- set(gca,'Fontsize',30,'Fontweight','b');
-    
-    
- % plot the offline background
- figure('Position',[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/2])
- semilogy(time_new, background_off, time_new, background_on); %
- datetick('x','HH','keeplimits');
-  title({[date_plot,'  Offline background C/s']},...
-     'fontweight','b','fontsize',30)
- ylim([1e2  1e7])
- hold on
-  semilogy(time_new, 5e6, 'green')   % Add a horizontal line to show the 5Mc/s linearity limit
- hold off
 
  
- % plot and save the cloud base (added 11-Sept-2014)
- figure('Position',[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/2])
- cloud_base = (diff(RB) > 25);
- for i=1:size(cloud_base,1)
-   if isempty(find(cloud_base(i,:), 1, 'first'))==1
-     cloud_base_idx(i,:) = NaN;
-   else
-     cloud_base_idx(i,:) = find(cloud_base(i,:), 1, 'first')*gate;
-   end
- end
- plot(time_new(1:end-1), cloud_base_idx);
- datetick('x','HH','keeplimits');
- title({[date_plot,'  Cloud Base']},'fontweight','b','fontsize',30)
- ylim([0  16000])
- ylabel('Height (m, AGL)','fontweight','b','fontsize',30); 
- xlabel('UTC','fontweight','b','fontsize',30); 
-% name=strcat(date, 'cloudbase.txt');
-% cloud_base = [time_new(1:end-1), cloud_base_idx];
-% cloud_base(isnan(cloud_base)==1) = -1;  % Dave Turner wants the NaNs converted to -1 flag
-% save(name, 'cloud_base', '-ascii', '-double');
-    
+   
 
   
 end
 
 
-%figure(100)
-%semilogy(mean(Offline_Raw_Data(1:300,8:566),1))
-%grid on
+
 
 
 

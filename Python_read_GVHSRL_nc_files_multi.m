@@ -14,10 +14,12 @@ d_read_data = pwd; % get the current path
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
 cd(strcat(serv_path,'/mpd/Plots'))
 d_save_data = pwd; %set the plot save path
-flag.save_data = 0;  %save data at end of processing (0=off 1=on)
-node = 'MPD05';
-node = 'GV_HSRL';
+flag.save_plots = 1;  %save plots (0=off 1=on)
+node = 'GV-HSRL';
 low_range_mask = 0;
+
+ plot_start_time =  '19-Jan-2018 04:25:00';
+ plot_end_time = '19-Jan-2018 04:30:00';
 
 cd(d_read_data);
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -27,14 +29,18 @@ jj=1;
   
  variable{1} = 'time';
  variable{2} = 'range';
- %variable{2} = 'rangeFull';
- %variable{3} = 'Absolute_Humidity'; 
- %variable{4} = 'Absolute_Humidity_mask';
- %variable{5} = 'Absolute_Humidity_variance'; 
+
+ variable{3} = 'Volume_Linear_Depolarization_Ratio'; 
+ variable{4} = 'Volume_Linear_Depolarization_Ratio_mask';
+ variable{5} = 'Volume_Linear_Depolarization_Ratio_variance'; 
  variable{6} = 'Aerosol_Backscatter_Coefficient';
  variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
  variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
-    
+ 
+ variable{9} = 'Molecular_Backscatter_Channel'; 
+ variable{10} = 'Merged_Combined_Channel';   
+ variable{11} = 'Molecular_Backscatter_Coefficient';  
+ variable{12} = 'Molecular_Backscatter_Coefficient_variance'; 
 
 for jj = 1:size(Pythonfilename,2)
   filename = Pythonfilename{jj};
@@ -51,20 +57,32 @@ for jj = 1:size(Pythonfilename,2)
     aircraft_alt{jj} = ncread(filename,'GGALT'); 
     pointing{jj} = ncread(filename,'TelescopeDirection');
  
-      
-    
-%     AH{jj}  = ncread(filename,variable{3});  
-%     AH_mask{jj} = ncread(filename,variable{4}); 
-%     AH_var{jj} = ncread(filename,variable{5}); 
-%     AH{jj}(AH_mask{jj} == 1) = nan;
-%     AH_var{jj}(AH_mask{jj} == 1) = nan; 
-    
     ABC{jj}  = ncread(filename,variable{6});   
     ABC_mask{jj} = ncread(filename,variable{7}); 
     ABC_var{jj} = ncread(filename,variable{8});
     ABC{jj}(ABC_mask{jj} == 1) = nan;
     ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
     
+    
+    LDR{jj}  = ncread(filename,variable{3});  
+    LDR_mask{jj} = ncread(filename,variable{4}); 
+    LDR_var{jj} = ncread(filename,variable{5}); 
+    LDR{jj}(LDR_mask{jj} == 1) = nan;
+    LDR_var{jj}(LDR_mask{jj} == 1) = nan; 
+ 
+     % add a QC step
+     low_mol_counts{jj} = ncread(filename,variable{9}); 
+     low_comb_counts{jj} = ncread(filename,variable{10});
+     mol_back{jj} = ncread(filename,variable{11}); 
+     mol_back_var{jj} = ncread(filename,variable{12});
+    % LDR{jj}(ABC{jj} <= 1e-9) = nan;
+    % ABC{jj}(ABC{jj} <= 1e-9) = nan; % remove unrealisitc backscatter values
+%      LDR{jj}(low_mol_counts{jj} < 1) = nan;
+%      ABC{jj}(low_mol_counts{jj} < 1) = nan; % remove data with < photon counted
+%      LDR{jj}(low_comb_counts{jj} < 2) = nan;
+%      ABC{jj}(low_comb_counts{jj} < 2) = nan; % remove data with < 1 photon counted
+     
+     
   netcdf.close(ncid); 
   %convert from Unix time to date number (days since Jan 0 0000) 
   duration{jj} =  n+double(time{jj}/3600/24);
@@ -82,8 +100,8 @@ for jj = 1:size(Pythonfilename,2)
       comb_duration = duration{jj};
       comb_aircraft_alt = aircraft_alt{jj};
       comb_pointing = pointing{jj};
-%       comb_AH = AH{jj}';
-%       comb_AH_var = AH_var{jj}';
+       comb_LDR = LDR{jj}';
+       comb_LDR_var = LDR_var{jj}';
       comb_ABC = ABC{jj}';
       comb_ABC_var = ABC_var{jj}';
   else
@@ -92,8 +110,8 @@ for jj = 1:size(Pythonfilename,2)
       comb_pointing = [comb_pointing; pointing{jj}];
       % find the maximum range to accumulate (in case it changes)
       max_range = min(cellfun('size',alt,1))
-%       comb_AH = [comb_AH(:,1:max_range); AH{jj}(1:max_range,:)'];
-%       comb_AH_var = [comb_AH_var(:,1:max_range); AH_var{jj}(1:max_range,:)'];
+      comb_LDR = [comb_LDR(:,1:max_range); LDR{jj}(1:max_range,:)'];
+      comb_LDR_var = [comb_LDR_var(:,1:max_range); LDR_var{jj}(1:max_range,:)'];
       comb_ABC = [comb_ABC(:,1:max_range); ABC{jj}(1:max_range,:)'];
       comb_ABC_var = [comb_ABC_var(:,1:max_range); ABC_var{jj}(1:max_range,:)'];
   end
@@ -132,110 +150,105 @@ skip = 1
 xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/skip)+1 );
 
 
-% % plot the AH
-%   figure1 = figure('Position',plot_size1);
-%   set(gcf,'renderer','zbuffer');
-%   h = pcolor(x, y, Z);
-%   set(h, 'EdgeColor', 'none'); 
-%   axis xy; colorbar('EastOutside'); 
-%   caxis([0 12]);
-%   %caxis([0 6]);
-%   axis([fix(min(x)) ceil(max(x)) 0 6]) 
-% %  shading interp
-%   set(gca, 'XTick',  xData)
-%   set(gca,'TickDir','out');
-%   set(gca,'TickLength',[0.005; 0.0025]);
-%   hh = title({[node, ' Absolute Humidity (g m^{-3})']},...
-%        'fontweight','b','fontsize',font_size);  
-%   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-%   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-%   colormap(jet)
-%   set(gca,'Fontsize',font_size,'Fontweight','b');
  
  % plot the atmospheric backscatter coefficient 
   Z = real(comb_ABC)';
-  figure2 = figure('Position',plot_size1);
+  figure1 = figure('Position',plot_size1);
   set(gcf,'renderer','zbuffer');
   h = pcolor(x, y, Z);
-  set(h, 'EdgeColor', 'none'); 
-  axis xy; colorbar('EastOutside'); 
-  caxis([0 12]);
+  set(h, 'EdgeColor', 'none');  axis xy; colorbar('EastOutside'); 
   caxis([1e-8 1e-3]);
-  ylim([-.1 5]);
   %axis([fix(min(x)) ceil(max(x)) 0 6])
   %  shading interp
-  set(gca, 'XTick',  xData)
-  set(gca,'TickDir','out');
-  set(gca,'TickLength',[0.005; 0.0025]);
-  set(gca,'Zscale', 'log')
-  set(gca,'Colorscale', 'log')
-  set(gca,'Zscale', 'linear')
-  hh = title({[node, ' Aerosol Backscatter Coefficient m^{-1} sr^{-1}']},...
+  set(gca, 'XTick',  xData); set(gca,'TickDir','out'); set(gca,'TickLength',[0.005; 0.0025]);
+  set(gca,'Zscale', 'log'); set(gca,'Colorscale', 'log'); set(gca,'Zscale', 'linear')
+  hh = title({[date, ' Aerosol Backscatter Coefficient m^{-1} sr^{-1}']},...
        'fontweight','b','fontsize',font_size);     
-  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+  ylabel('Height (km, MSL)','fontweight','b','fontsize',font_size); 
  % datetick('x','HH:MM','keeplimits', 'keepticks');
   datetick('x','HH:MM');
   colormap(jet)
   set(gca,'Fontsize',font_size,'Fontweight','b');
- 
- plot_start_time =  '19-Jan-2018 04:25:00';
- plot_end_time = '19-Jan-2018 04:30:00';
- xlim([datenum(plot_start_time) datenum(plot_end_time)]);
+  ylim([-.1 2]);
+  xlim([datenum(plot_start_time) datenum(plot_end_time)]);
  
 
- if flag.save_data == 1
+ 
+% % plot the Linear Depolarization
+   figure2 = figure('Position',plot_size1);
+   Z = real(comb_LDR)';
+   set(gcf,'renderer','zbuffer');
+   h = pcolor(x, y, Z);
+   set(h, 'EdgeColor', 'none');  axis xy; colorbar('EastOutside'); 
+   caxis([0 1]);
+%   axis([fix(min(x)) ceil(max(x)) 0 6]) 
+% %  shading interp
+   set(gca, 'XTick',  xData); set(gca,'TickDir','out'); set(gca,'TickLength',[0.005; 0.0025]);
+%    caxis([0.1 1]);
+%    set(gca,'Zscale', 'log'); set(gca,'Colorscale', 'log'); set(gca,'Zscale', 'linear')
+   hh = title({[date, ' Linear Depolarization Ratio']},...
+        'fontweight','b','fontsize',font_size);  
+   ylabel('Height (km, MSL)','fontweight','b','fontsize',font_size); 
+   datetick('x','HH:MM');
+   colormap(jet)
+   set(gca,'Fontsize',font_size,'Fontweight','b');
+  ylim([-.1 2]);
+  xlim([datenum(plot_start_time) datenum(plot_end_time)]);
+ 
+ 
+ if flag.save_plots == 1
   
-  cd(d_save_data);     
-  range = alt{1}'; 
-  N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
-  duration = duration;
+%   cd(d_save_data);     
+%   range = alt{1}'; 
+%   N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
+%   duration = duration;
 
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, node, ' WV_Python_multi'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 400]);
+  name=strcat(date, node, ' GVHSRL_backscatter_coeff'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
   FigH = figure(2);
   set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, node, ' RB_Python_multi'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 400]);
+  name=strcat(date, node, ' GVHSRL_Linear_depol_ratio'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
   
-  %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
-  name=strcat(date, '_combined');
-  if strcmp(node,'MPD01')==1
-      MPD01.N_avg_comb = N_avg_comb;
-     % MPD01.RB_comb = RB_comb;
-      MPD01.range = range;
-      MPD01.time = duration;
-      save(name, 'MPD01')
-  elseif strcmp(node,'MPD02')==1
-      MPD02.N_avg_comb = N_avg_comb;
-    %  MPD02.RB_comb = RB_comb;
-      MPD02.range = range;
-      MPD02.time = duration;
-      save(name, 'MPD02')
-  elseif strcmp(node,'MPD03')==1
-      MPD03.N_avg_comb = N_avg_comb;
-    %  MPD03.RB_comb = RB_comb;
-      MPD03.range = range;
-      MPD03.time = duration;
-      save(name, 'MPD03')
-  elseif strcmp(node,'MPD04')==1
-      MPD04.N_avg_comb = N_avg_comb;
-    %  MPD04.RB_comb = RB_comb;
-      MPD04.range = range;
-      MPD04.time = duration;
-      save(name, 'MPD04')
-   elseif strcmp(node,'MPD05')==1
-      MPD05.N_avg_comb = N_avg_comb;
-   %   MPD05.RB_comb = RB_comb;
-      MPD05.range = range;
-      MPD05.time =  duration;
-      save(name, 'MPD05')
-  end
+%   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
+%   name=strcat(date, '_combined');
+%   if strcmp(node,'MPD01')==1
+%       MPD01.N_avg_comb = N_avg_comb;
+%      % MPD01.RB_comb = RB_comb;
+%       MPD01.range = range;
+%       MPD01.time = duration;
+%       save(name, 'MPD01')
+%   elseif strcmp(node,'MPD02')==1
+%       MPD02.N_avg_comb = N_avg_comb;
+%     %  MPD02.RB_comb = RB_comb;
+%       MPD02.range = range;
+%       MPD02.time = duration;
+%       save(name, 'MPD02')
+%   elseif strcmp(node,'MPD03')==1
+%       MPD03.N_avg_comb = N_avg_comb;
+%     %  MPD03.RB_comb = RB_comb;
+%       MPD03.range = range;
+%       MPD03.time = duration;
+%       save(name, 'MPD03')
+%   elseif strcmp(node,'MPD04')==1
+%       MPD04.N_avg_comb = N_avg_comb;
+%     %  MPD04.RB_comb = RB_comb;
+%       MPD04.range = range;
+%       MPD04.time = duration;
+%       save(name, 'MPD04')
+%    elseif strcmp(node,'MPD05')==1
+%       MPD05.N_avg_comb = N_avg_comb;
+%    %   MPD05.RB_comb = RB_comb;
+%       MPD05.range = range;
+%       MPD05.time =  duration;
+%       save(name, 'MPD05')
+%   end
 
  end
   

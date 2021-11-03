@@ -1,16 +1,17 @@
-elevation= 1574; %MPD05 was at 1574m elevation at Christman Field Site
+elevation= 1745; %MPD03 was at 1745m elevation at Marshall Field Site
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
+
+flag.data_type = 1;  % 0=matlab WV, 1=python WV, 2=raman WV
 sonde_end_int = 15; % integration time (in min) for the MPD 
 WV_min = 0;
-WV_max = 15;
+WV_max = 12;
+
 
 %d=pwd;
-%cd('/Volumes/documents/MPD/Sondes_CSU')
-%plot_path = '/Volumes/documents/MPD/Plots/';
-cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/CSU_PrePRECIP')
+%cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
+%cd('/Users/lroot/Desktop/mpd/Sondes_Marshall')
+cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/Marshall_ISF/')
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots';
-%cd('/Volumes/eol/sci/voemel/data/radiosondes/boulder/ncdf')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
@@ -34,17 +35,8 @@ for jj = 1:size(sondefilename,2)
        range_grid_size = diff(range(1:2)) 
        range_grid_in = range;
        comb_AH_var = N_error_comb.*1e6./6.022E23.*18.015;
-    elseif flag.data_type == 3
-      %range_grid_size = 37.5; 
-      range_grid_size = diff(alt{1}');
-      range_grid_size = range_grid_size(1,1)
-      N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
-      comb_AH_var = N_avg_comb*0;
-      duration = comb_duration;
-      range_grid_in = alt{1}';
    end
-   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, plot_path, flag); 
-  % [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files_T_lapse(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, T_lapse, plot_path, flag); 
+   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_Marshall_ISF_nc_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, plot_path, flag); 
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
    %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
  end
@@ -97,7 +89,7 @@ plot(RMSE_demoninator, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); % 
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 45]);
+  xlim([0 70]);
   ylim([0,6]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Samples used');
@@ -197,8 +189,9 @@ plot(xrange,y_est,'r--','LineWidth',2) % plot the least squared fit line
 hold off
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
-%cd('/Users/lroot/Desktop/mpd/Plots/') % point to the directory where data is stor
-cd(plot_path)
+%cd('/Users/spuler/Desktop/mpd/Plots/') % point to the directory where data is stor
+cd(plot_path) % point to the directory where data is stor
+
 
 FigH = figure(1);
 set(gca,'Fontsize',16,'Fontweight','b'); % 

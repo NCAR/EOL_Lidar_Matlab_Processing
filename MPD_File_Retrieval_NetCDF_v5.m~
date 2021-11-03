@@ -1,11 +1,5 @@
 function[online_merged,offline_merged,on_near_merged, off_near_merged, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder, read_time_in)
 
-  O2online_comb_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.O2online_comb_grid];
-  O2offline_comb_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.O2offline_comb_grid];
-  O2online_mol_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.O2online_mol_grid];
-  O2offline_mol_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.O2offline_mol_grid]; 
-
-
 dd = pwd; % get the current path
 %cd /scr/eldora1/wvdial_2_data/2018
 %folder = '20180818';

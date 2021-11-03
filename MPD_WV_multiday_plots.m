@@ -1,22 +1,26 @@
 clear all; close all;
 tic
 
-% node = 'MPD03';
-% date = '16 Oct 2020';   
-% days = 120; skip = 12;
+ node = 'MPD03';
+ date = '19 Jul 2021';   
+ days = 28; skip = 2;
+  date = '06 Aug 2021';   
+  days = 21; skip = 3;
 
 % node = 'MPD04';
 % date = '07 Jul 2021';   
 % days = 2; skip = 1;
 
-node = 'MPD05';
-date = '20 Jun 2021';   
-days = 58; skip = 4;
-%date = '11 Aug 2021';  
-%days = 4; skip = 1;
+%  node = 'MPD05';
+% % date = '20 Jun 2021';   
+% % days = 62; skip = 4;
+%  date = '24 Jun 2021';  
+%  days = 4; skip = 1;
 
 serv_path = '/Volumes/documents/MPD/';
-plot_path = '/Volumes/documents/MPD/Plots/';
+%serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
+serv_path = '/Volumes/fog1/rsfdata/MPD/';
+plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
 blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 flag.near = 0;  % read in the near range channel (0=off 1=on)
 flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
