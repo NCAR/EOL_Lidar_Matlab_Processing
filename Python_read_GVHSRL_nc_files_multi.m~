@@ -37,8 +37,10 @@ jj=1;
  variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
  variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
  
- variable{9}= 'Molecular_Backscatter_Channel'; 
- variable{10}= 'Molecular_Backscatter_Channel';     
+ variable{9} = 'Molecular_Backscatter_Channel'; 
+ variable{10} = 'Merged_Combined_Channel';   
+ variable{11} = 'Cross_Polarization_Channel';  
+
 
 for jj = 1:size(Pythonfilename,2)
   filename = Pythonfilename{jj};
@@ -68,13 +70,20 @@ for jj = 1:size(Pythonfilename,2)
     LDR{jj}(LDR_mask{jj} == 1) = nan;
     LDR_var{jj}(LDR_mask{jj} == 1) = nan; 
  
-     % remove unrealisitc backscatter values
-     low_counts{jj} = ncread(filename,variable{9});  
+     % add a QC step
+     mol_counts{jj} = ncread(filename,variable{9}); 
+     comb_counts{jj} = ncread(filename,variable{10});
+     cross_counts{jj} = ncread(filename,variable{11});
     % LDR{jj}(ABC{jj} <= 1e-9) = nan;
     % ABC{jj}(ABC{jj} <= 1e-9) = nan; % remove unrealisitc backscatter values
-     LDR{jj}(low_counts{jj} < 1) = nan;
-     ABC{jj}(low_counts{jj} < 1) = nan; % remove data with < 1 photon counted
-    
+      LDR{jj}(mol_counts{jj} < 1) = nan;
+      ABC{jj}(mol_counts{jj} < 1) = nan; % remove data with < photon counted
+%      LDR{jj}(comb_counts{jj} < 10) = nan;
+%      ABC{jj}(comb_counts{jj} < 10) = nan; % remove data with < 1 photon counted
+%      LDR{jj}(cross_counts{jj} < 10) = nan;
+%      ABC{jj}(cross_counts{jj} < 10) = nan; % remove data with < 1 photon counted
+     
+     
   netcdf.close(ncid); 
   %convert from Unix time to date number (days since Jan 0 0000) 
   duration{jj} =  n+double(time{jj}/3600/24);
@@ -161,7 +170,7 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   datetick('x','HH:MM');
   colormap(jet)
   set(gca,'Fontsize',font_size,'Fontweight','b');
-  ylim([-.1 5]);
+  ylim([-.1 2]);
   xlim([datenum(plot_start_time) datenum(plot_end_time)]);
  
 
@@ -176,14 +185,15 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
 %   axis([fix(min(x)) ceil(max(x)) 0 6]) 
 % %  shading interp
    set(gca, 'XTick',  xData); set(gca,'TickDir','out'); set(gca,'TickLength',[0.005; 0.0025]);
-%   set(gca,'Zscale', 'log'); set(gca,'Colorscale', 'log'); set(gca,'Zscale', 'linear')
+%    caxis([0.1 1]);
+%    set(gca,'Zscale', 'log'); set(gca,'Colorscale', 'log'); set(gca,'Zscale', 'linear')
    hh = title({[date, ' Linear Depolarization Ratio']},...
         'fontweight','b','fontsize',font_size);  
    ylabel('Height (km, MSL)','fontweight','b','fontsize',font_size); 
    datetick('x','HH:MM');
    colormap(jet)
    set(gca,'Fontsize',font_size,'Fontweight','b');
-  ylim([-.1 5]);
+  ylim([-.1 2]);
   xlim([datenum(plot_start_time) datenum(plot_end_time)]);
  
  

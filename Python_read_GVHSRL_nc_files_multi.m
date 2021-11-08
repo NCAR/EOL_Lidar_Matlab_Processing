@@ -18,8 +18,8 @@ flag.save_plots = 1;  %save plots (0=off 1=on)
 node = 'GV-HSRL';
 low_range_mask = 0;
 
- plot_start_time =  '19-Jan-2018 04:25:00';
- plot_end_time = '19-Jan-2018 04:30:00';
+ plot_start_time =  '19-Jan-2018 04:20:00';
+ plot_end_time = '19-Jan-2018 04:35:00';
 
 cd(d_read_data);
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -39,8 +39,8 @@ jj=1;
  
  variable{9} = 'Molecular_Backscatter_Channel'; 
  variable{10} = 'Merged_Combined_Channel';   
- variable{11} = 'Molecular_Backscatter_Coefficient';  
- variable{12} = 'Molecular_Backscatter_Coefficient_variance'; 
+ variable{11} = 'Cross_Polarization_Channel';  
+
 
 for jj = 1:size(Pythonfilename,2)
   filename = Pythonfilename{jj};
@@ -71,16 +71,17 @@ for jj = 1:size(Pythonfilename,2)
     LDR_var{jj}(LDR_mask{jj} == 1) = nan; 
  
      % add a QC step
-     low_mol_counts{jj} = ncread(filename,variable{9}); 
-     low_comb_counts{jj} = ncread(filename,variable{10});
-     mol_back{jj} = ncread(filename,variable{11}); 
-     mol_back_var{jj} = ncread(filename,variable{12});
+     mol_counts{jj} = ncread(filename,variable{9}); 
+     comb_counts{jj} = ncread(filename,variable{10});
+     cross_counts{jj} = ncread(filename,variable{11});
     % LDR{jj}(ABC{jj} <= 1e-9) = nan;
     % ABC{jj}(ABC{jj} <= 1e-9) = nan; % remove unrealisitc backscatter values
-%      LDR{jj}(low_mol_counts{jj} < 1) = nan;
-%      ABC{jj}(low_mol_counts{jj} < 1) = nan; % remove data with < photon counted
-%      LDR{jj}(low_comb_counts{jj} < 2) = nan;
-%      ABC{jj}(low_comb_counts{jj} < 2) = nan; % remove data with < 1 photon counted
+      LDR{jj}(mol_counts{jj} < 1) = nan;
+      ABC{jj}(mol_counts{jj} < 1) = nan; % remove data with < photon counted
+%      LDR{jj}(comb_counts{jj} < 10) = nan;
+%      ABC{jj}(comb_counts{jj} < 10) = nan; % remove data with < 1 photon counted
+%      LDR{jj}(cross_counts{jj} < 10) = nan;
+%      ABC{jj}(cross_counts{jj} < 10) = nan; % remove data with < 1 photon counted
      
      
   netcdf.close(ncid); 
