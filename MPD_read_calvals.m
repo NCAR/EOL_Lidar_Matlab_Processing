@@ -133,6 +133,16 @@ if (t_date >= datetime(dat.Laser_Pulse_Delay(i).date,'InputFormat','d-MMM-yyyy H
 end
 end
 
+for i=1:size(dat.Receiver_Scan_File,2)
+if (t_date >= datetime(dat.Receiver_Scan_File(i).date,'InputFormat','d-MMM-yyyy H:m')) == 1
+    Receiver_Scan_File = dat.Receiver_Scan_File(i).value; 
+end
+end
+
+
+      
+  
+
 MPD_location %write the location to the screen 
 MPD_elevation %write the location to the screen 
 wavemeter_offset %write the calibration offset to the screen 

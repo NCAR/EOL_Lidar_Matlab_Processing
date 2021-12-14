@@ -1,7 +1,7 @@
 elevation= 1574; %MPD05 was at 1574m elevation at Christman Field Site
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
-sonde_end_int = 15; % integration time (in min) for the MPD 
+flag.data_type = 3;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
+sonde_end_int = 15; % integration time (in min) +/- around the sound launch  
 WV_min = 0;
 WV_max = 15;
 

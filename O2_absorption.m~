@@ -1,7 +1,6 @@
 function [] = O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
-    time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr)
+    time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength)
 
- d = pwd;
 
 %  O2_absorption(T, P, O2_online_comb, O2_offline_comb, ...
 %      time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength)
@@ -88,18 +87,11 @@ gate_int = range(2)*gates2use;
  % colormap(jet)
   
 figure(400)
-plot(O2_on_wavelength(600:650),'ro')
+plot(O2_on_wavelength(600:650))
 ylim([769.79 769.81])
 
 figure(401)
-plot(O2_on_wavelength(600:650), nanmedian(Z(15:50, 600:650),1), 'bo')
-% hold on
-% plot(O2_on_wavelength(600:650), Z(40, 600:650), 'ro')
-% plot(O2_on_wavelength(600:650), Z(50, 600:650), 'go')
-% plot(O2_on_wavelength(600:650), Z(60, 600:650), 'mo')
-% hold off
-
-
+plot(O2_on_wavelength(600:650), Z(112500/gate, 600:650))
 
  
    % plot a single profile
@@ -119,23 +111,6 @@ plot(O2_on_wavelength(600:650), nanmedian(Z(15:50, 600:650),1), 'bo')
    %xlim([1e-7 1e-5])
    %xlim([1e-6 5e-6])
    hold off
-   
-   
-   
-   
-   
-   serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  
-   cd(strcat(serv_path1,'/Plots'))
-   
-   FigH = figure(10);
-   set(gca,'Fontsize',16,'Fontweight','b'); 
-   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
-   name=strcat(node, "_", daystr, "_O2_absorption");
-   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-   
-   cd(d)
-   
-  
    
 end
   

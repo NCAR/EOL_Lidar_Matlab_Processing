@@ -1,23 +1,20 @@
 clear all; close all;
 tic
 
- node = 'MPD03';
- date = '19 Jul 2021';   
- days = 28; skip = 2;
-  date = '06 Aug 2021';   
-  days = 21; skip = 3;
+ node = 'MPD05';
+ date = '18 Jun 2021';   % pre-PRECIP
+ days = 64; skip = 4;
+
+   date = '18 Jun 2021';   
+   days = 18; skip = 2;
 
 % node = 'MPD04';
 % date = '07 Jul 2021';   
 % days = 2; skip = 1;
 
-%  node = 'MPD05';
-% % date = '20 Jun 2021';   
-% % days = 62; skip = 4;
-%  date = '24 Jun 2021';  
-%  days = 4; skip = 1;
 
-serv_path = '/Volumes/documents/MPD/';
+
+%serv_path = '/Volumes/documents/MPD/';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
 serv_path = '/Volumes/fog1/rsfdata/MPD/';
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
@@ -74,92 +71,76 @@ i=1;
 
 for i=1:days
   if i==1  
-    % load the near range data or regular data depending on flag  
-    %if flag.near == 1
-    %  if exist(strcat(date, '_near.mat'))==2
-    %    load(strcat(date, '_near.mat'))
-    %  end
-    %else
-      if exist(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))==2
+     if exist(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))==2
         load(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))
-      end
-%    end 
-    range_limit = size(N_avg,2);
-    % grid everything to a 75 m gate size 
-      if gate < 75
-         range_grid_75 = 0:range_grid_size:(range_limit-1)*gate; 
-         N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
-         N_error = interp1(range, N_error', range_grid_75, 'linear', 'extrap')'; 
-         RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
-         OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
-         range = range_grid_75;
-         range_limit = range_limit/2;
-     end
-    N_avg_comb=N_avg;
-    N_error_comb=N_error;
-    RB_comb=RB;
-    background_comb_on = background_on;
-    background_comb_off = background_off;
-    lambda_comb_on = lambda_all;
-    lambda_comb_off = lambda_all_off;
-    duration=time_new;
-    % if gate = 37.5 down sample to 75 m bins
-   if WS==1
-      surf_T = Surf_T;
-      surf_P = Surf_P;
-      surf_AH = Surf_AH;
-      i_off = I_off;
-      i_on = I_on;
-      p_on = P_on;
-      p_off = P_off;
-      t_bench = T_bench;
-    end
+        range_limit = size(N_avg,2);
+       % grid everything to a 75 m gate size 
+        if gate < 75
+           range_grid_75 = 0:range_grid_size:(range_limit-1)*gate; 
+           N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
+           N_error = interp1(range, N_error', range_grid_75, 'linear', 'extrap')'; 
+           RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
+           OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
+           range = range_grid_75;
+           range_limit = range_limit/2;
+        end
+        N_avg_comb=N_avg;
+        N_error_comb=N_error;
+        RB_comb=RB;
+        background_comb_on = background_on;
+        background_comb_off = background_off;
+        lambda_comb_on = lambda_all;
+        lambda_comb_off = lambda_all_off;
+        duration=time_new;
+        % if gate = 37.5 down sample to 75 m bins
+       if WS==1
+         surf_T = Surf_T;
+         surf_P = Surf_P;
+         surf_AH = Surf_AH;
+         i_off = I_off;
+         i_on = I_on;
+         p_on = P_on;
+         p_off = P_off;
+         t_bench = T_bench;
+       end
+     end  
   else
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
- %   if flag.near == 1
- %     if exist(strcat(date, '_near.mat'))==2
- %       load(strcat(date, '_near.mat'))
- %     end
- %   else
-      if exist(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))==2
-        load(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))
-      end
- %   end  
-    range_limit_ch = size(N_avg,2);
-   % if range_limit_ch < range_limit
-   %     range_limit = range_limit_ch;
-   % end
-   % grid everything to a 75 m gate size 
-      if gate < 75
+    if exist(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))==2
+       load(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))
+       range_limit_ch = size(N_avg,2);
+       % grid everything to a 75 m gate size 
+       if gate < 75
          range_grid_75 = 0:range_grid_size:(range_limit_ch-1)*gate; 
          N_avg = interp1(range, N_avg', range_grid_75, 'linear', 'extrap')'; 
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
   %      OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
          range_limit = range_limit_ch/2;
-      end
-    range_lim1 = size(N_avg_comb,2); % catch any changes in range
-    range_lim2 = size(N_avg,2); % catch any changes in range
-    range_limit = min([range_lim1 range_lim2]);
+       end
+      range_lim1 = size(N_avg_comb,2); % catch any changes in range
+      range_lim2 = size(N_avg,2); % catch any changes in range
+      range_limit = min([range_lim1 range_lim2]);
     
-    N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg(2:end,1:range_limit));
-    N_error_comb = vertcat(N_error_comb(:,1:range_limit), N_error(2:end,1:range_limit));
-    RB_comb = vertcat(RB_comb(:,1:range_limit), RB(2:end,1:range_limit));
- %   OD_comb= vertcat(OD_comb(:,1:range_limit), OD(2:end,1:range_limit));
-    duration = vertcat(duration, time_new(2:end));
-    background_comb_on = vertcat(background_comb_on, background_on(2:end));
-    background_comb_off = vertcat(background_comb_off, background_off(2:end));
-    lambda_comb_on = vertcat(lambda_comb_on, lambda_all(2:end));
-    lambda_comb_off = vertcat(lambda_comb_off, lambda_all_off(2:end));
-    if WS==1
-      surf_T = vertcat(surf_T,Surf_T(2:end,:));
-      surf_P = vertcat(surf_P,Surf_P(2:end,:));
-      surf_AH = vertcat(surf_AH, Surf_AH(2:end,:));
-      i_off = vertcat(i_off,I_off(2:end,:));
-      i_on = vertcat(i_on, I_on(2:end,:));
-      p_on = vertcat(p_on, P_on(2:end,:));  
-      p_off = vertcat(p_off, P_off(2:end,:)); 
-      t_bench = vertcat(t_bench, T_bench(2:end,:));  
+      N_avg_comb = vertcat(N_avg_comb(:,1:range_limit), N_avg(2:end,1:range_limit));
+      N_error_comb = vertcat(N_error_comb(:,1:range_limit), N_error(2:end,1:range_limit));
+      RB_comb = vertcat(RB_comb(:,1:range_limit), RB(2:end,1:range_limit));
+ %    OD_comb= vertcat(OD_comb(:,1:range_limit), OD(2:end,1:range_limit));
+      duration = vertcat(duration, time_new(2:end));
+      background_comb_on = vertcat(background_comb_on, background_on(2:end));
+      background_comb_off = vertcat(background_comb_off, background_off(2:end));
+      lambda_comb_on = vertcat(lambda_comb_on, lambda_all(2:end));
+      lambda_comb_off = vertcat(lambda_comb_off, lambda_all_off(2:end));
+      if WS==1
+        surf_T = vertcat(surf_T,Surf_T(2:end,:));
+        surf_P = vertcat(surf_P,Surf_P(2:end,:));
+        surf_AH = vertcat(surf_AH, Surf_AH(2:end,:));
+        i_off = vertcat(i_off,I_off(2:end,:));
+        i_on = vertcat(i_on, I_on(2:end,:));
+        p_on = vertcat(p_on, P_on(2:end,:));  
+        p_off = vertcat(p_off, P_off(2:end,:)); 
+        t_bench = vertcat(t_bench, T_bench(2:end,:));  
+      end
     end
   end
 end
@@ -508,13 +489,13 @@ if flag.save_figs==1
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, ' WV_Matlab_multi'); 
+  name=strcat(date, node, ' WV_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  
   FigH = figure(2);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, ' RB_Matlab_multi'); 
+  name=strcat(date, node, ' RB_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
 %  FigH = figure(3);

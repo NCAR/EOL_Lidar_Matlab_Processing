@@ -1,4 +1,4 @@
-function[Online_Temp_Spatial_Avg, Offline_Temp_Spatial_Avg, range, RB, time_grid, Surf_T, Surf_P] = MPD_Analysis_function_O2_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
+function[Online_Temp_Spatial_Avg, Offline_Temp_Spatial_Avg, range, RB, time_grid, Surf_T, Surf_P, lambda_all, lambda_all_off] = MPD_Analysis_function_O2_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
     profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave)
 
  
@@ -131,17 +131,17 @@ lambda_diff= Online_Raw_Data(:,3);
 lambda_all_off=Offline_Raw_Data(:,2);
 lambda_diff_off= Offline_Raw_Data(:,3);
 
-ii=1;
-for ii=1:size(lambda_all,1)
-    if ii>1&& lambda_all(ii)<828
-        lambda_all(ii)=lambda_all(ii-1);
-        lambda_diff(ii)=lambda_diff(ii-1);
-    end
-    if ii>1&& lambda_all_off(ii)<828
-        lambda_all_off(ii)=lambda_all_off(ii-1);
-        lambda_diff_off(ii)=lambda_diff_off(ii-1);
-    end
-end
+% ii=1;
+% for ii=1:size(lambda_all,1)
+%     if ii>1&& lambda_all(ii)<828
+%         lambda_all(ii)=lambda_all(ii-1);
+%         lambda_diff(ii)=lambda_diff(ii-1);
+%     end
+%     if ii>1&& lambda_all_off(ii)<828
+%         lambda_all_off(ii)=lambda_all_off(ii-1);
+%         lambda_diff_off(ii)=lambda_diff_off(ii-1);
+%     end
+% end
 
 lambda_on = median(lambda_all);
 lambda_off = median(lambda_all_off);
@@ -149,42 +149,42 @@ lambda_off = median(lambda_all_off);
 % if nanstd(lambda_all) >= 5e-4    
 %    h = msgbox('Online wavelength not stable during time period', 'Warning','warn');
 % end
-    % check for multiple wavelengths
-   % edges_on=828.1800:.00001:828.2200;
-   edges_on=769.6500:.00001:769.95;
-    mult_fac = 1;
-    lambda_on_set = lambda_all-lambda_diff;
-    [value,edges]=histcounts(round(mult_fac*lambda_on_set,3)/mult_fac,edges_on); % bin rounded wavelengths
-    lambda_on_N = edges(value>=1000)  % wavelength values with occurance > 10
-    %lambda_F = value(value~=0);  % frequency of occurance
-    lambda_all_N = round(mult_fac*lambda_on_set,3)/mult_fac; 
-    figure(1234)
-    plot(lambda_all_N)
-    hold on
-    plot(lambda_all)
-    hold off
-
-   % edges_off=828.280:.00005:828.320;
-    edges_off=770.0:.00005:770.2;
-    mult_fac = 1;
-    lambda_off_set = lambda_all_off-lambda_diff_off;
-    [value,edges]=histcounts(round(mult_fac*lambda_off_set,3)/mult_fac,edges_off); % bin rounded wavelengths
-    lambda_off_N = edges(value>=1000)  % wavelength values with occurance > 10
-    % select the most common offline values associated with the online 
-      value_sort = [value; edges(1:end-1)]';
-      values_sorted = sortrows(value_sort, 1);
-      lambda_off_N = sort(values_sorted(end-size(lambda_on_N,2)+1:end))
-    %lambda_off_F = value(value~=0);  % frequency of occurance
-    lambda_all_off_N=round(mult_fac*lambda_off_set,3)/mult_fac;
-    figure(5678)
-    plot(lambda_all_off_N)
-    hold on
-    plot(lambda_all_off)
-    hold off
-
-  if isempty(lambda_off_N) == 1
-      lambda_off_N = lambda_off 
-  end
+%     % check for multiple wavelengths
+%    % edges_on=828.1800:.00001:828.2200;
+%    edges_on=769.6500:.00001:769.95;
+%     mult_fac = 1;
+%     lambda_on_set = lambda_all-lambda_diff;
+%     [value,edges]=histcounts(round(mult_fac*lambda_on_set,3)/mult_fac,edges_on); % bin rounded wavelengths
+%     lambda_on_N = edges(value>=1000)  % wavelength values with occurance > 10
+%     %lambda_F = value(value~=0);  % frequency of occurance
+%     lambda_all_N = round(mult_fac*lambda_on_set,3)/mult_fac; 
+%     figure(1234)
+%     plot(lambda_all_N)
+%     hold on
+%     plot(lambda_all)
+%     hold off
+% 
+%    % edges_off=828.280:.00005:828.320;
+%     edges_off=770.0:.00005:770.2;
+%     mult_fac = 1;
+%     lambda_off_set = lambda_all_off-lambda_diff_off;
+%     [value,edges]=histcounts(round(mult_fac*lambda_off_set,3)/mult_fac,edges_off); % bin rounded wavelengths
+%     lambda_off_N = edges(value>=1000)  % wavelength values with occurance > 10
+%     % select the most common offline values associated with the online 
+%       value_sort = [value; edges(1:end-1)]';
+%       values_sorted = sortrows(value_sort, 1);
+%       lambda_off_N = sort(values_sorted(end-size(lambda_on_N,2)+1:end))
+%     %lambda_off_F = value(value~=0);  % frequency of occurance
+%     lambda_all_off_N=round(mult_fac*lambda_off_set,3)/mult_fac;
+%     figure(5678)
+%     plot(lambda_all_off_N)
+%     hold on
+%     plot(lambda_all_off)
+%     hold off
+% 
+%   if isempty(lambda_off_N) == 1
+%       lambda_off_N = lambda_off 
+%   end
     
  folder_date = textscan(folder_in(end-7:end), '%8f', 1); folder_date=folder_date{1}; % change to read ingore the NF and FF 
  %folder_CH = textscan(folder_in(end-1:end), '%s'); folder_CH=folder_CH{1}; % change to read ingore the NF and FF 
@@ -467,7 +467,7 @@ end
   time_grid = (floor(min(time)):1/24/60*(ave_time.gr):ceil(max(time)))';
   
   lambda_all = interp1(time, lambda_all, time_grid, 'next', extrapolation); 
-  lambda_all_N = interp1(time, lambda_all_N, time_grid, 'nearest', extrapolation); %added for multiwavelength processing
+%   lambda_all_N = interp1(time, lambda_all_N, time_grid, 'nearest', extrapolation); %added for multiwavelength processing
   I_on = interp1(time, I_on, time_grid, method, extrapolation);      
   I_off = interp1(time, I_off, time_grid, method, extrapolation);      
   P_on = interp1(time, P_on, time_grid, method, extrapolation);
@@ -482,7 +482,7 @@ end
     Surf_N = interp1(time, Surf_N, time_grid, method, extrapolation);  
   end
   lambda_all_off = interp1(time, lambda_all_off, time_grid, method, extrapolation);
-  lambda_all_off_N = interp1(time, lambda_all_off_N, time_grid, 'nearest', extrapolation);  %added for multiwavelength processing
+%   lambda_all_off_N = interp1(time, lambda_all_off_N, time_grid, 'nearest', extrapolation);  %added for multiwavelength processing
   background_off = interp1(time,background_off, time_grid, method, extrapolation);  
   background_on = interp1(time, background_on, time_grid, method, extrapolation);
   Offline_sum2 = interp1(time,Offline_sum2, time_grid, method, extrapolation);  

@@ -597,31 +597,40 @@ line_indices = Hitran.file(1:size(Hitran.file,1),1)>WNmin & Hitran.file(1:size(H
 line = double(Hitran.file(line_indices, 1:size(Hitran.file,2)));
 
 %Calculate temperature and pressure profile
-if flag.WS == 1
+  const.k_B = 1.380649e-23; % (J/K, or Pa m^3/K)
+  const.K_B = const.k_B * 9.869e-6; % (atm m^3/K)
+  const.N_A = 6.022E23; % (/mol) Avagadros number
+  const.M_air = 28.97E-3; % (kg/mol) air molecular mass per mol 
+  const.m_air = const.M_air./const.N_A; % (kg) mass of a air molecule
+  const.m_h2o = 18.015E-3./const.N_A; % mass of a single water molecule
+  const.g = 9.80665; % (m/s^2) graviational constant
+  const.c = 299792458; % (m/s) (exact)  
+  const.R = const.k_B*const.N_A; % (J/K mol) universal gas constant 
+
+  if flag.WS == 1
     T0 = nanmedian(Surf_T)+273.15
     P0 = nanmedian(Surf_P)
-   % T0 = median(Surf_T)+273.15
-   % P0 = median(Surf_P)
-else
-  T0 = 273.15+22; % if no surface station assume 22C
-end
+  else
+    T0 = 273.15+22; % if no surface station assume 22C
+  end
 
-if isnan(T0)
+  if isnan(T0)
     T0 = 295;
-end
-if isnan(P0)
+  end
+  if isnan(P0)
     P0=0.83;  % if no surface station assume 0.83 atm
-end
+  end
 
-  T = T0-0.0065.*range; % moist adiabatic lapse rate (dry adiabatic would be 0.0098C/m)
-
-% pressure in atmospheres
-  %P0  = 0.83; % surface pressure in Boulder
-  %P0  = 0.929; % surface pressure in Ellis KS
-%  P = P0.*(T0./T).^-5.5;   % set this value to match sounding
-  P = P0.*(T0./T).^-5.2199;   % set this value to match sounding
+  %T = T0-0.0065.*range; % moist adiabatic lapse rate (dry adiabatic would be 0.0098C/m)
+  %P = P0.*(T0./T).^-5.2199;   % set this value to match sounding
   %p_s = 7.75e-3.*exp(-range./3000).*P; % estimate of the partial pressure of wv for self broadening
 
+  lapse = 0.0065; % (K/m) standard atmosphere lapse rate, dry adiabatic is 9.8 K/km
+  % temp and pressure profiles using the median surface or changing surface values 
+  T = T0-lapse.*range;
+  P = P0.*(T0./T).^-((const.M_air*const.g)/(const.R*lapse));   % barometric formula
+
+  
 Hitran.T00 = 296;              % HITRAN reference temperature [K]
 Hitran.P00 = 1;                % HITRAN reference pressure [atm]
 Hitran.nu0_0 = line(:,1);      % absorption line center wavenumber from HITRAN [cm^-1]
@@ -636,7 +645,8 @@ Hitran.delta = line(:,8);      % pressure shift from HiTRAN [cm^-1 atm^-1]
 for l=1:length(lambda_on_N)
 
 %offset = 0.00017;  % This is the absolute accuracy (nm) of the Bristol 671A at 828 nm  
-offset = -wavemeter_offset*1e9; % This is the measured correction (nm) for each unit 
+%offset = -wavemeter_offset*1e9; % This is the measured correction (nm) for each unit 
+offset = -wavemeter_offset; % This is the measured correction (nm) for each unit 
 
 Hitran.nu_on = 1/(lambda_on_N(l)+offset)*1e7;
 Hitran.nu_off = 1/(lambda_off_N(l)+offset)*1e7;
@@ -660,11 +670,8 @@ for i = 1:size(Online_Temp_Spatial_Avg,2); % calculate the absorption cross sect
     % revise pressure broadened halfwidth to include correction for self broadening term 
     %gammal = ((P(i)-p_s(i)).*gammal0 + p_s(i).*gamma_s).*((T00./T(i)).^alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
    
-    const.m = 18.015E-3./6.022E23; % mass of a single water molecule
-    const.k_B = 1.3806488e-23; % (J/K)
-    const.c = 299792458; % (m/s) (exact)
    
-    Hitran.gammad = (Hitran.nu0).*((2.0.*const.k_B.*T(i).*log(2.0))./(const.m.*const.c^2)).^(0.5);  %Calculate HWHM Doppler linewidth at T(i)
+    Hitran.gammad = (Hitran.nu0).*((2.0.*const.k_B.*T(i).*log(2.0))./(const.m_h2o.*const.c^2)).^(0.5);  %Calculate HWHM Doppler linewidth at T(i)
     
     % term 1 in the Voigt profile
     y = (Hitran.gammal./Hitran.gammad).*((log(2.0)).^(0.5));

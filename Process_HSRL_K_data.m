@@ -1,5 +1,5 @@
 function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
-    O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag)
+    O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder)
 %Process_HSRL_K_data calcuated the backscatter coefficient
 %   Detailed explanation goes here
 
@@ -28,8 +28,11 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
   hold off
   
  % The plot above shows the combined efficiency, rel to molecular 
+   O2_geometeric_correction(O2_geometeric_correction==0)=nan;
+   O2_geometeric_correction(O2_geometeric_correction==Inf)=nan;
+   O2_geometeric_correction(O2_geometeric_correction==-Inf)=nan;
    eta_comb = nanmedian(O2_geometeric_correction) 
-   eta_comb = 0.5988;  % use for now a the above will blow on clouds
+   eta_comb = 0.5988  % use for now as the above can blow up on clouds
   
  %plot relative backscatter
   figure(104)
@@ -84,7 +87,6 @@ const.R = const.k_B*const.N_A; % (J/K mol) universal gas constant
 lapse = 0.0065; % (K/m) standard atmosphere lapse rate, dry adiabatic is 9.8 K/km
 lambda = 770.1085*1E-9; %wavelength in nm
 
-
 % temp and pressure profiles using the median surface or changing surface values 
 %T = T0-lapse.*range; % temperature as function of range with lapse rate
 T = (Surf_T+273.15)-lapse.*range;
@@ -119,8 +121,28 @@ figure(105)
 
 % below is a more complete way to check this efficency 
 % open the receiver scan data
-    load MPD05_receiver_scan
-      figure(250)
+
+
+% read in receiver scans
+    cd /Users/spuler/Documents/GitHub/eol-lidar-calvals/calfiles
+  %  if strcmp(node,'MPD05') == 1 
+  %     cal_file = 'MPD05_consolidated_20211110.nc';
+  %  elseif strcmp(node,'MPD01') == 1 
+  %     cal_file = 'MPD01_consolidated_20211116.nc';
+  %  end
+  cal_file = Receiver_Scan_File;
+     ncid = netcdf.open(cal_file, 'NC_NOWRITE');
+     % ncdisp(cal_file) % use this to display all variables
+      HSRLCombined_Transmission = ncread(cal_file, 'HSRLCombined_Transmission'); 
+      HSRLCombined_scan_wavelength = ncread(cal_file, 'HSRLCombined_scan_wavelength').*1e-9; 
+      HSRLMolecular_Transmission = ncread(cal_file, 'HSRLMolecular_Transmission'); 
+      HSRLMolecular_scan_wavelength = ncread(cal_file, 'HSRLMolecular_scan_wavelength').*1e-9; 
+    netcdf.close(ncid); 
+    cd(d)
+    
+   % load MPD05_receiver_scan
+    
+      figure(252)
       plot(HSRLMolecular_scan_wavelength, HSRLMolecular_Transmission)
       hold on
       plot(HSRLMolecular_scan_wavelength, HSRLCombined_Transmission/eta_comb)
@@ -128,7 +150,7 @@ figure(105)
     
       eta_mol = HSRLMolecular_Transmission./(HSRLCombined_Transmission/eta_comb);
       
-      figure(251)
+      figure(253)
       plot(HSRLMolecular_scan_wavelength, eta_mol)
  
  % Calculate the Rayliegh-Doppler broadening for each height 
@@ -147,8 +169,8 @@ figure(105)
          .*exp((-1*const.m./(2*K^2*const.k_B.*T(i,:)')).*(2*pi*((1./lam')-(1./lambda'))).^2);
      end  
 
-%         RD = sqrt(const.m./(2*pi*K^2*const.k_B.*T))...
-%           .*exp((-1*const.m./(2*K^2*const.k_B.*T)).*(2*pi*((1./lam)-(1./lambda))).^2);
+%          RD = sqrt(const.m./(2*pi*K^2*const.k_B.*T))...
+%            .*exp((-1*const.m./(2*K^2*const.k_B.*T)).*(2*pi*((1./lam)-(1./lambda))).^2);
 
      figure(253)
      plot(HSRLMolecular_scan_wavelength, squeeze(RD(10,1,:)))
@@ -172,6 +194,10 @@ figure(105)
  %beta_bs = ((BSR)-1).*beta_m_profileay;
  beta_bs = ((BSR)-1).*beta_m_profile;
 
+ %% mask data
+
+ BSR(O2_offline_mol<.25)=nan;  % remove very low count rate molecular data
+ beta_bs(O2_offline_mol<.25)=nan;  % remove very low count rate molecular data
 
  %% plot data
 
@@ -186,9 +212,10 @@ figure(105)
   set(gca,'TickLength',[0.005; 0.0025]);
   set(gca, 'XTick',  xData)
   colorbar('EastOutside');
-  axis([fix(min(time_comb)) fix(min(time_comb))+1 0 6])
+  axis([fix(min(time_comb)) fix(min(time_comb))+1 0 12])
   caxis([1e-1 1e3]);
   %caxis([0 20]);
+  hh = title({[node, ' ', daystr, ' Backscatter Ratio']},'fontweight','b','fontsize',font_size);  
   datetick('x','HH','keeplimits', 'keepticks');
   xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
@@ -209,7 +236,7 @@ figure(105)
   set(gca,'TickLength',[0.005; 0.0025]);
   set(gca, 'XTick',  xData)
   colorbar('EastOutside');
-  axis([fix(min(time_comb)) fix(min(time_comb))+1 0 6])
+  axis([fix(min(time_comb)) fix(min(time_comb))+1 0 12])
   caxis([1e-7 1e-3]);
   datetick('x','HH','keeplimits', 'keepticks');
   xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
@@ -224,37 +251,58 @@ figure(105)
   
 
   
-   % test the profiles of the python to the matlab 
-   figure(20) 
-   [minValue, closestIndex] = min(abs(time_comb - datenum('21-Jul-2021 10:00:00')))
-   BSR_profile_mat = BSR(closestIndex, :); 
-   plot(BSR_profile_mat, (range./1e3));
-   ylim([0 6])
-   xlim([0 10])
+%    % test the profiles of the python to the matlab 
+%    figure(20) 
+%    [minValue, closestIndex] = min(abs(time_comb - datenum('21-Jul-2021 10:00:00')))
+%    BSR_profile_mat = BSR(closestIndex, :); 
+%    plot(BSR_profile_mat, (range./1e3));
+%    ylim([0 6])
+%    xlim([0 10])
    
-   load BSR_at_21Jun2021_1000
-   hold on
-   plot(BSR_profile, y);
-   hold off
-   title('BSR profile on 21-Jul-2021 10:00:00')
-   legend('Matlab BSR', 'Python BSR')
+%    load BSR_at_21Jun2021_1000
+%    hold on
+%    plot(BSR_profile, y);
+%    hold off
+%    title('BSR profile on 21-Jul-2021 10:00:00')
+%    legend('Matlab BSR', 'Python BSR')
   
    serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  
    cd(strcat(serv_path1,'/Plots'))
    
-   FigH = figure(20);
-   set(gca,'Fontsize',16,'Fontweight','b'); 
-   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 600 600]);
-   name=strcat(' Backscatter Ratio comparison'); 
-   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+%    FigH = figure(20);
+%    set(gca,'Fontsize',16,'Fontweight','b'); 
+%    set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 600 600]);
+%    name=strcat(' Backscatter Ratio comparison'); 
+%    print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
    
    FigH = figure(110);
    set(gca,'Fontsize',16,'Fontweight','b'); 
    set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
-   name=strcat(' Backscatter Ratio'); 
+   name=strcat(node, "_", daystr, "_Backscatter Ratio");
    print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
    
-   cd(d)
+   FigH = figure(111);
+   set(gca,'Fontsize',16,'Fontweight','b'); 
+   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
+   name=strcat(node, "_", daystr, "_Backscatter Coefficient");
+   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+   
+ 
+   
+ %% save data
+  
+  if flag.save_data == 1
+    cd(write_data_folder)
+    save(name, 'x', 'y', 'beta_bs', 'BSR')
+  end
+   
+ 
+ 
+  cd(d)
+
+
+
+  
 end
 
 

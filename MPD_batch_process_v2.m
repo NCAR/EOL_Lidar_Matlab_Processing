@@ -1,13 +1,10 @@
 % example batch process
 
-% start_date = '20201012';
-% stop_date = '20201201';
-% start_date = '20190418'; %begining of the SGP field demo
-% stop_date = '20190519'; %32 days
-% start_date = '20190405'; %first 5 unit intercomparison
-% stop_date = '20190410'; 
- start_date = '20210728'; %first 5 unit intercomparison
- stop_date = '20210914';  
+ start_date = '20211211'; 
+ stop_date =  '20211213';  
+%   start_date = '20210618'; 
+%   stop_date =  '20210715';  
+
 
  
 start_day = datenum(start_date,'yyyymmdd');
@@ -24,9 +21,11 @@ tStart = tic
         % save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr 
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD01',file) 
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD02',file) 
-         MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) 
+        % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) 
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD04',file)  
-        % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)         
+        % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)    
+        MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD01',file) 
+        MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD05',file) 
       end
     end
 
@@ -34,8 +33,7 @@ tStart = tic
   stop_date =  '20201005';
 
     if flag.plot == 1
-      % save_figs, save_data, near/low, afterpulse, node, daystr, daystr2,
-      % skip(tick marks at every day 1, other day, 2 etc)
+      % save_figs, save_data, near/low, afterpulse, node, daystr, daystr2, skip(tick marks at every day 1, other day, 2 etc)
      % MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD01', start_date, stop_date, 1) 
      % MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD02', start_date, stop_date, 1) 
      % MPD_multiday_plots_NetCDF_function(1,1,0,0,'MPD03', start_date, stop_date, 1) 
