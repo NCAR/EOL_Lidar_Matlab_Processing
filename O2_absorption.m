@@ -1,5 +1,5 @@
 function [] = O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
-    time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr)
+    time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr, write_data_folder, flag)
 
  d = pwd;
 
@@ -34,38 +34,34 @@ N_O2 =  P./(const.k_B.*T).*vmr_O2; % (m^-3) number density
 
 gate = range(2);
 % override the native gate spacing
-gates2use = 10;
+gates2use = 4;
 gate_int = range(2)*gates2use;
 
 
-% Perturbative retrieval 
-% zeroth order term Eq. 11 from Repasky et al. 2019 Optics Express
- Inside = (O2_online_comb.*(circshift(O2_offline_comb, [0, -1*gates2use])))./...
-     ((circshift(O2_online_comb, [0, -1*gates2use])).*O2_offline_comb);
- del_cross = single(1./(2.*gate_int*100));
- % zeroth order absorption coefficient 
- % which is the number density of oxygen times absorption cross section
+% zeroth order absorption coefficient 
+% which is the measured extinction of oxgyen
+
+ Inside = (circshift(O2_online_comb,[0, gates2use/2]).* circshift(O2_offline_comb,[0,-gates2use/2]))./...
+          (circshift(O2_online_comb,[0,-gates2use/2]).* circshift(O2_offline_comb,[0, gates2use/2]));
+ del_cross = single(1./(2*gate_int));
+ alpha_O2_0th = del_cross.*log(Inside);  % absorption coef in m^-1
+
 
  % for Rayleigh scattering theory, the lidar ratio is equal to 8*pi/3
- alpha_m_off = 8*pi/3*beta_m_profile;
- 
- %test = (del_cross.*log(Inside));
- 
- alpha_0 =   alpha_m_off-(del_cross.*log(Inside));  
- O2_abs = del_cross.*log(Inside);  
- 
+ % attenuation due to molecules is 
+ % alpha_m_off = 8*pi/3*beta_m_profile;
+ % alpha_0 =   alpha_m_off+alpha_O2;  
+ % alpha_O2_off = Spectra.O2Offline.AbsorptionObserved
  
  % smooth the result over the range 
-  O2_abs_avg = O2_abs;
-  O2_abs_avg = nanmoving_average(O2_abs_avg,gates2use/2,2,0);
- 
- 
-  figure(10)
+ alpha_O2_avg = nanmoving_average(alpha_O2_0th,gates2use/2,2,0);
+  
+  figure
   x = (time_comb)';
   y = (range./1e3);
   %Z = real(double((((alpha_0))')));
-  Z = real(double((((O2_abs))')));
-  Z = real(double((((O2_abs_avg))')));
+  %Z = real(double((((O2_abs))')));
+  Z = real(double((((alpha_O2_avg))')));
   font_size = 14;
   xData =  linspace(fix(min(time_comb)),  ceil(max(time_comb)), 25);
   set(gcf,'renderer','zbuffer');
@@ -75,9 +71,10 @@ gate_int = range(2)*gates2use;
   set(gca,'TickLength',[0.005; 0.0025]);
   set(gca, 'XTick',  xData)
   colorbar('EastOutside');
-  axis([fix(min(time_comb)) fix(min(time_comb))+1 0 4])
-  caxis([1e-8 20e-7]);
+  axis([fix(min(time_comb)) fix(min(time_comb))+1 0 8])
+  caxis([1e-6 3e-4]);
   %caxis([1e-6 3e-6]);
+  hh = title({[node, ' ', daystr, ' O2 absorption coeff [cm^{-1}]']},'fontweight','b','fontsize',font_size);  
   datetick('x','HH','keeplimits', 'keepticks');
   xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
@@ -85,43 +82,55 @@ gate_int = range(2)*gates2use;
 %   set(gca,'Zscale', 'log')
 %   set(gca,'Colorscale', 'log')
 %   set(gca,'Zscale', 'linear')
- % colormap(jet)
-  
+%   colormap(jet)
+ 
+ 
+[~, startInd] = min(abs(time_comb - datenum('15-Dec-2021 03:15:00')));
+[~, endInd] = min(abs(time_comb - datenum('15-Dec-2021 05:15:00')));
+
+
 figure(400)
-plot(O2_on_wavelength(600:650),'ro')
-ylim([769.79 769.81])
+plot(O2_on_wavelength(startInd:endInd),'ro')
+ylim([769.79 769.80])
 
 figure(401)
-plot(O2_on_wavelength(600:650), nanmedian(Z(15:50, 600:650),1), 'bo')
-% hold on
-% plot(O2_on_wavelength(600:650), Z(40, 600:650), 'ro')
-% plot(O2_on_wavelength(600:650), Z(50, 600:650), 'go')
-% plot(O2_on_wavelength(600:650), Z(60, 600:650), 'mo')
-% hold off
-
-
-
+plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(10:30, startInd:endInd),1), 'bo')
+hold on
+plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(30:50, startInd:endInd),1), 'ro')
+plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(50:70, startInd:endInd),1), 'go')
+xlim([769.79 769.80])
+ylim([0 2e-6])
+grid on
+hold off
  
-   % plot a single profile
-   figure(20)
-   [minValue, closestIndex] = min(abs(time_comb - datenum('13-Dec-2021 17:00:00')))
-   alpha_0_profile = alpha_0(closestIndex, :); 
-   O2_abs_profile = O2_abs(closestIndex, :); 
- %  plot(alpha_0_profile, (range./1e3));
-   plot(O2_abs_profile, (range./1e3));
-   hold on
-   [minValue, closestIndex] = min(abs(time_comb - datenum('13-Dec-2021 17:55:00')))
-   alpha_0_profile = alpha_0(closestIndex, :);
-   O2_abs_profile = O2_abs(closestIndex, :); 
-%    plot(alpha_0_profile, (range./1e3)); 
-   plot(O2_abs_profile, (range./1e3));
-   ylim([0 4])
-   %xlim([1e-7 1e-5])
-   %xlim([1e-6 5e-6])
-   hold off
-   
-   
-   
+
+% first order perturbation
+BSR(BSR<1) = 1;
+IBSR = 1./BSR;
+% %% Calculating supporting variables
+% [~,FieldNames] = RecursiveStruct2Cell(Order0.Alpha);
+% for m=1:1:length(FieldNames)
+%     % Normalized absorption line shape (normalization needs to be to the  
+%     % online max so that spectra are on the same scale and normalized to 1)
+%     Order1.f.(FieldNames{m}) = Spectra.Rebuilt.(FieldNames{m}).Absorption./max(Spectra.Rebuilt.O2Online.Absorption,[],3);
+%     % Receiver optical transmission
+%     E = permute(Spectra.Optics.(FieldNames{m}).Etalon.Transmission,[1,3,2]);
+%     % Lineshape of the backscattered light
+%     g = (1-IBSR).*Spectra.Rebuilt.(FieldNames{m}).Aerosol + ...
+%         IBSR .*Spectra.Rebuilt.(FieldNames{m}).RayleighBr;
+%     % Derivative in range of g    (dimensions are (alt, time, frequency))
+%     % ....might be negative of what I want
+%     dgdr = (g - circshift(g,[4,0,0]))./DeltaR/4;
+%     % Temperary variables to simplify the math
+%     Order1.Eta.(FieldNames{m})  = dgdr.*E.*Order0.Tm.(FieldNames{m});
+%     Order1.Zeta.(FieldNames{m}) = g.*E.*Order0.Tm.(FieldNames{m});
+%     % Calculate perturbative terms
+%     Order1.DeltaW.(FieldNames{m}) = trapz(Order1.Zeta.(FieldNames{m}).*(1-Order1.f.(FieldNames{m})),3)./trapz(Order1.Zeta.(FieldNames{m}),3);
+%     Order1.DeltaG.(FieldNames{m}) = trapz(Order1.Eta.(FieldNames{m}),3)./trapz(Order1.Zeta.(FieldNames{m}),3);
+% end
+
+
+
    
    
    serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  
@@ -132,6 +141,16 @@ plot(O2_on_wavelength(600:650), nanmedian(Z(15:50, 600:650),1), 'bo')
    set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
    name=strcat(node, "_", daystr, "_O2_absorption");
    print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+   
+   
+   
+  if flag.save_data == 1
+    cd(write_data_folder)
+    alpha_O2 = Z';
+    name=strcat(node, "_", daystr, "_Backscatter Coefficient");
+    save(name, 'alpha_O2', '-append')  
+  end
+   
    
    cd(d)
    

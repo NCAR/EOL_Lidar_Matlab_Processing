@@ -1,12 +1,15 @@
 elevation= 1574; %MPD05 was at 1574m elevation at Christman Field Site
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
 flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV
-sonde_end_int = 30; % integration time (in min) for the MPD 
+sonde_end_int = 60; % integration time (in min) for the MPD 
+offset = 0 % temp offset for testing purposes only
 
 %d=pwd;
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
-cd('/Volumes/documents/MPD/Sondes_CSU')
-plot_path = '/Volumes/documents/MPD/Plots/';
+%cd('/Volumes/documents/MPD/Sondes_CSU')
+cd('/Volumes/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/CSU_PrePRECIP')
+%plot_path = '/Volumes/documents/MPD/Plots/';
+plot_path = '/Users/spuler/Desktop/mpd/Plots/';
 %cd('/Volumes/eol/sci/voemel/data/radiosondes/boulder/ncdf')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
@@ -14,8 +17,8 @@ jj=1;
 %cd= d;
 
 for jj = 1:size(sondefilename,2)
-    %cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
-    cd('/Users/lroot/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+    cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+    %cd('/Users/lroot/Documents/GitHub/EOL_Lidar_Matlab_processing/')
    if flag.data_type == 2    % add the following three lines for Raman 
       range_grid_size = 60;  
       N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
@@ -32,9 +35,9 @@ for jj = 1:size(sondefilename,2)
        range_grid_in = range;
      %  comb_AH_var = N_error_comb.*1e6./6.022E23.*18.015;
    end
-   %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, flag); 
-   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb_avg, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag); 
-   %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag);
+   %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, flag);
+   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb_avg-offset, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag); 
+   %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb-offset, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag);
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
    %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
  end
@@ -89,7 +92,7 @@ plot(RMSE_demoninator, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); % 
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
-  xlim([0 40]);
+  xlim([0 45]);
   ylim([0,6]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Samples used');

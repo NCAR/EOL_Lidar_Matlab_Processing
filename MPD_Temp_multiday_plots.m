@@ -4,11 +4,12 @@ tic
  node = 'MPD05';
  date = '20210620';   
  days = 36; skip = 4;
- date = '20210803';  
- days = 4; skip = 1;
+ date = '20210618';  
+ days = 7; skip = 1;
  lapse_rate = 0.0085;
      
 serv_path = '/Volumes/documents/MPD';
+serv_path = '/Volumes/fog1/rsfdata/MPD';
 plot_path = '/Volumes/documents/MPD/Plots/'; 
 %flag.near = 0;  % read in the near range channel (0=off 1=on)
 font_size = 36; % use this for 2018a version
@@ -36,7 +37,8 @@ if strcmp(node,'MPD01')==1
  elseif strcmp(node,'MPD04')==1
    cd(strcat(serv_path,'/mpd_04_processed_data//Matlab_temp'))
  elseif strcmp(node,'MPD05')==1
-   cd(strcat(serv_path,'/mpd_05_processed_data//Matlab_temp'))
+  % cd(strcat(serv_path,'/mpd_05_processed_data//Matlab_temp'))
+   cd(strcat(serv_path,'/mpd_05_processed_data/Quickload'))
 end
 
 i=1;
@@ -46,6 +48,7 @@ for i=1:days
   if i==1  
     if exist(strcat('mpd05.', date, '.Matlab.mat'))==2
       load(strcat('mpd05.', date, '.Matlab.mat'),'Retrievals','Data')  
+      %load(strcat('ProcessedMPDData_','MPD05_', date, '.mat'))  
       % reading in the 'Data' variable slows down the read considerably
       % save the file as save(strcat('mpd05.', date, '.Matlab.mat'), '-struct', 'Retreivals','Data');
       % then can load with the following line more quickly  

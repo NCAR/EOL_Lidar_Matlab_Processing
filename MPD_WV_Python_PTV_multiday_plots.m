@@ -13,7 +13,7 @@ d_save_data = pwd; %set the plot save path
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
 node = 'MPD05';
 low_range_mask = 0;
-skip = 1
+skip = 3
 
 cd(d_read_data);
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
@@ -37,8 +37,12 @@ jj=1;
 for jj = 1:size(Pythonfilename,2)
   filename = Pythonfilename{jj};
 %  date = filename(end-15:end-10);
-  date = filename(7:12);
-  n = datenum(date, 'yymmdd');
+%   date = filename(7:12);
+%   n = datenum(date, 'yymmdd');
+  
+  file_date = filename(7:14); % changed to full year
+  n = datenum(file_date, 'yyyymmdd');
+  
   ncid = netcdf.open(filename, 'NC_NOWRITE');
     %ncdisp(filename, '/', 'min') % use this to display all variables
     ncdisp(filename) % use this to display all variables
@@ -167,7 +171,7 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
 
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1500 300]);
   name=strcat(date, node, ' WV_Python_multi'); 
   %  name=strcat(' MSU_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 

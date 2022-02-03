@@ -1,7 +1,7 @@
 % example batch process
 
- start_date = '20211211'; 
- stop_date =  '20211213';  
+ start_date = '20210618'; 
+ stop_date =  '20210621';  
 %   start_date = '20210618'; 
 %   stop_date =  '20210715';  
 
@@ -24,7 +24,7 @@ tStart = tic
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) 
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD04',file)  
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)    
-        MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD01',file) 
+      %  MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD01',file) 
         MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD05',file) 
       end
     end

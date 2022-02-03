@@ -96,7 +96,8 @@ if flag.plot_overlay == 1
   
   figure(113)
   scatter(duration_sonde, sonde_AGL/1000, 15, sonde_T+273, '+');
-  colormap(jet)
+  %colormap(jet)
+  colormap(parula)
   ylim([0 6])
   caxis([240 320])
   colorbar
@@ -115,7 +116,8 @@ if flag.plot_overlay == 1
    scatter(duration_sonde, sonde_AGL/1000, 15, sonde_T+273, '+');
   ylim([0 6])
   caxis([240 320])
-  colormap(jet)
+  %colormap(jet)
+  colormap(parula)
   %end
   
   % how far has the sonde moved for the lower 4 km
@@ -147,14 +149,15 @@ sonde_T_grid =interp1(sonde_AGL_km, sonde_T(index)+273.15, range_grid, 'linear')
 [minValue, closestIndex_end] = min(abs(min(duration_sonde+sonde_end_int/24/60)-duration))
 %MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
 %MPD_AH_var =  comb_AH_var(closestIndex,:);
-MPD_T_lapse = nanmean(T_lapse(closestIndex:closestIndex_end,:),1)+273.15;
-MPD_T = nanmean(Temp_comb(closestIndex:closestIndex_end,:));
-%MPD_T_var =  nanmedian(comb_AH_var(closestIndex:closestIndex_end,:))./sqrt(sonde_end_int/10);
+MPD_T_lapse = nanmedian(T_lapse(closestIndex:closestIndex_end,:),1)+273.15;
+MPD_T = median(Temp_comb(closestIndex:closestIndex_end,:), 'omitnan');
+MPD_T_var = var(Temp_comb(closestIndex:closestIndex_end,:),'includenan');
+MPD_T(isnan(MPD_T_var)) = nan;
 
 try
     MPD_T_lapse_grid = interp1(range_grid_in/1000, MPD_T_lapse, range_grid, 'linear');  
     MPD_T_grid = interp1(range_grid_in(~isnan(MPD_T))/1000, MPD_T(~isnan(MPD_T)), range_grid, 'nearest');
-%  MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'linear');
+    MPD_T_var_grid = interp1(range_grid_in(~isnan(MPD_T_var))/1000, MPD_T_var(~isnan(MPD_T_var)), range_grid, 'linear');
 end
 
 if flag.plot_overlay == 1
@@ -165,8 +168,12 @@ if flag.plot_overlay == 1
   plot(MPD_T_grid, range_grid, 'ro')
   %plot the sonde T vs a standard lapse rate and surface station
   plot(MPD_T_lapse_grid, range_grid, 'g+')
+  eb(1) = errorbar(MPD_T_grid, range_grid, MPD_T_var_grid, 'horizontal', 'LineStyle', 'none', 'HandleVisibility','off');
+  set(eb, 'color', 'r', 'LineWidth', 1)
   hold off
+  xlim([-5+273 30+273])
   xlim([240 320])
+  ylim([0 4])
   ylim([0 6])
   % grid(gca,'minor')
   grid on
