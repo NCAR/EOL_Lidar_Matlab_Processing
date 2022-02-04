@@ -1,17 +1,19 @@
 clear all; close all;
 tic
+dd=pwd;
 
  node = 'MPD05';
  date = '20210618';   
  days = 36; skip = 4;
  date = '20210620';  
  days = 60; skip = 5;
- date = '20210706';  
- days = 4; skip = 1;
+ date = '20210815';  
+ days = 5; skip = 1;
  lapse_rate = 0.0065; %standard atmosphere lapse rate
      
 %serv_path = '/Volumes/documents/MPD';
 serv_path = '/Volumes/fog1/rsfdata/MPD';
+%serv_path = '/Volumes/eol/fog1/rsfdata/MPD';
 %plot_path = '/Volumes/documents/MPD/Plots/';
 plot_path = '/Users/spuler/Desktop/mpd/Plots/';
 %flag.near = 0;  % read in the near range channel (0=off 1=on)
@@ -28,8 +30,8 @@ flag.plot_sonde_data = 0;
 %decimate figures to the screen 2x size (1900 pixels x2)
 flag.decimate = 1;
   
-C = importdata('NCAR_C_Map.mat');
-dd=pwd;
+%C = importdata('NCAR_C_Map.mat');
+
 
 if strcmp(node,'MPD01')==1
    cd(strcat(serv_path,'/mpd_01_processed_data//Matlab_temp'))
@@ -118,9 +120,6 @@ Temp_comb_avg(Alpha0_var>1e-7)= nan;
    xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(duration))-fix(min(duration)))/skip)+1 );
   % xData =  linspace(fix(min(duration)),  round(max(duration)), 36);
   end
-
-% point back to original directory 
-cd(dd);
 
 scrsz = [1  1  1920 1200];
 Scrnsize=[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2];
@@ -380,8 +379,5 @@ if flag.save_figs==1
 end
 
 
-
- 
-
- 
+cd(dd);  % point back to original directory 
 toc
