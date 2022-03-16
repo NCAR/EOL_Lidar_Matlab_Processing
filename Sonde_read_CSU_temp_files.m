@@ -158,6 +158,9 @@ try
     MPD_T_lapse_grid = interp1(range_grid_in/1000, MPD_T_lapse, range_grid, 'linear');  
     MPD_T_grid = interp1(range_grid_in(~isnan(MPD_T))/1000, MPD_T(~isnan(MPD_T)), range_grid, 'nearest');
     MPD_T_var_grid = interp1(range_grid_in(~isnan(MPD_T_var))/1000, MPD_T_var(~isnan(MPD_T_var)), range_grid, 'linear');
+catch
+     MPD_T_grid = range_grid.*nan;
+     MPD_T_var_grid = range_grid.*nan;
 end
 
 if flag.plot_overlay == 1

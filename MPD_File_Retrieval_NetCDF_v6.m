@@ -1,4 +1,4 @@
-function[online_merged,offline_merged,O2online_comb_merged,O2offline_comb_merged,O2online_mol_merged, O2offline_mol_merged, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder, read_time_in)
+function[online_merged,offline_merged,O2online_comb_merged,O2offline_comb_merged,O2online_mol_merged, O2offline_mol_merged, MCS] = MPD_File_Retrieval_NetCDF_v6(flag, MCS, folder, read_time_in)
 
 
 dd = pwd; % get the current path

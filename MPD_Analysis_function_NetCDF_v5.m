@@ -963,7 +963,7 @@ end
    if flag.near == 1
      name=strcat(date_plot,'_near');   
    else
-    name=strcat(node,"_", datestr(date_plot, 'yymmdd'), "_Matlab");
+    name=strcat(node,"_", datestr(date_plot, 'yyyymmdd'), "_WV");
    end
    
    if flag.WS == 1

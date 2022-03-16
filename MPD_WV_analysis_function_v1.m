@@ -929,6 +929,30 @@ end
 
 %% save data
   
+
+ if flag.save_data == 1
+  %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
+  %cd('/Volumes/documents/WV_DIAL_data/processed_data') % point to the directory where data is stored 
+   cd(write_data_folder)
+   if flag.near == 1
+     name=strcat(date_plot,'_near');   
+   else
+    name=strcat(node,"_", datestr(date_plot, 'yyyymmdd'), "_WV");
+   end
+   
+   if flag.WS == 1
+     save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error',...
+     'Surf_T', 'Surf_P', 'Surf_RH', 'Surf_AH', 'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off', 'gate', ...
+     'MPD_elevation')
+   else
+     save(name, 'N_avg', 'RB', 'range', 'time_new', 'T', 'P', 'OD', 'background_off', 'background_on', 'profiles2ave', 'N_error', ...
+     'I_on', 'I_off', 'P_on', 'P_off', 'T_bench', 'T_base', 'lambda_all', 'lambda_all_off', 'gate', ...
+     'MPD_elevation')
+   end
+ end
+
+
+
  
  %% plot data
 

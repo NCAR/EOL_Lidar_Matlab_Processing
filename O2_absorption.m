@@ -56,7 +56,7 @@ gate_int = range(2)*gates2use;
  % smooth the result over the range 
  alpha_O2_avg = nanmoving_average(alpha_O2_0th,gates2use/2,2,0);
   
-  figure
+  figure(10)
   x = (time_comb)';
   y = (range./1e3);
   %Z = real(double((((alpha_0))')));
@@ -74,7 +74,7 @@ gate_int = range(2)*gates2use;
   axis([fix(min(time_comb)) fix(min(time_comb))+1 0 8])
   caxis([1e-6 3e-4]);
   %caxis([1e-6 3e-6]);
-  hh = title({[node, ' ', daystr, ' O2 absorption coeff [cm^{-1}]']},'fontweight','b','fontsize',font_size);  
+  hh = title({[node, ' ', daystr, ' O2 absorption coeff [m^{-1}]']},'fontweight','b','fontsize',font_size);  
   datetick('x','HH','keeplimits', 'keepticks');
   xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
@@ -88,48 +88,21 @@ gate_int = range(2)*gates2use;
 [~, startInd] = min(abs(time_comb - datenum('15-Dec-2021 03:15:00')));
 [~, endInd] = min(abs(time_comb - datenum('15-Dec-2021 05:15:00')));
 
-
-figure(400)
-plot(O2_on_wavelength(startInd:endInd),'ro')
-ylim([769.79 769.80])
-
-figure(401)
-plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(10:30, startInd:endInd),1), 'bo')
-hold on
-plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(30:50, startInd:endInd),1), 'ro')
-plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(50:70, startInd:endInd),1), 'go')
-xlim([769.79 769.80])
-ylim([0 2e-6])
-grid on
-hold off
- 
-
-% first order perturbation
-BSR(BSR<1) = 1;
-IBSR = 1./BSR;
-% %% Calculating supporting variables
-% [~,FieldNames] = RecursiveStruct2Cell(Order0.Alpha);
-% for m=1:1:length(FieldNames)
-%     % Normalized absorption line shape (normalization needs to be to the  
-%     % online max so that spectra are on the same scale and normalized to 1)
-%     Order1.f.(FieldNames{m}) = Spectra.Rebuilt.(FieldNames{m}).Absorption./max(Spectra.Rebuilt.O2Online.Absorption,[],3);
-%     % Receiver optical transmission
-%     E = permute(Spectra.Optics.(FieldNames{m}).Etalon.Transmission,[1,3,2]);
-%     % Lineshape of the backscattered light
-%     g = (1-IBSR).*Spectra.Rebuilt.(FieldNames{m}).Aerosol + ...
-%         IBSR .*Spectra.Rebuilt.(FieldNames{m}).RayleighBr;
-%     % Derivative in range of g    (dimensions are (alt, time, frequency))
-%     % ....might be negative of what I want
-%     dgdr = (g - circshift(g,[4,0,0]))./DeltaR/4;
-%     % Temperary variables to simplify the math
-%     Order1.Eta.(FieldNames{m})  = dgdr.*E.*Order0.Tm.(FieldNames{m});
-%     Order1.Zeta.(FieldNames{m}) = g.*E.*Order0.Tm.(FieldNames{m});
-%     % Calculate perturbative terms
-%     Order1.DeltaW.(FieldNames{m}) = trapz(Order1.Zeta.(FieldNames{m}).*(1-Order1.f.(FieldNames{m})),3)./trapz(Order1.Zeta.(FieldNames{m}),3);
-%     Order1.DeltaG.(FieldNames{m}) = trapz(Order1.Eta.(FieldNames{m}),3)./trapz(Order1.Zeta.(FieldNames{m}),3);
-% end
-
-
+% 
+% figure(400)
+% plot(O2_on_wavelength(startInd:endInd),'ro')
+% ylim([769.79 769.80])
+% 
+% figure(401)
+% plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(10:30, startInd:endInd),1), 'bo')
+% hold on
+% plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(30:50, startInd:endInd),1), 'ro')
+% plot(O2_on_wavelength(startInd:endInd), nanmedian(Z(50:70, startInd:endInd),1), 'go')
+% xlim([769.79 769.80])
+% ylim([0 2e-6])
+% grid on
+% hold off
+%  
 
    
    

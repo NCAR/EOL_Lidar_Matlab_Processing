@@ -4,8 +4,8 @@ tic
  node = 'MPD05';
 % date = '18 Jun 2021';   
 % days = 21; skip = 3;
- date = '10 Jul 2021';   
- days = 4; skip = 1;
+ date = '05 Mar 2022';   
+ days = 7; skip = 1;
 %  date = '06 Jul 2021';   
 %  days = 2; skip = 1;
  
@@ -67,7 +67,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   colorbar('EastOutside');
   axis([fix(min(duration))  ceil(max(duration)) 0 6])
   caxis([1e-1 1e3]);
-  %caxis([0 20]);
+  %caxis([1 300]);
   hh = title({[node, ' ', ' Backscatter Ratio']},'fontweight','b','fontsize',font_size);  
   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
@@ -141,12 +141,12 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   name=strcat(node, "_", date, "_Backscatter_Ratio_comb");
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
    
-  FigH = figure(2);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);      % 1500 300
-  name=strcat(node, "_", date, "_Backscatter_Coeff_comb");
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-  
+%   FigH = figure(2);
+%   set(gca,'Fontsize',16,'Fontweight','b'); 
+%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);      % 1500 300
+%   name=strcat(node, "_", date, "_Backscatter_Coeff_comb");
+%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+%   
   FigH = figure(3);
   set(gca,'Fontsize',16,'Fontweight','b'); 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);       % 1500 300

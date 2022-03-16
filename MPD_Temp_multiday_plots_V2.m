@@ -7,9 +7,14 @@ dd=pwd;
  days = 36; skip = 4;
  date = '20210620';  
  days = 60; skip = 5;
- date = '20210815';  
- days = 5; skip = 1;
- lapse_rate = 0.0065; %standard atmosphere lapse rate
+ %date = '20210620';  
+ %days = 4; skip = 1;
+
+  node = 'MPD05';
+  date = '20220305';  
+  days = 7; skip = 1;
+ 
+lapse_rate = 0.0065; %standard atmosphere lapse rate
      
 %serv_path = '/Volumes/documents/MPD';
 serv_path = '/Volumes/fog1/rsfdata/MPD';
@@ -34,7 +39,9 @@ flag.decimate = 1;
 
 
 if strcmp(node,'MPD01')==1
-   cd(strcat(serv_path,'/mpd_01_processed_data//Matlab_temp'))
+  % cd(strcat(serv_path,'/mpd_01_processed_data//Matlab_temp'))
+   cd(strcat(serv_path,'/mpd_01_processed_data/Quickload/TempData'))
+   path_node = 'mpd01.';
  elseif strcmp(node,'MPD02')==1
    cd(strcat(serv_path,'/mpd_02_processed_data//Matlab_temp'))
  elseif strcmp(node,'MPD03')==1
@@ -44,6 +51,7 @@ if strcmp(node,'MPD01')==1
  elseif strcmp(node,'MPD05')==1
   % cd(strcat(serv_path,'/mpd_05_processed_data//Matlab_temp'))
    cd(strcat(serv_path,'/mpd_05_processed_data/Quickload/TempData'))
+   path_node = 'mpd05.';
 end
 
 i=1;
@@ -51,8 +59,8 @@ i=1;
 
 for i=1:days
   if i==1  
-    if exist(strcat('mpd05.', date, '.Matlab.mat'))==2
-      load(strcat('mpd05.', date, '.Matlab.mat'),'Retrievals','Data')  
+    if exist(strcat(path_node, date, '.Matlab.mat'))==2
+      load(strcat(path_node, date, '.Matlab.mat'),'Retrievals','Data')  
       % reading in the 'Data' variable slows down the read considerably
       % save the file as save(strcat('mpd05.', date, '.Matlab.mat'), '-struct', 'Retreivals','Data');
       % then can load with the following line more quickly  
@@ -69,18 +77,18 @@ for i=1:days
     duration =  (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24)';
     range = Retrievals.Temperature.Range;
     % following four lines are to build a lapse rate temp field based on surface station data
-      T_surf = Data.TimeSeries.WeatherStation.Temperature;
-      WS_time = Data.TimeSeries.WeatherStation.TimeStamp/24;
+      T_surf = Data.Temperature;
+      WS_time = Data.TimeStamp/24;
       T_surf_grid = interp1( WS_time, T_surf, Retrievals.Temperature.TimeStamp/3600/24, 'linear')';
       T_lapse =  T_surf_grid-lapse_rate*range;
   else   
     date = datestr(addtodate(datenum(date, 'yyyymmdd'), 1, 'day'), 'yyyymmdd');
-    if exist(strcat('mpd05.', date, '.Matlab.mat'))==2
-      load(strcat('mpd05.', date, '.Matlab.mat'),'Retrievals', 'Data')
+    if exist(strcat(path_node, date, '.Matlab.mat'))==2
+      load(strcat(path_node, date, '.Matlab.mat'),'Retrievals', 'Data')
     end
     % following four lines are to build a lapse rate temp field based on surface station data
-      T_surf = Data.TimeSeries.WeatherStation.Temperature;
-      WS_time = Data.TimeSeries.WeatherStation.TimeStamp/24;
+      T_surf = Data.Temperature;
+      WS_time = Data.TimeStamp/24;
       T_surf_grid = interp1( WS_time, T_surf, Retrievals.Temperature.TimeStamp/3600/24, 'linear')';
       Temp_lapse =  T_surf_grid-lapse_rate*range;
       
@@ -149,7 +157,7 @@ y = range./1000;
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'MPD05 temperature (K)']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, ' temperature (K)']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    hh = title({[node, ' Temperature (K)']},'fontweight','b','fontsize',font_size);
@@ -178,7 +186,7 @@ y = range./1000;
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'MPD05 temperature (K)']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, ' temperature (K)']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    hh = title({[node, ' Temperature (K)']},'fontweight','b','fontsize',font_size);
@@ -205,7 +213,7 @@ y = range./1000;
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'MPD05 Alpha (m^{-1})']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, ' Alpha (m^{-1})']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    hh = title({[node, ' Alpha (m^{-1})']},'fontweight','b','fontsize',font_size);
@@ -232,7 +240,7 @@ y = range./1000;
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'MPD05 Alpha 0^{th} (m^{-1})']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, ' Alpha 0^{th} (m^{-1})']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    hh = title({[node, ' Alpha 0^{th} (m^{-1})']},'fontweight','b','fontsize',font_size);
@@ -259,7 +267,7 @@ Z = Alpha1_comb';
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'MPD05 Alpha 1^{st} (m^{-1})']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, ' Alpha 1^{st} (m^{-1})']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    hh = title({[node, ' Alpha 1^{st} (m^{-1})']},'fontweight','b','fontsize',font_size);
@@ -286,7 +294,7 @@ Z = Alpha2_comb';
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'MPD05 Alpha 2^{nd} (m^{-1})']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, ' Alpha 2^{nd} (m^{-1})']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    hh = title({[node, ' Alpha 2^{nd} (m^{-1})']},'fontweight','b','fontsize',font_size);
@@ -313,7 +321,7 @@ Z = Alpha2_comb';
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'MPD05 BSR']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, ' BSR']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    hh = title({[node, ' BSR']},'fontweight','b','fontsize',font_size);
@@ -337,43 +345,43 @@ if flag.save_figs==1
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);       %1500 x 300
-  name=strcat(date, ' Temp_Matlab_multi_avg'); 
+  name=strcat(date, node, ' Temp_Matlab_multi_avg'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  
   FigH = figure(2);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, ' Temp_Matlab_multi'); 
+  name=strcat(date, node, ' Temp_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution    
    
   FigH = figure(3);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);   %1500 x 300
-  name=strcat(date, ' Alpha_Matlab_multi'); 
+  name=strcat(date, node, ' Alpha_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution  
   
   FigH = figure(4);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);   %1500 x 300
-  name=strcat(date, ' Alpha0_Matlab_multi'); 
+  name=strcat(date, node, ' Alpha0_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution  
   
   FigH = figure(5);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);   %1500 x 300
-  name=strcat(date, ' Alpha1_Matlab_multi'); 
+  name=strcat(date, node, ' Alpha1_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution  
   
   FigH = figure(6);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);   %1500 x 300
-  name=strcat(date, ' Alpha2_Matlab_multi'); 
+  name=strcat(date, node, ' Alpha2_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution  
   
   FigH = figure(7);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);   %1500 x 300
-  name=strcat(date, ' BSR_Matlab_multi'); 
+  name=strcat(date, node, ' BSR_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
 end

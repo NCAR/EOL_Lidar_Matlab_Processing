@@ -6,8 +6,8 @@ tic
  days = 64; skip = 4;
 
  
- node = 'MPD05';
- date = '21 Jan 2022';   
+ node = 'MPD01';
+ date = '03 Dec 2021';   
  days = 7; skip = 1;
 
 
@@ -70,8 +70,8 @@ i=1;
 
 for i=1:days
   if i==1  
-     if exist(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))==2
-        load(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))
+     if exist(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))==2
+        load(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))
         range_limit = size(N_avg,2);
        % grid everything to a 75 m gate size 
         if gate < 75
@@ -105,8 +105,8 @@ for i=1:days
      end  
   else
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
-    if exist(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))==2
-       load(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))
+    if exist(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))==2
+       load(strcat(node, '_', datestr(date, 'yymmdd'), '_Matlab.mat'))
        range_limit_ch = size(N_avg,2);
        % grid everything to a 75 m gate size 
        if gate < 75
@@ -484,7 +484,7 @@ if flag.save_figs==1
   cd(plot_path)
   date=datestr(nanmean(time_new), 'yyyymmdd');
   
-
+ 
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);

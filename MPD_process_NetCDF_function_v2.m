@@ -1,9 +1,9 @@
  function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
- %clear all; 
- %close all
- %start_date = '20210620';
- %save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_Off'; node='MPD02'; daystr=start_date; 
- %save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_Off'; node='MPD05'; daystr=start_date; 
+%  clear all; 
+%  close all
+%  start_date = '20211210';
+%  %save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_Off'; node='MPD02'; daystr=start_date; 
+%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_Off'; node='MPD05'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
