@@ -668,7 +668,7 @@ for l=1:length(lambda_on_N)
 %offset = 0.00017;  % This is the absolute accuracy (nm) of the Bristol 671A at 828 nm  
 %offset = -wavemeter_offset*1e9; % This is the measured correction (nm) for each unit 
 offset = -wavemeter_offset; % This is the measured correction (nm) for each unit 
-%offset = -0.001;
+offset = 0.001;
 
 
 Hitran.nu_on = 1/(lambda_on_N(l)+offset)*1e7;

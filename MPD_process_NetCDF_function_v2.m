@@ -1,9 +1,9 @@
  function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
 %  clear all; 
 %  close all
-%  start_date = '20211210';
-%  %save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_Off'; node='MPD02'; daystr=start_date; 
-%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_Off'; node='MPD05'; daystr=start_date; 
+%  start_date = '20220608';
+%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_Off'; node='MPD04'; daystr=start_date; 
+%  %save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_Off'; node='MPD01'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -26,7 +26,7 @@ flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 14.42; % hour to show troubleshooting profiles
 
 ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor and O2 
-ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
+ave_time.rb = 2.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
@@ -58,7 +58,8 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
 
 % read in all the data
  if  strcmp(channels,'WV') == 1 
-   [data_on, data_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+   %[data_on, data_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+   [data_wv_on, data_wv_off, MCS] = MPD_File_Retrieval_NetCDF_v5(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
  end
  if  strcmp(channels,'O2') == 1 
    [data_wv_on, data_wv_off, data_O2_on_comb, data_O2_off_comb, data_O2_on_mol, data_O2_off_mol, MCS] = MPD_File_Retrieval_NetCDF_v6(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
@@ -68,8 +69,11 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
 if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
   flag.near = 0; flag.afterpulse = 0; 
-  MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+  MPD_Analysis_function_NetCDF_v5(data_wv_on, data_wv_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)%
+
+ %[N_WV, N_WV_error] = MPD_WV_analysis_function_v2(data_wv_on, data_wv_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
+ %        profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation);
 end
 
 % % process the oxygen channels
@@ -77,8 +81,8 @@ end
    write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
    flag.near = 0; flag.afterpulse = 0; 
    gates2ave = 1; %number of gates to average
-%    data_on = data_O2_on_comb;
-%    data_off = data_O2_off_comb;
+    data_on = data_O2_on_comb;
+    data_off = data_O2_off_comb;
   [O2_online_comb, O2_offline_comb, range, RB_comb, time_comb, Surf_T, Surf_P, O2_on_wavelength, O2_off_wavelength] =  MPD_Analysis_function_O2_v1(data_O2_on_comb, data_O2_off_comb, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
          profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave);%
   [O2_online_mol, O2_offline_mol, range, RB_mol,  time_mol] =  MPD_Analysis_function_O2_v1(data_O2_on_mol, data_O2_off_mol, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...

@@ -5,6 +5,16 @@ Scrsize=[scrsz(4)/1 scrsz(4)/1 scrsz(3)/1.5 scrsz(4)/1.5];
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
 cd('/Users/spuler/Desktop') % point to the directory where data is stor
+FigH = figure(1);
+%set(gca,'Fontsize',30,'Fontweight','b'); % 
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 3200/1.5 2000/1.5]);
+name=strcat('WV_Beta_T_comparison');
+print(FigH, name, '-dpng', '-r300')  
+
+
+
+%cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
+cd('/Users/spuler/Desktop') % point to the directory where data is stor
 FigH = figure(202);
 %set(gca,'Fontsize',30,'Fontweight','b'); % 
 set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);

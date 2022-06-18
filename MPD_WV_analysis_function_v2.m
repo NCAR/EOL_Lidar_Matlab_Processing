@@ -1,5 +1,5 @@
-function[] = MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)
+function[N_avg, N_error] = MPD_WV_analysis_function_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
+    profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)
 
 %% notes
 %Amin Nehrir (original author)
@@ -88,7 +88,7 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 % this filter creates range delays 
 
 %lambda offset for testing purposes only -- set to zero
-%lambda_offset = 0.0;  
+%lambda_offset = 0;  
 
 %% Importing online and offline files from the selected date
 
@@ -387,19 +387,15 @@ end
   end
 % used combined geometric overlap correction from Zemax model starting in March 2020
   if ((serial_date >= 737902))
-    O_y = 0.01*O_y_near + 0.99.*O_y_primary;
+    O_y = 0.10*O_y_near + 0.90.*O_y_primary;
   end
   
-  range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
-  O_x = O_x - range_shift; % add pulse length offset to geometeric overlap function (replace with real pulse duration)
+  O_x = O_x + 75; % add pulse legnth offset to geometeric overlap function (replace with real pulse duration)
   O = interp1(O_x, O_y, range, 'linear','extrap');
+
   
-  
- % RB_overlap_on = bsxfun(@rdivide,  RB_on, O);
- % RB_overlap = bsxfun(@rdivide,  RB, O);
-  
-  RB_overlap_on = RB_on./O;
-  RB_overlap = RB./O;
+  RB_overlap_on = bsxfun(@rdivide,  RB_on, O);
+  RB_overlap = bsxfun(@rdivide,  RB, O);
   
 % range correct   
   RB_on = bsxfun(@times, RB_on, range_km_squared);
@@ -407,24 +403,7 @@ end
   if flag.OF==1
     RB_on = bsxfun(@times, RB_overlap_on, range_km_squared);
     RB = bsxfun(@times,  RB_overlap, range_km_squared);
-      
-    figure(1)
-    loglog(O_y_near, O_x)
-    hold on
-    loglog(O_y_primary, O_x)
-    loglog(O, range)
-    hold off
-  %  pause
   end
-  
-  
-
-  
-  
-  
-  
-  
-  
  % clear Online Offline
 
 % delete(h)
@@ -590,7 +569,7 @@ end
     % the default is 2000*(MCS.bin_duration*MCS.accum)/500/14200) 
     if flag.troubleshoot == 1
       imagesc(time_grid,range./1e3, FX');
-      axis xy; colorbar('EastOutside'); caxis([-3000 3000]);   
+      axis xy; colorbar('EastOutside'); caxis([-1000 1000]);   
       title({[' Vertical Gradient']},...
       'fontweight','b','fontsize',16)
       ylabel('Altitude (km)','fontweight','b','fontsize',20); 
@@ -604,6 +583,34 @@ end
 
  % delete(h)
 
+ %% Calculate T & P profiles from surface station
+
+ const.k_B = 1.380649e-23; % (J/K, or Pa m^3/K)
+ const.K_B = const.k_B * 9.869e-6; % (atm m^3/K)
+ const.N_A = 6.022E23; % (/mol) Avagadros number
+ const.M = 28.97E-3; % (kg/mol) air molecular mass per mol 
+ const.m = const.M./const.N_A; % (kg) mass of a air molecule
+ const.g = 9.80665; % (m/s^2) gravitational constant
+ const.c = 299792458; % (m/s) (exact)  
+ const.R = const.k_B*const.N_A; % (J/K mol) universal gas constant
+
+ % Calculate temperature and pressure profile based on surface measurement and 
+ % assuming a standard lapse rate (-6.5 deg/km) for the entire troposphere
+ lapse = 0.0065; % (K/m) standard atmosphere lapse rate, dry adiabatic is 9.8 K/km
+ if flag.WS == 1  % use surface values if they exist
+   T0 = nanmedian(Surf_T)+273.15
+   P0 = nanmedian(Surf_P)
+   T = (Surf_T+273.15)-lapse.*range;
+   P = Surf_P.*((Surf_T+273.15)./T).^-((const.M*const.g)/(const.R*lapse));   % barometric formula
+ else
+   T0 = 290; % surface temperature
+   P0  = 1; % surface pressure in atm 
+   T = T0-lapse.*range; % temperature as function of range with lapse rate
+   P = P0.*(T0./T).^-((const.M*const.g)/(const.R*lapse));   % barometric formula 
+ end
+ 
+ 
+ 
  
 %% Spectral Line Fitting
 % h = waitbar(0,'Line Fiting');
@@ -617,40 +624,9 @@ line_indices = Hitran.file(1:size(Hitran.file,1),1)>WNmin & Hitran.file(1:size(H
 
 line = double(Hitran.file(line_indices, 1:size(Hitran.file,2)));
 
-%Calculate temperature and pressure profile
-  const.k_B = 1.380649e-23; % (J/K, or Pa m^3/K)
-  const.K_B = const.k_B * 9.869e-6; % (atm m^3/K)
-  const.N_A = 6.022E23; % (/mol) Avagadros number
-  const.M_air = 28.97E-3; % (kg/mol) air molecular mass per mol 
-  const.m_air = const.M_air./const.N_A; % (kg) mass of a air molecule
-  const.m_h2o = 18.015E-3./const.N_A; % mass of a single water molecule
-  const.g = 9.80665; % (m/s^2) graviational constant
-  const.c = 299792458; % (m/s) (exact)  
-  const.R = const.k_B*const.N_A; % (J/K mol) universal gas constant 
-
-  if flag.WS == 1
-    T0 = nanmedian(Surf_T)+273.15
-    P0 = nanmedian(Surf_P)
-  else
-    T0 = 273.15+22; % if no surface station assume 22C
-  end
-
-  if isnan(T0)
-    T0 = 295;
-  end
-  if isnan(P0)
-    P0=0.83;  % if no surface station assume 0.83 atm
-  end
-
-  %T = T0-0.0065.*range; % moist adiabatic lapse rate (dry adiabatic would be 0.0098C/m)
-  %P = P0.*(T0./T).^-5.2199;   % set this value to match sounding
-  %p_s = 7.75e-3.*exp(-range./3000).*P; % estimate of the partial pressure of wv for self broadening
-
-  lapse = 0.0065; % (K/m) standard atmosphere lapse rate, dry adiabatic is 9.8 K/km
-  % temp and pressure profiles using the median surface or changing surface values 
-  T = T0-lapse.*range;
-  P = P0.*(T0./T).^-((const.M_air*const.g)/(const.R*lapse));   % barometric formula
-
+%Get median temperature and pressure profile for the day
+T_med=nanmedian(T,1);
+P_med=nanmedian(P,1);
   
 Hitran.T00 = 296;              % HITRAN reference temperature [K]
 Hitran.P00 = 1;                % HITRAN reference pressure [atm]
@@ -668,7 +644,6 @@ for l=1:length(lambda_on_N)
 %offset = 0.00017;  % This is the absolute accuracy (nm) of the Bristol 671A at 828 nm  
 %offset = -wavemeter_offset*1e9; % This is the measured correction (nm) for each unit 
 offset = -wavemeter_offset; % This is the measured correction (nm) for each unit 
-%offset = -0.001;
 
 
 Hitran.nu_on = 1/(lambda_on_N(l)+offset)*1e7;
@@ -687,14 +662,17 @@ for i = 1:size(Online_Temp_Spatial_Avg,2); % calculate the absorption cross sect
   
     %nu0 = nu0_0-.0428.*P(i);    %Pressure shift
     %nu0 = nu0_0+delta.*P(i);     %calculate the pressure shifts for selected lines as function of range
-    Hitran.nu0 = Hitran.nu0_0+Hitran.delta.*(P(i)./Hitran.P00); % unclear if it should be Pi/P00
+    Hitran.nu0 = Hitran.nu0_0+Hitran.delta.*(P_med(i)./Hitran.P00); % unclear if it should be Pi/P00
     %gammal = gammal0.*P(i).*((T00./T(i)).^alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
-    Hitran.gammal = Hitran.gammal0.*(P(i)./Hitran.P00).*((Hitran.T00./T(i)).^Hitran.alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
+    Hitran.gammal = Hitran.gammal0.*(P_med(i)./Hitran.P00).*((Hitran.T00./T_med(i)).^Hitran.alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
     % revise pressure broadened halfwidth to include correction for self broadening term 
     %gammal = ((P(i)-p_s(i)).*gammal0 + p_s(i).*gamma_s).*((T00./T(i)).^alpha);    %Calculate Lorentz lineweidth at P(i) and T(i)
    
+    const.m = 18.015E-3./6.022E23; % mass of a single water molecule
+    const.k_B = 1.3806488e-23; % (J/K)
+    const.c = 299792458; % (m/s) (exact)
    
-    Hitran.gammad = (Hitran.nu0).*((2.0.*const.k_B.*T(i).*log(2.0))./(const.m_h2o.*const.c^2)).^(0.5);  %Calculate HWHM Doppler linewidth at T(i)
+    Hitran.gammad = (Hitran.nu0).*((2.0.*const.k_B.*T_med(i).*log(2.0))./(const.m.*const.c^2)).^(0.5);  %Calculate HWHM Doppler linewidth at T(i)
     
     % term 1 in the Voigt profile
     y = (Hitran.gammal./Hitran.gammad).*((log(2.0)).^(0.5));
@@ -717,7 +695,7 @@ for i = 1:size(Online_Temp_Spatial_Avg,2); % calculate the absorption cross sect
     integral_on = z_on;
     integral_off = z_off;
     %Calculate linestrength at temperature T
-    S = Hitran.S0.*((Hitran.T00./T(i)).^(1.5)).*exp(1.439.*Hitran.E.*((1./Hitran.T00)-(1./T(i))));
+    S = Hitran.S0.*((Hitran.T00./T_med(i)).^(1.5)).*exp(1.439.*Hitran.E.*((1./Hitran.T00)-(1./T_med(i))));
     %term3= (1-exp(-1.4388.*nu0_0./T(i)))./(1-exp(-1.4388.*nu0_0./T00));
     %S = S0.*((T00./T(i)).^(1.5)).*exp(1.4388.*E.*((1./T00)-(1./T(i)))).*term3;
       
@@ -796,9 +774,7 @@ end
   %% Smoothing Number Density for different range zones
 
  if flag.gradient_filter == 1
-   % N(N>1E18) = nan; % use this to remove high water vapor errors
-    % PRECIP adjusted
-    N(N>1.5E18) = nan; % use this to remove high water vapor errors
+    N(N>1E18) = nan; % use this to remove high water vapor errors
  end
   
  % insert the surface water vapor number density 
@@ -981,6 +957,7 @@ end
 
 %% save data
   
+
  if flag.save_data == 1
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
   %cd('/Volumes/documents/WV_DIAL_data/processed_data') % point to the directory where data is stored 
@@ -1001,99 +978,9 @@ end
      'MPD_elevation')
    end
  end
- 
- if flag.save_netCDF == 1  % save the data as an nc file
-    % convert NaN fill values (and Inf) to -1 flag
-    time_new(isnan(time_new)==1) = -1;  % NaNs converted to -1 flag
-    N_avg(isnan(N_avg)==1) = -1; 
-    N_error(isnan(N_error)==1) = -1; 
-    N_avg(isinf(N_avg)==1) = -1;  
-    N_error(isinf(N_error)==1) = -1;  
-    Offline_Temp_Spatial_Avg(isinf(Offline_Temp_Spatial_Avg)==1) = -1;  
-    Online_Temp_Spatial_Avg(isinf(Online_Temp_Spatial_Avg)==1) = -1; 
-    time_unix = (time_new-datenum(1970,1,1))*86400; % convert to unix time
-   
-    cdf_name = strcat('wv_dial.', datestr(date_plot, 'yymmdd'));
-    ncid = netcdf.create([cdf_name '.nc'],'CLOBBER');       
-    % define the dimensions and variables
-    % netcdf.reDef(ncid);
-    dimid1 = netcdf.defDim(ncid,'time',netcdf.getConstant('NC_UNLIMITED'));
-    %dimid1 = netcdf.defDim(ncid,'time', length(time_new));
-    dimid2 = netcdf.defDim(ncid, 'range', length(range));
-    dimid3 = netcdf.defDim(ncid, 'lambda', length(lambda_on));
-    
-    myvarID1 = netcdf.defVar(ncid,'time','double',dimid1);
-      netcdf.putAtt(ncid, myvarID1, 'units', 'days since January 0, 0000')
-    myvarID2 = netcdf.defVar(ncid,'range','float',dimid2);
-      netcdf.putAtt(ncid, myvarID2, 'units', 'meters')
-    myvarID3 = netcdf.defVar(ncid,'N_avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID3, 'long_name', 'water_vapor_number_density')
-      netcdf.putAtt(ncid, myvarID3, 'units', 'molecules/cm^3')
-      netcdf.putAtt(ncid, myvarID3, 'FillValue', '-1')
-    myvarID4 = netcdf.defVar(ncid,'N_error','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID4, 'long_name', 'water_vapor_number_density_error')
-      netcdf.putAtt(ncid, myvarID4, 'units', 'molecules/cm^3')
-      netcdf.putAtt(ncid, myvarID4, 'FillValue', '-1')
-    myvarID5 = netcdf.defVar(ncid,'P','float', dimid2);
-      netcdf.putAtt(ncid, myvarID5, 'long_name', 'pressure')
-      netcdf.putAtt(ncid, myvarID5, 'units', 'atm')
-    myvarID6 = netcdf.defVar(ncid,'T','float', dimid2);
-      netcdf.putAtt(ncid, myvarID6, 'long_name', 'temperature')
-      netcdf.putAtt(ncid, myvarID6, 'units', 'degK')
-   myvarID7 = netcdf.defVar(ncid,'RB','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID7, 'long_name', 'relative_backscatter')
-      netcdf.putAtt(ncid, myvarID7, 'units', 'arbitrary_units')
-      netcdf.putAtt(ncid, myvarID7, 'FillValue', '-1')
-   myvarID8 = netcdf.defVar(ncid,'time_unix','double',dimid1);
-      netcdf.putAtt(ncid, myvarID8, 'long_name', 'unix time')
-      netcdf.putAtt(ncid, myvarID8, 'units', 'seconds since 00:00:00 UTC, January 1, 1970')
-      netcdf.putAtt(ncid, myvarID8, 'FillValue', '-1')
-   myvarID9 = netcdf.defVar(ncid,'Offline_Temp_Spatial_Avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID9, 'long_name', 'offline counts')
-      netcdf.putAtt(ncid, myvarID9, 'units', 'counts')
-      netcdf.putAtt(ncid, myvarID9, 'FillValue', '-1')
-    myvarID10 = netcdf.defVar(ncid,'Online_Temp_Spatial_Avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID10, 'long_name', 'online counts')
-      netcdf.putAtt(ncid, myvarID10, 'units', 'counts')
-      netcdf.putAtt(ncid, myvarID10, 'FillValue', '-1')
-    myvarID11 = netcdf.defVar(ncid,'lambda_on','float', dimid3);
-      netcdf.putAtt(ncid, myvarID11, 'long_name', 'online wavelength')
-      netcdf.putAtt(ncid, myvarID11, 'units', 'nm')
-      netcdf.putAtt(ncid, myvarID11, 'FillValue', '-1')
-    myvarID12 = netcdf.defVar(ncid,'lambda_off','float', dimid3);
-      netcdf.putAtt(ncid, myvarID11, 'long_name', 'offline wavelength')
-      netcdf.putAtt(ncid, myvarID11, 'units', 'nm')
-      netcdf.putAtt(ncid, myvarID11, 'FillValue', '-1')
-      
-    netcdf.endDef(ncid)  
 
-    % save the variables to the file
-    
-    netcdf.putVar(ncid,myvarID1,0,length(time_new),time_new);   
-    netcdf.putVar(ncid,myvarID2,range);   
-    netcdf.putVar(ncid,myvarID3,[0,0],size(N_avg'),N_avg');  
-    netcdf.putVar(ncid,myvarID4,[0,0],size(N_error'),N_error');
-    netcdf.putVar(ncid,myvarID5,P);   
-    netcdf.putVar(ncid,myvarID6,T);
-    netcdf.putVar(ncid,myvarID7,[0,0],size(RB'),RB');
-    netcdf.putVar(ncid,myvarID8,time_unix);
-    netcdf.putVar(ncid,myvarID9,[0,0],size(Offline_Temp_Spatial_Avg'),Offline_Temp_Spatial_Avg');  
-    netcdf.putVar(ncid,myvarID10,[0,0],size(Online_Temp_Spatial_Avg'),Online_Temp_Spatial_Avg');
-    netcdf.putVar(ncid,myvarID11,lambda_on); 
-    netcdf.putVar(ncid,myvarID12,lambda_off); 
-    
-    
-  netcdf.close(ncid);
 
-  % original data save to ascii format for Dave Turner   
-  %   name=strcat(date, 'wv_number_density.txt');
-  %   wv_number_density = [time_new, double(N_avg)]; 
-  %   save(name, 'wv_number_density', '-ascii', '-double'); 
-  %   name=strcat(date, 'wv_number_density_error.txt');  
-  %   wv_number_density_error = [time_new, double(N_error)]; 
-  %   save(name, 'wv_number_density_error', '-ascii', '-double');
-  
- end
+
  
  %% plot data
 
@@ -1337,104 +1224,17 @@ toc
 cd(dd) % point back to original directory
 
 
-%% use this for troubleshooting raw data
+  
 
-%troubleshoot = 0;
-if flag.troubleshoot == 1
-
- %figure(3)
- %semilogx(N_avg(fix(end*14/24),:), range(1,1:end-1)./1e3, 'r')
- %ylim([0 6])
- %title('DIAL profile at about 14:00 MDT')
- %xlabel('Water Vapor Number Density (cm^{-3})');
- %ylabel('range(km)'); 
-
-%column integrated water vapor...just testing
-% pw=sum(N_avg(:,750/7.5:3500/7.5),2)./6.022e23*225*100;
-
-% find high gradient errors that occur near cloud boundaries   
-[FX,FY] = gradient(N_avg);
-figure('Position',plot_size1);
-imagesc(time_new,range./1e3, real(FX'));
-axis xy; colorbar('EastOutside'); caxis([-5e16 5e16]);  % model assumes there will be ~2E17 at ground and 2E15 at 8km 
-title({[date,' Vertical Gradient']},...
-     'fontweight','b','fontsize',16)
-ylabel('Altitude (km)','fontweight','b','fontsize',20); 
-datetick('x','HH','keeplimits');
-axis([fix(min(time_new)) fix(min(time_new))+1 0 7])
-colormap(C)  
-
-figure('Position',plot_size1);
-imagesc(time_new,range./1e3, real(FY'));
-axis xy; colorbar('EastOutside'); caxis([-5e16 5e16]);  % model assumes there will be ~2E17 at ground and 2E15 at 8km 
-title({[date_plot,' Horizontal Gradient']},...
-     'fontweight','b','fontsize',16)
-ylabel('Altitude (km)','fontweight','b','fontsize',20); 
-datetick('x','HH','keeplimits');
-axis([fix(min(time_new)) fix(min(time_new))+1 0 7])
-colormap(C)  
- 
-
- %plot column OD
- figure('Position',[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/2])
- imagesc(time_new,range./1e3,real(OD')); 
- set(gca,'Fontsize',30,'Fontweight','b');
- axis xy;
- colorbar('EastOutside');
- axis([fix(min(time_new)) fix(min(time_new))+1 0 12])
- caxis([-0.1 2]);
- datetick('x','HH','keeplimits');
- colormap(C)
- title({[date_plot,'  Column Optical Depth']},...
-      'fontweight','b','fontsize',30)
- xlabel('Time (UTC)','fontweight','b','fontsize',30); 
- ylabel('Height (km, AGL)','fontweight','b','fontsize',30); 
- set(gca,'XMinorTick','off');
- set(gca,'YMinorTick','off');
- set(gca,'Fontsize',30,'Fontweight','b');
-    
-    
- % plot the offline background
- figure('Position',[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/2])
- semilogy(time_new, background_off, time_new, background_on); %
- datetick('x','HH','keeplimits');
-  title({[date_plot,'  Offline background C/s']},...
-     'fontweight','b','fontsize',30)
- ylim([1e2  1e7])
- hold on
-  semilogy(time_new, 5e6, 'green')   % Add a horizontal line to show the 5Mc/s linearity limit
- hold off
 
  
- % plot and save the cloud base (added 11-Sept-2014)
- figure('Position',[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/2])
- cloud_base = (diff(RB) > 25);
- for i=1:size(cloud_base,1)
-   if isempty(find(cloud_base(i,:), 1, 'first'))==1
-     cloud_base_idx(i,:) = NaN;
-   else
-     cloud_base_idx(i,:) = find(cloud_base(i,:), 1, 'first')*gate;
-   end
- end
- plot(time_new(1:end-1), cloud_base_idx);
- datetick('x','HH','keeplimits');
- title({[date_plot,'  Cloud Base']},'fontweight','b','fontsize',30)
- ylim([0  16000])
- ylabel('Height (m, AGL)','fontweight','b','fontsize',30); 
- xlabel('UTC','fontweight','b','fontsize',30); 
-% name=strcat(date, 'cloudbase.txt');
-% cloud_base = [time_new(1:end-1), cloud_base_idx];
-% cloud_base(isnan(cloud_base)==1) = -1;  % Dave Turner wants the NaNs converted to -1 flag
-% save(name, 'cloud_base', '-ascii', '-double');
-    
+   
 
   
 end
 
 
-%figure(100)
-%semilogy(mean(Offline_Raw_Data(1:300,8:566),1))
-%grid on
+
 
 
 

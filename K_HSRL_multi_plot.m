@@ -4,10 +4,9 @@ tic
  node = 'MPD05';
 % date = '18 Jun 2021';   
 % days = 21; skip = 3;
- date = '05 Mar 2022';   
+ date = '04 Jun 2022';   
  days = 7; skip = 1;
-%  date = '06 Jul 2021';   
-%  days = 2; skip = 1;
+
  
  
 serv_path = '/Volumes/fog1/rsfdata/MPD/';

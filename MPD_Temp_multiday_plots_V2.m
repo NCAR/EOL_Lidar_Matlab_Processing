@@ -10,8 +10,8 @@ dd=pwd;
  %date = '20210620';  
  %days = 4; skip = 1;
 
-  node = 'MPD05';
-  date = '20220305';  
+  node = 'MPD01';
+  date = '20220528';  
   days = 7; skip = 1;
  
 lapse_rate = 0.0065; %standard atmosphere lapse rate
@@ -137,16 +137,15 @@ x = duration';
 y = range./1000;
  
  
- Z = Temp_comb_avg'; 
+ Z = Temp_comb_avg-273.15'; 
  figure('Position',Scrnsize)
  set(gcf,'renderer','zbuffer');
  h = pcolor(x,y,Z);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([-5+273.15 30+273.15]);
- caxis([240 320]);
- %caxis([-5 30]); % Celsius
+ caxis([-5 35]);
+ %caxis([240 320]);
  colormap(jet)
  %colormap(parula)
  %shading interp

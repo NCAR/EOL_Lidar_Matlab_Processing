@@ -6,11 +6,15 @@ tic
  days = 64; skip = 4;
 
  
- node = 'MPD05';
- date = '21 Jan 2022';   
- days = 7; skip = 1;
-
-
+ node = 'MPD04';      %PRECIP
+ date = '28 May 2022';   
+ days = 23; skip = 1;
+ WV_max_scale = 25;
+ 
+%  node = 'MPD05';            %MPD01 vs MPD05 intercomparions 
+%  date = '04 Jun 2022';   
+%  days = 7; skip = 1;
+%  WV_max_scale = 12;
 
 %serv_path = '/Volumes/documents/MPD/';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
@@ -231,7 +235,7 @@ if flag.replot==1
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 12]);
+ caxis([0 WV_max_scale]);
  %caxis([0 5]);
  colormap(jet)
  %colormap(C)
@@ -329,6 +333,7 @@ if flag.replot==1
     hh = title({'DIAL Background'},'fontweight','b','fontsize',font_size); 
   end
   set(gca,'Fontsize',font_size,'Fontweight','b');
+ 
   
   
 % plot column OD for the Narrow  
@@ -411,6 +416,7 @@ if flag.replot==1
    %plot(duration, T_bench,'r', 'LineWidth',1, 'DisplayName','T bench')
    plot(duration, surf_T, 'b', 'LineWidth',1, 'DisplayName','Surface T')
    axis([fix(min(duration)) ceil(max(duration)) -inf inf]);   % -20 40])
+   axis([fix(min(duration)) ceil(max(duration)) 0 40]);   % -20 40]) %PRECIP
       YTick = [-25 0 25 50];
    ylabel('temperature, C', 'Fontsize', font_size, 'Fontweight', 'b'); 
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
@@ -443,6 +449,7 @@ if flag.replot==1
    ax(4) = axes('Position',get(ax(2),'Position'));
    plot(duration, surf_P, 'k-','LineWidth', 1, 'DisplayName','Surf P') 
    axis([fix(min(duration)) ceil(max(duration)) -inf inf])
+   axis([fix(min(duration)) ceil(max(duration)) 0.975 1])  %PRECIP
    set(ax(4),'Color','none')
    set(ax(4),'YAxisLocation','right')
    set(ax(4),'XAxisLocation','bottom')
@@ -497,11 +504,11 @@ if flag.save_figs==1
   name=strcat(date, node, ' RB_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
-%  FigH = figure(3);
-%  % set(gca,'Fontsize',36,'Fontweight','b');
-%  set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrnsize);
-%  name=strcat(date, 'background_multi'); 
-%  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+  FigH = figure(3);
+  set(gca,'Fontsize',16,'Fontweight','b');
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
+  name=strcat(date, node, 'background_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
 %  FigH = figure(5);
 % %  set(gca,'Fontsize',36,'Fontweight','b');
@@ -515,7 +522,7 @@ if flag.save_figs==1
       FigH = figure(4);
      % set(gca,'Fontsize',36,'Fontweight','b');
       set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);
-      name=strcat(date, 'Housekeeping'); 
+      name=strcat(date, node, 'Housekeeping'); 
       print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   end
    
