@@ -69,8 +69,9 @@ C = importdata('NCAR_C_Map.mat');
 %C = viridis(70);
 
 %Importing HITRAN data
-Hitran.file = dlmread('815nm_841nm_HITRAN_2008.csv', ',',[1 1 1676 8]);
-%hitran = dlmread('823nm_834nm_HITRAN_2012.csv', ',',[0 0 2633 7]);
+%Hitran.file = dlmread('815nm_841nm_HITRAN_2008.csv', ',',[1 1 1676 8]);
+%Hitran.file = dlmread('823nm_834nm_HITRAN_2012.csv', ',',[0 0 2633 7]);
+Hitran.file = dlmread('823nm_834nm_HITRAN_2016.csv', ',',[0 0 2689 7]);
 
 RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
 
