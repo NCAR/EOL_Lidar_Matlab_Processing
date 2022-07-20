@@ -69,8 +69,9 @@ C = importdata('NCAR_C_Map.mat');
 %C = viridis(70);
 
 %Importing HITRAN data
-Hitran.file = dlmread('815nm_841nm_HITRAN_2008.csv', ',',[1 1 1676 8]);
-%hitran = dlmread('823nm_834nm_HITRAN_2012.csv', ',',[0 0 2633 7]);
+%Hitran.file = dlmread('815nm_841nm_HITRAN_2008.csv', ',',[1 1 1676 8]);
+%Hitran.file = dlmread('823nm_834nm_HITRAN_2012.csv', ',',[0 0 2633 7]);
+Hitran.file = dlmread('823nm_834nm_HITRAN_2016.csv', ',',[0 0 2689 7]);
 
 RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
 
@@ -668,7 +669,7 @@ for l=1:length(lambda_on_N)
 %offset = 0.00017;  % This is the absolute accuracy (nm) of the Bristol 671A at 828 nm  
 %offset = -wavemeter_offset*1e9; % This is the measured correction (nm) for each unit 
 offset = -wavemeter_offset; % This is the measured correction (nm) for each unit 
-offset = 0.001;
+%offset = -0.001;
 
 
 Hitran.nu_on = 1/(lambda_on_N(l)+offset)*1e7;
@@ -770,12 +771,19 @@ end
 
 %% DIAL Equation to calculate Number Density and error
 
+% correct for cross-talk in switches 
+%   off_cross = 10^-2.*Offline_Temp_Spatial_Avg; %20dB cross talk
+%   Online_Temp_Spatial_Avg = Online_Temp_Spatial_Avg-off_cross;
+%   on_cross = 10^-2.*Online_Temp_Spatial_Avg; %20dB cross talk
+%   Offline_Temp_Spatial_Avg = Offline_Temp_Spatial_Avg-on_cross;
+%  
  Inside = (Online_Temp_Spatial_Avg.*(circshift(Offline_Temp_Spatial_Avg, [0, -1])))./...
      ((circshift(Online_Temp_Spatial_Avg, [0, -1])).*Offline_Temp_Spatial_Avg);
  del_cross = single(1./(2.*(sigma_on_total-sigma_off_total).*gate*100));
  N =  (del_cross.*log(Inside)); 
  N(N == inf) = nan; 
-  
+ 
+
  % error calculation   
  N_error = (1/2./(sigma_on_total-sigma_off_total)./(gate*100)...    
     .*sqrt(...
@@ -798,7 +806,13 @@ end
  if flag.gradient_filter == 1
    % N(N>1E18) = nan; % use this to remove high water vapor errors
     % PRECIP adjusted
+    AH_cutoff = 45.*6.022E23./18.015./1e6
+    N_cutoff = 45.*6.022E23./18.015./1e6
     N(N>1.5E18) = nan; % use this to remove high water vapor errors
+    N(N>1.5E18) = nan; % use this to remove high water vapor errors
+    % threshold_mask = 1.5E18.*1e6./6.022E23.*18.015 (44.9 g/m3)
+    % 
+    
  end
   
  % insert the surface water vapor number density 

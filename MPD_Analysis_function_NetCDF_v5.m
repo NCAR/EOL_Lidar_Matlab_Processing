@@ -360,9 +360,10 @@ end
 % Offline_sum = cumsum(Offline,1)-[zeros(profiles2ave.wv,j); cumsum(Offline(1:i-profiles2ave.wv,:),1)];  %rolling average of rows or time
 % Online = Online_sum./profiles2ave.wv;
 % Offline = Offline_sum./profiles2ave.wv; 
- 
-  background_on = mean(Online(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
-  background_off = mean(Offline(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background 
+  
+
+  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background 
   %background_mean = (background_on+background_off)./2;
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
@@ -486,6 +487,7 @@ end
    hold off 
    ylim([0 1000])
    title('Summed range corrected and gridded counts')
+   grid on
  
  % regular averaging
   Online_Temp_Spatial_Avg = Online_sum2./profiles2ave.wv./delta_r_index;
@@ -499,6 +501,7 @@ end
    hold on
    semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
    hold off
+   xlim([1E2 1E5])
    ylim([0 1000])
    title('Background subtracted raw counts, not shifted')  
 
@@ -771,12 +774,19 @@ end
 
 %% DIAL Equation to calculate Number Density and error
 
+% correct for cross-talk in switches 
+%   off_cross = 10^-2.*Offline_Temp_Spatial_Avg; %20dB cross talk
+%   Online_Temp_Spatial_Avg = Online_Temp_Spatial_Avg-off_cross;
+%   on_cross = 10^-2.*Online_Temp_Spatial_Avg; %20dB cross talk
+%   Offline_Temp_Spatial_Avg = Offline_Temp_Spatial_Avg-on_cross;
+%  
  Inside = (Online_Temp_Spatial_Avg.*(circshift(Offline_Temp_Spatial_Avg, [0, -1])))./...
      ((circshift(Online_Temp_Spatial_Avg, [0, -1])).*Offline_Temp_Spatial_Avg);
  del_cross = single(1./(2.*(sigma_on_total-sigma_off_total).*gate*100));
  N =  (del_cross.*log(Inside)); 
  N(N == inf) = nan; 
-  
+ 
+
  % error calculation   
  N_error = (1/2./(sigma_on_total-sigma_off_total)./(gate*100)...    
     .*sqrt(...
@@ -799,7 +809,10 @@ end
  if flag.gradient_filter == 1
    % N(N>1E18) = nan; % use this to remove high water vapor errors
     % PRECIP adjusted
-    N(N>1.5E18) = nan; % use this to remove high water vapor errors
+    % N(N>1.5E18) = nan; % use this to remove high water vapor errors
+    AH_cutoff = 45; %g/m^3 (removes values above)
+    N_cutoff =  AH_cutoff.*6.022E23./18.015./1e6;
+    N(N>N_cutoff) = nan; % use this to remove high water vapor errors   
  end
   
  % insert the surface water vapor number density 

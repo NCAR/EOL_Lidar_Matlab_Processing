@@ -6,15 +6,21 @@ tic
  days = 64; skip = 4;
 
  
- node = 'MPD03';      %PRECIP
+ node = 'MPD04';      %PRECIP
  date = '28 May 2022';   
- days = 23; skip = 1;
+ days = 50; skip = 5;
+ WV_max_scale = 25;
+%  
+ node = 'MPD04';      %PRECIP
+ date = '13 Jul 2022';   
+ days = 7; skip = 1;
  WV_max_scale = 25;
  
-%  node = 'MPD05';            %MPD01 vs MPD05 intercomparions 
-%  date = '04 Jun 2022';   
-%  days = 7; skip = 1;
-%  WV_max_scale = 12;
+ 
+ node = 'MPD05';            %MPD01 vs MPD05 intercomparions 
+ date = '08 Jul 2022';   
+ days = 7; skip = 1;
+ WV_max_scale = 12;
 
 %serv_path = '/Volumes/documents/MPD/';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
@@ -153,6 +159,15 @@ T_lapse = surf_T-0.0065*range; %create an array of the T based on 6.5ºC/km lapse
 
 % remove the lowest bins 
 N_avg_comb(:,2:blank/75) = NaN; 
+
+% corrected/scaled lowest bins 
+% N_avg_comb(:,9) = N_avg_comb(:,9).*0.97; % 3% at 675 m 
+% N_avg_comb(:,8) = N_avg_comb(:,8).*0.90; % 10% at 600 m 
+% N_avg_comb(:,7) = N_avg_comb(:,7).*0.85;  % 15% at 525 m
+% N_avg_comb(:,6) = N_avg_comb(:,6).*0.85;  % 15% at 450 m
+% N_avg_comb(:,5) = N_avg_comb(:,5).*0.88;  % 12% at 375 m
+% N_avg_comb(:,1:4) = N_avg_comb(:,1:4).*0.92;  % 8% < 300 m
+
 
  %% save data
   

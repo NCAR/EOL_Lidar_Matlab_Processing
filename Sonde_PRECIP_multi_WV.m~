@@ -265,7 +265,7 @@ print(FigH, name, '-dpng', '-r0') % set at the screen resolution
 % print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 
 FigH = figure(20);
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1200 800]);
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
 name=strcat(date, 'P_error'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution
 

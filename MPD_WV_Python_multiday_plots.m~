@@ -6,7 +6,7 @@ serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  % need to use f
 serv_path = '/Volumes/sci/mhayman/DIAL/Processed_Data/PrePRECIP';  % need to use finder and connect to server 'smb://cit.ucar.edu/eol'
 serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PrePRECIP/masked/'; 
 serv_path = '/Volumes/fog1/rsfdata/MPD/mpd_04_processed_data/Python'; 
-serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/initial_processing/';
+serv_path = 'Volumes/sci/mhayman/DIAL/Processed_Data/PRECIP/initial_processing/';
 % Use the PTV version of the code  
 % serv_path = '/Volumes/fog1/rsfdata/MPD/mpd_05_processed_data/PTV/'; 
 
