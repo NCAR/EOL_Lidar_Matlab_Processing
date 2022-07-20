@@ -254,42 +254,42 @@ range = single(0:gate:(size(Online,2)-1)*gate);
  
   if flag.afterpulse == 1   % afterpulse correction
    
-%  read my vesrion of the afterpulse calibration files which are now using rates     
-%      afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
-%      load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_spline_sub_near_off', 'ap_spline_sub_near_on');  
-%      ap_spline_sub_off = p_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
-%      ap_spline_sub_on = ap_spline_sub_on*MCS.accum*MCS.bin_duration*1e-9;  
-%      if flag.near == 1
-%        ap_spline_sub_off = p_spline_sub_near_off*MCS.accum*MCS.bin_duration*1e-9;
-%        ap_spline_sub_on = ap_spline_sub_near_on*MCS.accum*MCS.bin_duration*1e-9;  
-%      end  
-      
-    % read the afterpulse nc file identified in the json file 
-    if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-     serv_path = '/home/rsfdata/Processing/'; % when running on server
-    elseif strcmp(getenv('HOSTNAME'),'')
-      serv_path = '../'; % running locally 
-    else
-     serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
-    end
-    ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
-   
-    ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
-    %ncdisp(ap_filename, '/', 'min') % use this to display all variables
-    if flag.near == 1
-       ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
-       ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');  
-    else
-       ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
-       ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
-    end
-    ap_range = ncread(ap_filename, 'range');
-    netcdf.close(ncid);   
-    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
-    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
+%  read my version of the afterpulse calibration files which are now using rates     
+      node
+      prompt = "enter the afterpulse file ";
+      afterpulse_filename = input(prompt,"s");
+      afterpulse_filename = 'MPD01_afterpulse_20220720.mat';
+      %afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
+      load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_range');  
+      ap_spline_sub_off = ap_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
+      ap_spline_sub_on = ap_spline_sub_on*MCS.accum*MCS.bin_duration*1e-9;  
 
-    range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
-    range_act = range + range_shift; % %actual range points 
+      
+%     % read the afterpulse nc file identified in the json file 
+%     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+%      serv_path = '/home/rsfdata/Processing/'; % when running on server
+%     elseif strcmp(getenv('HOSTNAME'),'')
+%       serv_path = '../'; % running locally 
+%     else
+%      serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
+%     end
+%     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
+%    
+%     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
+%     ncdisp(ap_filename, '/', 'min') % use this to display all variables
+%     if flag.near == 1
+%        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
+%        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');  
+%     else
+%        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
+%        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
+%     end
+%     ap_range = ncread(ap_filename, 'range');
+%     netcdf.close(ncid);   
+%     afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
+%     afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
+%     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
+%     range_act = range + range_shift; % %actual range points 
 
 %      figure(1004)
 %      semilogy(ap_range, afterpulse_off, 'bo-')
@@ -308,10 +308,10 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %     xlabel('range (m)')
 %     grid on
 %     grid minor 
-   
-   %grid to the current range and substitude nc file for mat file
-   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
-   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
+%    
+%    %grid to the current range and substitude nc file for mat file
+%    ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
+%    ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
    
    Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
@@ -360,9 +360,10 @@ end
 % Offline_sum = cumsum(Offline,1)-[zeros(profiles2ave.wv,j); cumsum(Offline(1:i-profiles2ave.wv,:),1)];  %rolling average of rows or time
 % Online = Online_sum./profiles2ave.wv;
 % Offline = Offline_sum./profiles2ave.wv; 
- 
-  background_on = mean(Online(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
-  background_off = mean(Offline(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background 
+  
+
+  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background 
   %background_mean = (background_on+background_off)./2;
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
@@ -486,6 +487,7 @@ end
    hold off 
    ylim([0 1000])
    title('Summed range corrected and gridded counts')
+   grid on
  
  % regular averaging
   Online_Temp_Spatial_Avg = Online_sum2./profiles2ave.wv./delta_r_index;
@@ -499,6 +501,7 @@ end
    hold on
    semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
    hold off
+   xlim([1E2 1E5])
    ylim([0 1000])
    title('Background subtracted raw counts, not shifted')  
 
@@ -806,13 +809,10 @@ end
  if flag.gradient_filter == 1
    % N(N>1E18) = nan; % use this to remove high water vapor errors
     % PRECIP adjusted
-    AH_cutoff = 45.*6.022E23./18.015./1e6
-    N_cutoff = 45.*6.022E23./18.015./1e6
-    N(N>1.5E18) = nan; % use this to remove high water vapor errors
-    N(N>1.5E18) = nan; % use this to remove high water vapor errors
-    % threshold_mask = 1.5E18.*1e6./6.022E23.*18.015 (44.9 g/m3)
-    % 
-    
+    % N(N>1.5E18) = nan; % use this to remove high water vapor errors
+    AH_cutoff = 45; %g/m^3 (removes values above)
+    N_cutoff =  AH_cutoff.*6.022E23./18.015./1e6;
+    N(N>N_cutoff) = nan; % use this to remove high water vapor errors   
  end
   
  % insert the surface water vapor number density 

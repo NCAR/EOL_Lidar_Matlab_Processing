@@ -252,44 +252,60 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %time = time2;
 %clear Online_Raw_Data  Offline_Raw_Data 
  
-  if flag.afterpulse == 1   % afterpulse correction
-   
-%  read my vesrion of the afterpulse calibration files which are now using rates     
-%      afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
-%      load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_spline_sub_near_off', 'ap_spline_sub_near_on');  
-%      ap_spline_sub_off = p_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
-%      ap_spline_sub_on = ap_spline_sub_on*MCS.accum*MCS.bin_duration*1e-9;  
-%      if flag.near == 1
-%        ap_spline_sub_off = p_spline_sub_near_off*MCS.accum*MCS.bin_duration*1e-9;
-%        ap_spline_sub_on = ap_spline_sub_near_on*MCS.accum*MCS.bin_duration*1e-9;  
-%      end  
-      
-    % read the afterpulse nc file identified in the json file 
-    if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-     serv_path = '/home/rsfdata/Processing/'; % when running on server
-    elseif strcmp(getenv('HOSTNAME'),'')
-      serv_path = '../'; % running locally 
-    else
-     serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
-    end
-    ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
-   
-    ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
-    %ncdisp(ap_filename, '/', 'min') % use this to display all variables
-    if flag.near == 1
-       ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
-       ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');  
-    else
-       ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
-       ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
-    end
-    ap_range = ncread(ap_filename, 'range');
-    netcdf.close(ncid);   
-    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
-    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
+if flag.pileup == 1
+% apply linear correction factor to raw counts 
+  %t_d=32E-9; % module dead time of Perkin Elmber
+  t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
+  %t_d=50E-9; %Emperical best fit to remove the noise in the WV behind clouds
+  %t_d=34E-9; %Excelitas SPCM-AQRH-13 Module 24696 for count rates < 5 Mc/s
+  % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
+  % divide by bin time in sec (e.g., 500ns) and # of acumulations (e.g., 10000)
+  % e.g., 10 accumlated counts is 2000 C/s
+  C_Online = 1./(1-(t_d.*(Online./(MCS.bin_duration*1E-9*MCS.accum))));   
+  C_Offline = 1./(1-(t_d.*(Offline./(MCS.bin_duration*1E-9*MCS.accum))));   
+  Online = Online.*C_Online;
+  Offline = Offline.*C_Offline;
+end
 
-    range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
-    range_act = range + range_shift; % %actual range points 
+
+if flag.afterpulse == 1   % afterpulse correction
+   
+%  read my version of the afterpulse calibration files which are now using rates     
+      %node
+      %prompt = "enter the afterpulse file ";
+      %afterpulse_filename = input(prompt,"s");
+      afterpulse_filename = 'MPD01_afterpulse_20220720.mat'
+      %afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
+      load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_range');  
+      ap_spline_sub_off = ap_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
+      ap_spline_sub_on = ap_spline_sub_on*MCS.accum*MCS.bin_duration*1e-9;  
+
+      
+%     % read the afterpulse nc file identified in the json file 
+%     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+%      serv_path = '/home/rsfdata/Processing/'; % when running on server
+%     elseif strcmp(getenv('HOSTNAME'),'')
+%       serv_path = '../'; % running locally 
+%     else
+%      serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
+%     end
+%     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
+%    
+%     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
+%     ncdisp(ap_filename, '/', 'min') % use this to display all variables
+%     if flag.near == 1
+%        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
+%        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');  
+%     else
+%        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
+%        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
+%     end
+%     ap_range = ncread(ap_filename, 'range');
+%     netcdf.close(ncid);   
+%     afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
+%     afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
+%     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
+%     range_act = range + range_shift; % %actual range points 
 
 %      figure(1004)
 %      semilogy(ap_range, afterpulse_off, 'bo-')
@@ -308,10 +324,10 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %     xlabel('range (m)')
 %     grid on
 %     grid minor 
-   
-   %grid to the current range and substitude nc file for mat file
-   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
-   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
+%    
+%    %grid to the current range and substitude nc file for mat file
+%    ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
+%    ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
    
    Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
@@ -326,20 +342,6 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     Offline = Offline_ap_sub;
   end
 
-if flag.pileup == 1
-% apply linear correction factor to raw counts 
-  %t_d=32E-9; % module dead time of Perkin Elmber
-  t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
-  %t_d=50E-9; %Emperical best fit to remove the noise in the WV behind clouds
-  %t_d=34E-9; %Excelitas SPCM-AQRH-13 Module 24696 for count rates < 5 Mc/s
-  % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
-  % divide by bin time in sec (e.g., 500ns) and # of acumulations (e.g., 10000)
-  % e.g., 10 accumlated counts is 2000 C/s
-  C_Online = 1./(1-(t_d.*(Online./(MCS.bin_duration*1E-9*MCS.accum))));   
-  C_Offline = 1./(1-(t_d.*(Offline./(MCS.bin_duration*1E-9*MCS.accum))));   
-  Online = Online.*C_Online;
-  Offline = Offline.*C_Offline;
-end
 
 % clear Online_Raw_Data Offline_Raw_Data data_on data_off
 
