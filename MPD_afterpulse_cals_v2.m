@@ -5,10 +5,10 @@
    ap.SPCM = 'MPD01 WV channel SPCM s/n xxxxx (0.x%AP) gate on';  
    afterpulse_start = 27488; afterpulse_stop = 28478; 
    
-%    ap.date = '20-Jul-2022'; 
-%    ap.filename = 'MPD05_afterpulse_20220720';  
-%    ap.SPCM = 'MPD05 WV channel SPCM s/n xxxxx (0.x%AP) gate on';  
-%    afterpulse_start = 27714; afterpulse_stop = 28721; 
+   ap.date = '20-Jul-2022'; 
+   ap.filename = 'MPD05_afterpulse_20220720';  
+   ap.SPCM = 'MPD05 WV channel SPCM s/n xxxxx (0.x%AP) gate on';  
+   afterpulse_start = 27714; afterpulse_stop = 28721; 
    
    
    %Spatial averaging (range average) in bins.  
@@ -18,9 +18,21 @@
 
    ap_accum_counts_off = sum(data_wv_off(afterpulse_start:afterpulse_stop,10:end))./afterpulse_num;  %accum counts per bin
    ap_accum_counts_on = sum(data_wv_on(afterpulse_start:afterpulse_stop,10:end))./afterpulse_num; %accum counts per bin
+
+   % apply linear correction factor to raw counts 
+    t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
+    % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
+    % divide by bin time in sec (e.g., 500ns) and # of acumulations (e.g., 10000)
+    % e.g., 10 accumlated counts is 2000 C/s
+    C_Offline = 1./(1-(t_d.*(ap_accum_counts_off./(MCS.bin_duration*1E-9*MCS.accum))));   
+    C_Online = 1./(1-(t_d.*(ap_accum_counts_on./(MCS.bin_duration*1E-9*MCS.accum))));   
+    ap_accum_counts_off = ap_accum_counts_off.*C_Offline;
+    ap_accum_counts_on = ap_accum_counts_on.*C_Online;
+   
    ap_count_rate_off = ap_accum_counts_off/MCS.accum/(MCS.bin_duration*1e-9); % counts per second
    ap_count_rate_on = ap_accum_counts_on/MCS.accum/(MCS.bin_duration*1e-9); % counts per second
-
+   
+   
    % vector in meters
    range = single(0:gate:(size(ap_accum_counts_off,2)-1)*gate);   
    ap_range = range; 

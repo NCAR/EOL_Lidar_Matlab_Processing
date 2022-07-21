@@ -2,8 +2,8 @@
 %  clear all; 
 %  close all
 %  start_date = '20220720';
-%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD01'; daystr=start_date; 
-%  %save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_OFF'; node='MPD01'; daystr=start_date; 
+%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD05'; daystr=start_date; 
+%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_OFF'; node='MPD01'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -22,7 +22,7 @@ flag.OF = 1; % correct for geometric overlap functions
 %flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD 3 & 4 only)
 
 flag.plot_data = 1;  % need to have this one to save the figs
-flag.troubleshoot = 1; % shows extra plots used for troubleshooting
+flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 10.25; % hour to show troubleshooting profiles
 
 ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor and O2 

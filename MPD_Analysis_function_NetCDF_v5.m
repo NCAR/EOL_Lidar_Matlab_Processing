@@ -274,7 +274,7 @@ if flag.afterpulse == 1   % afterpulse correction
       %node
       %prompt = "enter the afterpulse file ";
       %afterpulse_filename = input(prompt,"s");
-      afterpulse_filename = 'MPD01_afterpulse_20220720.mat'
+      afterpulse_filename = 'MPD05_afterpulse_20220720.mat'
       %afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
       load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_range');  
       ap_spline_sub_off = ap_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
