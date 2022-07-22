@@ -2,14 +2,18 @@
 
    ap.date = '20-Jul-2022'; 
    ap.filename = 'MPD01_afterpulse_20220720';  
-   ap.SPCM = 'MPD01 WV channel SPCM s/n xxxxx (0.x%AP) gate on';  
+   ap.SPCM = 'MPD01 SPCM s/n xxxxx (0.x%AP) gate on';  
    afterpulse_start = 27488; afterpulse_stop = 28478; 
    
    ap.date = '20-Jul-2022'; 
    ap.filename = 'MPD05_afterpulse_20220720';  
-   ap.SPCM = 'MPD05 WV channel SPCM s/n xxxxx (0.x%AP) gate on';  
+   ap.SPCM = 'MPD05 SPCM s/n xxxxx (0.x%AP) gate on';  
    afterpulse_start = 27714; afterpulse_stop = 28721; 
    
+   ap.date = '22-Jul-2022'; 
+   ap.filename = 'MPD04_afterpulse_20220722';  
+   ap.SPCM = 'MPD04 SPCM s/n xxxxx (0.x%AP) gate on';  
+   afterpulse_start = 1101; afterpulse_stop = 2905; 
    
    %Spatial averaging (range average) in bins.  
    gate = round((MCS.bin_duration*1e-9*3e8/2)*100)/100;
@@ -48,20 +52,20 @@
    ap_spline_sub_off = ap_spline_off-back_off_array;
    ap_spline_sub_on= ap_spline_on - back_on_array;
      
-   figure(1000)
-   semilogy(range, ap_spline_off, 'bx')
-   hold on
-   semilogy(range, ap_spline_on, 'ro')
-   semilogy(range, back_off_array , 'b--')
-   semilogy(range, back_on_array, 'r--')
-   hold off
-   legend('afterpulse_{off}', 'afterpulse_{on}') 
-   title([ap.date,' ', ap.SPCM])
-   ylim([1 1e8])
-   xlim([0 5000])
-   ylabel('phonton rate (counts/sec)')
-   xlabel('range (m)')
-   grid on
+%    figure(1000)
+%    semilogy(range, ap_spline_off, 'bx')
+%    hold on
+%    semilogy(range, ap_spline_on, 'ro')
+%    semilogy(range, back_off_array , 'b--')
+%    semilogy(range, back_on_array, 'r--')
+%    hold off
+%    legend('afterpulse_{off}', 'afterpulse_{on}') 
+%    title([ap.date,' ', ap.SPCM])
+%    ylim([1 1e8])
+%    xlim([0 5000])
+%    ylabel('phonton rate (counts/sec)')
+%    xlabel('range (m)')
+%    grid on
 
    figure(1001)
    semilogy(range, afterpulse_sub_off, 'bx')
@@ -78,6 +82,7 @@
    xlabel('range (m)')
    grid on
 
+   
 save(ap.filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_range');
    
 

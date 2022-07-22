@@ -61,9 +61,13 @@ bins = WV_max*4; % bin size is x 0.1 x 0.1 g/m^2
 %bin_min = 1;
 %bin_max = 400;
 
-% remove the surface station data
+% remove the surface station data 
 x_no_surface = xx(:,2:end); % Sondes (assume as truth) 
 y_no_surface = yy(:,2:end); % MPD  
+
+% remove the data below 225m (at 75 m gates, 1=0, 2=75, 3=150)  
+x_no_surface = xx(:,4:end); % Sondes (assume as truth) 
+y_no_surface = yy(:,42:end); % MPD  
 
 %calculate the RMS using the sonde data as truth
 RMSE_numerator = nansum((yy - xx).^2);
@@ -265,7 +269,7 @@ print(FigH, name, '-dpng', '-r0') % set at the screen resolution
 % print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 
 FigH = figure(20);
-set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 800 800]);
+set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1200 800]);
 name=strcat(date, 'P_error'); 
 print(FigH, name, '-dpng', '-r0') % set at the screen resolution
 

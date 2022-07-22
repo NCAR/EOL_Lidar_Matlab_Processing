@@ -270,65 +270,70 @@ end
 
 if flag.afterpulse == 1   % afterpulse correction
    
-%  read my version of the afterpulse calibration files which are now using rates     
+  if flag.ap_quick == 1  
+  %  read my version of simple afterpulse calibration files for testing      
       %node
       %prompt = "enter the afterpulse file ";
       %afterpulse_filename = input(prompt,"s");
-      afterpulse_filename = 'MPD05_afterpulse_20220720.mat'
+      afterpulse_filename = 'MPD04_afterpulse_20220722.mat'
       %afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
       load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_range');  
       ap_spline_sub_off = ap_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
       ap_spline_sub_on = ap_spline_sub_on*MCS.accum*MCS.bin_duration*1e-9;  
-
-      
-%     % read the afterpulse nc file identified in the json file 
-%     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-%      serv_path = '/home/rsfdata/Processing/'; % when running on server
-%     elseif strcmp(getenv('HOSTNAME'),'')
-%       serv_path = '../'; % running locally 
-%     else
-%      serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
-%     end
-%     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
-%    
-%     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
+  else    
+     % read the afterpulse nc file identified in the json file 
+     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+      serv_path = '/home/rsfdata/Processing/'; % when running on server
+     elseif strcmp(getenv('HOSTNAME'),'')
+       serv_path = '../'; % running locally 
+     else
+      serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
+     end
+     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
+   
+     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
 %     ncdisp(ap_filename, '/', 'min') % use this to display all variables
-%     if flag.near == 1
-%        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
-%        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');  
-%     else
-%        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
-%        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
-%     end
-%     ap_range = ncread(ap_filename, 'range');
-%     netcdf.close(ncid);   
-%     afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
-%     afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
-%     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
-%     range_act = range + range_shift; % %actual range points 
+     if flag.near == 1
+       ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
+       ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');  
+     else
+       ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
+       ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
+     end
+     ap_range = ncread(ap_filename, 'range');
+     netcdf.close(ncid);   
+     afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
+     afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
 
-%      figure(1004)
-%      semilogy(ap_range, afterpulse_off, 'bo-')
-%      hold on
-%      semilogy(ap_range, afterpulse_on, 'b+-')    
-% %     semilogy(ap_range, afterpulse_off, 'ro-')
-% %     semilogy(ap_range, afterpulse_on, 'r+-')  
-%      semilogy(range_act, ap_spline_sub_off, 'ro-')
-%      semilogy(range_act, ap_spline_sub_on, 'r+-')
-%      hold off
-%      legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
-% %    legend('high-gain_{off}', 'high-gain_{on}', 'low-gain_{off}', 'low-gain_{on}') 
+     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
+     range_act = range + range_shift; % %actual range points 
+
+     figure(1004)
+     semilogy(afterpulse_off, 'bo-')
+     hold on
+     semilogy(afterpulse_on, 'b+-')    
+% uncomment next two lines to compare to the quick technique above
+%        semilogy(ap_spline_sub_off, 'ro-')
+%        semilogy(ap_spline_sub_on, 'r+-')
+     hold off
+     legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
+%    legend('high-gain_{off}', 'high-gain_{on}', 'low-gain_{off}', 'low-gain_{on}') 
 %     ylim([1e-2 1e5])
 %     xlim([-200 4000])
-%     ylabel('counts')
-%     xlabel('range (m)')
-%     grid on
-%     grid minor 
-%    
-%    %grid to the current range and substitude nc file for mat file
-%    ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
-%    ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
+     ylabel('counts')
+     xlabel('bins')
+     grid on
+     grid minor 
    
+     % grid to the current range and substitude nc file for mat file
+ %   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
+ %   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
+     % just use the bins
+      ap_spline_sub_off = afterpulse_off';
+      ap_spline_sub_on = afterpulse_on';
+     
+  end
+  
    Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
 
@@ -340,7 +345,7 @@ if flag.afterpulse == 1   % afterpulse correction
     
     Online = Online_ap_sub;
     Offline = Offline_ap_sub;
-  end
+end
 
 
 % clear Online_Raw_Data Offline_Raw_Data data_on data_off

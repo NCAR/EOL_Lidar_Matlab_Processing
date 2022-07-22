@@ -1,9 +1,8 @@
  function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
 %  clear all; 
 %  close all
-%  start_date = '20220720';
-%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD05'; daystr=start_date; 
-%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_OFF'; node='MPD01'; daystr=start_date; 
+%  start_date = '20220722';
+%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD04'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
@@ -80,7 +79,7 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correct
 end
 
 % % process the oxygen channels
- if strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1  
+ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1)  && strcmp(correction,'AP_OFF') == 1 
    write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
    flag.near = 0; flag.afterpulse = 0; 
    gates2ave = 1; %number of gates to average
@@ -121,13 +120,36 @@ end
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
  % write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');  
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
-  flag.near = 0; flag.afterpulse = 1; 
+  flag.near = 0; flag.afterpulse = 1; flag.ap_quick = 0;
 %   if ((strcmp(node,'MPD04') == 1) && (serial_date >= 737902)) || ... 
 %      ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) % MPD04 and 03 use combined low range channels
 %      blank_range = 150; % low range 
 %   end
   MPD_Analysis_function_NetCDF_v5(data_wv_on, data_wv_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
         profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)%
+end
+
+
+% process the main O2 with afterpulse correction 
+if (strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1) && strcmp(correction,'AP_ON') == 1 
+ % write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');  
+  write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+  flag.near = 0; flag.afterpulse = 1; flag.ap_quick = 0;
+  gates2ave = 1; %number of gates to average
+  data_on = data_O2_on_comb;
+  data_off = data_O2_off_comb;
+  flag.molecular = 0;
+  [O2_online_comb, O2_offline_comb, range, RB_comb, time_comb, Surf_T, Surf_P, O2_on_wavelength, O2_off_wavelength] =  MPD_Analysis_function_O2_v1(data_O2_on_comb, data_O2_off_comb, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+         profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave, Afterpulse_File);%
+  flag.molecular = 1;
+  [O2_online_mol, O2_offline_mol, range, RB_mol,  time_mol] =  MPD_Analysis_function_O2_v1(data_O2_on_mol, data_O2_off_mol, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+         profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave, Afterpulse_File);%
+  [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
+         O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder);
+  [N_WV, N_WV_error] = MPD_WV_analysis_function_v1(data_wv_on, data_wv_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
+         profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation);
+  O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
+         time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr, write_data_folder, flag);
 end
 
 % process the near/low ch with afterpulse correction 

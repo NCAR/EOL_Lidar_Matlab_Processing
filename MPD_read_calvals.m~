@@ -29,7 +29,7 @@ elseif strcmp(node,'MPD03')==1
 elseif strcmp(node,'MPD04')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial4_calvals.json')],'SimplifyCell',1);
   if (serial_date >= 737902) % day the WFOV channel was installed
-       blank_range = 150+37.5;
+       blank_range = 150;
   end
 elseif strcmp(node,'MPD05')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial5_calvals.json')],'SimplifyCell',1);
@@ -39,20 +39,17 @@ elseif strcmp(node,'MPD05')==1
 end
 
 
-%t_date = '04-Jan-2022' % used for testing
+%t_date = '04-Dec-2021' % used for testing
 wavemeter_offset = double(0); 
 t_date = datetime(num2str(date),'InputFormat','yyMMdd')
 
 if isfield(dat, 'Afterpulse_File') == 1
     for i=1:size(dat.Afterpulse_File,2)
       if i >= 2 && strcmp(dat.Afterpulse_File(i).change_type, 'gradual') == 1
-             index_n0 = t_date - datetime(dat.Afterpulse_File(i-1).date,'InputFormat','d-MMM-yyyy H:m');
-             index_n1 = t_date - datetime(dat.Afterpulse_File(i).date,'InputFormat','d-MMM-yyyy H:m');
-             if abs(index_n0) < abs(index_n1) == 1
-                Afterpulse_File = dat.Afterpulse_File(i-1).value; 
-             else
-               Afterpulse_File = dat.Afterpulse_File(i).value;
-             end
+             index_n0 = t_date - datetime(dat.Afterpulse_File(i-1).date,'InputFormat','d-MMM-yyyy H:m')
+             index_n1 = t_date - datetime(dat.Afterpulse_File(i).date,'InputFormat','d-MMM-yyyy H:m')
+             [~,index] = sort([index_n0, index_n1])
+             Afterpulse_File = dat.Afterpulse_File(i).value;   
       elseif (t_date >= datetime(dat.Afterpulse_File(i).date,'InputFormat','d-MMM-yyyy H:m')) == 1
          Afterpulse_File = dat.Afterpulse_File(i).value;
       end
@@ -63,8 +60,8 @@ if isfield(dat, 'Afterpulse_File') == 1
 else
      Afterpulse_File = 'No Afterpulse Cal' 
 end
-Afterpulse_File
-  
+
+   
 
 for i=1:size(dat.MCS_bins,2)
 if (t_date >= datetime(dat.MCS_bins(i).date,'InputFormat','d-MMM-yyyy H:m')) == 1

@@ -11,16 +11,16 @@ tic
  days = 50; skip = 5;
  WV_max_scale = 25;
 %  
- node = 'MPD04';      %PRECIP
- date = '13 Jul 2022';   
- days = 7; skip = 1;
- WV_max_scale = 25;
+%  node = 'MPD04';      %PRECIP
+%  date = '11 Jul 2022';   
+%  days = 7; skip = 1;
+%  WV_max_scale = 25;
  
  
- node = 'MPD05';            %MPD01 vs MPD05 intercomparions 
- date = '08 Jul 2022';   
- days = 7; skip = 1;
- WV_max_scale = 12;
+%  node = 'MPD01';            %MPD01 vs MPD05 intercomparions 
+%  date = '08 Jul 2022';   
+%  days = 7; skip = 1;
+%  WV_max_scale = 12;
 
 %serv_path = '/Volumes/documents/MPD/';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';

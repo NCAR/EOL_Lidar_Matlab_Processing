@@ -1,5 +1,5 @@
 elevation= 25; %MPD04 was at 25m elevation at Hsinchu weather station
-flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
+flag.plot_overlay = 0; %plot sondes on the time vs hieght AH plot
 flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
 sonde_end_int = 15; % integration time (in min) +/- around the sound launch  
 WV_min = 0;
@@ -61,9 +61,13 @@ bins = WV_max*4; % bin size is x 0.1 x 0.1 g/m^2
 %bin_min = 1;
 %bin_max = 400;
 
-% remove the surface station data
+% remove the surface station data 
 x_no_surface = xx(:,2:end); % Sondes (assume as truth) 
 y_no_surface = yy(:,2:end); % MPD  
+
+% remove the data below 225m (at 75 m gates, 1=0, 2=75, 3=150)  
+x_no_surface = xx(:,4:end); % Sondes (assume as truth) 
+y_no_surface = yy(:,4:end); % MPD  
 
 %calculate the RMS using the sonde data as truth
 RMSE_numerator = nansum((yy - xx).^2);
