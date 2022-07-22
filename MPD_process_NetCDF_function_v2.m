@@ -28,8 +28,10 @@ ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor and O2
 ave_time.rb = 2.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
 
-if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
+elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1 
+    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
 elseif strcmp(getenv('HOSTNAME'),'')
     %serv_path = '/Volumes/documents/MPD/'; % when running on server 
     serv_path = '/Volumes/fog1/rsfdata/MPD/'; % when running on server

@@ -1,10 +1,12 @@
 addpath('./jsonlab')
-if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-   cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/'; % when running on server
-elseif strcmp(getenv('HOSTNAME'),'')
-    cal_serv_path = '../'; % running locally 
+if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
+   cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/' % when running on server
+elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1 
+   cal_serv_path = '/h/eol/spuler/' % when running on tikal server
+elseif strcmp(getenv('HOSTNAME'),'') == 1
+    cal_serv_path = '../' % running locally 
 else
-   cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
+   cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/' % 
 end
 
 %  blank_range = 525; % This was the original blank range in 2019
