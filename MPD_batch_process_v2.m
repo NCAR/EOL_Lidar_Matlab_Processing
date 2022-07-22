@@ -21,7 +21,7 @@ tStart = tic
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD01',file)
 %             MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD02',file) 
 %             MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) 
-            MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD04',file)  
+            MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD04',file)  
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)    
 %              MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD01',file) 
 %              MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD05',file) 
