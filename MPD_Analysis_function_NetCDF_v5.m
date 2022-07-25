@@ -368,7 +368,6 @@ end
 % Online = Online_sum./profiles2ave.wv;
 % Offline = Offline_sum./profiles2ave.wv; 
   
-
   background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
   background_off = mean(Offline(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background 
   %background_mean = (background_on+background_off)./2;
@@ -426,13 +425,7 @@ end
   %  pause
   end
   
-  
 
-  
-  
-  
-  
-  
   
  % clear Online Offline
 

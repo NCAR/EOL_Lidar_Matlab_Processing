@@ -11,10 +11,10 @@ tic
  days = 50; skip = 5;
  WV_max_scale = 25;
 %  
-%  node = 'MPD04';      %PRECIP
-%  date = '11 Jul 2022';   
-%  days = 7; skip = 1;
-%  WV_max_scale = 25;
+ node = 'MPD04';      %PRECIP
+ date = '11 Jul 2022';   
+ days = 7; skip = 1;
+ WV_max_scale = 25;
  
  
 %  node = 'MPD01';            %MPD01 vs MPD05 intercomparions 
@@ -285,7 +285,7 @@ if flag.replot==1
 %  h = pcolor(x,y,Z_mask);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
- axis([fix(min(duration)) ceil(max(duration)) 0 12])
+ axis([fix(min(duration)) ceil(max(duration)) 13.25 18.25])
  caxis([1e1 1e7]);
  colormap(C)
  %colormap(perula)
