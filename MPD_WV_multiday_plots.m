@@ -5,9 +5,9 @@ tic
  date = '18 Jun 2021';   % pre-PRECIP
  days = 64; skip = 4;
  
- node = 'MPD02';      %PRECIP
+ node = 'MPD03';      %PRECIP
  date = '28 May 2022';   
- days = 60; skip = 5;
+ days = 50; skip = 5;
  WV_max_scale = 25;
 %  
 %  node = 'MPD04';      %PRECIP
