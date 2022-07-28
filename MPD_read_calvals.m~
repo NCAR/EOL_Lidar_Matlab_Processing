@@ -48,7 +48,7 @@ t_date = datetime(num2str(date),'InputFormat','yyMMdd')
 if isfield(dat, 'Afterpulse_File') == 1
     for i=1:size(dat.Afterpulse_File,2)
         if size(dat.Afterpulse_File,2)== 1
-            Afterpulse_File = dat.Afterpulse_File.value;
+            Afterpulse_File = dat.Afterpulse_File(i).value;
         elseif i >= 2 && strcmp(dat.Afterpulse_File(i).change_type, 'gradual') == 1
              index_n0 = t_date - datetime(dat.Afterpulse_File(i-1).date,'InputFormat','d-MMM-yyyy H:m');
              index_n1 = t_date - datetime(dat.Afterpulse_File(i).date,'InputFormat','d-MMM-yyyy H:m');
