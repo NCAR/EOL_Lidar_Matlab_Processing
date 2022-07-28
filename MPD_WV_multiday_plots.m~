@@ -9,8 +9,6 @@ tic
  date = '28 May 2022';   
  days = 50; skip = 5;
  WV_max_scale = 25;
- flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
- 
 %  
 %  node = 'MPD04';      %PRECIP
 %  date = '21 Jul 2022';   
@@ -29,7 +27,7 @@ plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
 
 blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 flag.near = 0;  % read in the near range channel (0=off 1=on)
-
+flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
 
 font_size = 36; % use this for 2018a version
 
@@ -53,35 +51,20 @@ C = importdata('NCAR_C_Map.mat');
 dd=pwd;
 
 if strcmp(node,'MPD01')==1
-    if flag.afterpulse == 1
-      cd(strcat(serv_path,'/mpd_01_processed_data/Matlab/afterpulse'))    
-    else
-      cd(strcat(serv_path,'/mpd_01_processed_data/Matlab'))
-    end
+    cd(strcat(serv_path,'/mpd_01_processed_data/Matlab')) 
  elseif strcmp(node,'MPD02')==1
-    if flag.afterpulse == 1
-      cd(strcat(serv_path,'/mpd_02_processed_data/Matlab/afterpulse'))    
-    else
-      cd(strcat(serv_path,'/mpd_02_processed_data/Matlab'))
-    end
+    cd(strcat(serv_path,'/mpd_02_processed_data/Matlab')) 
  elseif strcmp(node,'MPD03')==1
-    if flag.afterpulse == 1
-      cd(strcat(serv_path,'/mpd_03_processed_data/Matlab/afterpulse'))    
-    else
-      cd(strcat(serv_path,'/mpd_03_processed_data/Matlab'))
-    end
+    cd(strcat(serv_path,'/mpd_03_processed_data/Matlab')) 
+    cd(strcat(serv_path,'/mpd_03_processed_data/Matlab/afterpulse')) 
  elseif strcmp(node,'MPD04')==1
     if flag.afterpulse == 1
-      cd(strcat(serv_path,'/mpd_04_processed_data/Matlab/afterpulse'))    
+      cd(strcat(serv_path,'/mpd_03_processed_data/Matlab/afterpulse'))    
     else
       cd(strcat(serv_path,'/mpd_04_processed_data/Matlab'))
     end
  elseif strcmp(node,'MPD05')==1
-    if flag.afterpulse == 1
-      cd(strcat(serv_path,'/mpd_05_processed_data/Matlab/afterpulse'))    
-    else
-      cd(strcat(serv_path,'/mpd_05_processed_data/Matlab'))
-    end
+    cd(strcat(serv_path,'/mpd_05_processed_data/Matlab'))
 end
 
 %gate = round((bin_duration*1e-9*3e8/2)*10)/10

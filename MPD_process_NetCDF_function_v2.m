@@ -120,8 +120,7 @@ end
 
 % process the main ch with afterpulse correction 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
- % write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');  
-  write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+  write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');  
   flag.near = 0; flag.afterpulse = 1; flag.ap_quick = 0;
 %   if ((strcmp(node,'MPD04') == 1) && (serial_date >= 737902)) || ... 
 %      ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) % MPD04 and 03 use combined low range channels
@@ -134,8 +133,7 @@ end
 
 % process the main O2 with afterpulse correction 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1) && strcmp(correction,'AP_ON') == 1 
- % write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');  
-  write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+  write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');  
   flag.near = 0; flag.afterpulse = 1; flag.ap_quick = 0;
   gates2ave = 1; %number of gates to average
   data_on = data_O2_on_comb;
