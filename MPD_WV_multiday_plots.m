@@ -4,18 +4,16 @@ tic
  node = 'MPD05';
  date = '18 Jun 2021';   % pre-PRECIP
  days = 64; skip = 4;
-
  
- node = 'MPD04';      %PRECIP
+ node = 'MPD02';      %PRECIP
  date = '28 May 2022';   
- days = 50; skip = 5;
+ days = 60; skip = 5;
  WV_max_scale = 25;
 %  
- node = 'MPD04';      %PRECIP
- date = '11 Jul 2022';   
- days = 7; skip = 1;
- WV_max_scale = 25;
- 
+%  node = 'MPD04';      %PRECIP
+%  date = '21 Jul 2022';   
+%  days = 7; skip = 1;
+%  WV_max_scale = 25;
  
 %  node = 'MPD01';            %MPD01 vs MPD05 intercomparions 
 %  date = '08 Jul 2022';   
@@ -285,7 +283,7 @@ if flag.replot==1
 %  h = pcolor(x,y,Z_mask);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
- axis([fix(min(duration)) ceil(max(duration)) 13.25 18.25])
+ axis([fix(min(duration)) ceil(max(duration)) 0 18.25])
  caxis([1e1 1e7]);
  colormap(C)
  %colormap(perula)

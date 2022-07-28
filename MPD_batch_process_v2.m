@@ -1,7 +1,7 @@
 % example batch process
 
-start_date = '20220719';   %PRECIP
-stop_date =  '20220725'; 
+start_date = '20220528';   %PRECIP
+stop_date =  '20220727'; 
 
 %   start_date = '20220712';  %MPD1 vs MPD05 test
 %   stop_date =  '20220712'; 
@@ -19,9 +19,9 @@ tStart = tic
         file = datestr(k, 'yyyymmdd');  
         % save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr 
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD01',file)
-             MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD02',file) 
-             MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD03',file) 
-            MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD04',file)  
+%           MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD02',file) 
+           MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD03',file) 
+%             MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD04',file)  
         % MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)    
 %              MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD01',file) 
 %              MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD05',file) 

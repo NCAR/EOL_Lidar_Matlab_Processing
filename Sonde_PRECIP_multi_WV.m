@@ -1,6 +1,6 @@
 elevation= 25; %MPD04 was at 25m elevation at Hsinchu weather station
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.data_type = 1;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
+flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
 sonde_end_int = 15; % integration time (in min) +/- around the sound launch  
 WV_min = 0;
 WV_max = 30;
