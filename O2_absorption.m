@@ -106,14 +106,14 @@ gate_int = range(2)*gates2use;
 
    
    
-   serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  
-   cd(strcat(serv_path1,'/Plots'))
-   
-   FigH = figure(10);
-   set(gca,'Fontsize',16,'Fontweight','b'); 
-   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
-   name=strcat(node, "_", daystr, "_O2_absorption");
-   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+%    serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  
+%    cd(strcat(serv_path1,'/Plots'))
+%    
+%    FigH = figure(10);
+%    set(gca,'Fontsize',16,'Fontweight','b'); 
+%    set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
+%    name=strcat(node, "_", daystr, "_O2_absorption");
+%    print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
    
    
    
