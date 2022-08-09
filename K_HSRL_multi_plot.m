@@ -4,9 +4,9 @@ tic
  node = 'MPD01';
 % date = '18 Jun 2021';   
 % days = 21; skip = 3;
- date = '08 Jul 2022';   
+ date = '22 Jul 2022';   
  days = 7; skip = 1;
-
+ flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
  
 serv_path = '/Volumes/fog1/rsfdata/MPD/';
@@ -15,7 +15,11 @@ C = importdata('NCAR_C_Map.mat');
 dd=pwd;
 
 if strcmp(node,'MPD01')==1
-    cd(strcat(serv_path,'/mpd_01_processed_data//Matlab')) 
+    if flag.afterpulse == 1
+      cd(strcat(serv_path,'/mpd_01_processed_data/Matlab/afterpulse'))    
+    else
+      cd(strcat(serv_path,'/mpd_01_processed_data/Matlab'))
+    end
  elseif strcmp(node,'MPD02')==1
     cd(strcat(serv_path,'/mpd_02_processed_data//Matlab')) 
  elseif strcmp(node,'MPD03')==1
@@ -23,7 +27,11 @@ if strcmp(node,'MPD01')==1
  elseif strcmp(node,'MPD04')==1
     cd(strcat(serv_path,'/mpd_04_processed_data//Matlab'))
  elseif strcmp(node,'MPD05')==1
-    cd(strcat(serv_path,'/mpd_05_processed_data//Matlab'))
+    if flag.afterpulse == 1
+      cd(strcat(serv_path,'/mpd_05_processed_data/Matlab/afterpulse'))    
+    else
+      cd(strcat(serv_path,'/mpd_05_processed_data/Matlab'))
+    end
 end
 
 %% read and combine the data into a single file
