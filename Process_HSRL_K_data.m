@@ -228,20 +228,20 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
     
 %% save the plots 
   
-   serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  
-   cd(strcat(serv_path1,'/Plots'))
-   
-   FigH = figure(110);
-   set(gca,'Fontsize',16,'Fontweight','b'); 
-   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
-   name=strcat(node, "_", daystr, "_Backscatter Ratio");
-   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-   
-   FigH = figure(111);
-   set(gca,'Fontsize',16,'Fontweight','b'); 
-   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
-   name=strcat(node, "_", daystr, "_Backscatter Coefficient");
-   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+%    serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  
+%    cd(strcat(serv_path1,'/Plots'))
+%    
+%    FigH = figure(110);
+%    set(gca,'Fontsize',16,'Fontweight','b'); 
+%    set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
+%    name=strcat(node, "_", daystr, "_Backscatter Ratio");
+%    print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+%    
+%    FigH = figure(111);
+%    set(gca,'Fontsize',16,'Fontweight','b'); 
+%    set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920/2 250]);
+%    name=strcat(node, "_", daystr, "_Backscatter Coefficient");
+%    print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
    
  
    
