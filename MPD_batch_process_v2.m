@@ -3,8 +3,8 @@
 start_date = '20220708';   %PRECIP
 stop_date =  '20220708'; 
 
-start_date = '20220721';  %MPD1 vs MPD05 test
-stop_date =  '20220731'; 
+start_date = '20220701';  %MPD1 vs MPD05 test
+stop_date =  '20220707'; 
 
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');

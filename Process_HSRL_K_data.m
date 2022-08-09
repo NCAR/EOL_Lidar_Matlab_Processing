@@ -103,7 +103,13 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
 
  % below is a more complete way to check this efficiency 
  % open the receiver scan data and read in receiver scans
- cd /Users/spuler/Documents/GitHub/eol-lidar-calvals/calfiles
+ if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
+   cal_path = '/home/rsfdata/Processing'; % when running on server
+ else
+   cal_path = '/Users/spuler/Documents/GitHub'; % when running on server s
+ end
+ cd ([cal_path '/eol-lidar-calvals/calfiles'])
+ 
  cal_file = Receiver_Scan_File;
  ncid = netcdf.open(cal_file, 'NC_NOWRITE');
     % ncdisp(cal_file) % use this to display all variables

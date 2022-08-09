@@ -247,7 +247,7 @@ if flag.afterpulse == 1   % afterpulse correction
      ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
    
      ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
-     ncdisp(ap_filename, '/', 'min') % use this to display all variables
+ %    ncdisp(ap_filename, '/', 'min') % use this to display all variables
      if flag.molecular == 1
        ap_off_rate = ncread(ap_filename, 'O2OfflineMol_afterpulse');
        ap_on_rate = ncread(ap_filename, 'O2OnlineMol_afterpulse');  
