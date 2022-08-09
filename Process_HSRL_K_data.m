@@ -245,12 +245,12 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
    
  
    
- %% save data
-  
-  if flag.save_data == 1
-    cd(write_data_folder)
-    save(name, 'x', 'y', 'beta_bs', 'BSR')
-  end
+%  %% save data
+%   
+%   if flag.save_data == 1
+%     cd(write_data_folder)
+%     save(name, 'x', 'y', 'beta_bs', 'BSR')
+%   end
    
  
 cd(dd)
