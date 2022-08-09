@@ -115,13 +115,16 @@ gate_int = range(2)*gates2use;
 %    name=strcat(node, "_", daystr, "_O2_absorption");
 %    print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
    
-   
-   
+  
   if flag.save_data == 1
     cd(write_data_folder)
     alpha_O2 = Z';
     name=strcat(node, "_", daystr, "_Backscatter Coefficient");
-    save(name, 'alpha_O2', '-append')  
+    try
+      save(name, 'alpha_O2', '-append')  
+    catch
+      save(name, 'alpha_O2')  
+    end
   end
    
    
