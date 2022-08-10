@@ -120,11 +120,11 @@ gate_int = range(2)*gates2use;
     cd(write_data_folder)
     alpha_O2 = Z';
     name=strcat(node, "_", daystr, "_Backscatter Coefficient");
-    try
+%    try
       save(name, 'alpha_O2', '-append')  
-    catch
-      save(name, 'alpha_O2')  
-    end
+%    catch
+%      save(name, 'alpha_O2')  
+%    end
   end
    
    
