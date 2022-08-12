@@ -238,9 +238,7 @@ if flag.afterpulse == 1   % afterpulse correction
         ap_spline_sub_off = ap_O2_mol_off*MCS.accum*MCS.bin_duration*1e-9;
         ap_spline_sub_on = ap_O2_mol_on*MCS.accum*MCS.bin_duration*1e-9;
       else
-        ap_spline_sub_off = ap_O2_comb_off*MCS.accum*MCS.bin_duration*1e-9;
-        ap_spline_sub_on = ap_O2_comb_on*MCS.accum*MCS.bin_duration*1e-9;
-      end
+
   else    
      % read the afterpulse nc file identified in the json file 
      if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')

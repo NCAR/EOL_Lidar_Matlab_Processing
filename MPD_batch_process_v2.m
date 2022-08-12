@@ -3,8 +3,8 @@
 start_date = '20220708';   %PRECIP
 stop_date =  '20220708'; 
 
-start_date = '20220704';  %MPD1 vs MPD05 test
-stop_date =  '20220707'; 
+start_date = '20220708';  %MPD1 vs MPD05 test
+stop_date =  '20220714'; 
 
 start_day = datenum(start_date,'yyyymmdd');
 stop_day = datenum(stop_date,'yyyymmdd');
@@ -28,7 +28,7 @@ tStart = tic
 %              MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD01',file) 
 %              MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD05',file) 
               MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD01',file) 
-              MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD05',file) 
+%              MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD05',file) 
       end
     end
 

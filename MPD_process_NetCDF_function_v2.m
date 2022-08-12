@@ -1,14 +1,15 @@
  function[] = MPD_process_NetCDF_function_v2(save_quicklook, save_data, save_netCDF, save_catalog, channels, correction, node, daystr)
 %  clear all; 
 %  close all
-%  start_date = '20220722';
-%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'WV'; correction = 'AP_ON'; node='MPD04'; daystr=start_date; 
+%  start_date = '20220812';
+%  save_quicklook=0; save_data=1; save_netCDF=0; save_catalog=0; channels = 'O2'; correction = 'AP_ON'; node='MPD01'; daystr=start_date; 
 
 flag.save_quicklook = save_quicklook;  % save quicklook to local directory
 flag.save_data = save_data;  % save files in matlab format
 flag.save_netCDF = save_netCDF; % save files netCDF format
 flag.save_catalog = save_catalog; % upload quicklook (and data) to field catalog
 
+flag.ap_quick = 0; 
 flag.mask_data = 1;  % mask applied to data based on error analysis threshold
 flag.gradient_filter = 1;  % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
 flag.pileup = 1; % use pileup correction for detectors
@@ -121,7 +122,7 @@ end
 % process the main ch with afterpulse correction 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_ON') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');  
-  flag.near = 0; flag.afterpulse = 1; flag.ap_quick = 0;
+  flag.near = 0; flag.afterpulse = 1; 
 %   if ((strcmp(node,'MPD04') == 1) && (serial_date >= 737902)) || ... 
 %      ((strcmp(node,'MPD03') == 1) && (serial_date >= 737916)) % MPD04 and 03 use combined low range channels
 %      blank_range = 150; % low range 
@@ -134,7 +135,7 @@ end
 % process the main O2 with afterpulse correction 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1) && strcmp(correction,'AP_ON') == 1 
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab/afterpulse');  
-  flag.near = 0; flag.afterpulse = 1; flag.ap_quick = 0;
+  flag.near = 0; flag.afterpulse = 1; 
   gates2ave = 1; %number of gates to average
   data_on = data_O2_on_comb;
   data_off = data_O2_off_comb;

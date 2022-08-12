@@ -15,6 +15,12 @@
    ap.SPCM = 'MPD04 SPCM s/n xxxxx (0.x%AP) gate on';  
    afterpulse_start = 1101; afterpulse_stop = 2905; 
    
+   ap.date = '12-Aug-2022'; 
+   ap.filename = 'MPD01_afterpulse_20220812';  
+   ap.SPCM = 'MPD01 SPCM s/n xxxxx (0.x%AP) gate on';  
+   afterpulse_start = 25835; afterpulse_stop = 27001; 
+      afterpulse_start = 25835; afterpulse_stop = 26743; 
+   
    %Spatial averaging (range average) in bins.  
    gate = round((MCS.bin_duration*1e-9*3e8/2)*100)/100;
       
@@ -22,7 +28,12 @@
 
    ap_accum_counts_off = sum(data_wv_off(afterpulse_start:afterpulse_stop,10:end))./afterpulse_num;  %accum counts per bin
    ap_accum_counts_on = sum(data_wv_on(afterpulse_start:afterpulse_stop,10:end))./afterpulse_num; %accum counts per bin
+   ap_accum_counts_off = sum(data_O2_off_comb(afterpulse_start:afterpulse_stop,10:end))./afterpulse_num;  %accum counts per bin
+   ap_accum_counts_on = sum(data_O2_on_comb(afterpulse_start:afterpulse_stop,10:end))./afterpulse_num; %accum counts per bin
+   ap_accum_counts_off = sum(data_O2_off_mol(afterpulse_start:afterpulse_stop,10:end))./afterpulse_num;  %accum counts per bin
+   ap_accum_counts_on = sum(data_O2_on_mol(afterpulse_start:afterpulse_stop,10:end))./afterpulse_num; %accum counts per bin
 
+   
    % apply linear correction factor to raw counts 
     t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
     % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
@@ -82,8 +93,19 @@
    xlabel('range (m)')
    grid on
 
-   
-save(ap.filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_range');
+% ap_wv_off = ap_spline_sub_off;
+% ap_wv_on = ap_spline_sub_on;
+% save(ap.filename, 'ap_wv_off', 'ap_wv_on', 'ap_range');
+
+% ap_O2_comb_off = ap_spline_sub_off;
+% ap_O2_comb_on = ap_spline_sub_on;
+% save(ap.filename, 'ap_O2_comb_off', 'ap_O2_comb_on', '-append');
+
+ap_O2_mol_off = ap_spline_sub_off;
+ap_O2_mol_on = ap_spline_sub_on;
+save(ap.filename, 'ap_O2_mol_off', 'ap_O2_mol_on', '-append');
+
+
    
 
    

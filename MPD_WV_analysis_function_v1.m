@@ -259,11 +259,11 @@ if flag.afterpulse == 1   % afterpulse correction
       %node
       %prompt = "enter the afterpulse file ";
       %afterpulse_filename = input(prompt,"s");
-      afterpulse_filename = 'MPD04_afterpulse_20220722.mat'
+      afterpulse_filename = 'MPD01_afterpulse_20220812.mat'
       %afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
-      load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_range');  
-      ap_spline_sub_off = ap_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
-      ap_spline_sub_on = ap_spline_sub_on*MCS.accum*MCS.bin_duration*1e-9;  
+      load (afterpulse_filename, 'ap_wv_off', 'ap_wv_on', 'ap_range');  
+      ap_spline_sub_off = ap_wv_off*MCS.accum*MCS.bin_duration*1e-9;
+      ap_spline_sub_on = ap_wv_on*MCS.accum*MCS.bin_duration*1e-9;    
   else    
      % read the afterpulse nc file identified in the json file 
      if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')

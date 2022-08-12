@@ -6,14 +6,19 @@ dd=pwd;
  date = '20210618';   
  days = 36; skip = 4;
  date = '20210620';  
- days = 60; skip = 5;
+ days = 65; skip = 5;
  %date = '20210620';  
  %days = 4; skip = 1;
 
   node = 'MPD01';
-  date = '20220722';  
-  days = 7; skip = 1;
+  date = '20220601';  
+  days = 70; skip = 5;
  
+  node = 'MPD01';
+  date = '20220204';  
+  days = 7; skip = 1;
+  
+  
 lapse_rate = 0.0065; %standard atmosphere lapse rate
      
 %serv_path = '/Volumes/documents/MPD';
@@ -71,6 +76,7 @@ for i=1:days
 %    Alpha0_comb = Retrievals.PerturbOrders.Order0.Alpha.O2Online';
 %    Alpha1_comb = Retrievals.PerturbOrders.Order1.Alpha.O2Online';
 %    Alpha2_comb = Retrievals.PerturbOrders.Order2.Alpha.O2Online';
+    WV_mask_comb = Retrievals.WaterVapor.Mask';
     Alpha_comb = Retrievals.Alpha';
  %   O2_online_comb = Data.Lidar.Interp.O2OnlineComb.Data';
     BSR_comb = Retrievals.Python.BackRatio.Value';
@@ -85,7 +91,8 @@ for i=1:days
   else   
     date = datestr(addtodate(datenum(date, 'yyyymmdd'), 1, 'day'), 'yyyymmdd');
     if exist(strcat(path_node, date, '.Matlab.mat'))==2
-      load(strcat(path_node, date, '.Matlab.mat'),'Retrievals', 'Data')
+     % load(strcat(path_node, date, '.Matlab.mat'),'Retrievals', 'Data')
+      load(strcat(path_node, date, '.Matlab.mat'),'Retrievals')
     end
     % following four lines are to build a lapse rate temp field based on surface station data
 %      T_surf = Data.Temperature;
@@ -99,6 +106,7 @@ for i=1:days
  %   Alpha0_comb = vertcat(Alpha0_comb, Retrievals.PerturbOrders.Order0.Alpha.O2Online');
  %   Alpha1_comb = vertcat(Alpha1_comb, Retrievals.PerturbOrders.Order1.Alpha.O2Online');
  %   Alpha2_comb = vertcat(Alpha2_comb, Retrievals.PerturbOrders.Order2.Alpha.O2Online');
+    WV_mask_comb =  vertcat(WV_mask_comb, Retrievals.WaterVapor.Mask'); 
     Alpha_comb = vertcat(Alpha_comb, Retrievals.Alpha');
     BSR_comb = vertcat(BSR_comb, Retrievals.Python.BackRatio.Value');
     BSR_duration = vertcat(BSR_duration, (datenum(date, 'yyyymmdd') + Retrievals.Python.BackRatio.TimeStamp/3600/24));
@@ -140,13 +148,15 @@ y = range./1000;
  
  %Z = Temp_comb_avg'-273.15; 
  Z = Temp_comb_avg'; 
+ %Z(isnan(Alpha_comb)) = nan;
+ %Z = Alpha_comb'; 
  figure('Position',Scrnsize)
  set(gcf,'renderer','zbuffer');
  h = pcolor(x,y,Z);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- %caxis([-5 35]);
+ %caxis([1e-4 5e-4]);
  caxis([240 320]);
  colormap(jet)
  %colormap(parula)
