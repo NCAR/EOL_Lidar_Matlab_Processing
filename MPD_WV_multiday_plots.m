@@ -1,27 +1,26 @@
 clear all; close all;
 tic
 
- node = 'MPD05';
- date = '18 Jun 2021';   % pre-PRECIP
- days = 64; skip = 4;
+%  node = 'MPD05';
+%  date = '18 Jun 2021';   % pre-PRECIP
+%  days = 64; skip = 4;
  
- node = 'MPD02';      %PRECIP
+ node = 'MPD04';      %PRECIP
  date = '28 May 2022';   
- days = 60; skip = 5;
+ days = 75; skip = 5;
  WV_max_scale = 25;
- flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
+ flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
-%  
 %  node = 'MPD04';      %PRECIP
 %  date = '21 Jul 2022';   
 %  days = 7; skip = 1;
 %  WV_max_scale = 25;
  
- node = 'MPD01';            %MPD01 vs MPD05 intercomparions 
- date = '22 Jul 2022';   
- days = 7; skip = 1;
- WV_max_scale = 12;
- flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
+%  node = 'MPD01';            %MPD01 vs MPD05 intercomparions 
+%  date = '22 Jul 2022';   
+%  days = 7; skip = 1;
+%  WV_max_scale = 12;
+%  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
 
 %serv_path = '/Volumes/documents/MPD/';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
@@ -30,7 +29,6 @@ plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
 
 blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 flag.near = 0;  % read in the near range channel (0=off 1=on)
-
 
 font_size = 36; % use this for 2018a version
 
