@@ -70,8 +70,8 @@ end
   %time2 = time2-0.25; % this was a fix for computer switch 20-Oct to 26-Oct 2017
   %time2(time2>292.5)= time2(time2>292.5)-0.25; % 19-Oct-2017 fix
   time = time2;
-  time = time(~(time2<(nanmedian(time2)-1.5)));
-  time= time(~(time>(nanmedian(time)+1.5)));
+  time = time(~(time2<(median(time2,'omitnan')-1.5)));
+  time= time(~(time>(median(time,'omitnan')+1.5)));
   Online_Raw_Data = Online_Raw_Data(~isnan(time),:);
   Offline_Raw_Data = Offline_Raw_Data(~isnan(time),:);
 

@@ -10,14 +10,16 @@ tic
  days = 75; skip = 5;
  WV_max_scale = 25;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
+
+ node = 'MPD04';      %PRECIP post project
+ date = '16 Aug 2022';   
+ days = 7; skip = 1;
+ WV_max_scale = 25;
+ flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
-%  node = 'MPD04';      %PRECIP
-%  date = '21 Jul 2022';   
-%  days = 7; skip = 1;
-%  WV_max_scale = 25;
- 
-%  node = 'MPD01';            %MPD01 vs MPD05 intercomparions 
-%  date = '22 Jul 2022';   
+
+%  node = 'MPD05';            %MPD01 vs MPD05 intercomparions 
+%  date = '12 Aug 2022';   
 %  days = 7; skip = 1;
 %  WV_max_scale = 12;
 %  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
@@ -503,7 +505,7 @@ if flag.replot==1
 %%
 if flag.plot_sonde_data==1
   % the elevation needs to be read from the json file
-    elevation= 310.0; %MPD05 was at 310m elevation at SGP
+  %  elevation= 310.0; %MPD05 was at 310m elevation at SGP
   %d=pwd;
   %cd('/Volumes/documents/WV_DIAL_data/SGP_sondes/') % point to the directory where data is stored
    cd('/scr/sci/tammy/mpd/sgp/soundings/')
@@ -523,7 +525,7 @@ if flag.save_figs==1
   %cd('/Users/spuler/Desktop/mpd_05_processed_data/Plots/') % point to the directory where data is stored   
   %cd('/Users/lroot/Desktop/mpd/Plots/') % point to the directory where data is stored 
   cd(plot_path)
-  date=datestr(nanmean(time_new), 'yyyymmdd');
+  date=datestr(mean(time_new,'omitnan'), 'yyyymmdd');
   
 
   FigH = figure(1);

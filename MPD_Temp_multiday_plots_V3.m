@@ -15,7 +15,7 @@ dd=pwd;
   days = 70; skip = 5;
  
   node = 'MPD01';
-  date = '20220204';  
+  date = '20220729';  
   days = 7; skip = 1;
   
   

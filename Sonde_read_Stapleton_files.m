@@ -44,7 +44,8 @@ ncid = netcdf.open(folder, 'NC_NOWRITE');
  P_Man(P_Man == 99999) = nan;
 
 % Offset (m) for testing
-Offset = 750;
+Offset = 0;
+%Offset = 750;
 
  
  
@@ -72,7 +73,7 @@ for i=1:size(t,1)
    hold on
    %scatter(sonde_duration_Man, sonde_AGL_Man/1000, 100, sonde_T_Man, 's', 'filled');
    %scatter(sonde_duration_sigT, sonde_AGL_sigT/1000, 100, sonde_T_sigT, 's', 'filled');
-   scatter(sonde_duration, range_grid, 15, sonde_T_grid, 'o', 'filled');
+   scatter(sonde_duration, range_grid, 30, sonde_T_grid, 'o', 'filled');
    colormap(jet)
    ylim([0 6])
    %xlim([datenum(t(1)) datenum(t(end))])

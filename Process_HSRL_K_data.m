@@ -8,14 +8,14 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
 
  % Receiver beam splitter sends more signal to the molecular detector vs combined. 
  % Determine split level using the measured O2 online counts in both channels 
- O2_geometric_correction = nanmean(O2_online_comb(1:end-15,:)./O2_online_mol(1:end-15,:),1);
+ O2_geometric_correction = mean(O2_online_comb(1:end-15,:)./O2_online_mol(1:end-15,:),1,'omitnan');
   
  % trying to make this an automatic calculated value, but it blows up in clouds 
  O2_geometric_correction(O2_geometric_correction==0)=nan;
  O2_geometric_correction(O2_geometric_correction==Inf | O2_geometric_correction==-Inf)=nan;
  try
    % the geometric correction is ignored for now  
-   eta_comb = nanmedian(O2_geometric_correction)  
+   eta_comb = median(O2_geometric_correction, 'omitnan')  
  catch
    warning('Problem with the geometric correction, assigning a fixed value.');
    eta_comb = 0.5988  % override, and use this value for now 
@@ -83,8 +83,8 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  % assuming a standard lapse rate (-6.5 deg/km) for the entire troposphere
  lapse = 0.0065; % (K/m) standard atmosphere lapse rate, dry adiabatic is 9.8 K/km
  if flag.WS == 1  % use surface values if they exist
-   T0 = nanmedian(Surf_T)+273.15
-   P0 = nanmedian(Surf_P)
+   T0 = median(Surf_T,'omitnan')+273.15
+   P0 = median(Surf_P,'omitnan')
    T = (Surf_T+273.15)-lapse.*range;
    P = Surf_P.*((Surf_T+273.15)./T).^-((const.M*const.g)/(const.R*lapse));   % barometric formula
  else
