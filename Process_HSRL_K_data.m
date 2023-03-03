@@ -9,7 +9,9 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  % Receiver beam splitter sends more signal to the molecular detector vs combined. 
  % Determine split level using the measured O2 online counts in both channels 
  O2_geometric_correction = mean(O2_online_comb(1:end-15,:)./O2_online_mol(1:end-15,:),1,'omitnan');
-  
+ O2_geometric_correction = mean(O2_online_comb(1:end-15,:)./(O2_online_mol(1:end-15,:)+O2_online_comb(1:end-15,:)),1,'omitnan');
+ O2_geometric_correction = median(O2_online_comb./(O2_online_mol+O2_online_comb),1,'omitnan');
+   
  % trying to make this an automatic calculated value, but it blows up in clouds 
  O2_geometric_correction(O2_geometric_correction==0)=nan;
  O2_geometric_correction(O2_geometric_correction==Inf | O2_geometric_correction==-Inf)=nan;
@@ -18,29 +20,30 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
    eta_comb = median(O2_geometric_correction, 'omitnan')  
  catch
    warning('Problem with the geometric correction, assigning a fixed value.');
-   eta_comb = 0.5988  % override, and use this value for now 
+   eta_comb = 0.6  % override, and use this value for now 
  end
   
       if flag.troubleshoot == 1
           figure(102)
-          semilogx(O2_online_comb(100,:), range/1000, 'k')
+          sample_profile = 100;
+          semilogx(O2_online_comb(sample_profile,:), range/1000, 'k')
           hold on
-          semilogx(O2_offline_comb(100,:), range/1000, 'm')
-          semilogx(O2_online_mol(100,:), range/1000, 'g')
-          semilogx(O2_offline_mol(100,:), range/1000, 'b')
+          semilogx(O2_offline_comb(sample_profile,:), range/1000, 'm')
+          semilogx(O2_online_mol(sample_profile,:), range/1000, 'g')
+          semilogx(O2_offline_mol(sample_profile,:), range/1000, 'b')
           ylim([0 6])
           legend('online comb', 'offline comb', 'online mol', 'offline mol')
-          %semilogx(O2_online_comb(100,:).*O2_geometeric_correction, range/1000, 'k-');
+          %semilogx(O2_online_comb(sample_profile,:).*O2_geometeric_correction, range/1000, 'k-');
           hold off
 
           %Combined efficiency, rel to molecular 
           figure(103)
-          plot(O2_online_comb(100,:)./O2_online_mol(100,:), range/1000)
-          hold on
+          %plot(O2_online_comb(100,:)./O2_online_mol(100,:), range/1000)
+          %hold on
           plot(O2_geometric_correction, range/1000)
           xlim([0 2])
           ylim([0 8])
-          hold off
+          %hold off
 
         % plot relative backscatter
           figure(104)
@@ -85,6 +88,18 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  if flag.WS == 1  % use surface values if they exist
    T0 = median(Surf_T,'omitnan')+273.15
    P0 = median(Surf_P,'omitnan')
+   Surf_T(isnan(Surf_T))= T0; % fills in missing values with median
+   Surf_P(isnan(Surf_P))= P0; % fills in missing values with median
+   if isnan(T0)==1
+       T0=25+273.15;
+       Surf_T= ones(size(Surf_T)).*T0;
+       warning('No Temperature Weather Station Data');
+  end
+  if isnan(P0)==1
+       P0=1;
+       Surf_P= ones(size(Surf_P)).*P0;
+       warning('No Pressure Weather Station Data');
+  end 
    T = (Surf_T+273.15)-lapse.*range;
    P = Surf_P.*((Surf_T+273.15)./T).^-((const.M*const.g)/(const.R*lapse));   % barometric formula
  else
@@ -119,21 +134,28 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
     HSRLMolecular_scan_wavelength = ncread(cal_file, 'HSRLMolecular_scan_wavelength').*1e-9; 
  netcdf.close(ncid); 
  cd(dd)
-   
+  
+ % sometimes the transmissions are shifted several bins?  Just a check on correcting  
+ %HSRLMolecular_Transmission = circshift(HSRLMolecular_Transmission,-5);
+ %HSRLCombined_Transmission = circshift(HSRLCombined_Transmission,5);
+
  % this should be the same eta_comb ratio as measured above but not
  % necessarily if the receiver has been adjusted since the calibration
- eta_comb_cal = 1./(mean(HSRLMolecular_Transmission./(HSRLCombined_Transmission),1,'omitnan'));
- eta_mol = HSRLMolecular_Transmission./(HSRLCombined_Transmission./eta_comb_cal);
+ eta_comb_cal = median(HSRLCombined_Transmission./(HSRLCombined_Transmission+HSRLMolecular_Transmission),1,'omitnan');
+ eta_mol = (HSRLMolecular_Transmission./(1-eta_comb_cal))./(HSRLCombined_Transmission./eta_comb_cal);
   
-     if flag.troubleshoot == 1
+%     if flag.troubleshoot == 1
        figure(252)
-       plot(HSRLMolecular_scan_wavelength, HSRLMolecular_Transmission)
+      % plot(HSRLMolecular_scan_wavelength, HSRLMolecular_Transmission)
+      % hold on
+      % plot(HSRLCombined_scan_wavelength, HSRLCombined_Transmission)
+       plot(HSRLCombined_scan_wavelength, HSRLCombined_Transmission/eta_comb_cal)
        hold on
-       plot(HSRLMolecular_scan_wavelength, HSRLCombined_Transmission/eta_comb_cal)
+       plot(HSRLMolecular_scan_wavelength, HSRLMolecular_Transmission./(1-eta_comb_cal))
        hold off
        figure(253)
        plot(HSRLMolecular_scan_wavelength, eta_mol)
-     end
+%     end
       
  % Calculate the Rayleigh-Doppler broadening for each height 
  % from Fiocco and DeWolf 1968
@@ -141,13 +163,14 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
   K = K0 + K0; % in backscatter 
   lam =  HSRLMolecular_scan_wavelength; 
   lam = reshape(lam,1,1,length(lam));  % dimension of time, range, spectral wavelength
+
   RD  = sqrt(const.m./(2*pi*K^2*const.k_B.*T))...
         .*exp((-1*const.m./(2*K^2*const.k_B.*T)).*(2*pi*((1./lam)-(1./lambda))).^2); 
  % Bosenberg 1998 suggests a simple Brillouin broadening correction: RD width x 1.2 ~ RDB width  
  % (valid in the lower 10km of a standard atmosphere)
   RD = RD.*1.2;  
   
-     if flag.troubleshoot == 1  
+  %   if flag.troubleshoot == 1  
          % Plot RD spectrum and receiver transmission
          figure(254)
          plot(HSRLMolecular_scan_wavelength, squeeze(RD(10,1,:)))
@@ -155,15 +178,17 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
          plot(HSRLMolecular_scan_wavelength, squeeze(RD(10,1,:)).*eta_mol)
          legend('RD', 'RD*receiver_eff') 
          hold off
-     end
+  %   end
      
  % calculate the overall efficiency of the molecular channel
  eta_mol = reshape(eta_mol,1,1,length(eta_mol));  % dimension of time, range, spectral wavelength
  eta_mol_all = trapz(RD*1.2.*eta_mol,3)./trapz(RD*1.2,3);
  
- % backscatter ratio
- BSR = (O2_offline_comb./eta_comb)./(O2_offline_mol./(eta_mol_all));
- 
+ % backscatter ratio (total backscatter/molecular backscatter)
+ BSR = ( (O2_offline_comb./eta_comb) + (O2_offline_mol./(1-eta_comb)./eta_mol_all) ) ./(O2_offline_mol./(1-eta_comb)./eta_mol_all);
+ BSR = (O2_offline_comb./eta_comb)./((O2_offline_mol./(1-eta_comb))./(eta_mol_all));
+
+
  % backscatter coefficient in m^-1 sr^-1
  beta_m_profile = 5.45.*10^(-32).*(550/(lambda/1e-9))^4.*P./(T.*const.K_B); 
  beta_bs = ((BSR)-1).*beta_m_profile;
@@ -202,6 +227,7 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
   set(gca,'Colorscale', 'log')
   set(gca,'Zscale', 'linear')
   colormap(jet)
+  
   
   figure(111)
   Z = real(double((beta_bs')));

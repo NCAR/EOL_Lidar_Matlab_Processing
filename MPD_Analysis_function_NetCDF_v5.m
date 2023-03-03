@@ -399,7 +399,7 @@ end
   end
 % used combined geometric overlap correction from Zemax model starting in March 2020
   if ((serial_date >= 737902))
-    O_y = 0.01*O_y_near + 0.99.*O_y_primary;
+    O_y = 0.001*O_y_near + 0.999.*O_y_primary;
   end
   
   range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 

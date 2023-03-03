@@ -1,4 +1,4 @@
-function[sonde_T_grid, MPD_T_grid, range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename, Temp_comb, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag) 
+function[sonde_T_grid, MPD_T_grid, range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename, Temp_comb, Temp_comb_var, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag) 
 
 %sondedir
 
@@ -149,13 +149,14 @@ sonde_T_grid =interp1(sonde_AGL_km, sonde_T(index)+273.15, range_grid, 'linear')
 [minValue, closestIndex_end] = min(abs(min(duration_sonde+sonde_end_int/24/60)-duration))
 %MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
 %MPD_AH_var =  comb_AH_var(closestIndex,:);
-MPD_T_lapse = nanmedian(T_lapse(closestIndex:closestIndex_end,:),1)+273.15;
+%MPD_T_lapse = nanmedian(T_lapse(closestIndex:closestIndex_end,:),1)+273.15;
 MPD_T = median(Temp_comb(closestIndex:closestIndex_end,:), 'omitnan');
-MPD_T_var = var(Temp_comb(closestIndex:closestIndex_end,:),'includenan');
+%MPD_T_var = var(Temp_comb(closestIndex:closestIndex_end,:),'includenan');
+MPD_T_var = median(Temp_comb_var(closestIndex:closestIndex_end,:),'includenan');
 MPD_T(isnan(MPD_T_var)) = nan;
 
 try
-    MPD_T_lapse_grid = interp1(range_grid_in/1000, MPD_T_lapse, range_grid, 'linear');  
+  %  MPD_T_lapse_grid = interp1(range_grid_in/1000, MPD_T_lapse, range_grid, 'linear');  
     MPD_T_grid = interp1(range_grid_in(~isnan(MPD_T))/1000, MPD_T(~isnan(MPD_T)), range_grid, 'nearest');
     MPD_T_var_grid = interp1(range_grid_in(~isnan(MPD_T_var))/1000, MPD_T_var(~isnan(MPD_T_var)), range_grid, 'linear');
 catch
@@ -170,7 +171,7 @@ if flag.plot_overlay == 1
   hold on
   plot(MPD_T_grid, range_grid, 'ro')
   %plot the sonde T vs a standard lapse rate and surface station
-  plot(MPD_T_lapse_grid, range_grid, 'g+')
+%  plot(MPD_T_lapse_grid, range_grid, 'g+')
   eb(1) = errorbar(MPD_T_grid, range_grid, MPD_T_var_grid, 'horizontal', 'LineStyle', 'none', 'HandleVisibility','off');
   set(eb, 'color', 'r', 'LineWidth', 1)
   hold off

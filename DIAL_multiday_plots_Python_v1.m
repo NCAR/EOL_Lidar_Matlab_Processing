@@ -17,6 +17,7 @@ days = 9; skip = 1;
 %range_grid_size = 300;  %set the size of the range gridding
 %dirname = '/Volumes/documents/WV_DIAL_data/MPD5_python_5min_125m_processed_data';
 dirname = '/Users/lroot/Desktop/mpd/mpd_05_processed_data/python';
+dirname =  'Volumes/fog1/rsfdata/MPD/mpd_field_campaigns/2022_PRECIP/ProcessedData/'
 range_grid_size = 75;  %set the size of the range gridding
   
 font_size = 36; % use this for 2018a version

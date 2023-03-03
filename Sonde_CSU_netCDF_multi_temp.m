@@ -7,7 +7,8 @@ sonde_end_int = 75; % integration time (in min) for the MPD
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
 %cd('/Users/spuler/Desktop/mpd_05_processed_data/Sondes')
 %cd('/Users/spuler/Desktop/mpd/Marshall/Sondes')
-cd('/Users/lroot/Desktop/mpd/CSU_Sondes')
+%cd('/Users/lroot/Desktop/mpd/CSU_Sondes')
+cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/CSU_PrePRECIP')
 %cd('/Volumes/eol/sci/voemel/data/radiosondes/boulder/ncdf')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
@@ -15,8 +16,8 @@ jj=1;
 %cd= d;
 
 for jj = 1:size(sondefilename,2)
-    %cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
-    cd('/Users/lroot/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+    cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+    %cd('/Users/lroot/Documents/GitHub/EOL_Lidar_Matlab_processing/')
    if flag.data_type == 2    % add the following three lines for Raman 
       range_grid_size = 60;  
       N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
@@ -34,7 +35,10 @@ for jj = 1:size(sondefilename,2)
      %  comb_AH_var = N_error_comb.*1e6./6.022E23.*18.015;
    end
    %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, flag); 
-   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb_avg, duration, range_grid_size, range_grid_in, sonde_end_int, flag); 
+   %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename, Temp_comb_avg, duration, range_grid_size, range_grid_in, sonde_end_int, flag); 
+   
+   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename, Temp_comb, Temp_comb_var, lapse_rate, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag); 
+   
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
    %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)
  end
@@ -190,8 +194,8 @@ plot(xrange,y_est,'r--','LineWidth',2) % plot the least squared fit line
 hold off
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
-cd('/Users/lroot/Desktop/mpd/Plots/') % point to the directory where data is stor
-
+%cd('/Users/lroot/Desktop/mpd/Plots/') % point to the directory where data is stor
+cd('/Users/spuler/Desktop/mpd/Plots/') % point to the directory where data is stor
 
 FigH = figure(1);
 set(gca,'Fontsize',30,'Fontweight','b'); % 

@@ -1,18 +1,19 @@
-elevation= 25; %MPD04 was at 25m elevation at Hsinchu weather station
+elevation= 0; %MPD04 was at 25m elevation at Hsinchu weather station, but PRECIP sondes are in AGL
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
+flag.plot_profile = 1;
+flag.data_type = 1;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
 sonde_end_int = 15; % integration time (in min) +/- around the sound launch  
 WV_min = 0;
 WV_max = 30;
 
 %d=pwd;
 
-%cd('/Volumes/documents/MPD/Sondes_CSU')
-%plot_path = '/Volumes/documents/MPD/Plots/';
-%cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/CSU_PrePRECIP')
-cd('/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/sondes');
+if strcmp(node, 'MPD04') ==1
+  cd('/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/radiosondes/PRECIP/Hsinchu/');
+elseif strcmp(node, 'MPD03') ==1
+  cd('/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/radiosondes/PRECIP/Yilan/');
+end
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots';
-%cd('/Volumes/eol/sci/voemel/data/radiosondes/boulder/ncdf')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
@@ -70,16 +71,16 @@ x_no_surface = xx(:,4:end); % Sondes (assume as truth)
 y_no_surface = yy(:,4:end); % MPD  
 
 %calculate the RMS using the sonde data as truth
-RMSE_numerator = nansum((yy - xx).^2);
+RMSE_numerator = sum((yy - xx).^2,'omitnan');
 RMSE_denominator = sum(~isnan((yy - xx).^2));
 RMSE = sqrt(RMSE_numerator./RMSE_denominator);
-RMSPE = nanmean((yy - xx)./xx).^2;
+RMSPE = mean((yy - xx)./xx,'omitnan').^2;
 % calcuate the Mean Bias Error
-mean_error_numerator = nansum(yy - xx);
+mean_error_numerator = sum(yy - xx,'omitnan');
 mean_error_denominator = sum(~isnan((yy - xx)));
 mean_error = (mean_error_numerator./mean_error_denominator);
 % calcuate the Percent Error
-percent_error_numerator = nansum(abs(real((xx - yy)./yy)));
+percent_error_numerator = sum(abs(real((xx - yy)./yy)),'omitnan');
 percent_error_denominator = sum(~isnan(real((xx - yy)./yy)));
 percent_error = (percent_error_numerator./percent_error_denominator)*100;
 
@@ -116,7 +117,8 @@ plot(RMSE_denominator, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); % 
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
- % xlim([0 45]);
+  set(gca,'XMinorGrid','on','YMinorGrid','on')
+  xlim([0 size(sondefilename,2)]);
   ylim([0,6]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Samples used');
@@ -147,7 +149,7 @@ plot(RMSE_denominator, range_grid)
   set(gca,'Fontsize',20,'Fontweight','b'); % 
   grid on
   set(gca,'XMinorGrid','on','YMinorGrid','on')
- % xlim([0 45]);
+  xlim([0 size(sondefilename,2)]);
   ylim([0,6]);
   ylabel('Altitude, AGL (km)'); 
   xlabel('Samples used');
@@ -175,6 +177,7 @@ idx = (isnan(y_MPD05)|isnan(x_sonde)); %remove the NaNs
 %[Corr, P_test] = corrcoef(x_sonde(~idx),y_MPD05(~idx))
 %Cov = cov(x_sonde(~idx),y_MPD05(~idx))
 %StDev = sqrt((cov(x_sonde(~idx),y_MPD05(~idx))))
+
 mdl = fitlm(x_sonde(~idx),y_MPD05(~idx));
 Rsquared = mdl.Rsquared.Ordinary
 Corr = sqrt(Rsquared) 

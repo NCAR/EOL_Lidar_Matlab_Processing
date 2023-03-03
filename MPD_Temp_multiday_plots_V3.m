@@ -3,20 +3,8 @@ tic
 dd=pwd;
 
  node = 'MPD05';
- date = '20210618';   
- days = 36; skip = 4;
  date = '20210620';  
- days = 65; skip = 5;
- %date = '20210620';  
- %days = 4; skip = 1;
-
-  node = 'MPD01';
-  date = '20220601';  
-  days = 70; skip = 5;
- 
-  node = 'MPD01';
-  date = '20220729';  
-  days = 7; skip = 1;
+ days = 3; skip = 1;
   
   
 lapse_rate = 0.0065; %standard atmosphere lapse rate
@@ -56,6 +44,7 @@ if strcmp(node,'MPD01')==1
  elseif strcmp(node,'MPD05')==1
   % cd(strcat(serv_path,'/mpd_05_processed_data//Matlab_temp'))
    cd(strcat(serv_path,'/mpd_05_processed_data/Quickload/ReProcessing'))
+%   cd(strcat(serv_path,'/mpd_05_processed_data/Quickload/FullProcessingBootStrap'))
    path_node = 'mpd05.';
 end
 
@@ -73,14 +62,16 @@ for i=1:days
     end
     Temp_comb = Retrievals.Temperature.Value';
     Temp_comb_avg = Retrievals.Temperature.Smoothed';
+    Temp_comb_var = Retrievals.Temperature.VarianceSm';
 %    Alpha0_comb = Retrievals.PerturbOrders.Order0.Alpha.O2Online';
 %    Alpha1_comb = Retrievals.PerturbOrders.Order1.Alpha.O2Online';
 %    Alpha2_comb = Retrievals.PerturbOrders.Order2.Alpha.O2Online';
     WV_mask_comb = Retrievals.WaterVapor.Mask';
-    Alpha_comb = Retrievals.Alpha';
- %   O2_online_comb = Data.Lidar.Interp.O2OnlineComb.Data';
-    BSR_comb = Retrievals.Python.BackRatio.Value';
-    BSR_duration = (datenum(date, 'yyyymmdd') + Retrievals.Python.BackRatio.TimeStamp/3600/24);
+%    Alpha_comb = Retrievals.Alpha';
+%    O2_online_comb = Data.Lidar.Interp.O2OnlineComb.Data';
+%    BSR_comb = Retrievals.Python.BackRatio.Value';
+    BSR_comb = Retrievals.Python.MPD.BackRatio.Value';
+    BSR_duration = (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24);
     duration =  (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24)';
     range = Retrievals.Temperature.Range;
     % following four lines are to build a lapse rate temp field based on surface station data
@@ -103,13 +94,14 @@ for i=1:days
 %    T_lapse = vertcat(T_lapse, Temp_lapse);
     Temp_comb = vertcat(Temp_comb, Retrievals.Temperature.Value');
     Temp_comb_avg = vertcat(Temp_comb_avg, Retrievals.Temperature.Smoothed');
+    Temp_comb_var = vertcat(Temp_comb_var, Retrievals.Temperature.VarianceSm');
  %   Alpha0_comb = vertcat(Alpha0_comb, Retrievals.PerturbOrders.Order0.Alpha.O2Online');
  %   Alpha1_comb = vertcat(Alpha1_comb, Retrievals.PerturbOrders.Order1.Alpha.O2Online');
  %   Alpha2_comb = vertcat(Alpha2_comb, Retrievals.PerturbOrders.Order2.Alpha.O2Online');
     WV_mask_comb =  vertcat(WV_mask_comb, Retrievals.WaterVapor.Mask'); 
-    Alpha_comb = vertcat(Alpha_comb, Retrievals.Alpha');
-    BSR_comb = vertcat(BSR_comb, Retrievals.Python.BackRatio.Value');
-    BSR_duration = vertcat(BSR_duration, (datenum(date, 'yyyymmdd') + Retrievals.Python.BackRatio.TimeStamp/3600/24));
+ %   Alpha_comb = vertcat(Alpha_comb, Retrievals.Alpha');
+    BSR_comb = vertcat(BSR_comb, Retrievals.Python.MPD.BackRatio.Value');   
+    BSR_duration = vertcat(BSR_duration, (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24));
     duration = vertcat(duration, (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24)');
   end
 end
@@ -117,7 +109,7 @@ end
 
 %Alpha0_var = movvar(Alpha0_comb, [2 2]);
 % apply preliminary mask based on O_2 order absorption zeroth order variance 
-% Temp_comb_avg(Alpha0_var>1e-7)= nan;
+Temp_comb_avg(Temp_comb_var > 5^2)= nan;
 %     Temp_comb(Alpha0_var>1e-7)= nan;
 %    Alpha_comb(Alpha0_var>1e-7)= nan;
  % Alpha0_comb(Alpha0_var>1e-7)= nan;
@@ -314,7 +306,7 @@ y = range./1000;
 %  set(gca,'Fontsize',font_size,'Fontweight','b');
 
  x = BSR_duration';
- y = Retrievals.Python.BackRatio.Range./1000;  % note this is Matt's version and not mine
+ y = Retrievals.Python.MPD.BackRatio.Range./1000;  % note this is Matt's version and not mine
  Z = BSR_comb';  
  figure('Position',Scrnsize)
  set(gcf,'renderer','zbuffer');
@@ -322,8 +314,8 @@ y = range./1000;
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- %caxis([1 300]);
- caxis([1e-1 1e3]);
+ caxis([1 1000]);
+ %caxis([1e-1 1e3]);
  colormap(jet)
  %shading interp
  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 

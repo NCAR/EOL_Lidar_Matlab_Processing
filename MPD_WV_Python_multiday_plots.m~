@@ -20,8 +20,8 @@ d_save_data = pwd; % set the plot save path
 flag.save_data = 1;  % save data at end of processing (0=off 1=on)
 flag.decimate = 0;  % decimate time dimension to fit screen (needed for long timespans)
 flag.grid75 = 0; % grid data to 75 m
-skip = 1
-node = 'MPD02';
+skip = 5
+node = 'MPD04';
 mask_var = sqrt(49); %standard is 25
 force_low_range_mask_off = 0;  %removes mask from low range  
 
@@ -118,7 +118,7 @@ for jj = 1:size(Pythonfilename,2)
       comb_AH = [comb_AH(:,1:max_range); AH{jj}(1:max_range,:)'];
       comb_AH_var = [comb_AH_var(:,1:max_range); AH_var{jj}(1:max_range,:)'];
       comb_ABC = [comb_ABC(:,1:max_range); ABC{jj}(1:max_range,:)'];
-      comb_AH_sur = vertcat(comb_AH_sur, AH_sur{jj});
+      comb_AH_sur = horzcat(comb_AH_sur, AH_sur{jj});
 %       comb_ABC_var = [comb_ABC_var(:,1:max_range); ABC_var{jj}(1:max_range,:)'];
   end
   
@@ -147,8 +147,6 @@ end
 x = comb_duration;
 y = alt{1}/1000;
 Z_AH = real(comb_AH)';
-Z_AH(2,:) = comb_AH_sur';  % add in the AbsHum weather station data (this data starts below the ground so need to use bin 2 and 3)
-Z_AH(3,:) = comb_AH_sur';  % add in the AbsHum weather station data
 Z_ABC = real(comb_ABC)';
 
 
