@@ -267,7 +267,7 @@ if flag.afterpulse == 1   % afterpulse correction
   else    
      % read the afterpulse nc file identified in the json file 
      if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-      serv_path = '/home/rsfdata/Processing/'; % when running on server
+      serv_path = '/home/rsfdata/Processing/Python/'; % when running on server
      elseif strcmp(getenv('HOSTNAME'),'')
        serv_path = '../'; % running locally 
      else
