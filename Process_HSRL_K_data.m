@@ -120,6 +120,7 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  % open the receiver scan data and read in receiver scans
  if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
    cal_path = '/home/rsfdata/Processing'; % when running on server
+   cal_path = '/home/rsfdata/Processing/Python/'; % when running on server
  else
    cal_path = '/Users/spuler/Documents/GitHub'; % when running on server s
  end
