@@ -14,7 +14,7 @@ tic
  
  node = 'MPD03';            %MPD01 vs MPD05 intercomparions 
  date = '30 Mar 2023';     
- days = 7; skip = 1;
+ days = 10; skip = 1;
  WV_max_scale = 6;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
@@ -39,7 +39,7 @@ WS = 1;  % set to 1 for using the weather station data (after Jan 2016)
 flag.sonde = 0;  %include sonde data (0=off 1=on)
 flag.replot = 1;  %replot time vs range images at start of processing (0=off 1=on)
 flag.save_figs = 1; %save figures at end of processing (0=off 1=on)
-flag.save_data = 1; %save data at end of processing (0=off 1=on)
+flag.save_data = 0; %save data at end of processing (0=off 1=on)
 flag.plot_sonde_data = 0; %plot NetCDF sonde data on top (0=off 1=on)
 flag.decimate = 1; %decimate figures to the screen 2x size (1900 pixels x2)
 if days<=2

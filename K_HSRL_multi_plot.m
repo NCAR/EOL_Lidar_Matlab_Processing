@@ -1,9 +1,9 @@
 clear all; close all;
 tic
 
- node = 'MPD03';
+ node = 'MPD05';
  date = '30 Mar 2023';   
- days = 7; skip = 1;
+ days = 10; skip = 1;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
  

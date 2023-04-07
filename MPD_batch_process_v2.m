@@ -1,6 +1,6 @@
 % example batch process
 
-start_date = '20230405';   
+start_date = '20230407';   
 stop_date =  '20230407'; 
 
 % start_date = '20220528'; %PRECIP   
