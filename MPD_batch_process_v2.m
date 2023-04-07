@@ -1,7 +1,7 @@
 % example batch process
 
-start_date = '20230225';   
-stop_date =  '20230303'; 
+start_date = '20230405';   
+stop_date =  '20230407'; 
 
 % start_date = '20220528'; %PRECIP   
 % stop_date =  '20220810'; 
@@ -24,8 +24,8 @@ tStart = tic
 %          MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD04',file)  
 % %          MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)    
 %   MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD01',file) %Smart switch testing started Feb 2023 
-    MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD03',file) % Temp began late Feb 2023           %
-%    MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD05',file) 
+    MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD03',file) % Temp began late Feb 2023           %
+    MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD05',file) 
       end
     end
 

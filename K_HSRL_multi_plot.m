@@ -1,12 +1,10 @@
 clear all; close all;
 tic
 
- node = 'MPD01';
- date = '03 Feb 2023';   
+ node = 'MPD03';
+ date = '30 Mar 2023';   
  days = 7; skip = 1;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
- 
-
  
  
 serv_path = '/Volumes/fog1/rsfdata/MPD/';
@@ -21,11 +19,23 @@ if strcmp(node,'MPD01')==1
       cd(strcat(serv_path,'/mpd_01_processed_data/Matlab'))
     end
  elseif strcmp(node,'MPD02')==1
-    cd(strcat(serv_path,'/mpd_02_processed_data//Matlab')) 
+    if flag.afterpulse == 1
+      cd(strcat(serv_path,'/mpd_02_processed_data/Matlab/afterpulse'))    
+    else
+      cd(strcat(serv_path,'/mpd_02_processed_data/Matlab'))
+    end
  elseif strcmp(node,'MPD03')==1
-    cd(strcat(serv_path,'/mpd_03_processed_data//Matlab')) 
+    if flag.afterpulse == 1
+      cd(strcat(serv_path,'/mpd_03_processed_data/Matlab/afterpulse'))    
+    else
+      cd(strcat(serv_path,'/mpd_03_processed_data/Matlab'))
+    end 
  elseif strcmp(node,'MPD04')==1
-    cd(strcat(serv_path,'/mpd_04_processed_data//Matlab'))
+    if flag.afterpulse == 1
+      cd(strcat(serv_path,'/mpd_04_processed_data/Matlab/afterpulse'))    
+    else
+      cd(strcat(serv_path,'/mpd_04_processed_data/Matlab'))
+    end
  elseif strcmp(node,'MPD05')==1
     if flag.afterpulse == 1
       cd(strcat(serv_path,'/mpd_05_processed_data/Matlab/afterpulse'))    
@@ -145,6 +155,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b'); 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);      % 1500 300
+%  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1000 250]);       % 1500 300
   name=strcat(node, "_", date, "_Backscatter_Ratio_comb");
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
    

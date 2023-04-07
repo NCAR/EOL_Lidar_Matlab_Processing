@@ -12,17 +12,17 @@ tic
 %  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
  
- node = 'MPD01';            %MPD01 vs MPD05 intercomparions 
- date = '03 Feb 2023';   
+ node = 'MPD03';            %MPD01 vs MPD05 intercomparions 
+ date = '30 Mar 2023';     
  days = 7; skip = 1;
  WV_max_scale = 6;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
- node = 'MPD02';            %post PRECIP intercomparions 
- date = '3 Jun 2022';   
- days = 2; skip = 1;
- WV_max_scale = 25;
- flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
+%  node = 'MPD02';            %post PRECIP intercomparions 
+%  date = '3 Jun 2022';   
+%  days = 2; skip = 1;
+%  WV_max_scale = 25;
+%  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
 
 %serv_path = '/Volumes/documents/MPD/';

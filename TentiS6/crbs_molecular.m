@@ -11,18 +11,18 @@
 % Brillouin Scattering", 2003, Princeton Univ.
 % 
 % downloaded from www.mathworks.com/matlabcentral/fileexchange/
-% and adapted/modified for backscatter in air by Scott Spuler Nov 2021 
+% adapted/modified for backscatter in air by Scott Spuler Nov 2021 
 
 % set the temperature of the gas
 tem=262.7; % US standard model at 4km
 p_atm=0.609; 
-% tem=281.7; % US standard model at 1km
-% p_atm=0.887;
+tem=281.7; % US standard model at 1km
+p_atm=0.887;
 % tem=287; % 
 % p_atm=0.82; % 
 
 % set laser parameters
-lambda=770e-9;
+lambda=1570e-9;
 angle=(180)*(pi/180);  % Set at 180 for backscatter
 
 % create the domain of xi
