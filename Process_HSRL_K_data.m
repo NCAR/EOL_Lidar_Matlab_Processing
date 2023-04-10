@@ -1,5 +1,5 @@
 function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
-    O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder)
+    O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder, cal_serv_path)
 % Process the HSRL channels 
 % Calculate the backscatter ratio (BSR) and backscatter coefficient using receiver scan data
  
@@ -118,13 +118,15 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
 
  % below is a more complete way to check this efficiency 
  % open the receiver scan data and read in receiver scans
- if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
-   cal_path = '/home/rsfdata/Processing'; % when running on server
-   cal_path = '/home/rsfdata/Processing/Python/'; % when running on server
- else
-   cal_path = '/Users/spuler/Documents/GitHub'; % when running on server s
- end
- cd ([cal_path '/eol-lidar-calvals/calfiles'])
+
+%  if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
+%    cal_path = '/home/rsfdata/Processing'; % when running on server
+%    cal_path = '/home/rsfdata/Processing/Python/'; % when running on server
+%  else
+%    cal_path = '/Users/spuler/Documents/GitHub'; % when running on server s
+%  end
+
+ cd ([cal_serv_path '/eol-lidar-calvals/calfiles'])
  
  cal_file = Receiver_Scan_File;
  ncid = netcdf.open(cal_file, 'NC_NOWRITE');

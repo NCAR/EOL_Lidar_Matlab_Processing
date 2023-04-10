@@ -1,5 +1,5 @@
 function[N_avg, N_error] = MPD_WV_analysis_function_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)
+    profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path)
 
 %% notes
 %Amin Nehrir (original author)
@@ -266,14 +266,15 @@ if flag.afterpulse == 1   % afterpulse correction
       ap_spline_sub_on = ap_wv_on*MCS.accum*MCS.bin_duration*1e-9;    
   else    
      % read the afterpulse nc file identified in the json file 
-     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-      serv_path = '/home/rsfdata/Processing/Python/'; % when running on server
-     elseif strcmp(getenv('HOSTNAME'),'')
-       serv_path = '../'; % running locally 
-     else
-      serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
-     end
-     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
+%      if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+%       cal_serv_path = '/home/rsfdata/Processing/Python/'; % when running on server
+%      elseif strcmp(getenv('HOSTNAME'),'')
+%        cal_serv_path = '../'; % running locally 
+%      else
+%       cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
+%      end
+     
+     ap_filename = strcat(cal_serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
    
      ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
 %     ncdisp(ap_filename, '/', 'min') % use this to display all variables

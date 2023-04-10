@@ -1,13 +1,13 @@
 addpath('./jsonlab')
-if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
-   cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/' % when running on server
-elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1 
-   cal_serv_path = '/h/eol/spuler/' % when running on tikal server
-elseif strcmp(getenv('HOSTNAME'),'') == 1
-    cal_serv_path = '../' % running locally 
-else
-   cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/' % 
-end
+% if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
+%    cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/' % when running on server
+% elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1 
+%    cal_serv_path = '/h/eol/spuler/' % when running on tikal server
+% elseif strcmp(getenv('HOSTNAME'),'') == 1
+%     cal_serv_path = '../' % running locally 
+% else
+%    cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/' % 
+% end
 
 %  blank_range = 525; % This was the original blank range in 2019
   blank_range = 300; %  This was the blank range prior to adding the WFOV receiver in summer of 2020

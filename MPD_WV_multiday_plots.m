@@ -12,9 +12,9 @@ tic
 %  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
  
- node = 'MPD03';            %MPD01 vs MPD05 intercomparions 
- date = '30 Mar 2023';     
- days = 10; skip = 1;
+ node = 'MPD05';            %MPD01 vs MPD05 intercomparions 
+ date = '07 Apr 2023';     
+ days = 7; skip = 1;
  WV_max_scale = 6;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  

@@ -1,5 +1,5 @@
 function[Online_Temp_Spatial_Avg, Offline_Temp_Spatial_Avg, range, RB, time_grid, Surf_T, Surf_P, lambda_all, lambda_all_off] = MPD_Analysis_function_O2_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave, Afterpulse_File, cal_serv_path)
+    profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave, Afterpulse_File, cal_ser)
 
  
 %% notes
