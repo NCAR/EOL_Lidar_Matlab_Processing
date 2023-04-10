@@ -22,7 +22,7 @@ p_atm=0.887;
 % p_atm=0.82; % 
 
 % set laser parameters
-lambda=1570e-9;
+lambda=1550e-9;
 angle=(180)*(pi/180);  % Set at 180 for backscatter
 
 % create the domain of xi
