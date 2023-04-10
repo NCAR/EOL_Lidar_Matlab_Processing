@@ -29,17 +29,18 @@ ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor and O2
 ave_time.rb = 2.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
 
-if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
-   serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
-   cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/' % when running on server
-elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1 
-    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on tikal server
-    cal_serv_path = '/h/eol/spuler/' % when running on tikal server
-elseif strcmp(getenv('HOSTNAME'),'')
-    serv_path = '/Volumes/fog1/rsfdata/MPD/'; % when running on server
-    cal_serv_path = '../' % running locally 
-    cal_serv_path = '/Users/spuler/Documents/GitHub'; % when running on server s
-else 
+if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1  % when running on fog server
+   serv_path = '/export/fog1/rsfdata/MPD/'; 
+   cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/'
+   cal_serv_path = '/home/rsfdata/Processing/Python/'
+elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1  % when running on tikal server
+    serv_path = '/export/fog1/rsfdata/MPD/'; 
+    cal_serv_path = '/h/eol/spuler/' 
+elseif strcmp(getenv('HOSTNAME'),'') % running locally 
+    serv_path = '/Volumes/fog1/rsfdata/MPD/'; 
+    % cal_serv_path = '../' 
+    cal_serv_path = '/Users/spuler/Documents/GitHub';  
+else % running locally but use calibration from fog server
    serv_path = '/Volumes/fog1/rsfdata/MPD/'; % 
    cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/' % 
 end

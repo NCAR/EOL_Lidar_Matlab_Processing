@@ -29,17 +29,17 @@ ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor and O2
 ave_time.rb = 2.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
 
-if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1
-   serv_path = '/export/fog1/rsfdata/MPD/'; % when running on server
-   cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/' % when running on server
-elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1 
-    serv_path = '/export/fog1/rsfdata/MPD/'; % when running on tikal server
-    cal_serv_path = '/h/eol/spuler/' % when running on tikal server
-elseif strcmp(getenv('HOSTNAME'),'')
-    serv_path = '/Volumes/fog1/rsfdata/MPD/'; % when running on server
-    cal_serv_path = '../' % running locally 
-    cal_serv_path = '/Users/spuler/Documents/GitHub'; % when running on server s
-else 
+if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1  % when running on fog server
+   serv_path = '/export/fog1/rsfdata/MPD/'; 
+   cal_serv_path = '/export/fog1/rsfdata/MPD/calibration/'
+elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1  % when running on tikal server
+    serv_path = '/export/fog1/rsfdata/MPD/'; 
+    cal_serv_path = '/h/eol/spuler/' 
+elseif strcmp(getenv('HOSTNAME'),'') % running locally 
+    serv_path = '/Volumes/fog1/rsfdata/MPD/'; 
+    % cal_serv_path = '../' 
+    cal_serv_path = '/Users/spuler/Documents/GitHub';  
+else % assume running locally but con fog server if nothing else
    serv_path = '/Volumes/fog1/rsfdata/MPD/'; % 
    cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/' % 
 end
@@ -152,7 +152,7 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1) && strcmp(correct
   [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
          O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder,cal_serv_path);
   [N_WV, N_WV_error] = MPD_WV_analysis_function_v1(data_wv_on, data_wv_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-         profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation);
+         profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path);
   O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
          time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr, write_data_folder, flag);
 end
