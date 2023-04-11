@@ -3,10 +3,7 @@
 start_date = '20230410';   
 stop_date =  '20230411'; 
 
-prompt = 'Enter start date (e.g., 20230411)';
-start_date = input(prompt, 's');
-prompt = 'Enter stop date (e.g., 20230411)';
-stop_date = input(prompt, 's');
+x = input(prompt)
 
 % start_date = '20220528'; %PRECIP   
 % stop_date =  '20220810'; 
