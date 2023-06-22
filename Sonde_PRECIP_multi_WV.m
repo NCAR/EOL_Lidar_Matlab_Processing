@@ -8,9 +8,9 @@ WV_max = 30;
 
 %d=pwd;
 
-if strcmp(node, 'MPD04') ==1
+if strcmp(node, 'mpd04') ==1
   cd('/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/radiosondes/PRECIP/Hsinchu/');
-elseif strcmp(node, 'MPD03') ==1
+elseif strcmp(node, 'mpd03') ==1
   cd('/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/radiosondes/PRECIP/Yilan/');
 end
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots';

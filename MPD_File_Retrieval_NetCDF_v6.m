@@ -86,20 +86,26 @@ for d = 1:length(HKeep.dirListing)
   end
 end
 
-for d = 1:length(Pow.dirListing)
+
+
+
+ for d = 1:length(Pow.dirListing)
   %read in the power montioring data
   Pow.filename = Pow.dirListing(d).name;
-  Pow.time = ncread(Pow.filename,'time');
-  Pow.power = ncread(Pow.filename,'Power');
-  Pow.channel = h5read(Pow.filename,'/ChannelAssignment');
-  if d>1   % sum the days nc data files into a single array
-    Pow.time1 = [Pow.time1; Pow.time];
-    Pow.power1 = [Pow.power1; Pow.power];
-  else
-    Pow.time1 = Pow.time;
-    Pow.power1 = Pow.power;
-  end
+ % if exist(Pow.filename) == 2 
+    Pow.time = ncread(Pow.filename,'time');
+    Pow.power = ncread(Pow.filename,'Power');
+    Pow.channel = h5read(Pow.filename,'/ChannelAssignment');
+    if d>1   % sum the days nc data files into a single array
+      Pow.time1 = [Pow.time1; Pow.time];
+      Pow.power1 = [Pow.power1; Pow.power];
+    else
+      Pow.time1 = Pow.time;
+      Pow.power1 = Pow.power;
+    end
+ % end
 end
+
 
 for d = 1:length(WS.dirListing)
   %read in the weather station data
@@ -330,6 +336,7 @@ if isfield(WS,'time') == 1
   uA = WS.all(ia,:);  % apply those to the other rows
   WS.online = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
 end
+
 
 % combine all of the data into original data format
 if isfield(HKeep,'time') == 1 && isfield(WS,'time') == 1

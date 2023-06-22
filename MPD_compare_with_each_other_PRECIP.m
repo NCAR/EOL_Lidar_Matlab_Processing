@@ -2,8 +2,10 @@ clear all; close all;
 
 dd = pwd; % get the current path
 date = '22 Aug 2022'; % Last day of a collocated test 
+date = '2022-Aug-22'; % Python date of a collocated test 
 
 profile_time = '21 Aug 2022 18:00';
+profile_time = '2022 Aug 21 18:00'; % Python date of a collocated test 
 plot_histograms = 1; 
 mask_range_level = 0;
 plot_path = '/Users/spuler/Desktop/mpd/Plots/';
@@ -23,13 +25,16 @@ serv_path = '/Volumes/eol/fog1/rsfdata/MPD/'; %
 % load(strcat('MPD01_',date,'_Matlab_combined.mat'))
 
 cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) % point to the directory where data is stored
-load(strcat('MPD02_',date,'_Matlab_combined.mat'))
+%load(strcat('MPD02_',date,'_Matlab_combined.mat'))
+load(strcat(date,'_combined.mat'))
 
 cd(strcat(serv_path, 'mpd_03_processed_data/Matlab')) % point to the directory where data is stored
-load(strcat('MPD03_',date,'_Matlab_combined.mat'))
+%load(strcat('MPD03_',date,'_Matlab_combined.mat'))
+load(strcat(date,'_combined.mat'))
 
 cd(strcat(serv_path, 'mpd_04_processed_data/Matlab')) % point to the directory where data is stored
-load(strcat('MPD04_',date,'_Matlab_combined.mat'))
+%load(strcat('MPD04_',date,'_Matlab_combined.mat'))
+load(strcat(date,'_combined.mat'))
 
 % cd(strcat(serv_path, 'mpd_05_processed_data/Matlab')) % point to the directory where data is stored
 % load(strcat('MPD05_',date,'_Matlab_combined.mat'))
@@ -56,6 +61,7 @@ bin_max = 250;
  set(gcf,'renderer','zbuffer');
  x = MPD02.time;
  y = MPD02.range./1e3;
+ y = MPD02.range; %python
  
  subplot(3,1,1)
  Z_AH = double(real(MPD02.N_avg_comb'.*1e6./6.022E23.*18.015));
@@ -108,6 +114,7 @@ print(FigH, name, '-dpng', '-r300')
 % plot profiles 
  p_start = find(MPD04.time >= datenum(profile_time), 1, 'first');
  p_stop = p_start+250;
+ p_stop = p_start+25;
  MPD02_AH_profile = mean(MPD02.N_avg_comb(p_start:p_stop,:),1,'omitnan').*1e6./6.022E23.*18.015; 
  MPD03_AH_profile = mean(MPD03.N_avg_comb(p_start:p_stop,:),1, 'omitnan').*1e6./6.022E23.*18.015; 
  MPD04_AH_profile = mean(MPD04.N_avg_comb(p_start:p_stop,:),1, 'omitnan').*1e6./6.022E23.*18.015; 

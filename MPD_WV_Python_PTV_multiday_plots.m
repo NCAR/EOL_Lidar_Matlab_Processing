@@ -186,6 +186,7 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   
   
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
+  serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
   name=strcat(date, '_combined');
   if strcmp(node,'MPD01')==1
       MPD01.N_avg_comb = N_avg_comb;
@@ -194,24 +195,28 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
       MPD01.time = duration;
       save(name, 'MPD01')
   elseif strcmp(node,'MPD02')==1
+      cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) % point to the directory where data is stored
       MPD02.N_avg_comb = N_avg_comb;
     %  MPD02.RB_comb = RB_comb;
       MPD02.range = range;
       MPD02.time = duration;
       save(name, 'MPD02')
   elseif strcmp(node,'MPD03')==1
+     cd(strcat(serv_path, 'mpd_03_processed_data/Matlab')) % point to the directory where data is stored
       MPD03.N_avg_comb = N_avg_comb;
     %  MPD03.RB_comb = RB_comb;
       MPD03.range = range;
       MPD03.time = duration;
       save(name, 'MPD03')
   elseif strcmp(node,'MPD04')==1
+      cd(strcat(serv_path, 'mpd_04_processed_data/Matlab')) % point to the directory where data is stored
       MPD04.N_avg_comb = N_avg_comb;
     %  MPD04.RB_comb = RB_comb;
       MPD04.range = range;
       MPD04.time = duration;
       save(name, 'MPD04')
    elseif strcmp(node,'MPD05')==1
+      c
       MPD05.N_avg_comb = N_avg_comb;
    %   MPD05.RB_comb = RB_comb;
       MPD05.range = range;

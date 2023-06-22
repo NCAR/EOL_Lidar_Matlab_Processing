@@ -38,8 +38,8 @@ elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1  % when running on ti
     cal_serv_path = '/h/eol/spuler/' 
 elseif strcmp(getenv('HOSTNAME'),'') % running locally 
     serv_path = '/Volumes/fog1/rsfdata/MPD/'; 
-    % cal_serv_path = '../' 
-    cal_serv_path = '/Users/spuler/Documents/GitHub';  
+    cal_serv_path = '../' 
+    %cal_serv_path = '/Users/spuler/Documents/GitHub';  
 else % running locally but use calibration from fog server
    serv_path = '/Volumes/fog1/rsfdata/MPD/'; % 
    cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/' % 

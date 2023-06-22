@@ -3,6 +3,7 @@
 clear all 
 close all
 load('WV_spectral_calc.mat')
+load('spectral_calc.mat') %WV and O2
 
 figure(1)
 plot(alt_1km(:,1),   alt_1km(:,2)    )

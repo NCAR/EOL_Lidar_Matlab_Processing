@@ -86,9 +86,9 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  % assuming a standard lapse rate (-6.5 deg/km) for the entire troposphere
  lapse = 0.0065; % (K/m) standard atmosphere lapse rate, dry adiabatic is 9.8 K/km
  if flag.WS == 1  % use surface values if they exist
-   T0 = median(Surf_T,'omitnan')+273.15
+   T0 = median(Surf_T,'omitnan')+273.15 %This should be in C so convert
    P0 = median(Surf_P,'omitnan')
-   Surf_T(isnan(Surf_T))= T0; % fills in missing values with median
+   Surf_T(isnan(Surf_T))= T0-273.15; % fills in missing values with median
    Surf_P(isnan(Surf_P))= P0; % fills in missing values with median
    if isnan(T0)==1
        T0=25+273.15;

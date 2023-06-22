@@ -89,7 +89,24 @@ end
 if flag.WS==1
   % read in surface weather station data
   Surf_T = Offline_Raw_Data(:,7);  %temperature in C
-  Surf_P = Offline_Raw_Data(:,8)./1013.249977;  % pressure in atm
+  Surf_P = Offline_Raw_Data(:,8)./1013.249977;  % pressure in atm   
+  Surf_T(isnan(Surf_T))= median(Surf_T); % fills in missing values with median
+  Surf_P(isnan(Surf_P))= median(Surf_P); % fills in missing values with median
+     if isnan(median(Surf_T,'omitnan'))==1
+       T0=25;
+       Surf_T= ones(size(Surf_T)).*T0;
+       warning('No Temperature Weather Station Data')
+       pause
+     end
+     if isnan(median(Surf_P,'omitnan'))==1
+       P0=1;
+       Surf_P= ones(size(Surf_P)).*P0;
+       warning('No Pressure Weather Station Data')
+     end
+    
+  %Surf_T(isnan(Surf_T))= 20; % fills in missing 
+  %Surf_P(isnan(Surf_P))= 0.83; % fills in missing 
+ 
   Surf_RH = Offline_Raw_Data(:,9);
   % convert RH to number density and absolute humidity
   % vapor pressure of water

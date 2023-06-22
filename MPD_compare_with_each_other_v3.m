@@ -4,7 +4,7 @@ dd = pwd; % get the current path
 %date = '10 Apr 2019'; % Last day of a five-unit side-by-side test 
 date = '2019-Apr-10'; %  Python date 
 %date = '05 Oct 2020'; %   
-date = '2020-Oct-05'; %  Python date 
+date = '2022-Aug-18'; %  Python date 
 
 % p_start = 2900; %1-Oct-2020 profile WFOV blocked
 % p_start = 6200; %3-Oct-2020 profile WFOV open

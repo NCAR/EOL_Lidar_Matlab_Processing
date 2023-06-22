@@ -7,11 +7,13 @@ serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  % need to use f
 %serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/const_smooth/';
 %serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/no_smooth/';
 %serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/10min_37m/qc_masked/';
-serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/final_adj_mask/qc_masked/';
-serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/full_altitude/qc_masked/';
-%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/final_adj_mask_iii/qc_masked/';
+%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/final_adj_mask/qc_masked/';
+%serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/full_altitude/qc_masked/';
+serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/final_adj_mask_iii/qc_masked/';
+serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/full_alt_mask_iii/qc_masked/';
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
 
+node = 'mpd04';
 cd(strcat(serv_path))
 addpath /Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing
 d_read_data = pwd; % get the current path
@@ -21,12 +23,11 @@ flag.save_data = 1;  % save data at end of processing (0=off 1=on)
 flag.decimate = 0;  % decimate time dimension to fit screen (needed for long timespans)
 flag.grid75 = 0; % grid data to 75 m
 skip = 1
-node = 'MPD02';
-mask_var = sqrt(49); %standard is 25
+mask_var = sqrt(25); %standard is 25
 force_low_range_mask_off = 0;  %removes mask from low range  
 
 cd(d_read_data);
-[Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
+[Pythonfilename, Pythondir] = uigetfile(strcat(node,'*.*'),'Select the sonde file', 'MultiSelect', 'on');
 serv_path = Pythondir;
 jj=1;
 % sort file names into order (https://fr.mathworks.com/matlabcentral/fileexchange/47434-natural-order-filename-sort)
@@ -45,6 +46,7 @@ Pythonfilename = natsortfiles(Pythonfilename);
 %  variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
  variable{6} = 'Relative_Backscatter';
  variable{10} = 'Surface_AbsHum';
+ variable{11} = 'Absolute_Humidity_mask_layers';
     
 for jj = 1:size(Pythonfilename,2)
   try
@@ -64,19 +66,45 @@ for jj = 1:size(Pythonfilename,2)
     AH_mask{jj} = ncread(filename,variable{4}); 
     AH_var{jj} = sqrt(ncread(filename,variable{5}));
     AH_sur{jj} = ncread(filename,variable{10});  
+    AH_mask_layers{jj} = ncread(filename,variable{11}); %each mask layer applied to the Absolute Humidity data.  The order is reflective of when they are applied.'
     
-    if force_low_range_mask_off == 1
-      AH_mask{jj}(6:9,:)= 0; %as a test turn off the low range mask
-    end
+%     if force_low_range_mask_off == 1
+%       AH_mask{jj}(6:9,:)= 0; %as a test turn off the low range mask
+%     end
     AH{jj}(AH_mask{jj} == 1) = nan;
     AH_var{jj}(AH_mask{jj} == 1) = nan; 
     AH{jj}(isnan(AH_var{jj})) = nan;
+
+    %     AH_mask_layer_1 = squeeze(AH_mask_layers{jj}(1,:,:));
+%     AH_mask_layer_2 = squeeze(AH_mask_layers{jj}(2,:,:));
+%     AH_mask_layer_3 = squeeze(AH_mask_layers{jj}(3,:,:));
+%     AH_mask_layer_4 = squeeze(AH_mask_layers{jj}(4,:,:));
+%     AH_mask_layer_5 = squeeze(AH_mask_layers{jj}(5,:,:));
+%     AH_mask_all = AH_mask{jj};
+%    AH_mask_layers_all = zeros(size(AH_mask_all));
+%    AH_mask_layers_all((AH_mask_layer_1 == 0) & (AH_mask_layer_2 == 0) & (AH_mask_layer_4 == 0)) = 1;
+%    AH{jj}(AH_mask_layers_all==0) = nan;  %mask layers
+%   %  mask the absolute humidity data based on its variance
+%   AH{jj}(AH_var{jj} >= mask_var) = nan;  %standard is 25 (5) 
+%   %  AH_var{jj}(AH_var{jj} >= mask_var) = nan; 
+
+
+% figure(10)
+% mesh(AH_mask_all)
+% figure(11)
+% mesh(AH_mask_layer_1)
+% figure(12)
+% mesh(AH_mask_layer_2)
+% figure(13)
+% mesh(AH_mask_layer_3)
+% figure(14)
+% mesh(AH_mask_layer_4)
+% figure(15)
+% mesh(AH_mask_layers_all)
+
+
     
- %  mask the absolute humidity data based on its variance
-   AH{jj}(AH_var{jj} >= mask_var) = nan;  %standard is 25 (5) 
-   AH_var{jj}(AH_var{jj} >= mask_var) = nan; 
-    
-   ABC{jj}  = ncread(filename,variable{6});    
+  ABC{jj}  = ncread(filename,variable{6});    
 
    %     try
 %       ABC_mask{jj} = ncread(filename,variable{7}); 
@@ -302,6 +330,7 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   set(gca,'Fontsize',16,'Fontweight','b'); 
 %  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1500 300]);
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 185]);
   name=strcat(date, node, ' WV_Python_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
@@ -314,36 +343,42 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   
   
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
+  serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
   name=strcat(date, '_combined');
-  if strcmp(node,'MPD01')==1
+  if strcmp(node,'mpd01')==1
+     cd(strcat(serv_path, 'mpd_01_processed_data/Matlab')) 
       MPD01.N_avg_comb = N_avg_comb;
      % MPD01.RB_comb = RB_comb;
-      MPD01.range = range;
-      MPD01.time = duration;
+      MPD01.range = y;
+      MPD01.time = x;
       save(name, 'MPD01')
-  elseif strcmp(node,'MPD02')==1
+  elseif strcmp(node,'mpd02')==1
+      cd(strcat(serv_path, 'mpd_02_processed_data/Matlab')) 
       MPD02.N_avg_comb = N_avg_comb;
     %  MPD02.RB_comb = RB_comb;
-      MPD02.range = range;
-      MPD02.time = duration;
+      MPD02.range = y;
+      MPD02.time = x;
       save(name, 'MPD02')
-  elseif strcmp(node,'MPD03')==1
+  elseif strcmp(node,'mpd03')==1
+      cd(strcat(serv_path, 'mpd_03_processed_data/Matlab')) 
       MPD03.N_avg_comb = N_avg_comb;
     %  MPD03.RB_comb = RB_comb;
-      MPD03.range = range;
-      MPD03.time = duration;
+      MPD03.range = y;
+      MPD03.time = x;
       save(name, 'MPD03')
-  elseif strcmp(node,'MPD04')==1
+  elseif strcmp(node,'mpd04')==1
+      cd(strcat(serv_path, 'mpd_04_processed_data/Matlab')) 
       MPD04.N_avg_comb = N_avg_comb;
     %  MPD04.RB_comb = RB_comb;
-      MPD04.range = range;
-      MPD04.time = duration;
+      MPD04.range = y;
+      MPD04.time = x;
       save(name, 'MPD04')
-   elseif strcmp(node,'MPD05')==1
-      MPD05.N_avg_comb = N_avg_comb;
+   elseif strcmp(node,'mpd05')==1
+       cd(strcat(serv_path, 'mpd_05_processed_data/Matlab')) 
+       MPD05.N_avg_comb = N_avg_comb;
    %   MPD05.RB_comb = RB_comb;
-      MPD05.range = range;
-      MPD05.time =  duration;
+      MPD05.range = y;
+      MPD05.time =  x;
       save(name, 'MPD05')
   end
 

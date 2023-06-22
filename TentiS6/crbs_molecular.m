@@ -18,8 +18,8 @@ tem=262.7; % US standard model at 4km
 p_atm=0.609; 
 tem=281.7; % US standard model at 1km
 p_atm=0.887;
-% tem=287; % 
-% p_atm=0.82; % 
+tem=298; % 
+p_atm=0.82; % 
 
 % set laser parameters
 lambda=1550e-9;

@@ -70,7 +70,7 @@ C = importdata('NCAR_C_Map.mat');
 
 %Importing HITRAN data
 %Hitran.file = dlmread('815nm_841nm_HITRAN_2008.csv', ',',[1 1 1676 8]);
-%hitran = dlmread('823nm_834nm_HITRAN_2012.csv', ',',[0 0 2633 7]);
+%Hitran.file = dlmread('823nm_834nm_HITRAN_2012.csv', ',',[0 0 2633 7]);
 Hitran.file = dlmread('823nm_834nm_HITRAN_2016.csv', ',',[0 0 2689 7]);
 
 RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
@@ -89,7 +89,7 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 % this filter creates range delays 
 
 %lambda offset for testing purposes only -- set to zero
-%lambda_offset = 0;  
+%lambda_offset = 0.0;  
 
 %% Importing online and offline files from the selected date
 
@@ -252,6 +252,21 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %time = time2;
 %clear Online_Raw_Data  Offline_Raw_Data 
  
+if flag.pileup == 1
+% apply linear correction factor to raw counts 
+  %t_d=32E-9; % module dead time of Perkin Elmber
+  t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
+  %t_d=50E-9; %Emperical best fit to remove the noise in the WV behind clouds
+  %t_d=34E-9; %Excelitas SPCM-AQRH-13 Module 24696 for count rates < 5 Mc/s
+  % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
+  % divide by bin time in sec (e.g., 500ns) and # of acumulations (e.g., 10000)
+  % e.g., 10 accumlated counts is 2000 C/s
+  C_Online = 1./(1-(t_d.*(Online./(MCS.bin_duration*1E-9*MCS.accum))));   
+  C_Offline = 1./(1-(t_d.*(Offline./(MCS.bin_duration*1E-9*MCS.accum))));   
+  Online = Online.*C_Online;
+  Offline = Offline.*C_Offline;
+end
+
 if flag.afterpulse == 1   % afterpulse correction
    
   if flag.ap_quick == 1  
@@ -263,11 +278,11 @@ if flag.afterpulse == 1   % afterpulse correction
       %afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
       load (afterpulse_filename, 'ap_wv_off', 'ap_wv_on', 'ap_range');  
       ap_spline_sub_off = ap_wv_off*MCS.accum*MCS.bin_duration*1e-9;
-      ap_spline_sub_on = ap_wv_on*MCS.accum*MCS.bin_duration*1e-9;    
+      ap_spline_sub_on = ap_wv_on*MCS.accum*MCS.bin_duration*1e-9;  
   else    
      % read the afterpulse nc file identified in the json file 
 %      if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-%       cal_serv_path = '/home/rsfdata/Processing/Python/'; % when running on server
+%       cal_serv_path = '/home/rsfdata/Processing/'; % when running on server
 %      elseif strcmp(getenv('HOSTNAME'),'')
 %        cal_serv_path = '../'; % running locally 
 %      else
@@ -336,20 +351,6 @@ if flag.afterpulse == 1   % afterpulse correction
     Offline = Offline_ap_sub;
 end
 
-if flag.pileup == 1
-% apply linear correction factor to raw counts 
-  %t_d=32E-9; % module dead time of Perkin Elmber
-  t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
-  %t_d=50E-9; %Emperical best fit to remove the noise in the WV behind clouds
-  %t_d=34E-9; %Excelitas SPCM-AQRH-13 Module 24696 for count rates < 5 Mc/s
-  % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
-  % divide by bin time in sec (e.g., 500ns) and # of acumulations (e.g., 10000)
-  % e.g., 10 accumlated counts is 2000 C/s
-  C_Online = 1./(1-(t_d.*(Online./(MCS.bin_duration*1E-9*MCS.accum))));   
-  C_Offline = 1./(1-(t_d.*(Offline./(MCS.bin_duration*1E-9*MCS.accum))));   
-  Online = Online.*C_Online;
-  Offline = Offline.*C_Offline;
-end
 
 % clear Online_Raw_Data Offline_Raw_Data data_on data_off
 
@@ -371,8 +372,8 @@ end
 % Online = Online_sum./profiles2ave.wv;
 % Offline = Offline_sum./profiles2ave.wv; 
  
-  background_on = mean(Online(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
-  background_off = mean(Offline(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background 
+  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background 
   %background_mean = (background_on+background_off)./2;
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
@@ -398,15 +399,18 @@ end
   end
 % used combined geometric overlap correction from Zemax model starting in March 2020
   if ((serial_date >= 737902))
-    O_y = 0.10*O_y_near + 0.90.*O_y_primary;
+    O_y = 0.001*O_y_near + 0.999.*O_y_primary;
   end
   
-  O_x = O_x + 75; % add pulse legnth offset to geometeric overlap function (replace with real pulse duration)
-  O = interp1(O_x, O_y, range, 'linear','extrap');
+  range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
 
+  O_x = O_x -range_shift; % add pulse length offset to geometeric overlap function (replace with real pulse duration)
+  O = interp1(O_x, O_y, range, 'linear','extrap');
   
-  RB_overlap_on = bsxfun(@rdivide,  RB_on, O);
-  RB_overlap = bsxfun(@rdivide,  RB, O);
+ % RB_overlap_on = bsxfun(@rdivide,  RB_on, O);
+ % RB_overlap = bsxfun(@rdivide,  RB, O);
+  RB_overlap_on = RB_on./O;
+  RB_overlap = RB./O;
   
 % range correct   
   RB_on = bsxfun(@times, RB_on, range_km_squared);
@@ -610,6 +614,7 @@ line = double(Hitran.file(line_indices, 1:size(Hitran.file,2)));
 %Get median temperature and pressure profile for the day
 T_med=median(T,1,'omitnan');
 P_med=median(P,1,'omitnan');
+
   
 Hitran.T00 = 296;              % HITRAN reference temperature [K]
 Hitran.P00 = 1;                % HITRAN reference pressure [atm]

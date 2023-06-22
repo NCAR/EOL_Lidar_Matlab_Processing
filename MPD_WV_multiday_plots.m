@@ -5,17 +5,11 @@ tic
 %  date = '18 Jun 2021';   % pre-PRECIP
 %  days = 64; skip = 4;
  
-%  node = 'MPD01';      %PRECIP
-%  date = '28 May 2022';   
-%  days = 75; skip = 5;
-%  WV_max_scale = 25;
-%  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
- 
  
  node = 'MPD05';            %MPD01 vs MPD05 intercomparions 
- date = '07 Apr 2023';     
+ date = '16 Jun 2023';     
  days = 7; skip = 1;
- WV_max_scale = 6;
+ WV_max_scale = 8;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
 %  node = 'MPD02';            %post PRECIP intercomparions 
