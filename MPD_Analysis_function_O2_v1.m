@@ -96,10 +96,11 @@ if flag.WS==1
        T0=25;
        Surf_T= ones(size(Surf_T)).*T0;
        warning('No Temperature Weather Station Data')
-       pause
+       %pause
      end
      if isnan(median(Surf_P,'omitnan'))==1
        P0=1;
+       P0=0.81; % 
        Surf_P= ones(size(Surf_P)).*P0;
        warning('No Pressure Weather Station Data')
      end
@@ -482,6 +483,7 @@ end
   end
 
   % blank lowest gates
+  blank_range = 150;
   blank = nan.*ones(size(Offline_sum2(:,1:blank_range/gate)));
   Offline_Temp_Spatial_Avg  = single(horzcat(blank, Offline_Temp_Spatial_Avg (:,(blank_range/gate+1):end)));  
   Online_Temp_Spatial_Avg  = single(horzcat(blank, Online_Temp_Spatial_Avg (:,(blank_range/gate+1):end)));

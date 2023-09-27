@@ -41,8 +41,12 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
           %plot(O2_online_comb(100,:)./O2_online_mol(100,:), range/1000)
           %hold on
           plot(O2_geometric_correction, range/1000)
-          xlim([0 2])
-          ylim([0 8])
+          xlim([0 1.5])
+          ylim([0 6])
+          title([node,' \eta_{combined} (scaled O2 geometeric correction)'])
+          legend('O2_{on-comb}/(O2_{on-mol}+O2_{on-comb})')
+          ylabel('range (km)')
+          grid on
           %hold off
 
         % plot relative backscatter

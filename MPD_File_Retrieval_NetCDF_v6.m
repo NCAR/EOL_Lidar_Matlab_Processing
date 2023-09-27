@@ -11,6 +11,7 @@ LL.dirListing = dir(strcat('LL','*')); %ncdisp('LLsample000000.nc', '/', 'min')
 HKeep.dirListing = dir(strcat('HKeep','*')); %ncdisp('HKeepsample000000.nc', '/', 'min')
 Pow.dirListing = dir(strcat('Pow','*')); %ncdisp('Powsample000000.nc', '/', 'min')
 WS.dirListing = dir(strcat('WS','*')); %ncdisp('WSsample000000.nc', '/', 'min')
+Etalon.dirListing = dir(strcat('Etalon','*')); %ncdisp('Etalon_03_20230724_080000.nc', '/', 'min')
 
 d=1;
 
@@ -86,9 +87,6 @@ for d = 1:length(HKeep.dirListing)
   end
 end
 
-
-
-
  for d = 1:length(Pow.dirListing)
   %read in the power montioring data
   Pow.filename = Pow.dirListing(d).name;
@@ -104,8 +102,27 @@ end
       Pow.power1 = Pow.power;
     end
  % end
-end
+ end
 
+for d = 1:length(Etalon.dirListing)
+  %read in the power montioring data
+  Etalon.filename = Etalon.dirListing(d).name;
+ % if exist(Pow.filename) == 2 
+    Etalon.time = ncread(Etalon.filename,'time');
+    Etalon.temp = ncread(Etalon.filename,'Temperature');
+    Etalon.name = h5read(Etalon.filename,'/EtalonNum');
+    if d>1   % sum the days nc data files into a single array
+      Etalon.time1 = [Etalon.time1; Etalon.time];
+      Etalon.temp1 = [Etalon.temp1; Etalon.temp];
+      Etalon.name1 = [Etalon.name1; Etalon.name];
+    else
+      Etalon.time1 = Etalon.time;
+      Etalon.temp1 = Etalon.temp;
+      Etalon.name1 = Etalon.name;   
+    end
+ % end
+end
+ 
 
 for d = 1:length(WS.dirListing)
   %read in the weather station data
@@ -224,6 +241,17 @@ if isfield(LL,'time') == 1
   LL.O2offline = LL.all(strcmp(LL.name1,'O2Offline'),:);
 end
 
+if isfield(Etalon,'time') == 1
+  Etalon.all = [Etalon.time1, Etalon.temp1];
+  Etalon.WV_temp = Etalon.all(strcmp(Etalon.name1,'WVEtalon'),:);
+  Etalon.O2_temp = Etalon.all(strcmp(Etalon.name1,'O2Etalon'),:);
+end
+ figure(11)
+ plot(Etalon.WV_temp(:,2))
+ hold on
+ plot(Etalon.O2_temp(:,2))
+ grid on
+ 
 %LL.hsrl =  LL.all(strcmp(LL.name1,'HSRL'),:);
 if isfield(HKeep,'time') == 1
   try

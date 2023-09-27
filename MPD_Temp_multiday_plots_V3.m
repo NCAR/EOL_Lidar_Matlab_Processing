@@ -2,12 +2,14 @@ clear all; close all;
 tic
 dd=pwd;
 
- node = 'MPD05';
- date = '20210620';  
- days = 3; skip = 1;
-  
+ node = 'MPD03';
+ date = '20230719';  
+ days = 52; skip = 4;
+%  date = '20230728';  
+%  days = 15; skip = 3;  
   
 lapse_rate = 0.0065; %standard atmosphere lapse rate
+T_lapse = 0.0065; %standard atmosphere lapse rate
      
 %serv_path = '/Volumes/documents/MPD';
 serv_path = '/Volumes/fog1/rsfdata/MPD';
@@ -36,15 +38,19 @@ if strcmp(node,'MPD01')==1
    cd(strcat(serv_path,'/mpd_01_processed_data/Quickload/ReProcessing'))
    path_node = 'mpd01.';
  elseif strcmp(node,'MPD02')==1
-   cd(strcat(serv_path,'/mpd_02_processed_data//Matlab_temp'))
+   %cd(strcat(serv_path,'/mpd_02_processed_data/Quickload/ReProcessing'))
+   cd(strcat(serv_path,'/mpd_02_processed_data/Quickload/FullProcessingBootstrap'))
+   path_node = 'mpd02.';
  elseif strcmp(node,'MPD03')==1
-   cd(strcat(serv_path,'/mpd_03_processed_data//Matlab_temp'))
+   %cd(strcat(serv_path,'/mpd_03_processed_data/Quickload/ReProcessing'))
+   cd(strcat(serv_path,'/mpd_03_processed_data/Quickload/FullProcessingBootstrap'))
+   path_node = 'mpd03.';
  elseif strcmp(node,'MPD04')==1
-   cd(strcat(serv_path,'/mpd_04_processed_data//Matlab_temp'))
+   cd(strcat(serv_path,'/mpd_04_processed_data/Quickload/ReProcessing'))
+   path_node = 'mpd04.';
  elseif strcmp(node,'MPD05')==1
-  % cd(strcat(serv_path,'/mpd_05_processed_data//Matlab_temp'))
-   cd(strcat(serv_path,'/mpd_05_processed_data/Quickload/ReProcessing'))
-%   cd(strcat(serv_path,'/mpd_05_processed_data/Quickload/FullProcessingBootStrap'))
+   %cd(strcat(serv_path,'/mpd_05_processed_data/Quickload/ReProcessing'))
+   cd(strcat(serv_path,'/mpd_05_processed_data/Quickload/FullProcessingBootstrap'))
    path_node = 'mpd05.';
 end
 
@@ -70,8 +76,8 @@ for i=1:days
 %    Alpha_comb = Retrievals.Alpha';
 %    O2_online_comb = Data.Lidar.Interp.O2OnlineComb.Data';
 %    BSR_comb = Retrievals.Python.BackRatio.Value';
-    BSR_comb = Retrievals.Python.MPD.BackRatio.Value';
-    BSR_duration = (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24);
+%    BSR_comb = Retrievals.Python.MPD.BackRatio.Value';
+%    BSR_duration = (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24);
     duration =  (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24)';
     range = Retrievals.Temperature.Range;
     % following four lines are to build a lapse rate temp field based on surface station data
@@ -100,8 +106,8 @@ for i=1:days
  %   Alpha2_comb = vertcat(Alpha2_comb, Retrievals.PerturbOrders.Order2.Alpha.O2Online');
     WV_mask_comb =  vertcat(WV_mask_comb, Retrievals.WaterVapor.Mask'); 
  %   Alpha_comb = vertcat(Alpha_comb, Retrievals.Alpha');
-    BSR_comb = vertcat(BSR_comb, Retrievals.Python.MPD.BackRatio.Value');   
-    BSR_duration = vertcat(BSR_duration, (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24));
+ %   BSR_comb = vertcat(BSR_comb, Retrievals.Python.MPD.BackRatio.Value');   
+ %   BSR_duration = vertcat(BSR_duration, (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24));
     duration = vertcat(duration, (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24)');
   end
 end
@@ -147,9 +153,10 @@ y = range./1000;
  h = pcolor(x,y,Z);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
- axis([fix(min(x)) ceil(max(x)) 0 6])
+ axis([fix(min(x)) ceil(max(x)) 0 4])
  %caxis([1e-4 5e-4]);
- caxis([240 320]);
+ caxis([260 320]);
+ caxis([273-10 273+35]);
  colormap(jet)
  %colormap(parula)
  %shading interp
@@ -174,7 +181,7 @@ y = range./1000;
  h = pcolor(x,y,Z);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
- axis([fix(min(x)) ceil(max(x)) 0 6])
+ axis([fix(min(x)) ceil(max(x)) 0 4])
  %caxis([240 320]);
  caxis([-5+273.15 30+273.15]);
  caxis([240 320]);
@@ -305,36 +312,36 @@ y = range./1000;
 %  end
 %  set(gca,'Fontsize',font_size,'Fontweight','b');
 
- x = BSR_duration';
- y = Retrievals.Python.MPD.BackRatio.Range./1000;  % note this is Matt's version and not mine
- Z = BSR_comb';  
- figure('Position',Scrnsize)
- set(gcf,'renderer','zbuffer');
- h = pcolor(x,y,Z);
- set(h, 'EdgeColor', 'none');
- colorbar('EastOutside');
- axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([1 1000]);
- %caxis([1e-1 1e3]);
- colormap(jet)
- %shading interp
- ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
- set(gca, 'XTick',  xData)
- set(gca,'TickDir','out');
- set(gca,'TickLength',[0.005; 0.0025]);
- if days == 1
-   datetick('x','HH:MM','keeplimits', 'keepticks');
-   xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date, node, ' BSR']},'fontweight','b','fontsize',font_size);
- else
-   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   hh = title({[node, ' BSR']},'fontweight','b','fontsize',font_size);
-   %hh = title({'DIAL Water Vapor (g m^{-3})'},'fontweight','b','fontsize',font_size);
- end
- set(gca,'Fontsize',font_size,'Fontweight','b');
-  set(gca,'Zscale', 'log')
-  set(gca,'Colorscale', 'log')
-  set(gca,'Zscale', 'linear')
+%  x = BSR_duration';
+%  y = Retrievals.Python.MPD.BackRatio.Range./1000;  % note this is Matt's version and not mine
+%  Z = BSR_comb';  
+%  figure('Position',Scrnsize)
+%  set(gcf,'renderer','zbuffer');
+%  h = pcolor(x,y,Z);
+%  set(h, 'EdgeColor', 'none');
+%  colorbar('EastOutside');
+%  axis([fix(min(x)) ceil(max(x)) 0 6])
+%  caxis([1 1000]);
+%  %caxis([1e-1 1e3]);
+%  colormap(jet)
+%  %shading interp
+%  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+%  set(gca, 'XTick',  xData)
+%  set(gca,'TickDir','out');
+%  set(gca,'TickLength',[0.005; 0.0025]);
+%  if days == 1
+%    datetick('x','HH:MM','keeplimits', 'keepticks');
+%    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
+%    hh = title({[date, node, ' BSR']},'fontweight','b','fontsize',font_size);
+%  else
+%    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+%    hh = title({[node, ' BSR']},'fontweight','b','fontsize',font_size);
+%    %hh = title({'DIAL Water Vapor (g m^{-3})'},'fontweight','b','fontsize',font_size);
+%  end
+%  set(gca,'Fontsize',font_size,'Fontweight','b');
+%   set(gca,'Zscale', 'log')
+%   set(gca,'Colorscale', 'log')
+%   set(gca,'Zscale', 'linear')
   
   
   

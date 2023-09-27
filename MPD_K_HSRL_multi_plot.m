@@ -1,9 +1,11 @@
 clear all; close all;
 tic
 
- node = 'MPD05';
- date = '16 Jun 2023';   
+ node = 'MPD02';
+ date = '14 Sep 2023';   
  days = 7; skip = 1;
+     date = '18 Jul 2023';
+     days = 70; skip = 5;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
  
@@ -82,8 +84,8 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   set(gca,'TickLength',[0.005; 0.0025]);
   set(gca, 'XTick',  xData) 
   colorbar('EastOutside');
-  axis([fix(min(duration))  ceil(max(duration)) 0 12])
-  caxis([1e-1 1e3]);
+  axis([fix(min(duration))  ceil(max(duration)) 0 6])
+  caxis([5e-1 1e2]);
   %caxis([1 300]);
   hh = title({[node, ' ', ' Backscatter Ratio']},'fontweight','b','fontsize',font_size);  
   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
@@ -155,7 +157,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b'); 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);      % 1500 300
-%  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1000 250]);       % 1500 300
+%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 750 250]);       % 1500 300
   name=strcat(node, "_", date, "_Backscatter_Ratio_comb");
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
    

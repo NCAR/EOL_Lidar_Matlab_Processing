@@ -196,37 +196,42 @@ for ii=1:size(lambda_all,1)
     end
 end
 
+
+
 lambda_on = median(lambda_all);
 lambda_off = median(lambda_all_off);
+
+
  
 % if nanstd(lambda_all) >= 5e-4    
 %    h = msgbox('Online wavelength not stable during time period', 'Warning','warn');
 % end
     % check for multiple wavelengths
-    edges_on=828.1800:.00001:828.2200;
-    mult_fac = 1;
+    edges_on=828.1800:.00005:828.2200;
     lambda_on_set = lambda_all-lambda_diff;
-    [value,edges]=histcounts(round(mult_fac*lambda_on_set,3)/mult_fac,edges_on); % bin rounded wavelengths
-    lambda_on_N = edges(value>=1000)  % wavelength values with occurance > 10
+    lambda_on_act = lambda_all; % use the actual (not set)
+    [value,edges]=histcounts(round(lambda_on_act,5),edges_on); % bin rounded wavelengths
+    lambda_on_N = edges(value>=0.20*max(value))  % wavelength values with occurance > 5% max
     %lambda_F = value(value~=0);  % frequency of occurance
-    lambda_all_N = round(mult_fac*lambda_on_set,3)/mult_fac; 
+    lambda_all_N = round(lambda_on_act,5); 
     figure(1234)
     plot(lambda_all_N)
     hold on
     plot(lambda_all)
     hold off
 
+      
     edges_off=828.280:.00005:828.320;
-    mult_fac = 1;
     lambda_off_set = lambda_all_off-lambda_diff_off;
-    [value,edges]=histcounts(round(mult_fac*lambda_off_set,3)/mult_fac,edges_off); % bin rounded wavelengths
-    lambda_off_N = edges(value>=1000)  % wavelength values with occurance > 10
+    lambda_off_act = lambda_all_off;  % use the actual (not set)
+    [value,edges]=histcounts(round(lambda_off_act,5),edges_off); % bin rounded wavelengths
+    lambda_off_N = edges(value>=0.05*max(value));  % wavelength values with occurance > 10
     % select the most common offline values associated with the online 
       value_sort = [value; edges(1:end-1)]';
       values_sorted = sortrows(value_sort, 1);
       lambda_off_N = sort(values_sorted(end-size(lambda_on_N,2)+1:end))
     %lambda_off_F = value(value~=0);  % frequency of occurance
-    lambda_all_off_N=round(mult_fac*lambda_off_set,3)/mult_fac;
+    lambda_all_off_N=round(lambda_off_act,5);
     figure(5678)
     plot(lambda_all_off_N)
     hold on
@@ -254,8 +259,8 @@ range = single(0:gate:(size(Online,2)-1)*gate);
  
 if flag.pileup == 1
 % apply linear correction factor to raw counts 
-  %t_d=32E-9; % module dead time of Perkin Elmber
-  t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
+  t_d=32E-9; % module dead time of Perkin Elmber
+  %t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
   %t_d=50E-9; %Emperical best fit to remove the noise in the WV behind clouds
   %t_d=34E-9; %Excelitas SPCM-AQRH-13 Module 24696 for count rates < 5 Mc/s
   % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
@@ -372,13 +377,13 @@ end
 % Online = Online_sum./profiles2ave.wv;
 % Offline = Offline_sum./profiles2ave.wv; 
  
-  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
-  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background 
-  %background_mean = (background_on+background_off)./2;
+  background_on = mean(Online(:,end-round(525/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(525/gate):end),2)-0; % select last ~1050 meters to measure background 
+%  background_mean = (background_on+background_off)./2;
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
   Offline_sub = (bsxfun(@minus, Offline, background_off));%./accumulations;
-   
+
  % smooth RB for 1 minute and set spatial average
    %window_temporal = ones(aerosol_temporal_average,1)/aerosol_temporal_average;
    %window_spatial = ones(1,1)/1; % preserve high spatial res in RB
@@ -642,7 +647,7 @@ Hitran.nu_off = 1/(lambda_off_N(l)+offset)*1e7;
 %sigma_on_total = zeros(size(Online_Temp_Spatial_Avg,1),size(Online_Temp_Spatial_Avg,2));
 
 
-for i = 1:size(Online_Temp_Spatial_Avg,2); % calculate the absorption cross section at each range
+for i = 1:size(Online_Temp_Spatial_Avg,2) % calculate the absorption cross section at each range
     j=rem(i,25);
     if j==0 
  %     waitbar(i/(size(Online_Temp_Spatial_Avg,2)),h);

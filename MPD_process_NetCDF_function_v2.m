@@ -80,7 +80,7 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correct
   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
   flag.near = 0; flag.afterpulse = 0; 
   MPD_Analysis_function_NetCDF_v5(data_wv_on, data_wv_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)%
+        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path)%
 
  %[N_WV, N_WV_error] = MPD_WV_analysis_function_v2(data_wv_on, data_wv_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
  %        profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation);
@@ -133,7 +133,7 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correct
 %      blank_range = 150; % low range 
 %   end
   MPD_Analysis_function_NetCDF_v5(data_wv_on, data_wv_off, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
-        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)%
+        profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path)%
 end
 
 

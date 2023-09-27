@@ -1,5 +1,5 @@
 function[] = MPD_Analysis_function_NetCDF_v5(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)
+    profiles2ave, P0, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path)
 
 %% notes
 %Amin Nehrir (original author)
@@ -203,13 +203,13 @@ lambda_off = median(lambda_all_off);
 %    h = msgbox('Online wavelength not stable during time period', 'Warning','warn');
 % end
     % check for multiple wavelengths
-    edges_on=828.1800:.00001:828.2200;
-    mult_fac = 1;
+    edges_on=828.1800:.00005:828.2200;
     lambda_on_set = lambda_all-lambda_diff;
-    [value,edges]=histcounts(round(mult_fac*lambda_on_set,3)/mult_fac,edges_on); % bin rounded wavelengths
-    lambda_on_N = edges(value>=1000)  % wavelength values with occurance > 10
+    lambda_on_act = lambda_all; % use the actual (not set)
+    [value,edges]=histcounts(round(lambda_on_act,5),edges_on); % bin rounded wavelengths
+    lambda_on_N = edges(value>=0.20*max(value))  % wavelength values with occurance > 5% max
     %lambda_F = value(value~=0);  % frequency of occurance
-    lambda_all_N = round(mult_fac*lambda_on_set,3)/mult_fac; 
+    lambda_all_N = round(lambda_on_act,5); 
     figure(1234)
     plot(lambda_all_N)
     hold on
@@ -217,16 +217,16 @@ lambda_off = median(lambda_all_off);
     hold off
 
     edges_off=828.280:.00005:828.320;
-    mult_fac = 1;
     lambda_off_set = lambda_all_off-lambda_diff_off;
-    [value,edges]=histcounts(round(mult_fac*lambda_off_set,3)/mult_fac,edges_off); % bin rounded wavelengths
-    lambda_off_N = edges(value>=1000)  % wavelength values with occurance > 10
+    lambda_off_act = lambda_all_off;  % use the actual (not set)
+    [value,edges]=histcounts(round(lambda_off_act,5),edges_off); % bin rounded wavelengths
+    lambda_off_N = edges(value>=0.05*max(value));  % wavelength values with occurance > 10
     % select the most common offline values associated with the online 
       value_sort = [value; edges(1:end-1)]';
       values_sorted = sortrows(value_sort, 1);
       lambda_off_N = sort(values_sorted(end-size(lambda_on_N,2)+1:end))
     %lambda_off_F = value(value~=0);  % frequency of occurance
-    lambda_all_off_N=round(mult_fac*lambda_off_set,3)/mult_fac;
+    lambda_all_off_N=round(lambda_off_act,5);
     figure(5678)
     plot(lambda_all_off_N)
     hold on
@@ -254,8 +254,8 @@ range = single(0:gate:(size(Online,2)-1)*gate);
  
 if flag.pileup == 1
 % apply linear correction factor to raw counts 
-  %t_d=32E-9; % module dead time of Perkin Elmber
-  t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
+  t_d=32E-9; % module dead time of Perkin Elmber
+  %t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
   %t_d=50E-9; %Emperical best fit to remove the noise in the WV behind clouds
   %t_d=34E-9; %Excelitas SPCM-AQRH-13 Module 24696 for count rates < 5 Mc/s
   % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
@@ -282,14 +282,14 @@ if flag.afterpulse == 1   % afterpulse correction
       ap_spline_sub_on = ap_wv_on*MCS.accum*MCS.bin_duration*1e-9;  
   else    
      % read the afterpulse nc file identified in the json file 
-     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-      serv_path = '/home/rsfdata/Processing/'; % when running on server
-     elseif strcmp(getenv('HOSTNAME'),'')
-       serv_path = '../'; % running locally 
-     else
-      serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
-     end
-     ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
+%     if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+%      cal_serv_path = '/home/rsfdata/Processing/'; % when running on server
+%     elseif strcmp(getenv('HOSTNAME'),'')
+%       cal_serv_path = '../'; % running locally 
+%     else
+%      cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
+%     end
+     ap_filename = strcat(cal_serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
    
      ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
 %     ncdisp(ap_filename, '/', 'min') % use this to display all variables
@@ -372,9 +372,9 @@ end
 % Online = Online_sum./profiles2ave.wv;
 % Offline = Offline_sum./profiles2ave.wv; 
   
-  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
-  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background 
-  %background_mean = (background_on+background_off)./2;
+  background_on = mean(Online(:,end-round(525/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(525/gate):end),2)-0; % select last ~1050 meters to measure background 
+%  background_mean = (background_on+background_off)./2;
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
   Offline_sub = (bsxfun(@minus, Offline, background_off));%./accumulations;
@@ -403,7 +403,7 @@ end
   end
   
   range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
-  O_x = O_x - range_shift; % add pulse length offset to geometeric overlap function (replace with real pulse duration)
+  O_x = O_x -range_shift; % add pulse length offset to geometeric overlap function (replace with real pulse duration)
   O = interp1(O_x, O_y, range, 'linear','extrap');
   
   
@@ -676,7 +676,6 @@ for l=1:length(lambda_on_N)
 %offset = 0.00017;  % This is the absolute accuracy (nm) of the Bristol 671A at 828 nm  
 %offset = -wavemeter_offset*1e9; % This is the measured correction (nm) for each unit 
 offset = -wavemeter_offset; % This is the measured correction (nm) for each unit 
-%offset = -0.001;
 
 
 Hitran.nu_on = 1/(lambda_on_N(l)+offset)*1e7;

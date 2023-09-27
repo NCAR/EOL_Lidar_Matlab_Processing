@@ -1,15 +1,12 @@
 clear all; close all;
 tic
 
-%  node = 'MPD05';
-%  date = '18 Jun 2021';   % pre-PRECIP
-%  days = 64; skip = 4;
- 
- 
- node = 'MPD05';            %MPD01 vs MPD05 intercomparions 
- date = '16 Jun 2023';     
+ node = 'MPD02';            
+ date = '10 Aug 2023';
  days = 7; skip = 1;
- WV_max_scale = 8;
+     date = '18 Jul 2023';
+     days = 70; skip = 5;
+ WV_max_scale = 10;
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
 %  node = 'MPD02';            %post PRECIP intercomparions 
@@ -448,28 +445,28 @@ if flag.replot==1
    hold(subplot1,'all');
   %plot(duration, (i_off),'b','LineWidth',2,'DisplayName','i_{off}') % these plot diode Temps
   %plot(duration, (i_on),'r','LineWidth',2, 'DisplayName','i_{on}')
-  plot(duration, (lambda_comb_on),'b','LineWidth',2,'DisplayName','Lambda_{on}') % these plot diode Temps
+  plot(duration, (lambda_comb_on),'k','LineWidth',2,'DisplayName','Lambda_{on}') % these plot diode Temps
   %plot(duration, (t_hsrl),'g','LineWidth',2, 'DisplayName','T_{hsrl}')
-   axis([fix(min(duration)) ceil(max(duration)) -inf inf])
+   axis([fix(min(duration)) ceil(max(duration)) 828.190 828.200])
    YTick = [100 120 140 160 180];
-   ylabel('seed Temp, C', 'Fontsize', font_size, 'Fontweight', 'b');  
+   ylabel('wavelength, nm', 'Fontsize', font_size, 'Fontweight', 'b');  
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    set(gca,'Fontsize',font_size,'Fontweight','b');
    % Plot the temperature data
    subplot2=subplot(2,1,2,'Parent',figure1,'YGrid','on', 'XGrid','on');
    box(subplot2,'on');
    hold(subplot2,'all');
-   %plot(duration, T_bench,'r', 'LineWidth',1, 'DisplayName','T bench')
+   plot(duration, t_bench,'r', 'LineWidth',1, 'DisplayName','Bench T')
    plot(duration, surf_T, 'b', 'LineWidth',1, 'DisplayName','Surface T')
-   axis([fix(min(duration)) ceil(max(duration)) -inf inf]);   % -20 40])
-  % axis([fix(min(duration)) ceil(max(duration)) 0 40]);   % -20 40]) %PRECIP
+ %  axis([fix(min(duration)) ceil(max(duration)) -inf inf]);   % -20 40])
+  axis([fix(min(duration)) ceil(max(duration)) 0 40]);   % -20 40]) %PRECIP
       YTick = [-25 0 25 50];
-   ylabel('temperature, C', 'Fontsize', font_size, 'Fontweight', 'b'); 
+   ylabel('Temp, C', 'Fontsize', font_size, 'Fontweight', 'b'); 
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    set(gca,'Fontsize',font_size,'Fontweight','b');
    % Create legend
-   legend(subplot1,'show'); 
-   legend(subplot2,'show');
+   legend(subplot1,'show','Location','southwest'); 
+   legend(subplot2,'show','Location','southwest');
    %link the x axis for all 3 subplots
    ax(1)=subplot(2,1,1);
    ax(2)=subplot(2,1,2);
@@ -487,8 +484,8 @@ if flag.replot==1
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    ylabel('rel. transmit power', 'Fontsize', font_size, 'Fontweight', 'b');  
    set(gca,'Fontsize',font_size,'Fontweight','b');
-   legend('show', 'Location','southwest')
-   set(legend(ax(3)),'Color','white')
+   %legend('show', 'Location','southwest')
+   set(legend(ax(3)),'Color','white','Location','southeast')
    %change backgroud color to transparent
    
    % plot Surface pressure right y-axis of the lower plot
@@ -506,8 +503,8 @@ if flag.replot==1
    set(legend(ax(3)),'Color','white')
    %change backgroud color to transparent
       
-   legend(ax(1),'Location','NorthWest') 
-   legend(ax(2),'Location','NorthWest') 
+%   legend(ax(1),'Location','NorthWest') 
+%   legend(ax(2),'Location','NorthWest') 
    linkaxes(ax, 'x');
    hold off;
  end
@@ -541,6 +538,7 @@ if flag.save_figs==1
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b');  
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
+  %set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 750 250]);
   name=strcat(date, node, ' WV_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
  
