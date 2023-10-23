@@ -1,5 +1,5 @@
 elevation= 1641; %MPD02 and 03 at 1641m elevation 
-flag.plot_overlay = 0; %plot sondes on the time vs hieght AH plot
+flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
 flag.plot_profile = 1;
 flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
 sonde_end_int = 15; % integration time (in min) +/- around the sound launch  

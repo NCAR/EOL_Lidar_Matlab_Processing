@@ -2,7 +2,8 @@ elevation= 1641; %
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
 flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV
 sonde_end_int = 30; % integration time (in min) for the MPD 
-offset = 0 % temp offset for testing purposes only
+offset = 0 % sonde offset for testing purposes only
+temp_range_offset = 0; % temp range offset for testing purposes only
 
 %d=pwd;
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
@@ -32,7 +33,7 @@ for jj = 1:size(sondefilename,2)
       range_grid_in = alt{1}';
    elseif flag.data_type == 0
        range_grid_size = diff(range(1:2)) 
-       range_grid_in = range;
+       range_grid_in = range-temp_range_offset;
      %  comb_AH_var = N_error_comb.*1e6./6.022E23.*18.015;
    end
    %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, flag);

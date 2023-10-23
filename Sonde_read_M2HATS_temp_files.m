@@ -9,7 +9,7 @@ datestr(n)
 
 ncid = netcdf.open(filename, 'NC_NOWRITE');
   %ncdisp(filename, '/', 'min') % use this to display all variables
-  ncdisp(filename) % use this to display all variables
+  %ncdisp(filename) % use this to display all variables
     
  variable{1} = 'time'; % time (seconds since 1970-1-1)
  variable{2} = 'time_offset'; % time (seconds since 1970-1-1)
@@ -162,8 +162,8 @@ sonde_T_grid =interp1(sonde_AGL_km, sonde_T(index)+273.15, range_grid, 'linear')
 % MPD_T_var = median(Temp_comb_var(closestIndex:closestIndex_end,:),'includenan');
 % MPD_T(isnan(MPD_T_var)) = nan;
 
-MPD_T = median(Temp_comb_avg(closestIndex:closestIndex_end,1:round(6000/range_grid_size)),1, 'omitnan');
-MPD_T_var =  mean(Temp_comb_var(closestIndex:closestIndex_end,1:round(6000/range_grid_size)),1, 'omitnan');
+MPD_T = mean(Temp_comb_avg(closestIndex:closestIndex_end,1:round(6000/range_grid_size-1)),1, 'omitnan');
+MPD_T_var =  mean(Temp_comb_var(closestIndex:closestIndex_end,1:round(6000/range_grid_size-1)),1, 'omitnan');
 
 
 try
@@ -188,7 +188,7 @@ if flag.plot_overlay == 1
   set(eb, 'color', 'r', 'LineWidth', 1)
   hold off
   xlim([-5+273 30+273])
-  xlim([270 310])
+  xlim([260 310])
   ylim([0 4])
   %ylim([0 6])
   % grid(gca,'minor')
