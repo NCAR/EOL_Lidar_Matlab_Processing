@@ -43,7 +43,7 @@ elseif strcmp(getenv('HOSTNAME'),'') % running locally
     %cal_serv_path = '/Users/spuler/Documents/GitHub';  
 else % running locally but use calibration from fog server
    serv_path = '/Volumes/smaug/rsfdata/MPD/'; % 
-   cal_serv_path = '/Volumes/eol/smaug/rsfdata/MPD/calibration/' % 
+   cal_serv_path = '/Volumes/eol/smaug1/rsfdata/MPD/calibration/' % 
 end
 
 
