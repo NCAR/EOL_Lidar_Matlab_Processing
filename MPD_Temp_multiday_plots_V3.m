@@ -11,7 +11,7 @@ dd=pwd;
 %   days = 3; skip = 1;
  temp_range_offset = 150; % temp range offset for testing purposes only
  flag.ReProcessing = 1; %use the ReProcessed folder to get the temp data
- ReProc_ver = '_10'; % 20[5]min, 1x150 DeltaR, Abs_shift_index = 1 (nominal)
+ ReProc_ver = '_11'; % 20[5]min, 1x150 DeltaR, Abs_shift_index = 1 (nominal)
  %..          '',  20[5]min, 2x150 DeltaR, Abs_shift_index = 1, 150 m final shift 
  %..          '_1', 30[5]min, 2x150 DeltaR, Abs_shift_index = 2, 150 m final shift   
  %..          '_2', 30[5]min, 4x75 DeltaR, Abs_shift_index = 3, 225 m final shift  

@@ -1,7 +1,7 @@
 % example batch process
 
-start_date = '20231020';   
-stop_date =  '20231020'; 
+start_date = '20231026';   
+stop_date =  '20231030'; 
 
 if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu') == 1  % when running on fog server
   prompt = 'Enter start date (e.g., 20230411)';

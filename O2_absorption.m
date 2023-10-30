@@ -6,11 +6,6 @@ function [] = O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
 %  O2_absorption(T, P, O2_online_comb, O2_offline_comb, ...
 %      time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength)
 
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-%outputArg1 = inputArg1;
-%outputArg2 = inputArg2;
-
 % calculate the density of air
 vmr_O2_d =  0.2095; % volume mixing ratio of oxygen, dry
 

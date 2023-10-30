@@ -2,7 +2,7 @@ clear all; close all;
 tic
 
  node = 'MPD05';
- date = '17 Oct 2023';   
+ date = '26 Oct 2023';   
  days = 7; skip = 1;
 % date = '29 Aug 2023';   
 % days = 3; skip = 1;
@@ -11,7 +11,8 @@ tic
  flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
  
  
-serv_path = '/Volumes/fog1/rsfdata/MPD/';
+%serv_path = '/Volumes/fog1/rsfdata/MPD/';
+serv_path = '/Volumes/smaug1/rsfdata/MPD/';
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
 C = importdata('NCAR_C_Map.mat');
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/';
@@ -123,7 +124,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   set(gca, 'XTick',  xData)
   colorbar('EastOutside');
   axis([fix(min(duration))  ceil(max(duration)) 0 6])
-  caxis([1e-7 1e-3]);
+  caxis([1e-8 1e-6]);
   hh = title({[node, ' ', ' Backscatter Coefficient [m^{-1}sr^{-1}]']},'fontweight','b','fontsize',font_size);  
   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
 %  xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
@@ -133,6 +134,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   set(gca,'Colorscale', 'log')
   set(gca,'Zscale', 'linear')
   colormap(jet)
+  colormap(viridis)
 
   
   figure(3)

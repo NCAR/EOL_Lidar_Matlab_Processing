@@ -2,7 +2,7 @@ clear all; close all;
 tic
 
  node = 'MPD05';            
- date = '17 Oct 2023';
+ date = '26 Oct 2023';
  days = 7; skip = 1;
 %      date = '18 Jul 2023';
 %      days = 70; skip = 5;
@@ -18,7 +18,7 @@ tic
 
 %serv_path = '/Volumes/documents/MPD/';
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
-serv_path = '/Volumes/fog1/rsfdata/MPD/';
+serv_path = '/Volumes/smaug1/rsfdata/MPD/';
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
 
 blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
@@ -550,11 +550,11 @@ if flag.save_figs==1
   name=strcat(date, node, ' RB_Matlab_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
-  FigH = figure(3);
-  set(gca,'Fontsize',16,'Fontweight','b');
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, node, 'background_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+%   FigH = figure(3);
+%   set(gca,'Fontsize',16,'Fontweight','b');
+%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
+%   name=strcat(date, node, 'background_multi'); 
+%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
 %  FigH = figure(5);
 % %  set(gca,'Fontsize',36,'Fontweight','b');
@@ -562,15 +562,15 @@ if flag.save_figs==1
 %  name=strcat(date, 'column_OD_multi'); 
 %  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
-  if WS==1
-      %size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
-      size2 = [0 0 scrsz(3) scrsz(4)/3]; % use for long plots 
-      FigH = figure(4);
-     % set(gca,'Fontsize',36,'Fontweight','b');
-      set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);
-      name=strcat(date, node, 'Housekeeping'); 
-      print(FigH, name, '-dpng', '-r0') % set at the screen resolution
-  end
+%   if WS==1
+%       %size2 = [scrsz(4)/1 scrsz(4)/1 scrsz(3)/0.35 scrsz(4)/1]; % use for long plots 
+%       size2 = [0 0 scrsz(3) scrsz(4)/3]; % use for long plots 
+%       FigH = figure(4);
+%      % set(gca,'Fontsize',36,'Fontweight','b');
+%       set(FigH, 'PaperUnits', 'points', 'PaperPosition', size2);
+%       name=strcat(date, node, 'Housekeeping'); 
+%       print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+%   end
    
 end
  
