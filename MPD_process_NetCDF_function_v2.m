@@ -30,8 +30,8 @@ ave_time.rb = 2.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
 
 if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1  % when running on fog server
-   serv_path = '/export/smaug/rsfdata/MPD/'; 
-   cal_serv_path = '/export/smaug/rsfdata/MPD/calibration/'
+   serv_path = '/export/smaug1/rsfdata/MPD/'; 
+   cal_serv_path = '/export/smaug1/rsfdata/MPD/calibration/'
    cal_serv_path = '/home/rsfdata/Processing/Python/'
 elseif strcmp(getenv('HOSTNAME'),'tikal.eol.ucar.edu') ==1  % when running on tikal server
     serv_path = '/export/smaug/rsfdata/MPD/'; 
@@ -42,8 +42,8 @@ elseif strcmp(getenv('HOSTNAME'),'') % running locally
     cal_serv_path = '../' 
     %cal_serv_path = '/Users/spuler/Documents/GitHub';  
 else % running locally but use calibration from fog server
-   serv_path = '/Volumes/smaug/rsfdata/MPD/'; % 
-   cal_serv_path = '/Volumes/eol/smaug/rsfdata/MPD/calibration/' % 
+   serv_path = '/Volumes/smaug1/rsfdata/MPD/'; % 
+   cal_serv_path = '/Volumes/eol/smaug1/rsfdata/MPD/calibration/' % 
 end
 
 
