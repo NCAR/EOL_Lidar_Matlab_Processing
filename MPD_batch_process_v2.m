@@ -3,7 +3,7 @@
 start_date = '20231130';   
 stop_date =  '20231130'; 
 
-if strcmp(getenv('HOSTNAME'),'smaug.eol.ucar.edu') == 1  % when running on fog server
+if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1  % when running on fog server
   prompt = 'Enter start date (e.g., 20230411)';
   start_date = input(prompt, 's');
   prompt = 'Enter stop date (e.g., 20230411)';
