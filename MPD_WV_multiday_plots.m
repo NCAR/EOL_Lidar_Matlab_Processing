@@ -1,13 +1,13 @@
 clear all; close all;
 tic
 
- node = 'MPD05';            
- date = '26 Oct 2023';
- days = 7; skip = 1;
+ node = 'MPD02';            
+ date = '30 Nov 2023';
+ days = 1; skip = 1;
 %      date = '18 Jul 2023';
 %      days = 70; skip = 5;
- WV_max_scale = 10;
- flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
+ WV_max_scale = 6;
+ flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
  
 %  node = 'MPD02';            %post PRECIP intercomparions 
 %  date = '3 Jun 2022';   
@@ -20,6 +20,8 @@ tic
 %serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
 serv_path = '/Volumes/smaug1/rsfdata/MPD/';
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
+addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/';
+addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/matplotlib/';
 
 blank = 150; % has to be in increments of 75 (the default blank in the processing is 300m before WFOV)
 flag.near = 0;  % read in the near range channel (0=off 1=on)
@@ -83,7 +85,7 @@ end
 
 test_gate = exist('gate') % check for early versions were the gate wasn't saved
 if test_gate == 0
- gate = 75
+ %gate = 75
 end
 
 i=1;
@@ -106,7 +108,7 @@ for i=1:days
            RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
            OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
            range = range_grid_75;
-           range_limit = range_limit/2;
+           range_limit = range_limit/(75/gate);
         end
         N_avg_comb=N_avg;
         N_error_comb=N_error;
@@ -140,7 +142,7 @@ for i=1:days
          RB = interp1(range, RB', range_grid_75, 'linear', 'extrap')';
   %      OD = interp1(range, OD', range_grid_75, 'linear', 'extrap')';
          range = range_grid_75;
-         range_limit = range_limit_ch/2;
+         range_limit = range_limit_ch/(75/gate);
        end
       range_lim1 = size(N_avg_comb,2); % catch any changes in range
       range_lim2 = size(N_avg,2); % catch any changes in range
@@ -293,7 +295,8 @@ if flag.replot==1
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date,'DIAL Water Vapor (g m^{-3})']},'fontweight','b','fontsize',font_size);
+   hh = title({[node, ' Water Vapor (g m^{-3})', '  ', date]},'fontweight','b','fontsize',font_size);
+  % hh = title({[date,'DIAL Water Vapor (g m^{-3})']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
    hh = title({[node, ' Water Vapor (g m^{-3})']},'fontweight','b','fontsize',font_size);

@@ -2,18 +2,17 @@
 % atmosphere for 1km path lengths. Convert to absorption cross section
 clear all 
 close all
-% load('WV_spectral_calc.mat')   %WV
-%load('spectral_calc.mat') %O2
 load('O2_spectral_calc_0K_offset.mat') %O2
+% load('O2_spectral_calc_10K_offset.mat') %O2
 
 figure(1)
-plot(O20km0K(:,1),   O20km0K(:,2)    )
+plot(O2_0km(:,1),   O2_0km(:,2)    )
 hold on
-plot(O21km0K(:,1),   O21km0K(:,2)    )
-plot(O22km0K(:,1), O22km0K(:,2)  )
-plot(O23km0K(:,1), O23km0K(:,2)  )
-plot(O24km0K(:,1), O24km0K(:,2)  )
-plot(O25km0K(:,1), O25km0K(:,2)  )
+plot(O2_1km(:,1),   O2_1km(:,2)    )
+plot(O2_2km(:,1), O2_2km(:,2)  )
+plot(O2_3km(:,1), O2_3km(:,2)  )
+plot(O2_4km(:,1), O2_4km(:,2)  )
+plot(O2_5km(:,1), O2_5km(:,2)  )
 hold off
 
 % US standard atmosphere temperature (K) and pressure (atm) 
@@ -38,16 +37,16 @@ L = 1000;  % path length (m) used in SpectralCalc
 
 
 figure(2)
-plot(alt_0km(:,1).*1000,  -1*log(alt_0km(:,2))/L/ND_0km/O2MR*10000, 'b')
+plot(O2_0km(:,1).*1000,  -1*log(O2_0km(:,2))/L/ND_0km/O2MR*10000, 'b')
 hold on
-plot(alt_1km(:,1).*1000,  -1*log(alt_1km(:,2))/L/ND_1km/O2MR*10000, 'b')
-plot(alt_2km(:,1).*1000,  -1*log(alt_2km(:,2))/L/ND_2km/O2MR*10000, 'g')
-plot(alt_3km(:,1).*1000, -1*log(alt_3km(:,2))/L/ND_3km/O2MR*10000, 'y')
-plot(alt_4km(:,1).*1000, -1*log(alt_4km(:,2))/L/ND_4km/O2MR*10000, 'm')
-plot(alt_5km(:,1).*1000, -1*log(alt_5km(:,2))/L/ND_5km/O2MR*10000, 'r')
+plot(O2_1km(:,1).*1000,  -1*log(O2_1km(:,2))/L/ND_1km/O2MR*10000, 'b')
+plot(O2_2km(:,1).*1000,  -1*log(O2_2km(:,2))/L/ND_2km/O2MR*10000, 'g')
+plot(O2_3km(:,1).*1000, -1*log(O2_3km(:,2))/L/ND_3km/O2MR*10000, 'y')
+plot(O2_4km(:,1).*1000, -1*log(O2_4km(:,2))/L/ND_4km/O2MR*10000, 'm')
+plot(O2_5km(:,1).*1000, -1*log(O2_5km(:,2))/L/ND_5km/O2MR*10000, 'r')
 hold off
 legend('0km', '1km','2km', '3km', '4km', '5km')
-xlim([769.6 770.0])
+xlim([769.75 770.15])
 %xlim([769. 770])
 grid on
 title('HITRAN 2020, O2, all isotopologues (SpectralCalc, US Standard Atmosphere)')
@@ -56,21 +55,35 @@ xlabel('wavelength [nm]')
 
 
 figure(3)
-semilogy(alt_0km(:,1).*1000,  -1*log(alt_0km(:,2))/L/ND_0km/O2MR*10000, 'K')
+semilogy(O2_0km(:,1).*1000,  -1*log(O2_0km(:,2))/L/ND_0km/O2MR*10000, 'K')
 hold on
-semilogy(alt_1km(:,1).*1000,  -1*log(alt_1km(:,2))/L/ND_1km/O2MR*10000, 'b')
-semilogy(alt_2km(:,1).*1000,  -1*log(alt_2km(:,2))/L/ND_2km/O2MR*10000, 'g')
-semilogy(alt_3km(:,1).*1000, -1*log(alt_3km(:,2))/L/ND_3km/O2MR*10000, 'y')
-semilogy(alt_4km(:,1).*1000, -1*log(alt_4km(:,2))/L/ND_4km/O2MR*10000, 'm')
-semilogy(alt_5km(:,1).*1000, -1*log(alt_5km(:,2))/L/ND_5km/O2MR*10000, 'r')
+semilogy(O2_1km(:,1).*1000,  -1*log(O2_1km(:,2))/L/ND_1km/O2MR*10000, 'b')
+semilogy(O2_2km(:,1).*1000,  -1*log(O2_2km(:,2))/L/ND_2km/O2MR*10000, 'g')
+semilogy(O2_3km(:,1).*1000, -1*log(O2_3km(:,2))/L/ND_3km/O2MR*10000, 'y')
+semilogy(O2_4km(:,1).*1000, -1*log(O2_4km(:,2))/L/ND_4km/O2MR*10000, 'm')
+semilogy(O2_5km(:,1).*1000, -1*log(O2_5km(:,2))/L/ND_5km/O2MR*10000, 'r')
 hold off
 legend('0km', '1km','2km', '3km', '4km', '5km')
-xlim([769.6 770.0])
+xlim([769.75 770.15])
 %xlim([769. 770])
 grid on
 title('HITRAN 2020, O2, all isotopologues (SpectralCalc, US Standard Atmosphere)')
 ylabel('absorption cross section [cm^{2}]')
 xlabel('wavelength [nm]') 
+
+% figure(4)
+% semilogy(O2_3km_0K(:,1).*1000,  -1*log(O2_3km_0K(:,2))/L/ND_0km/O2MR*10000, 'K')
+% hold on
+% semilogy(O2_3km_10K(:,1).*1000,  -1*log(O2_3km_10K(:,2))/L/ND_1km/O2MR*10000, 'r')
+% hold off
+% legend('0K offset', '10K offset')
+% xlim([769.73 769.81])
+% grid on
+% title('HITRAN 2020, O2, all isotopologues (SpectralCalc, US Standard Atmosphere)')
+% ylabel('absorption cross section [cm^{2}]')
+% xlabel('wavelength [nm]') 
+
+
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
 %cd('/Users/spuler/Desktop') % point to the directory where data is stor

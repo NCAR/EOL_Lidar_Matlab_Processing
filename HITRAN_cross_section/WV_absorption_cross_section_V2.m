@@ -48,7 +48,7 @@ legend('0km', '1km','2km', '3km', '4km', '5km')
 %xlim([769.75 770])
 %xlim([769. 770])
 grid on
-title('HITRAN 2020, all isotopologues (SpectralCalc, US Standard Atmosphere)')
+title('HITRAN 2020, H2O all isotopologues (SpectralCalc, US Standard Atmosphere)')
 ylabel('absorption cross section [cm^{2}]')
 xlabel('wavelength [nm]') 
 
@@ -66,7 +66,7 @@ legend('0km', '1km','2km', '3km', '4km', '5km')
 %xlim([769.75 770])
 %xlim([769. 770])
 grid on
-title('HITRAN 2020, all isotopologues (SpectralCalc, US Standard Atmosphere)')
+title('HITRAN 2020, H2O all isotopologues (SpectralCalc, US Standard Atmosphere)')
 ylabel('absorption cross section [cm^{2}]')
 xlabel('wavelength [nm]') 
 

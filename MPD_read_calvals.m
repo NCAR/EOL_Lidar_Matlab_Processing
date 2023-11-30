@@ -16,12 +16,16 @@ addpath('./jsonlab')
 if strcmp(node,'MPD01')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial1_calvals.json')],'SimplifyCell',1);
   if (serial_date >= 737988) % day the WFOV channel was installed
-       blank_range = 37.5*7;
+      blank_range = 37.5*7;
+  elseif (serial_date >= datenum(2023,11,30))
+      blank_range = 37.5*4
   end
 elseif strcmp(node,'MPD02')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial2_calvals.json')],'SimplifyCell',1);
   if (serial_date >= 738024) % day the WFOV channel was installed
        blank_range = 37.5*7  % 1µs pulse requires 6 range bins
+  elseif (serial_date >= datenum(2023,11,30))
+      blank_range = 37.5*4
   end
 elseif strcmp(node,'MPD03')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial3_calvals.json')],'SimplifyCell',1);
