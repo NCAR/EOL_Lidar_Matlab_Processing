@@ -33,7 +33,7 @@ for d = 1:length(MCSsample.dirListing)
   
 
   if d>1   % sum the days nc data files into a single array
-    if size(MCSsample.data,2)==  size(MCSsample.data1,2) % check the MSC didn't change
+    if size(MCSsample.data,2)==  MCSsample.NBins(end) % check the MSC didn't change
       MCSsample.time1=[MCSsample.time1;MCSsample.time];
       MCSsample.data1=[MCSsample.data1;MCSsample.data];
       MCSsample.channel1=[MCSsample.channel1;MCSsample.channel];

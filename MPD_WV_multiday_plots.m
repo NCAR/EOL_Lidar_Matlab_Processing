@@ -1,9 +1,9 @@
 clear all; close all;
 tic
 
- node = 'MPD02';            
+ node = 'MPD01';            
  date = '30 Nov 2023';
- days = 1; skip = 1;
+ days = 6; skip = 1;
 %      date = '18 Jul 2023';
 %      days = 70; skip = 5;
  WV_max_scale = 4;

@@ -574,8 +574,10 @@ end
   Online_Temp_Spatial_Avg = interp1(time_grid_act, Online_Temp_Spatial_Avg_act, time_grid, 'linear'); 
 
 % %remove any negative counts (beyond noise)
-    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -10) = 0;   
-    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = 0;  
+%    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -10) = 0;   
+%    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = 0;  
+    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -10) = nan;   
+    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = nan;  
     RB(real(RB) < -10) = 0;
     RB_on(real(RB_on) < -10) = 0;
   
