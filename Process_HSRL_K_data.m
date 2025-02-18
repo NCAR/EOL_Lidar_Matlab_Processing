@@ -1,5 +1,5 @@
 function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
-    O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder, cal_serv_path)
+    O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder, cal_serv_path, receiver_scale_factor)
 % Process the HSRL channels 
 % Calculate the backscatter ratio (BSR) and backscatter coefficient using receiver scan data
  
@@ -9,19 +9,25 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  % Receiver beam splitter sends more signal to the molecular detector vs combined. 
  % Determine split level using the measured O2 online counts in both channels 
  O2_geometric_correction = mean(O2_online_comb(1:end-15,:)./O2_online_mol(1:end-15,:),1,'omitnan');
- O2_geometric_correction = mean(O2_online_comb(1:end-15,:)./(O2_online_mol(1:end-15,:)+O2_online_comb(1:end-15,:)),1,'omitnan');
- O2_geometric_correction = median(O2_online_comb./(O2_online_mol+O2_online_comb),1,'omitnan');
+ O2_geometric_correction = median(O2_online_comb(10:end-15,:)./(O2_online_mol(10:end-15,:)+O2_online_comb(10:end-15,:)),1,'omitnan');
+  O2_geometric_correction = median(O2_online_comb(10:end-15,:),1,'omitnan')./median((O2_online_mol(10:end-15,:)+O2_online_comb(10:end-15,:)),1,'omitnan');
+ %O2_geometric_correction = median(O2_online_comb./(O2_online_mol+O2_online_comb),1,'omitnan');
    
  % trying to make this an automatic calculated value, but it blows up in clouds 
  O2_geometric_correction(O2_geometric_correction==0)=nan;
  O2_geometric_correction(O2_geometric_correction==Inf | O2_geometric_correction==-Inf)=nan;
  try
    % the geometric correction is ignored for now  
-   eta_comb = median(O2_geometric_correction, 'omitnan')  
+   eta_comb = median(O2_geometric_correction(1:end/3), 'omitnan')  
  catch
    warning('Problem with the geometric correction, assigning a fixed value.');
    eta_comb = 0.6  % override, and use this value for now 
  end
+%  eta_comb=receiver_scale_factor % read from json file
+%  eta_comb=0.56 % manual over ride
+% node
+% eta_comb
+%flag.troubleshoot == 1
   
       if flag.troubleshoot == 1
           figure(102)
@@ -38,8 +44,8 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
 
           %Combined efficiency, rel to molecular 
           figure(103)
-          %plot(O2_online_comb(100,:)./O2_online_mol(100,:), range/1000)
-          %hold on
+         % plot(O2_online_comb(500:600,:)./(O2_online_mol(500:600,:)+O2_online_comb(500:600,:)), range/1000)
+         % hold on
           plot(O2_geometric_correction, range/1000)
           xlim([0 1.5])
           ylim([0 6])

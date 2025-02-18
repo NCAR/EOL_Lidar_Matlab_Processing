@@ -1,14 +1,14 @@
 elevation= 1641; %MPD02 and 03 at 1641m elevation 
-flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.plot_profile = 1;
-flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
+flag.plot_overlay = 0; %plot sondes on the time vs hieght AH plot
+flag.plot_profile = 0;
+flag.data_type = 3;  % 0=matlab WV, 1=python WV, 2=raman WV, 3=PTV WV
 sonde_end_int = 15; % integration time (in min) +/- around the sound launch  
 WV_min = 0;
 WV_max = 10;
 
 %d=pwd;
 
-cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/M2HATS')
+cd('/Volumes/eol/smaug1/rsfdata/MPD/mpd_ancillary_data/radiosondes/M2HATS')
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots';
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
@@ -37,7 +37,7 @@ for jj = 1:size(sondefilename,2)
       %range_grid_size = 37.5; 
       range_grid_size = diff(alt{1}');
       range_grid_size = range_grid_size(1,1)
-      N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
+      N_avg_comb = (comb_AH'./1e6.*6.022E23./18.015);
       comb_AH_var = N_avg_comb*0;
       duration = comb_duration;
       range_grid_in = alt{1}';

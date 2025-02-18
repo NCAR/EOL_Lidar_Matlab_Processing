@@ -2,18 +2,18 @@
 clear all; close all
 %serv_path = '/Volumes/eol/sci/spuler';
 %serv_path = '/Volumes/documents/MPD';
-serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';  % need to use finder and connect to server 'smb://cit.ucar.edu/eol'
-% cd(strcat(serv_path,'/mpd_05_processed_data/python'))
-cd(strcat(serv_path,'/mpd_05_processed_data/PTV'))
+serv_path = '/Volumes/eol/smaug1/rsfdata/MPD/';  % need to use finder and connect to server 'smb://cit.ucar.edu/eol'
+%cd(strcat(serv_path,'/mpd_03_processed_data/PTV'))
+cd(strcat(serv_path,'/mpd_03_processed_data/Python'))
 d_read_data = pwd; % get the current path
 
-serv_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd';
-cd(strcat(serv_path,'/Plots'))
+plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd';
+cd(strcat(plot_path,'/Plots'))
 d_save_data = pwd; %set the plot save path
 flag.save_data = 1;  %save data at end of processing (0=off 1=on)
-node = 'MPD05';
+node = 'MPD03';
 low_range_mask = 0;
-skip = 3
+skip = 4
 
 cd(d_read_data);
 [Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');

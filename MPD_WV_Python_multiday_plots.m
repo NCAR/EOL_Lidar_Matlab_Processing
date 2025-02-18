@@ -11,9 +11,12 @@ serv_path1 = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/';  % need to use f
 %serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/full_altitude/qc_masked/';
 serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/final_adj_mask_iii/qc_masked/';
 serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/PRECIP/full_alt_mask_iii/qc_masked/';
+serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/ECLIPSE/test_1.2/qc_masked/';
+serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/ECLIPSE/test_1.2/qc_masked/';
+serv_path = '/Volumes/eol/sci/mhayman/DIAL/Processed_Data/NOAA2023/1.0/';
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
 
-node = 'mpd04';
+node = 'mpd05';
 cd(strcat(serv_path))
 addpath /Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing
 d_read_data = pwd; % get the current path
@@ -22,7 +25,7 @@ d_save_data = pwd; % set the plot save path
 flag.save_data = 1;  % save data at end of processing (0=off 1=on)
 flag.decimate = 0;  % decimate time dimension to fit screen (needed for long timespans)
 flag.grid75 = 0; % grid data to 75 m
-skip = 1
+skip = 3
 mask_var = sqrt(25); %standard is 25
 force_low_range_mask_off = 0;  %removes mask from low range  
 
@@ -38,13 +41,13 @@ Pythonfilename = natsortfiles(Pythonfilename);
  variable{3} = 'Absolute_Humidity'; 
  variable{4} = 'Absolute_Humidity_mask';
  variable{5} = 'Absolute_Humidity_variance'; 
-%  variable{6} = 'Backscatter_Ratio';
-%  variable{7} = 'Backscatter_Ratio_mask';
-%  variable{8} = 'Backscatter_Ratio_variance'; 
-%  variable{6} = 'Aerosol_Backscatter_Coefficient';
-%  variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
-%  variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
- variable{6} = 'Relative_Backscatter';
+% variable{6} = 'Backscatter_Ratio';
+% variable{7} = 'Backscatter_Ratio_mask';
+% variable{8} = 'Backscatter_Ratio_variance'; 
+  variable{6} = 'Aerosol_Backscatter_Coefficient';
+  variable{7} = 'Aerosol_Backscatter_Coefficient_mask';
+  variable{8} = 'Aerosol_Backscatter_Coefficient_variance';
+% variable{6} = 'Relative_Backscatter';
  variable{10} = 'Surface_AbsHum';
  variable{11} = 'Absolute_Humidity_mask_layers';
     
@@ -72,6 +75,7 @@ for jj = 1:size(Pythonfilename,2)
 %       AH_mask{jj}(6:9,:)= 0; %as a test turn off the low range mask
 %     end
     AH{jj}(AH_mask{jj} == 1) = nan;
+    AH{jj}(AH_var{jj} >= mask_var) = nan;
     AH_var{jj}(AH_mask{jj} == 1) = nan; 
     AH{jj}(isnan(AH_var{jj})) = nan;
 
@@ -201,7 +205,7 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   h = pcolor(x, y, Z_AH);
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); 
-  caxis([0 25]);
+  caxis([0 15]);
   %caxis([0 6]);
   axis([fix(min(x)) ceil(max(x)) 0 6]) 
 %  shading interp
@@ -224,10 +228,11 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); 
   caxis([0 12]);
-%  caxis([1e-8 1e-3]);
-  caxis([1e3 1e8]);  % for relative backscatter
-%  caxis([1e2 1e9]); 
+  caxis([1e-8 1e-3]);
+%  caxis([1e3 1e8]);  % for relative backscatter
+%  caxis([1e-1 1e4]); % backscatter ratio
   axis([fix(min(x)) ceil(max(x)) 0 18.25])
+  axis([fix(min(x)) ceil(max(x)) 0 12])
 %  axis([fix(min(x)) ceil(max(x)) 0 6])
   %  shading interp
   set(gca, 'XTick',  xData)
@@ -288,7 +293,7 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
  h = pcolor(x, y, Z_AH);
  set(h, 'EdgeColor', 'none'); 
  axis xy; colorbar('EastOutside'); 
- caxis([0 25]);
+ caxis([0 15]);
   %caxis([0 6]);
  axis([fix(min(x)) ceil(max(x)) 0 6]) 
 %  shading interp
@@ -343,7 +348,7 @@ xData =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x)))/
   
   
   %cd('/Users/spuler/Desktop/WV_DIAL_data') % point to the directory where data is stored 
-  serv_path = '/Volumes/eol/fog1/rsfdata/MPD/';
+  serv_path = '/Volumes/eol/smaug1/rsfdata/MPD/';
   name=strcat(date, '_combined');
   if strcmp(node,'mpd01')==1
      cd(strcat(serv_path, 'mpd_01_processed_data/Matlab')) 

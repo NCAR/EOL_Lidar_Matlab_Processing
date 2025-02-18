@@ -1,10 +1,14 @@
 clear all
 close all
 
+  
 O_x = [50;100;200;300;400;500;750;1000;1250;1500; 2000;3000;4000;5000;6000;8000;12000]; %range in meters
 O_y_near = [2.47E-2; 9.90E-2; 3.99E-1; 8.72E-1; 1.00E+0; 1.00E+0 ;1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0; 1.00E+0]; %near range receiver overlap function
+% 119µrad (105µm fiber, f=11 fiber port, M1=4x beam reducer, M2=20x, focus offset 150µm)
 O_y_primary = [7e-7; 1.5e-5; 2.77e-4; 1.38e-3; 3.98e-3; 8.89e-3; 3.72e-2; 1.06e-1; 2.08e-1; 3.39e-1; 6.61e-1; 9.53e-1; 9.74e-1; 9.86e-1; 9.92e-1; 1.00E+0; 1.00E+0]; %primary receiver overlap function
-
+% 71µrad (62.5µm fiber, f=11 fiber port, M1=4x beam reducer, M2=20x, focus offset 50µm)
+%norm = 0.680;
+%O_y_primary = [0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.001; 0.01; 0.041; 0.167; 0.428; 0.598; 0.669; 0.68; 0.68; 0.67]./norm; %primary receiver overlap function
 O_y_combined = O_y_primary*0.9 + O_y_near*.1;  
 
 figure(1)

@@ -1,7 +1,7 @@
 % example batch process
 
-start_date = '20240208';   
-stop_date =  '20240208'; 
+start_date = '20250214';   
+stop_date =  '20250214'; 
 
 if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1  % when running on fog server
   prompt = 'Enter start date (e.g., 20230411)';
@@ -28,10 +28,10 @@ tStart = tic
 %          MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_ON','MPD04',file)  
 %          MPD_process_NetCDF_function_v2(0,1,0,0,'WV','AP_OFF','MPD05',file)    
 %          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD01',file)  
-          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD02',file) 
-          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD03',file)
-          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD04',file) 
-%          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_ON','MPD05',file) 
+%          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD02',file) 
+%          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD03',file)
+%          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD04',file) 
+          MPD_process_NetCDF_function_v2(0,1,0,0,'O2','AP_OFF','MPD05',file) 
       end
     end
 

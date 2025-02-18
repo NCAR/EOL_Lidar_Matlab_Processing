@@ -139,11 +139,11 @@ sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'nearest');
 [minValue, closestIndex_end] = min(abs(min(duration_sonde+sonde_end_int/24/60)-duration))
 %MPD_AH = N_avg_comb(closestIndex,:).*1e6./6.022E23.*18.015;
 %MPD_AH_var =  comb_AH_var(closestIndex,:);
-MPD_AH = nanmean(N_avg_comb(closestIndex:closestIndex_end,:),1).*1e6./6.022E23.*18.015;
+MPD_AH = mean(N_avg_comb(closestIndex:closestIndex_end,:),1, 'omitnan').*1e6./6.022E23.*18.015;
 if flag.data_type == 0
-  MPD_AH_var =  nanmedian(comb_AH_var(closestIndex:closestIndex_end,:),1)./sqrt(sonde_end_int/10); %assumes 10 min in the Matlab data
+  MPD_AH_var =  median(comb_AH_var(closestIndex:closestIndex_end,:),1, 'omitnan')./sqrt(sonde_end_int/10); %assumes 10 min in the Matlab data
 else
-  MPD_AH_var =  nanmedian(comb_AH_var(closestIndex:closestIndex_end,:),1);
+  MPD_AH_var =  median(comb_AH_var(closestIndex:closestIndex_end,:),1, 'omitnan');
 end
 % remove isolated points
 test = ~isnan(MPD_AH);
@@ -152,8 +152,8 @@ test3 = (test2>0.2);
 test4 = (test==1 & test3==1);
 
 try
-MPD_AH_grid = interp1(range_grid_in(test4)/1000, MPD_AH(test4), range_grid, 'linear');
-MPD_AH_var_grid = interp1(range_grid_in(test4)/1000, MPD_AH_var(test4), range_grid, 'linear');
+ MPD_AH_grid = interp1(range_grid_in(test4)/1000, MPD_AH(test4), range_grid, 'linear');
+ MPD_AH_var_grid = interp1(range_grid_in(test4)/1000, MPD_AH_var(test4), range_grid, 'linear');
 % MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'linear');
 %MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'linear');
 end
@@ -191,7 +191,7 @@ if flag.plot_overlay == 1
   %camroll(90)
   
   hold off
-  xlim([0 5])
+  xlim([0 8])
   ylim([0 6])
   % grid(gca,'minor')
   grid on
@@ -201,8 +201,8 @@ if flag.plot_overlay == 1
   
    
   Scrsize=[1 1 800 800];
- % cd('/Users/spuler/Desktop/mpd/Plots/')
-  cd('/Users/lroot/Desktop/mpd/Plots/') 
+  cd('/Users/spuler/Desktop/mpd/Plots/')
+ % cd('/Users/lroot/Desktop/mpd/Plots/') 
   FigH = figure(115);
   set(gca,'Fontsize',30,'Fontweight','b'); % 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);

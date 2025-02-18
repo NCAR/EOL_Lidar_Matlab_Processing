@@ -1,24 +1,25 @@
 elevation= 1745; %MPD03 was at 1745m elevation at Marshall Field Site
 flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
 
-flag.data_type = 1;  % 0=matlab WV, 1=python WV, 2=raman WV
+flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV
 sonde_end_int = 30; % integration time (in min) for the MPD 
 WV_min = 0;
-WV_max = 5;
+WV_max = 8;
 
 
 %d=pwd;
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
 %cd('/Users/lroot/Desktop/mpd/Sondes_Marshall')
-cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/Marshall')
+%cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/Marshall')
+cd('/Volumes/eol/smaug1/rsfdata/MPD/mpd_ancillary_data/radiosondes/Marshall')
 [sondefilename, sondedir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
 %flag.MR = 0; % instead of absolute humidity plot the mixing ratio
 jj=1;
 %cd= d;
 
 for jj = 1:size(sondefilename,2)
-    %cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
-    cd('/Users/lroot/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+    cd('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_processing/')
+    %cd('/Users/lroot/Documents/GitHub/EOL_Lidar_Matlab_processing/')
    if flag.data_type == 2    % add the following three lines for Raman 
       range_grid_size = 60;  
       N_avg_comb = (comb_Raman_AH./1e6.*6.022E23./18.015);
@@ -55,12 +56,12 @@ x_no_surface = xx(:,2:end); % Sondes (assume as truth)
 y_no_surface = yy(:,2:end); % MPD  
 
 %calculate the RMS using the sonde data as truth
-RMSE_numerator = nansum((yy - xx).^2);
+RMSE_numerator = sum((yy - xx).^2, 'omitnan');
 RMSE_demoninator = sum(~isnan((yy - xx).^2));
 RMSE = sqrt(RMSE_numerator./RMSE_demoninator);
-RMSPE = nanmean((yy - xx)./xx).^2;
+RMSPE = mean((yy - xx)./xx, 'omitnan').^2;
 % calcuate the Mean Bias Error
-mean_error_numerator = nansum(yy - xx);
+mean_error_numerator = sum(yy - xx, 'omitnan');
 mean_error_demoninator = sum(~isnan((yy - xx)));
 mean_error = (mean_error_numerator./mean_error_demoninator);
 
@@ -188,8 +189,8 @@ plot(xrange,y_est,'r--','LineWidth',2) % plot the least squared fit line
 hold off
 
 %cd('/Volumes/documents/WV_DIAL_data/plots/') % point to the directory where data is stored 
-%cd('/Users/spuler/Desktop/mpd/Plots/') % point to the directory where data is stor
-cd('/Users/lroot/Desktop/mpd/Plots/') % point to the directory where data is stor
+cd('/Users/spuler/Desktop/mpd/Plots/') % point to the directory where data is stor
+%cd('/Users/lroot/Desktop/mpd/Plots/') % point to the directory where data is stor
 
 
 FigH = figure(1);

@@ -1,12 +1,12 @@
 clear all; close all;
 tic
 
- node = 'MPD01';            
- date = '30 Nov 2023';
- days = 6; skip = 1;
+ node = 'MPD05';            
+ date = '03 Dec 2024';
+ days = 7; skip = 1;
 %      date = '18 Jul 2023';
 %      days = 70; skip = 5;
- WV_max_scale = 4;
+ WV_max_scale = 6;
  flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
  
 %  node = 'MPD02';            %post PRECIP intercomparions 

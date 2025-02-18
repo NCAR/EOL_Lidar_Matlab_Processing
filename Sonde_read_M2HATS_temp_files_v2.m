@@ -1,4 +1,4 @@
-function[sonde_T_grid, MPD_T_grid, range_grid] = Sonde_read_M2HATS_temp_files(jj, elevation, sondedir, sondefilename, Temp_comb_avg, Temp_comb_var, AH_comb_avg, AH_comb_var, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag) 
+function[sonde_T_grid, MPD_T_grid, range_grid] = Sonde_read_M2HATS_temp_files_v2(jj, elevation, sondedir, sondefilename, Temp_comb_avg, Temp_comb_var, AH_comb_avg, AH_comb_var, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, comb_T_surf, comb_P_surf, comb_AH_surf, flag) 
 
 %sondedir
 filename = [sondedir sondefilename{jj}]; 
@@ -147,7 +147,8 @@ if flag.plot_overlay == 1
 end
 
 % grid sonde data vs range 
-range_grid = 0:range_grid_size/1000:6;
+%range_grid = 0:range_grid_size/1000:6;
+range_grid = range_grid_in(1)/1000:range_grid_size/1000:6;
 [sonde_AGL_km, index] = unique(sonde_AGL/1000); 
 sonde_T_grid =interp1(sonde_AGL_km, sonde_T(index)+273.15, range_grid, 'linear');
 sonde_AH_grid =interp1(sonde_AGL_km, sonde_AH(index), range_grid, 'linear');
@@ -173,19 +174,22 @@ sonde_P_grid =interp1(sonde_AGL_km, sonde_P(index), range_grid, 'linear');
  MPD_T_var =  median(Temp_comb_var(closestIndex:closestIndex_end,:),1, 'omitnan');
  MPD_AH = median(AH_comb_avg(closestIndex:closestIndex_end,:),1, 'omitnan');
  MPD_AH_var =  median(AH_comb_var(closestIndex:closestIndex_end,:),1, 'omitnan');
+ MPD_T_surf = median(comb_T_surf(closestIndex:closestIndex_end,:),1, 'omitnan');
+ MPD_P_surf = median(comb_P_surf(closestIndex:closestIndex_end,:),1, 'omitnan');
+ MPD_AH_surf = median(comb_AH_surf(closestIndex:closestIndex_end,:),1, 'omitnan');
 
-try
-  %  MPD_T_lapse_grid = interp1(range_grid_in/1000, MPD_T_lapse, range_grid, 'linear');  
+ try
+ %  MPD_T_lapse_grid = interp1(range_grid_in/1000, MPD_T_lapse, range_grid, 'linear');  
     MPD_T_grid = interp1(range_grid_in(~isnan(MPD_T))/1000, MPD_T(~isnan(MPD_T)), range_grid, 'linear');
     MPD_T_var_grid = interp1(range_grid_in(~isnan(MPD_T_var))/1000, MPD_T_var(~isnan(MPD_T_var)), range_grid, 'linear');
     MPD_AH_grid = interp1(range_grid_in(~isnan(MPD_AH))/1000, MPD_AH(~isnan(MPD_AH)), range_grid, 'linear');
     MPD_AH_var_grid = interp1(range_grid_in(~isnan(MPD_AH_var))/1000, MPD_AH_var(~isnan(MPD_AH_var)), range_grid, 'linear');
-catch
-     MPD_T_grid = range_grid.*nan;
-     MPD_T_var_grid = range_grid.*nan;
-     MPD_AH_grid = range_grid.*nan;
-     MPD_AH_var_grid = range_grid.*nan;
-end
+ catch
+    MPD_T_grid = MPD_T;
+    MPD_T_var_grid = MPD_T_var;
+    MPD_AH_grid = MPD_AH;
+    MPD_AH_var_grid = MPD_AH_var;
+ end
 
 if flag.plot_overlay == 1
   % overlay sonde vs MPD
@@ -312,18 +316,22 @@ if flag.plot_overlay == 1
    const.k_B = 1.3806488e-23; % (J/K)
    % water vapor number density 
    n_wv = MPD_AH_grid.*const.N_A./const.M_wv;
+   n_wv_surf = MPD_AH_surf.*const.N_A./const.M_wv;
    n_wv_sonde = sonde_AH_grid.*const.N_A./const.M_wv;
    % water vapor partial pressure (convert from Pa to atm)
    e_wv =  n_wv.*const.k_B.*(MPD_T_grid)./101300;
+   e_wv_surf =  n_wv_surf.*const.k_B.*(MPD_T_surf)./101300;
    sonde_e_wv = n_wv_sonde.*const.k_B.*(sonde_T_grid)./101300;
    % take sonde pressure in hPa and convert to atm
    MPD_P_grid = sonde_P_grid./1.01300e3;
    % calculate virtual temperature (assumes pressure in atm)
    MPD_T_v = MPD_T_grid./(1-((e_wv)./MPD_P_grid).*(1-const.M_wv/const.M_air));
+   MPD_T_v_surf = MPD_T_surf./(1-((e_wv_surf)./MPD_P_surf).*(1-const.M_wv/const.M_air));
    sonde_T_v = sonde_T_grid./(1-((sonde_e_wv)./(sonde_P_grid./1.01300e3)).*(1-const.M_wv/const.M_air));
    % calculate virtual potential temperature
    P_0 = 0.987; % reference pressure in atm
    MPD_T_p = MPD_T_v.*(P_0./MPD_P_grid).^0.286; 
+   MPD_T_p_surf = MPD_T_v_surf.*(P_0./MPD_P_surf).^0.286;
    sonde_T_p = sonde_T_v.*(P_0./(sonde_P_grid./1.01300e3)).^0.286; 
   
   if  isnan(sonde_T_p(1)) 
@@ -332,14 +340,16 @@ if flag.plot_overlay == 1
    surf_T =  sonde_T_p(1); 
   end
  
-    figure(119)
+  figure(119)
+  
   plot(sonde_T_p, range_grid, 'k')
   hold on
   plot(MPD_T_p, range_grid, 'r')
-  plot(surf_T*ones(size(sonde_T_grid)), range_grid, 'k+')
+  plot(MPD_T_p_surf(1:5:end)*ones(size(sonde_T_grid(1:5:end))), range_grid(1:5:end), 'r.')
+  plot(surf_T(1:5:end)*ones(size(sonde_T_grid(1:5:end))), range_grid(1:5:end), 'k.')
   hold off
   %xlim([0 100])
-  ylim([0 6])
+  ylim([0 5])
   % grid(gca,'minor')
   grid on
   set(gca, 'YMinorTick','on', 'YMinorGrid','on')
@@ -349,16 +359,16 @@ if flag.plot_overlay == 1
    
    
   
-  Scrsize=[1 1 800 800];
+  Scrsize=[1 1 400 400];
   %cd('/Users/lroot/Desktop/mpd/Plots/')
   %cd('/Volumes/documents/mpd/Plots/')
   cd(plot_path)
   
-%   FigH = figure(115);
-%   set(gca,'Fontsize',30,'Fontweight','b'); % 
-%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
-%   name=strcat(sonde_date, '_', sonde_time, 'Sonde_temp_profile'); 
-%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+   FigH = figure(115);
+ %  set(gca,'Fontsize',30,'Fontweight','b'); % 
+   set(FigH, 'PaperUnits', 'points', 'PaperPosition', Scrsize);
+   name=strcat(sonde_date, '_', sonde_time, 'Sonde_temp_profile'); 
+   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
   FigH = figure(118);
  % set(gca,'Fontsize',30,'Fontweight','b'); % 

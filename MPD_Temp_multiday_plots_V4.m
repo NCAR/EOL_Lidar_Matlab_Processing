@@ -2,34 +2,19 @@ clear all; close all;
 tic
 dd=pwd;
 
- node = 'MPD03';
- date = '20230803';  
- days = 8; skip = 1; 
-%    date = '20230723'; 
-%    days = 7; skip = 1;
-%   date = '20230829'; 
-%   days = 3; skip = 1;
- temp_range_offset = 150; % temp range offset for testing purposes only
- flag.ReProcessing = 0; %use the ReProcessed folder to get the temp data
- ReProc_ver = '_11'; % 20[5]min, 1x150 DeltaR, Abs_shift_index = 1 (nominal)
- %..          '',  20[5]min, 2x150 DeltaR, Abs_shift_index = 1, 150 m final shift 
- %..          '_1', 30[5]min, 2x150 DeltaR, Abs_shift_index = 2, 150 m final shift   
- %..          '_2', 30[5]min, 4x75 DeltaR, Abs_shift_index = 3, 225 m final shift  
- %..          '_3', 20[5]min, 2x150 DeltaR {+/-}, Abs_shift_index = 1, 225 m final shift  
- %..          '_4', 20[5]min, 2x150 DeltaR, Abs_shift_index = 1, 150 m final shift  
- %..          '_5', 20[5]min, 2x150 DeltaR, Abs_shift_index = 2, 150 m final shift 
- %..          '_6', 20[5]min, 2x150 DeltaR, Abs_shift_index = 2, Py HSRL, 150 m final shift 
- %..          '_7', 60[10]min, 2x150 DeltaR, Abs_shift_index = 2, 150 m final shift 
- %..          '_8', 60[10]min, 4x75 DeltaR, Abs_shift_index = 3, Py HSRL, 225 m final shift
- %..          '_9', 60[10]min, 4x75 DeltaR, Abs_shift_index = 3, 225 m final shift 
- %..          '_10', 60[5]min, 2x150 DeltaR, Abs_shift_index = 2, 150 m final shift 
- 
+ node = 'MPD04';
+ date = '20241203';  
+ days = 1; skip = 1; 
+ days = 7; skip = 1; 
+
+temp_range_offset = 0; % temp range offset for testing purposes only
+flag.ReProcessing = 0; %use the ReProcessed folder to get the temp data
 lapse_rate = 0.0065; %standard atmosphere lapse rate
 T_lapse = 0.0065; %standard atmosphere lapse rate
      
 %serv_path = '/Volumes/fog1/rsfdata/MPD';
-%serv_path = '/Volumes/smaug1/rsfdata/MPD';
-serv_path = '/Volumes/eol/sci/stillwel/MPDReprocess';
+serv_path = '/Volumes/smaug1/rsfdata/MPD';
+%serv_path = '/Volumes/eol/sci/stillwel/MPDReprocess';
 plot_path = '/Users/spuler/Desktop/mpd/Plots/';
 font_size = 36; % use this for 2018a version
 
@@ -39,7 +24,6 @@ flag.save_figs = 1; %save figures at end of processing (0=off 1=on)
 flag.save_data = 0; %save data at end of processing (0=off 1=on)
 flag.plot_sonde_data = 0; %plot NetCDF sonde data on top (0=off 1=on)
 flag.decimate = 1; %decimate figures to the screen 2x size (1900 pixels x2)
-%flag.near = 0;  % read in the near range channel (0=off 1=on)
 flag.PyHSRL = 0; %decimate figures to the screen 2x size (1900 pixels x2)
 
 %C = importdata('NCAR_C_Map.mat');
@@ -94,51 +78,36 @@ for i=1:days
     Temp_comb = Retrievals.Temperature.Value';
     Temp_comb_avg = Retrievals.Temperature.Smoothed';
     Temp_comb_var = Retrievals.Temperature.VarianceSm';
-%    Alpha0_comb = Retrievals.PerturbOrders.Order0.Alpha.O2Online';
-%    Alpha1_comb = Retrievals.PerturbOrders.Order1.Alpha.O2Online';
-%    Alpha2_comb = Retrievals.PerturbOrders.Order2.Alpha.O2Online';
+    Temp_duration =  (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24);
+    Temp_range = Retrievals.Temperature.Range - temp_range_offset;
     WV_comb_avg = Retrievals.WaterVapor.Smoothed';
     WV_mask_comb = Retrievals.WaterVapor.Mask';
-%    Alpha_comb = Retrievals.Alpha';
-%    O2_online_comb = Data.Lidar.Interp.O2OnlineComb.Data';
-if flag.PyHSRL == 1
-    %BSR_comb = Retrievals.Python.BackRatio.Value';
-    BSR_comb = Retrievals.Python.MPD.BackRatio.Value';
-    BSR_duration = (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24);
-else
-    BSR_comb = Retrievals.HSRL.Smoothed';
-    ABC_comb = Retrievals.HSRL.ABC';
-    ABC_mask_comb =  Retrievals.HSRL.Mask';
-    BSR_duration = (datenum(date, 'yyyymmdd') + Retrievals.HSRL.TimeStamp/3600/24);
-end
-    duration =  (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24);
-    range = Retrievals.Temperature.Range - temp_range_offset;
-    % following four lines are to build a lapse rate temp field based on surface station data
-%      T_surf = Data.Temperature;
-%      WS_time = Data.TimeStamp/24;
-%      T_surf_grid = interp1( WS_time, T_surf, Retrievals.Temperature.TimeStamp/3600/24, 'linear')';
-%      T_lapse =  T_surf_grid-lapse_rate*range;
+    WV_duration =  (datenum(date, 'yyyymmdd') + Retrievals.WaterVapor.TimeStamp/3600/24);
+    WV_range = Retrievals.WaterVapor.Range;
+
+    if flag.PyHSRL == 1
+        %BSR_comb = Retrievals.Python.BackRatio.Value';
+        BSR_comb = Retrievals.Python.MPD.BackRatio.Value';
+        BSR_duration = (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24);
+    else
+        BSR_comb = Retrievals.HSRL.Smoothed';
+        ABC_comb = Retrievals.HSRL.ABC';
+        ABC_mask_comb =  Retrievals.HSRL.Mask';
+        BSR_range = Retrievals.HSRL.Range';
+        BSR_duration = (datenum(date, 'yyyymmdd') + Retrievals.HSRL.TimeStamp/3600/24);
+        P_comb = Retrievals.HSRL.Press';
+        T_surf = Retrievals.HSRL.Temp(1,:)';
+    end
   else   
     date = datestr(addtodate(datenum(date, 'yyyymmdd'), 1, 'day'), 'yyyymmdd');
     if exist(strcat(path_node, date, '.Matlab.mat'))==2
-     % load(strcat(path_node, date, '.Matlab.mat'),'Retrievals', 'Data')
       load(strcat(path_node, date, '.Matlab.mat'),'Retrievals')
     end
-    % following four lines are to build a lapse rate temp field based on surface station data
-%      T_surf = Data.Temperature;
-%      WS_time = Data.TimeStamp/24;
-%      T_surf_grid = interp1( WS_time, T_surf, Retrievals.Temperature.TimeStamp/3600/24, 'linear')';
-%      Temp_lapse =  T_surf_grid-lapse_rate*range;
-      
-%    T_lapse = vertcat(T_lapse, Temp_lapse);
     Temp_comb = vertcat(Temp_comb, Retrievals.Temperature.Value');
     Temp_comb_avg = vertcat(Temp_comb_avg, Retrievals.Temperature.Smoothed');
     Temp_comb_var = vertcat(Temp_comb_var, Retrievals.Temperature.VarianceSm');
- %   Alpha0_comb = vertcat(Alpha0_comb, Retrievals.PerturbOrders.Order0.Alpha.O2Online');
- %   Alpha1_comb = vertcat(Alpha1_comb, Retrievals.PerturbOrders.Order1.Alpha.O2Online');
- %   Alpha2_comb = vertcat(Alpha2_comb, Retrievals.PerturbOrders.Order2.Alpha.O2Online');
+    WV_comb_avg = vertcat(WV_comb_avg, Retrievals.WaterVapor.Smoothed');
     WV_mask_comb =  vertcat(WV_mask_comb, Retrievals.WaterVapor.Mask'); 
- %   Alpha_comb = vertcat(Alpha_comb, Retrievals.Alpha');
  if flag.PyHSRL == 1
     BSR_comb = vertcat(BSR_comb, Retrievals.Python.MPD.BackRatio.Value');   
     BSR_duration = vertcat(BSR_duration, (datenum(date, 'yyyymmdd') + Retrievals.Python.MPD.BackRatio.TimeStamp/3600/24));
@@ -146,34 +115,62 @@ end
     BSR_comb = vertcat(BSR_comb, Retrievals.HSRL.Smoothed');  
     ABC_comb = vertcat(ABC_comb, Retrievals.HSRL.ABC');  
     ABC_mask_comb =  vertcat(ABC_mask_comb, Retrievals.HSRL.Mask');
+    P_comb = vertcat(P_comb, Retrievals.HSRL.Press');
+    T_surf = vertcat(T_surf, Retrievals.HSRL.Temp(1,:)');
     BSR_duration = vertcat(BSR_duration, (datenum(date, 'yyyymmdd') + Retrievals.HSRL.TimeStamp/3600/24));
  end
-    duration = vertcat(duration, (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24));
+    Temp_duration = vertcat(Temp_duration, (datenum(date, 'yyyymmdd') + Retrievals.Temperature.TimeStamp/3600/24));
+    WV_duration = vertcat(WV_duration, (datenum(date, 'yyyymmdd') + Retrievals.WaterVapor.TimeStamp/3600/24));
   end
 end
 
-
-%Alpha0_var = movvar(Alpha0_comb, [2 2]);
 % apply preliminary mask based on O_2 order absorption zeroth order variance 
 Temp_comb_avg(Temp_comb_var > 5^2)= nan;
 ABC_comb(ABC_mask_comb==1)= nan;
-%     Temp_comb(Alpha0_var>1e-7)= nan;
-%    Alpha_comb(Alpha0_var>1e-7)= nan;
- % Alpha0_comb(Alpha0_var>1e-7)= nan;
- % Alpha1_comb(Alpha0_var>1e-7)= nan;
- % Alpha2_comb(Alpha0_var>1e-7)= nan;
-%  Temp_comb_avg(Alpha0_comb>7.5e-4 | Alpha0_comb<-2.5e-4)= nan;
-%      Temp_comb(Alpha0_comb>7.5e-4 | Alpha0_comb<-2.5e-4)= nan;
-%     Alpha_comb(Alpha0_comb>7.5e-4 | Alpha0_comb<-2.5e-4)= nan; 
- %  Alpha0_comb(Alpha0_comb>7.5e-4 | Alpha0_comb<-2.5e-4)= nan;
- %  Alpha1_comb(Alpha0_comb>7.5e-4 | Alpha0_comb<-2.5e-4)= nan;
- %  Alpha2_comb(Alpha0_comb>7.5e-4 | Alpha0_comb<-2.5e-4)= nan; 
+
+
+% put T_surf and P (BSR range and duration) on same grid 
+% as Temp_comb (Temp range and duration) 
+
+T_surf_grid = interp1(BSR_duration(~isnan(T_surf)), T_surf(~isnan(T_surf)), Temp_duration, 'linear');
+  [range_in, duration_in] = meshgrid(BSR_range, BSR_duration);
+  [range_out,duration_out] = meshgrid(Temp_range, Temp_duration);
+P_grid = interp2(range_in, duration_in, P_comb, range_out, duration_out, 'linear');
+  [range_in, duration_in] = meshgrid(WV_range, WV_duration);
+WV_grid = interp2(range_in, duration_in, WV_comb_avg, range_out, duration_out, 'linear');
+WV_surf = WV_grid(:,4);
+P_surf = P_grid(:,1);
+
+% calculate virtual potential temperature
+  const.M_wv = 18.015;  %molar mass of water molecule
+  const.M_air = 28.97; % molar mass gm/mol of air
+  const.N_A = 6.022E23; % Avagadro number
+  const.k_B = 1.3806488e-23; % (J/K)
+  % water vapor number density 
+  n_wv = WV_grid.*const.N_A./const.M_wv;
+  n_wv_surf = WV_surf.*const.N_A./const.M_wv;
+  % water vapor partial pressure (Pa to atm convert)
+  e_wv =  n_wv.*const.k_B.*Temp_comb_avg./101300;
+  e_wv_surf =  WV_surf.*const.k_B.*(T_surf_grid)./101300;
+  % calculate virtual temperature
+  comb_T_v = Temp_comb_avg./(1-((e_wv)./P_grid).*(1-const.M_wv/const.M_air));
+  comb_T_v_surf = T_surf_grid./(1-((e_wv_surf)./P_surf).*(1-const.M_wv/const.M_air));
+  % calculate virtual potential temperature
+  P_0 = 0.987; % reference pressure in atm
+  comb_T_p = comb_T_v.*(P_0./P_grid).^0.286; 
+  comb_T_p_surf = comb_T_v_surf.*(P_0./P_surf).^0.286;
+
+%   B = repmat(comb_T_p_surf, 1, size(comb_T_p,2));
+%   B_test = B+2; % offset virtual potential temp at surface by 1.5deg
+%   comb_T_p(comb_T_p>B_test) = nan;
+
+
 
     
   if days == 1
-   xData =  linspace(fix(min(duration)),  ceil(max(duration)), 25);
+   xData =  linspace(fix(min(Temp_duration)),  ceil(max(Temp_duration)), 25);
  else
-   xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(duration))-fix(min(duration)))/skip)+1 );
+   xData =  linspace( fix(min(Temp_duration)),  ceil(max(Temp_duration)), round((ceil(max(Temp_duration))-fix(min(Temp_duration)))/skip)+1 );
   % xData =  linspace(fix(min(duration)),  round(max(duration)), 36);
   end
 
@@ -181,8 +178,8 @@ scrsz = [1  1  1920 1200];
 Scrnsize=[scrsz(4)/2 scrsz(4)/10 scrsz(3)/1 scrsz(4)/2];
 
 
-x = duration';
-y = range./1000;
+x = Temp_duration';
+y = Temp_range./1000;
  
  
  Z = Temp_comb_avg'-273.15; 
@@ -195,7 +192,7 @@ y = range./1000;
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([-15 30]);
+ caxis([-15 20]);
  %caxis([250 310]);
  colormap(plasma)
 %  colormap(jet)
@@ -207,7 +204,7 @@ y = range./1000;
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date, node, ' temperature (K)']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, ' T Standard (C)']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
 %    hh = title({[node, ' Temperature (K)']},'fontweight','b','fontsize',font_size);
@@ -217,15 +214,16 @@ y = range./1000;
  grid on
    
 %  Z = Temp_comb'-273.15;  
- Z = Temp_comb';  
+% Z = Temp_comb'; 
+ Z =  comb_T_p'; 
  figure('Position',Scrnsize)
  set(gcf,'renderer','zbuffer');
  h = pcolor(x,y,Z);
  set(h, 'EdgeColor', 'none');
  colorbar('EastOutside');
  axis([fix(min(x)) ceil(max(x)) 0 6])
- caxis([0 35]); % Celsius
- caxis([260 310]); 
+ %caxis([0 35]); % Celsius
+ caxis([314 326]); 
  %colormap(jet)
  colormap(plasma)
  %shading interp
@@ -236,10 +234,10 @@ y = range./1000;
  if days == 1
    datetick('x','HH:MM','keeplimits', 'keepticks');
    xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-   hh = title({[date, node, ' temperature (K)']},'fontweight','b','fontsize',font_size);
+   hh = title({[date, node, 'Virt Potential Temperature (K)']},'fontweight','b','fontsize',font_size);
  else
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   hh = title({[node, ' Temperature (K)']},'fontweight','b','fontsize',font_size);
+   hh = title({[node, ' Virt Potential Temperature (K)']},'fontweight','b','fontsize',font_size);
 %    hh = title({[node, ' Temperature (C)']},'fontweight','b','fontsize',font_size);
  end
  set(gca,'Fontsize',font_size,'Fontweight','b');

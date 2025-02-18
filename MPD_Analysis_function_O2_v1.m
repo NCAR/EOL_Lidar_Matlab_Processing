@@ -315,6 +315,8 @@ if flag.afterpulse == 1   % afterpulse correction
      
   end
   
+
+  
    Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
 
@@ -327,7 +329,6 @@ if flag.afterpulse == 1   % afterpulse correction
     Online = Online_ap_sub;
     Offline = Offline_ap_sub;
 end
-
 
 
 % clear Online_Raw_Data Offline_Raw_Data data_on data_off
@@ -352,11 +353,40 @@ end
  
   background_on = mean(Online(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
   background_off = mean(Offline(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background 
-  %background_mean = (background_on+background_off)./2;
+  % to deal with RF switches not closing quickly during Smart MCS testing
+  background_on = mean(Online(:,end-round(525/gate):end-4),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(525/gate):end-4),2)-0;
+  background_mean = (background_on+background_off)./2;
+  %background_on =  background_mean;
+  %background_off = background_mean;
+    
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
   Offline_sub = (bsxfun(@minus, Offline, background_off));%./accumulations;
    
+   
+%   figure(110)
+%   semilogy(range, mean(Online(33314:37323,:)), 'r')
+%   semilogy(range, mean(Offline(33314:37323,:)), 'k')
+%   hold on
+%   semilogy(range, ap_spline_sub_on, 'r-')
+%   semilogy(range, ap_spline_sub_off, 'k-')
+%   semilogy(range, mean(Online_ap_sub(33314:37323,:)), 'r-')
+%   semilogy(range, mean(Offline_ap_sub(33314:37323,:)), 'k-')
+%   grid on
+%   xlim([0 2000])
+%   
+%   figure(111)
+%   plot(range, mean(Online_ap_sub(33314:37323,:)), 'r-')
+%   hold on
+%   plot(range, mean(Offline_ap_sub(33314:37323,:)), 'k-')
+%   grid on
+%   xlim([0 8000])
+%   ylim([-10 10])
+  
+  
+  
+  
  % smooth RB for 1 minute and set spatial average
    %window_temporal = ones(aerosol_temporal_average,1)/aerosol_temporal_average;
    %window_spatial = ones(1,1)/1; % preserve high spatial res in RB
@@ -438,7 +468,22 @@ end
  Background_off_sum2 = interp1(range_smoothed_act, Background_off_sum2_act', range, method)'; 
  RB_on = interp1(range_act, RB_on_act', range, method)';
  RB = interp1(range_act, RB_act', range, method)';
-
+ % grid to regular range bins
+ if gate < 37.5
+   range_grid = 0:37.5:range(end);   
+   Offline_sum2 = interp1(range, Offline_sum2', range_grid, method, extrapolation)';  
+   Online_sum2 = interp1(range, Online_sum2', range_grid, method, extrapolation)';
+   Background_on_sum2 = interp1(range,Background_on_sum2', range_grid, method, extrapolation)';  
+   Background_off_sum2 = interp1(range, Background_off_sum2', range_grid, method, extrapolation)'; 
+   RB = interp1(range, RB', range_grid, method, extrapolation)'; 
+   RB_on = interp1(range, RB_on', range_grid, method, extrapolation)';
+   range = range_grid;
+   gate = 37.5;
+   delta_r_index =  75/gate*gates2ave; % this is the cumlative sum photons gate spacing    
+ end
+ 
+ 
+ 
    figure(101)
    semilogx(RB(round(p_hour/24*size(Offline,1)),:), range, 'b')
    hold on
@@ -461,17 +506,20 @@ end
  % regular averaging
   Online_Temp_Spatial_Avg = Online_sum2./profiles2ave.wv./delta_r_index;
   Offline_Temp_Spatial_Avg = Offline_sum2./profiles2ave.wv./delta_r_index; 
+  
+  Online_Temp_Spatial_back =  Background_on_sum2./profiles2ave.wv./delta_r_index;
+  Offline_Temp_Spatial_back =  Background_off_sum2./profiles2ave.wv./delta_r_index;
    
   if flag.troubleshoot == 1
 
    
-   figure(102)
-   semilogx(Offline_sub(round(p_hour/24*size(Offline,1)),:), range, 'b')
-   hold on
-   semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
-   hold off
-   ylim([0 1000])
-   title('Background subtracted raw counts, not shifted')  
+%    figure(102)
+%    semilogx(Offline_sub(round(p_hour/24*size(Offline,1)),:), range, 'b')
+%    hold on
+%    semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
+%    hold off
+%    ylim([0 1000])
+%    title('Background subtracted raw counts, not shifted')  
 
    figure(104)
    semilogx(Offline_Temp_Spatial_Avg(round(p_hour/24*size(Offline_sum2,1)),:), range, 'b')
@@ -480,6 +528,9 @@ end
    hold off
    ylim([0 1000])
    title('Average counts')
+   
+   
+   
   end
 
   % blank lowest gates
@@ -526,6 +577,8 @@ end
   Background_off_sum2 = interp1(time, Background_off_sum2, time_grid, method, extrapolation); 
   Offline_Temp_Spatial_Avg = interp1(time, Offline_Temp_Spatial_Avg, time_grid, method, extrapolation);  
   Online_Temp_Spatial_Avg = interp1(time, Online_Temp_Spatial_Avg, time_grid, method, extrapolation);
+  Offline_Temp_Spatial_back = interp1(time, Offline_Temp_Spatial_back, time_grid, method, extrapolation);  
+  Online_Temp_Spatial_back = interp1(time, Online_Temp_Spatial_back, time_grid, method, extrapolation);
   Offline_Raw_Data = interp1(time, Offline_Raw_Data, time_grid, method, extrapolation);
   RB = interp1(time, RB, time_grid, method, extrapolation);  
   RB_on = interp1(time, RB_on, time_grid, method, extrapolation);
@@ -552,6 +605,51 @@ end
     Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = nan; 
     RB(real(RB) < -10) = 0;
     RB_on(real(RB_on) < -10) = 0;
+  
+   
+%% QE bleaching effect (only valid for Nov 1 MPD02 data)
+
+     start = 1116;
+     stop = 1242;
+% 
+%    % Calc Normalized QE  
+% 
+     Online_Norm_QE = 1+((mean(Online_Temp_Spatial_Avg(start:stop,:)))./mean(Online_Temp_Spatial_back(start:stop,:)));
+     Offline_Norm_QE = 1+((mean(Offline_Temp_Spatial_Avg(start:stop,:)))./mean(Offline_Temp_Spatial_back(start:stop,:)));
+%   
+% %   load('NormQE_MPD02.mat')
+% 
+    
+%      figure(105)
+%      plot(range, mean(Online_Temp_Spatial_Avg(start:stop,:)),'r')
+%      hold on
+%      plot(range, mean(Offline_Temp_Spatial_Avg(start:stop,:)),'k')
+%      xlim([0 18000])
+%      grid on
+%      
+%      figure(106)
+%      semilogy(range, afterpulse_on ,'r')
+%      hold on
+%      semilogy(range, afterpulse_off,'k')
+%      hold on
+%      semilogy(range, mean(Offline_Temp_Spatial_Avg(start:stop,:)),'k')
+%      xlim([0 18000])
+%      grid on
+% 
+%      figure(107)
+%      plot(range, Online_Norm_QE,'r')
+%      hold on
+%      plot(range, Offline_Norm_QE,'k')
+%      xlim([0 18000])
+%      grid on
+%     
+% %    % test removing the affect of the bleached QE
+%     Online_Temp_Spatial_Avg = Online_Temp_Spatial_Avg./Online_Norm_QE;
+%     Offline_Temp_Spatial_Avg = Offline_Temp_Spatial_Avg./Offline_Norm_QE;
+
+    
+  
+  
   
 % clear Online_Raw_Data Online Offline Online_sub Offline_sub data_on data_off C_Online C_Offline ... 
 %      Offline_sum1 Online_sum1 Background_on_sum1 Background_off_sum1 Background_off Background_on 

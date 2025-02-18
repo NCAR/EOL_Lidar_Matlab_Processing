@@ -25,7 +25,7 @@ elseif strcmp(node,'MPD02')==1
   if (serial_date >= 738024 && serial_date < datenum(2023,11,29)) % day the WFOV channel was installed
        blank_range = 37.5*7  % 1µs pulse requires 6 range bins
   elseif (serial_date >= datenum(2023,11,29))
-      blank_range = 37.5*4
+      blank_range = 37.5*7
   end
 elseif strcmp(node,'MPD03')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial3_calvals.json')],'SimplifyCell',1);

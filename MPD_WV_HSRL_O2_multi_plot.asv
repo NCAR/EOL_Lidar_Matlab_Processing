@@ -1,11 +1,11 @@
 clear all; close all;
 tic
 
- node = 'MPD05';
- date = '15 Feb 2025';   
- days = 8; skip = 1;
+ node = 'MPD04';
+ date = '16 Oct 2024';   
+ days = 16; skip = 1;
  flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
- WV_max_scale = 6;
+ WV_max_scale = 10;
  
  
 serv_path = '/Volumes/smaug1/rsfdata/MPD/';
@@ -56,11 +56,10 @@ for i=1:days
          beta_bs_comb = beta_bs;
          alpha_O2_comb = alpha_O2;
          duration=x';
-         end
+     end
      if exist(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))==2
         load(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))
         range_limit = size(N_avg,2);
-%         range_limit = 490
         N_avg_comb=N_avg;
         N_error_comb=N_error;
         RB_comb=RB;
@@ -82,9 +81,9 @@ for i=1:days
     date = datestr(addtodate(datenum(date), 1, 'day'), 'dd mmm yyyy');
     if exist(strcat(node, '_', datestr(date, 'yyyymmdd'), '_Backscatter Coefficient.mat'))==2
        load(strcat(node, '_', datestr(date, 'yyyymmdd'), '_Backscatter Coefficient.mat'))
-       BSR_comb = vertcat(BSR_comb(:,1:range_limit), BSR(2:end,1:range_limit));
-       beta_bs_comb = vertcat(beta_bs_comb(:,1:range_limit), beta_bs(2:end,1:range_limit));
-       alpha_O2_comb = vertcat(alpha_O2_comb(:,1:range_limit), alpha_O2(2:end,1:range_limit));
+       BSR_comb = vertcat(BSR_comb, BSR);
+       beta_bs_comb = vertcat(beta_bs_comb, beta_bs);
+       alpha_O2_comb = vertcat(alpha_O2_comb, alpha_O2);
        duration = vertcat(duration, x');
     end
     if exist(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))==2
@@ -110,15 +109,14 @@ for i=1:days
   end
 end
 
-%force range to starting size
-y = y(1:range_limit);
+
 
 %% plot data
 cd(dd);
 xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(duration))-fix(min(duration)))/skip)+1 );
 
   figure(1)
-  x = (durationWV)';
+  x = (duration)';
   Z = real(double((((BSR_comb))')));
   font_size = 14;
   set(gcf,'renderer','zbuffer');
@@ -230,7 +228,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
    subplot1=subplot(4,1,1,'Parent',figure6,'YGrid','on', 'XGrid','on');
    box(subplot1,'on');
  %  hold(subplot1,'all');
-      x = (durationWV)';
+      x = (duration)';
 %       Z = real(double((((BSR_comb))')));
       Z = real(double((beta_bs_comb')));
       set(gcf,'renderer','zbuffer');
@@ -277,7 +275,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
       grid on
   subplot3=subplot(4,1,3,'Parent',figure6,'YGrid','on', 'XGrid','on');
   box(subplot3,'on'); 
-      x = (durationWV)';    
+      x = (duration)';    
       Z = alpha_O2_comb';
       set(gcf,'renderer','zbuffer');
       h = pcolor(x,y,Z);
@@ -431,7 +429,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
 %   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 275*2]);
 %   name=strcat(node, "_", date, '_house_comb'); 
 %   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-%   
+  
   
  cd(dd);  % point back to original directory 
 

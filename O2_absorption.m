@@ -28,8 +28,11 @@ vmr_O2 = vmr_O2_d*(1-vmr_WV);
 N_O2 =  P./(const.k_B.*T).*vmr_O2; % (m^-3) number density  
 
 gate = range(2);
-% override the native gate spacing
-gates2use = 4;
+% override the native gate spacing (needs to be changed in the future)
+gates2use =  225/gate;
+%if strcmp(node,'MPD04')==1
+%    gates2use = 6*5;
+%end
 gate_int = range(2)*gates2use;
 
 

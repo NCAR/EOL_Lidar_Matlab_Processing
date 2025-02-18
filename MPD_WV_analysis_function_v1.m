@@ -178,7 +178,7 @@ time_step = diff(Online_Raw_Data(:,1)); % median time step in seconds
   set(gca, 'YScale', 'log')
 %end
 
-%Calculating average wavelenth
+%Calculating average wavelength
 lambda_all=Online_Raw_Data(:,2);
 lambda_diff= Online_Raw_Data(:,3);
 lambda_all_off=Offline_Raw_Data(:,2);
@@ -377,12 +377,24 @@ end
 % Online = Online_sum./profiles2ave.wv;
 % Offline = Offline_sum./profiles2ave.wv; 
  
-  background_on = mean(Online(:,end-round(525/gate):end),2)-0; % select last ~1050 meters to measure background
-  background_off = mean(Offline(:,end-round(525/gate):end),2)-0; % select last ~1050 meters to measure background 
-%  background_mean = (background_on+background_off)./2;
+  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background 
+% to deal with RF switches not closing quickly during Smart MCS testing
+  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0;
+  background_mean = (background_on+background_off)./2;
+  background_on =  background_mean;
+  background_off = background_mean;
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
   Offline_sub = (bsxfun(@minus, Offline, background_off));%./accumulations;
+  
+   
+%test a QE perturbation at about 1 km 
+%   QE = ones(size(Offline_sub));
+%   QE(:,1050/gate)= 0.99;
+%   Offline_sub_test = Offline_sub.*QE;
+%   Offline_sub = Offline_sub_test;
 
  % smooth RB for 1 minute and set spatial average
    %window_temporal = ones(aerosol_temporal_average,1)/aerosol_temporal_average;
@@ -465,7 +477,28 @@ end
  Background_off_sum2 = interp1(range_smoothed_act, Background_off_sum2_act', range, method)'; 
  RB_on = interp1(range_act, RB_on_act', range, method)';
  RB = interp1(range_act, RB_act', range, method)';
-
+ 
+ % grid to regular gate spacing
+ if gate < 37.5
+   range_grid = 0:37.5:range(end);   
+   Offline_sum2 = interp1(range, Offline_sum2', range_grid, method, extrapolation)';  
+   Online_sum2 = interp1(range, Online_sum2', range_grid, method, extrapolation)';
+   Background_on_sum2 = interp1(range,Background_on_sum2', range_grid, method, extrapolation)';  
+   Background_off_sum2 = interp1(range, Background_off_sum2', range_grid, method, extrapolation)'; 
+   RB = interp1(range, RB', range_grid, method, extrapolation)'; 
+   RB_on = interp1(range, RB_on', range_grid, method, extrapolation)';
+   range = range_grid;
+   gate = 37.5;
+   delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
+   %delta_r = delta_r_index*gate*100; % delta r in cm
+   r1 = round(1500/gate); % index for smoothing range 1 (1500m)
+   r2 = round(2500/gate); % index for smoothing range 2 (2500m)
+   spatial_average1 = 150/gate; %150 meter smoothing range 1 
+   spatial_average2 = 300/gate; %300 meter smoothing between range 1 and 2
+   spatial_average3 = 600/gate; %600 meter smoothing above range 2
+ end
+ 
+ 
    figure(101)
    semilogx(RB(round(p_hour/24*size(Offline,1)),:), range, 'b')
    hold on
@@ -556,7 +589,7 @@ end
   RB = interp1(time, RB, time_grid, method, extrapolation);  
   RB_on = interp1(time, RB_on, time_grid, method, extrapolation);
   
-     
+    
   % remove the time lag from cumsum
   time_shift = (ave_time.wv-1)/2 %time shift in minutes
   time_grid_act = time_grid-(1/24/60*time_shift);
@@ -576,10 +609,13 @@ end
 % %remove any negative counts (beyond noise)
 %    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -10) = 0;   
 %    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = 0;  
+
+  if flag.gradient_filter == 1
     Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -10) = nan;   
     Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = nan;  
     RB(real(RB) < -10) = 0;
     RB_on(real(RB_on) < -10) = 0;
+  end
   
 % clear Online_Raw_Data Online Offline Online_sub Offline_sub data_on data_off C_Online C_Offline ... 
 %      Offline_sum1 Online_sum1 Background_on_sum1 Background_off_sum1 Background_off Background_on 
@@ -796,9 +832,11 @@ end
 %% Mask the Number density data based on the error, correct for range center, and add WS data at lowest gate 
 
  N_masked = N_avg;
- N_masked(N_avg < 0) = nan; % remove non-pysical (negative) wv regions
- N_masked(abs(N_error./N_avg) > 3.00) = nan; % remove high error regions
-% check_high_counts = Offline_Raw_Data(:,9:end)./(MCS.bin_duration*1e-9*MCS.accum);
+ if flag.gradient_filter == 1
+   N_masked(N_avg < 0) = nan; % remove non-pysical (negative) wv regions
+   N_masked(abs(N_error./N_avg) > 3.00) = nan; % remove high error regions
+ end
+ % check_high_counts = Offline_Raw_Data(:,9:end)./(MCS.bin_duration*1e-9*MCS.accum);
 % N_masked(check_high_counts > 5E6) = nan; % remove raw counts above linear count threshold (5MC/s)
 
 %if strcmp(folder_CH,'NF') == 1
@@ -999,6 +1037,8 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   set(gcf,'renderer','zbuffer');
   %Z = double(log10((real(RB')./RB_scale)));
   Z = double(real(RB')./RB_scale);
+  %Z = double(real(RB_on')./RB_scale);
+  %Z = Offline_Temp_Spatial_Avg';
   %Z = real(double(log10(Offline_Temp_Spatial_Avg_act')));
   %Z(isnan(Z)) = -1;
   h = pcolor(x,y,Z);

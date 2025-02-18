@@ -19,15 +19,17 @@ flag.int = 0; % interpolate nans in nanmoving_average
 flag.mark_gaps = 1; % sets gaps in data to NaNs
 flag.OF = 1; % correct for geometric overlap functions
 %flag.near = near; %process the near range channel (or low gain)
-%flag.afterpulse = afterpulse; % correct for afterpulsing (in progress on MPD 3 & 4 only)
 
 flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
-p_hour = 10.25; % hour to show troubleshooting profiles
+p_hour = 20; % hour to show troubleshooting profiles
 
-ave_time.wv = 10.0; % averaging time (in minutes) for the water vapor and O2 
-ave_time.rb = 2.0; % averaging time (in minutes) for the relative backscatter
+ave_time.wv = 5; %10.0; % averaging time (in minutes) for the water vapor and O2 
+ave_time.rb = 5; %5.0; % averaging time (in minutes) for the relative backscatter
+% ave_time.wv = 1.0; % averaging time (in minutes) for the water vapor and O2 
+%  ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
+ave_range.gr = 75; % grid data to this range (useful for SmartSwitch tests)
 
 if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1  % when running on fog server
    serv_path = '/export/smaug1/rsfdata/MPD/'; 
@@ -99,7 +101,7 @@ end
   [O2_online_mol, O2_offline_mol, range, RB_mol,  time_mol] =  MPD_Analysis_function_O2_v1(data_O2_on_mol, data_O2_off_mol, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
          profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave, Afterpulse_File, cal_serv_path);%
   [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
-         O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder,cal_serv_path);
+         O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder,cal_serv_path, receiver_scale_factor);
   [N_WV, N_WV_error] = MPD_WV_analysis_function_v1(data_wv_on, data_wv_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
          profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path);
   O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
@@ -152,7 +154,7 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1) && strcmp(correct
   [O2_online_mol, O2_offline_mol, range, RB_mol,  time_mol] =  MPD_Analysis_function_O2_v1(data_O2_on_mol, data_O2_off_mol, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
          profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave, Afterpulse_File,cal_serv_path);%
   [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
-         O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder,cal_serv_path);
+         O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder,cal_serv_path, receiver_scale_factor);
   [N_WV, N_WV_error] = MPD_WV_analysis_function_v1(data_wv_on, data_wv_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
          profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path);
   O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...

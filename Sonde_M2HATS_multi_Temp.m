@@ -1,6 +1,6 @@
 elevation= 1641; %
-flag.plot_overlay = 1; %plot sondes on the time vs hieght AH plot
-flag.data_type = 0;  % 0=matlab WV, 1=python WV, 2=raman WV
+flag.plot_overlay = 0; %plot sondes on the time vs hieght AH plot
+flag.data_type = 0;  % 0=matlab, 1=python, 2=raman, 3=PTV 
 sonde_end_int = 30; % integration time (in min) for the MPD 
 offset = 0 % sonde offset for testing purposes only
 temp_range_offset = 0; % temp range offset for testing purposes only
@@ -8,7 +8,7 @@ temp_range_offset = 0; % temp range offset for testing purposes only
 %d=pwd;
 %cd('/Volumes/eol/sci/tammy/mpd/sgp/soundings/')
 %cd('/Volumes/documents/MPD/Sondes_CSU')
-cd('/Volumes/eol/fog1/rsfdata/MPD/mpd_ancillary_data/radiosondes/M2HATS/')
+cd('/Volumes/eol/smaug1/rsfdata/MPD/mpd_ancillary_data/radiosondes/M2HATS/')
 %plot_path = '/Volumes/documents/MPD/Plots/';
 plot_path = '/Users/spuler/Desktop/mpd/Plots/';
 %cd('/Volumes/eol/sci/voemel/data/radiosondes/boulder/ncdf')
@@ -32,12 +32,30 @@ for jj = 1:size(sondefilename,2)
       duration = comb_duration;
       range_grid_in = alt{1}';
    elseif flag.data_type == 0
-       range_grid_size = diff(range(1:2)) 
-       range_grid_in = range-temp_range_offset;
+       range_grid_size = diff(Temp_range(1:2)) 
+       range_grid_in = Temp_range-temp_range_offset;
+       duration = Temp_duration;
+       AH_comb_avg = WV_grid;
+       AH_comb_var = WV_grid.*nan;
+       comb_T_surf = T_surf_grid;
+       comb_P_surf = P_surf;
+       comb_AH_surf = WV_surf;
      %  comb_AH_var = N_error_comb.*1e6./6.022E23.*18.015;
+   elseif flag.data_type == 3
+      %range_grid_size = 37.5; 
+      range_grid_size = diff(alt{1}');
+      range_grid_size = range_grid_size(1,1)
+      Temp_comb_avg = comb_T';
+      Temp_comb_var = comb_T_var';
+      AH_comb_avg = comb_AH';
+      AH_comb_var = comb_AH_var';
+      duration = comb_duration;
+      range_grid_in = alt{1}';
+      T_lapse = range_grid_in;
    end
    %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_files(jj, elevation, sondedir, sondefilename,  N_avg_comb, duration, range_grid_size, range_grid_in, comb_AH_var, sonde_end_int, flag);
-   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_M2HATS_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb_avg, Temp_comb_var, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag); 
+   %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_M2HATS_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb_avg, Temp_comb_var, AH_comb_avg, AH_comb_var, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag); 
+   [xx(jj,:), yy(jj,:), range_grid] = Sonde_read_M2HATS_temp_files_v2(jj, elevation, sondedir, sondefilename,  Temp_comb_avg, Temp_comb_var, AH_comb_avg, AH_comb_var, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, comb_T_surf, comb_P_surf, comb_AH_surf, flag);
    %[xx(jj,:), yy(jj,:), range_grid] = Sonde_read_CSU_temp_files(jj, elevation, sondedir, sondefilename,  Temp_comb-offset, T_lapse, duration, range_grid_size, range_grid_in, sonde_end_int, plot_path, flag);
    %Sonde_DIAL_comparison_funct_v6(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs, ID_sonde);
    %Sonde_DIAL_comparison_funct_Python(N_H2O, sonde_top, sonde_range, t, date, T_sonde, P_sonde, sonde_stop, shift, error_threshold, Wind_speed, save_figs)

@@ -90,6 +90,7 @@ for d = 1:length(HKeep.dirListing)
 end
 
  for d = 1:length(Pow.dirListing)
+ %for d = 1:14
   %read in the power montioring data
   Pow.filename = Pow.dirListing(d).name;
  % if exist(Pow.filename) == 2 
