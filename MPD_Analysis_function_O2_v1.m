@@ -357,8 +357,8 @@ end
   background_on = mean(Online(:,end-round(525/gate):end-4),2)-0; % select last ~1050 meters to measure background
   background_off = mean(Offline(:,end-round(525/gate):end-4),2)-0;
   background_mean = (background_on+background_off)./2;
-  %background_on =  background_mean;
-  %background_off = background_mean;
+  background_on =  background_mean;
+  background_off = background_mean;
     
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
