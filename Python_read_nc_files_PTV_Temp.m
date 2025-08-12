@@ -4,7 +4,7 @@ clear all; close all
 
 
 skip = 1
-node = 'MPD01';
+node = 'MPD04';
 flag.PTV = 1 %use the PTV data which has temperature
 offset = 2; % parcel method surface temp offset
 gradient_limit = 0.2; % mask postive gradients
@@ -14,13 +14,16 @@ serv_path = '/Volumes/eol/sci/mhayman';
 cd(strcat(serv_path,'/DIAL/Processed_Data/M2HATS/5min_release1.0/qc_masked/'))
 %cd(strcat(serv_path,'/DIAL/Processed_Data/ECLIPSE/initial_test/'))
 
+
 if flag.PTV == 1
 %  serv_path = '/Volumes/eol/smaug1/rsfdata/MPD';
 %  cd(strcat(serv_path,'/mpd_03_processed_data/PTV/temperature/M2HATS1.0'))
+%  serv_path = '/Volumes/eol/sci/mhayman';
+%  cd(strcat(serv_path,'/DIAL/Processed_Data/Marshall_2024/ptv1.0/'))
+%  serv_path = '/Volumes/eol/scr-tmp/mhayman';
+  %cd(strcat(serv_path,'/O2DIAL/PTV/gp_search/'))
   serv_path = '/Volumes/eol/sci/mhayman';
-  cd(strcat(serv_path,'/DIAL/Processed_Data/Marshall_2024/ptv1.0/'))
-%   serv_path = '/Volumes/eol/scr-tmp/mhayman';
-%   cd(strcat(serv_path,'/O2DIAL/PTV/gp_search'))
+  cd(strcat(serv_path,'/DIAL/Processed_Data/BRIDGE_2025/ptv0.0/'))
 end
 %cd(strcat(serv_path,'/mpd_03_processed_data/Python'))
 d_read_data = pwd; % get the current path
@@ -42,18 +45,27 @@ jj=1;
  variable{3} = 'Temperature';
  variable{4} = 'Temperature_mask';
  variable{5} = 'Temperature_uncertainty';
+ variable{6} = 'Absolute_Humidity_Standard'; 
+ variable{7} = 'Absolute_Humidity_Standard_mask';
+ variable{8} = 'Absolute_Humidity_Standard_uncertainty'; 
  variable{6} = 'Absolute_Humidity'; 
  variable{7} = 'Absolute_Humidity_mask';
- variable{8} = 'Absolute_Humidity_variance'; 
- if flag.PTV == 1
-   variable{8} = 'Absolute_Humidity_uncertainty'; 
- end
- variable{11} = 'Aerosol_Backscatter_Coefficient_variance';
+ variable{8} = 'Absolute_Humidity_uncertainty'; 
  variable{9} = 'Aerosol_Backscatter_Coefficient';
  variable{10} = 'Aerosol_Backscatter_Coefficient_mask';
  variable{11} = 'Aerosol_Backscatter_Coefficient_variance';
+ 
+ variable{9} = 'Backscatter_Photon_Counts_828'; 
+ 
  if flag.PTV == 1
+   
+   % variable{6} = 'Water_Vapor'; 
+   % variable{8} = 'Water_Vapor_std';  
    variable{11} = 'Aerosol_Backscatter_Coefficient_uncertainty';
+   % variable{9} = 'Backscatter_Ratio';
+   % variable{10} = 'Backscatter_Ratio_mask';
+   % variable{11} = 'Backscatter_Ratio_uncertainty';
+   % variable{9} = 'Relative_Backscatter';
    variable{12} = 'Pressure_Estimate';
    variable{13} = 'Pressure_Estimate_mask';
    variable{14} = 'Lapse_Rate';
@@ -67,16 +79,25 @@ jj=1;
    variable{22} =  'Surface_Pressure';
    variable{23} =  'Surface_Absolute_Humidity';
    variable{24} = 'Temperature_Model';
-   variable{25} = 'Temperature_Standard';
+   variable{25} = 'Temperature_Standard'; 
+   variable{26} = 'Absolute_Humidity_Standard'; 
+   variable{27} = 'Absolute_Humidity_Standard_mask'; 
  end
 
     
 
 for jj = 1:size(Pythonfilename,2)
   filename = Pythonfilename{jj};
-  %date = filename(end-15:end-10);
-  %n = datenum(date, 'yymmdd');
   date = filename(end-15:end-8);
+  %n = datenum(date, 'yymmdd');
+  %date = filename(end-54:end-47);
+  % %date = filename(end-15:end-8);
+  % expression = '\d{8}T\d{4}'; % Matches 8 digits, 'T', then 4 digits
+  % matches = regexp(filename, expression, 'match');
+  % first_timestamp_str = matches{1};
+  % date = first_timestamp_str(1:8); 
+
+
   n = datenum(date, 'yyyymmdd');
   
   ncid = netcdf.open(filename, 'NC_NOWRITE');
@@ -87,24 +108,25 @@ for jj = 1:size(Pythonfilename,2)
     
 if flag.PTV == 1
      T{jj}  = ncread(filename,variable{3});  
-     T_model{jj}  = ncread(filename,variable{24});
-     T_std{jj}  = ncread(filename,variable{25});  
+%     T_model{jj}  = ncread(filename,variable{24});
+%     T_stand{jj}  = ncread(filename,variable{25});  
      T_mask{jj} = ncread(filename,variable{4}); 
-     T_var{jj} = ncread(filename,variable{5}); 
+ %    T_var{jj} = ncread(filename,variable{5}); 
      T{jj}(T_mask{jj} == 1) = nan;
      T_var{jj}(T_mask{jj} == 1) = nan; 
-     P{jj} =  ncread(filename,variable{12});
-     P_mask{jj} = ncread(filename,variable{13});
-     L{jj} =  ncread(filename,variable{14});
-     L_mask{jj} = ncread(filename,variable{15});
-     PBLH{jj} =  ncread(filename,variable{16});
-     T_vp{jj} =  ncread(filename,variable{17});
-     T_vp_mask{jj} = ncread(filename,variable{18});
-     Lift{jj} =  ncread(filename,variable{19});
-     Lift_mask{jj} = ncread(filename,variable{20});
+ %    P{jj} =  ncread(filename,variable{12});
+ %    P_mask{jj} = ncread(filename,variable{13});
+ %    L{jj} =  ncread(filename,variable{14});
+ %    L_mask{jj} = ncread(filename,variable{15});
+ %    PBLH{jj} =  ncread(filename,variable{16});
+ %    T_vp{jj} =  ncread(filename,variable{17});
+ %    T_vp_mask{jj} = ncread(filename,variable{18});
+ %    Lift{jj} =  ncread(filename,variable{19});
+ %    Lift_mask{jj} = ncread(filename,variable{20});
      T_surf{jj} =  ncread(filename,variable{21});
      P_surf{jj} =  ncread(filename,variable{22});
-     AH_surf{jj} =  ncread(filename,variable{23});
+ %    AH_surf{jj} =  ncread(filename,variable{23});
+   
 end
     
     AH{jj}  = ncread(filename,variable{6});  
@@ -112,21 +134,25 @@ end
     AH_var{jj} = ncread(filename,variable{8}); 
     AH{jj}(AH_mask{jj} == 1) = nan;
     AH_var{jj}(AH_mask{jj} == 1) = nan; 
-    AH{jj}(AH_var{jj} > 3) = nan;
-    
+
+%    AH_stand{jj} =  ncread(filename,variable{26}); 
+%    AH_stand_mask{jj} =  ncread(filename,variable{27}); 
+%    AH_stand{jj}(AH_stand_mask{jj} == 1) = nan;
+    % AH{jj}(AH_var{jj} > 3) = nan;
+       
     ABC{jj}  = ncread(filename,variable{9});   
-    ABC_mask{jj} = ncread(filename,variable{10}); 
-    ABC_var{jj} = ncread(filename,variable{11});
-    ABC{jj}(ABC_mask{jj} == 1) = nan;
-    ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
-   % ABC{jj}(ABC_var{jj} > 1e-11) = nan;
-    ABC{jj}(ABC{jj} < 1e-12) = nan;
+%     ABC_mask{jj} = ncread(filename,variable{10}); 
+%     ABC_var{jj} = ncread(filename,variable{11});
+  %   ABC{jj}(ABC_mask{jj} == 1) = nan;
+   %  ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
+   % % ABC{jj}(ABC_var{jj} > 1e-11) = nan;
+   %  ABC{jj}(ABC{jj} < 1e-12) = nan;
     
     if flag.PTV == 1
       % P{jj}(P_mask{jj} == 1) = nan;
-      L{jj}(L_mask{jj} == 1) = nan;
-      T_vp{jj}(T_vp_mask{jj} == 1) = nan;
-      Lift{jj}(Lift_mask{jj} == 1) = nan;
+%      L{jj}(L_mask{jj} == 1) = nan;
+%      T_vp{jj}(T_vp_mask{jj} == 1) = nan;
+%      Lift{jj}(Lift_mask{jj} == 1) = nan;
     end
     
   netcdf.close(ncid); 
@@ -146,20 +172,21 @@ end
       comb_AH = AH{jj};
       comb_AH_var = AH_var{jj};
       comb_ABC = ABC{jj};
-      comb_ABC_var = ABC_var{jj};
+ %     comb_ABC_var = ABC_var{jj};
       if flag.PTV == 1
         comb_T = T{jj};
-        comb_T_model = T_model{jj};
-        comb_T_std = T_std{jj};
+%        comb_T_model = T_model{jj};
+ %       comb_T_stand = T_stand{jj};
         comb_T_var = T_var{jj};
-        comb_P = P{jj};
-        comb_L = L{jj};
-        comb_PBLH = PBLH{jj};
-        comb_T_vp = T_vp{jj};  
-        comb_Lift = Lift{jj};  
+ %       comb_P = P{jj};
+ %       comb_L = L{jj};
+ %       comb_PBLH = PBLH{jj};
+ %       comb_T_vp = T_vp{jj};  
+ %       comb_Lift = Lift{jj};  
         comb_T_surf = T_surf{jj}; 
         comb_P_surf = P_surf{jj}; 
-        comb_AH_surf = AH_surf{jj}; 
+ %       comb_AH_surf = AH_surf{jj};
+  %      comb_AH_stand = AH_stand{jj}; 
       end
   else
       comb_duration = [comb_duration; duration{jj}];
@@ -168,20 +195,21 @@ end
       comb_AH = [comb_AH AH{jj}];
       comb_AH_var = [comb_AH_var AH_var{jj}];
       comb_ABC = [comb_ABC ABC{jj}];
-      comb_ABC_var = [comb_ABC_var ABC_var{jj}];
+ %     comb_ABC_var = [comb_ABC_var ABC_var{jj}];
       if flag.PTV == 1
         comb_T = [comb_T T{jj}];
-        comb_T_model = [comb_T_model T_model{jj}];
-        comb_T_std = [comb_T_std T_std{jj}];
-        comb_T_var = [comb_T_var T_var{jj}];
-        comb_P = [comb_P P{jj}];
-        comb_L = [comb_L L{jj}];
-        comb_PBLH = [comb_PBLH; PBLH{jj}];
-        comb_T_vp = [comb_T_vp T_vp{jj}];
-        comb_Lift = [comb_Lift; Lift{jj}];
+  %      comb_T_model = [comb_T_model T_model{jj}];
+  %      comb_T_stand = [comb_T_stand T_stand{jj}];        
+  %      comb_AH_stand = [comb_AH_stand AH_stand{jj}];
+  %      comb_T_var = [comb_T_var T_var{jj}];
+  %      comb_P = [comb_P P{jj}];
+  %      comb_L = [comb_L L{jj}];
+  %      comb_PBLH = [comb_PBLH; PBLH{jj}];
+  %      comb_T_vp = [comb_T_vp T_vp{jj}];
+  %      comb_Lift = [comb_Lift; Lift{jj}];
         comb_T_surf = [comb_T_surf; T_surf{jj}];
         comb_P_surf = [comb_P_surf; P_surf{jj}];
-        comb_AH_surf = [comb_AH_surf; AH_surf{jj}];
+  %      comb_AH_surf = [comb_AH_surf; AH_surf{jj}];
       end
   end
   
@@ -206,7 +234,7 @@ if flag.PTV == 1
   h = pcolor(x, y, Z);
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); 
-  caxis([-20 20]);
+  caxis([-20 30]);
   axis([fix(min(x)) ceil(max(x)) 0 6]) 
 %  shading interp
   set(gca, 'XTick',  xData)
@@ -264,32 +292,32 @@ if flag.PTV == 1
 
  
 
-   %Z = comb_T-comb_T_model;
-   Z = comb_T_model-273.115;
- 
-   figure4 = figure('Position',plot_size1);
-   set(gcf,'renderer','zbuffer');
-   h = pcolor(x, y, Z);
-   set(h, 'EdgeColor', 'none'); 
-   axis xy; colorbar('EastOutside'); 
-   caxis([-20 20]);
-   axis([fix(min(x)) ceil(max(x)) 0 6]) 
-   set(gca, 'XTick',  xData)
-   set(gca,'XMinorTick','on')
-   xAx = get(gca,'XAxis');
-   xAx.MinorTickValues=xData_m;
-    set(gca,'TickDir','out');
-   set(gca,'TickLength',[0.005; 0.0025]);
-   hh = title({[node, ' Temp HRRR(C)']},...
-        'fontweight','b','fontsize',font_size);  
-   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   colormap(jet)
- %  colormap(redblue)
-   colormap(plasma)
-   set(gca,'Fontsize',font_size,'Fontweight','b'); 
-   grid on 
-   grid(gca, 'minor')
+ %   %Z = comb_T-comb_T_model;
+ %   Z = comb_T_model-273.115;
+ % 
+ %   figure4 = figure('Position',plot_size1);
+ %   set(gcf,'renderer','zbuffer');
+ %   h = pcolor(x, y, Z);
+ %   set(h, 'EdgeColor', 'none'); 
+ %   axis xy; colorbar('EastOutside'); 
+ %   caxis([-20 20]);
+ %   axis([fix(min(x)) ceil(max(x)) 0 6]) 
+ %   set(gca, 'XTick',  xData)
+ %   set(gca,'XMinorTick','on')
+ %   xAx = get(gca,'XAxis');
+ %   xAx.MinorTickValues=xData_m;
+ %    set(gca,'TickDir','out');
+ %   set(gca,'TickLength',[0.005; 0.0025]);
+ %   hh = title({[node, ' Temp HRRR(C)']},...
+ %        'fontweight','b','fontsize',font_size);  
+ %   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+ %   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ %   colormap(jet)
+ % %  colormap(redblue)
+ %   colormap(plasma)
+ %   set(gca,'Fontsize',font_size,'Fontweight','b'); 
+ %   grid on 
+ %   grid(gca, 'minor')
 % 
 %     
 %      % add the overlay of PBLH
@@ -348,28 +376,28 @@ if flag.PTV == 1
 % %  colormap(jet)
 %   set(gca,'Fontsize',font_size,'Fontweight','b');
   
-   Z = comb_T-comb_T_model;
-   figure5 = figure('Position',plot_size1);
-   set(gcf,'renderer','zbuffer');
-   h = pcolor(x, y, Z);
-   set(h, 'EdgeColor', 'none'); 
-   axis xy; colorbar('EastOutside'); 
-   caxis([-10 10]);
-   axis([fix(min(x)) ceil(max(x)) 0 6]) 
-   set(gca, 'XTick',  xData)
-   set(gca,'XMinorTick','on')
-   xAx = get(gca,'XAxis');
-   xAx.MinorTickValues=xData_m;
-    set(gca,'TickDir','out');
-   set(gca,'TickLength',[0.005; 0.0025]);
-   hh = title({[node, ' T_{PTV} - T_{HRRR} (K)']},...
-        'fontweight','b','fontsize',font_size);  
-   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-  colormap(redblue)
-   set(gca,'Fontsize',font_size,'Fontweight','b'); 
-   grid on 
-   grid(gca, 'minor')
+  %  Z = comb_T-comb_T_model;
+  %  figure5 = figure('Position',plot_size1);
+  %  set(gcf,'renderer','zbuffer');
+  %  h = pcolor(x, y, Z);
+  %  set(h, 'EdgeColor', 'none'); 
+  %  axis xy; colorbar('EastOutside'); 
+  %  caxis([-10 10]);
+  %  axis([fix(min(x)) ceil(max(x)) 0 6]) 
+  %  set(gca, 'XTick',  xData)
+  %  set(gca,'XMinorTick','on')
+  %  xAx = get(gca,'XAxis');
+  %  xAx.MinorTickValues=xData_m;
+  %   set(gca,'TickDir','out');
+  %  set(gca,'TickLength',[0.005; 0.0025]);
+  %  hh = title({[node, ' T_{PTV} - T_{HRRR} (K)']},...
+  %       'fontweight','b','fontsize',font_size);  
+  %  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+  %  datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+  % colormap(redblue)
+  %  set(gca,'Fontsize',font_size,'Fontweight','b'); 
+  %  grid on 
+  %  grid(gca, 'minor')
 
 
 end
@@ -383,7 +411,7 @@ end
   set(h, 'EdgeColor', 'none'); 
   axis xy; 
   colorbar('EastOutside'); 
-  caxis([0 6]);
+  caxis([0 25]);
   axis([fix(min(x)) ceil(max(x)) 0 6]) 
 %  shading interp
   set(gca, 'XTick',  xData)
@@ -419,7 +447,7 @@ end
 
   
   
- 
+
  % plot the atmospheric backscatter coefficient 
   Z = real(comb_ABC);
   figure2 = figure('Position',plot_size1);
@@ -438,18 +466,22 @@ end
   xAx.MinorTickValues=xData_m;
   set(gca,'TickDir','out');
   set(gca,'TickLength',[0.005; 0.0025]);
-  set(gca,'Zscale', 'log')
-  set(gca,'Colorscale', 'log')
-  set(gca,'Zscale', 'linear')
-  hh = title({[node, ' Aerosol Backscatter Coefficient m^{-1} sr^{-1}']},...
-       'fontweight','b','fontsize',font_size);     
+
+  caxis([1e2 1e6]);
+    hh = title({[node, ' ', ' Relative Backscatter]']},'fontweight','b','fontsize',font_size);  
+ % caxis([1e-8 1e-6]);
+ %   hh = title({[node, ' Aerosol Backscatter Coefficient m^{-1} sr^{-1}']},'fontweight','b','fontsize',font_size);     
+ % hh = title({[node, ' Backscatter Ratio']},...
+ %     'fontweight','b','fontsize',font_size);     
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
  % datetick('x','HH:MM');
  % colormap(jet)
   colormap(viridis)
   set(gca,'Fontsize',font_size,'Fontweight','b');
-  caxis([1e-8 1e-6]);
+  set(gca,'Zscale', 'log')
+  set(gca,'Colorscale', 'log')
+  set(gca,'Zscale', 'linear')
 
   
 %   % add the overlay of PBLH
@@ -468,129 +500,120 @@ end
 %   c = colorbar;
 %   c.FontSize = 0.01;
 
-  % plot the standard temp 
-   Z = real(comb_T_std-273.15);
-   figure7 = figure('Position',plot_size1);
-   set(gcf,'renderer','zbuffer');
-   h = pcolor(x, y, Z);
-   set(h, 'EdgeColor', 'none'); 
-   axis xy; colorbar('EastOutside'); 
-   caxis([-20 20]);
-   axis([fix(min(x)) ceil(max(x)) 0 6]) 
-   set(gca, 'XTick',  xData)
-   set(gca,'XMinorTick','on')
-   xAx = get(gca,'XAxis');
-   xAx.MinorTickValues=xData_m;
-    set(gca,'TickDir','out');
-   set(gca,'TickLength',[0.005; 0.0025]);
-   hh = title({[node, ' T Standard (C)']},...
-        'fontweight','b','fontsize',font_size);  
-   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-   colormap(jet)
+ %  % plot the standard temp 
+ %   Z = real(comb_T_std-273.15);
+ %   figure7 = figure('Position',plot_size1);
+ %   set(gcf,'renderer','zbuffer');
+ %   h = pcolor(x, y, Z);
+ %   set(h, 'EdgeColor', 'none'); 
+ %   axis xy; colorbar('EastOutside'); 
+ %   caxis([-20 20]);
+ %   axis([fix(min(x)) ceil(max(x)) 0 6]) 
+ %   set(gca, 'XTick',  xData)
+ %   set(gca,'XMinorTick','on')
+ %   xAx = get(gca,'XAxis');
+ %   xAx.MinorTickValues=xData_m;
+ %    set(gca,'TickDir','out');
+ %   set(gca,'TickLength',[0.005; 0.0025]);
+ %   hh = title({[node, ' T Standard (C)']},...
+ %        'fontweight','b','fontsize',font_size);  
+ %   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+ %   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ %   colormap(jet)
+ % %  colormap(redblue)
+ %   colormap(plasma)
+ %   set(gca,'Fontsize',font_size,'Fontweight','b'); 
+ %   grid on 
+ %   grid(gca, 'minor')
+ % 
+ % 
+ %   Z = comb_T_std-comb_T_model;
+ %   figure7 = figure('Position',plot_size1);
+ %   set(gcf,'renderer','zbuffer');
+ %   h = pcolor(x, y, Z);
+ %   set(h, 'EdgeColor', 'none'); 
+ %   axis xy; colorbar('EastOutside'); 
+ %   caxis([-10 10]);
+ %   axis([fix(min(x)) ceil(max(x)) 0 6]) 
+ %   set(gca, 'XTick',  xData)
+ %   set(gca,'XMinorTick','on')
+ %   xAx = get(gca,'XAxis');
+ %   xAx.MinorTickValues=xData_m;
+ %    set(gca,'TickDir','out');
+ %   set(gca,'TickLength',[0.005; 0.0025]);
+ %   hh = title({[node, ' T_{standard} - T_{HRRR} (K)']},...
+ %        'fontweight','b','fontsize',font_size);  
+ %   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+ %   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
  %  colormap(redblue)
-   colormap(plasma)
-   set(gca,'Fontsize',font_size,'Fontweight','b'); 
-   grid on 
-   grid(gca, 'minor')
+ %   set(gca,'Fontsize',font_size,'Fontweight','b'); 
+ %   grid on 
+ %   grid(gca, 'minor')
    
-   
-   Z = comb_T_std-comb_T_model;
-   figure7 = figure('Position',plot_size1);
-   set(gcf,'renderer','zbuffer');
-   h = pcolor(x, y, Z);
-   set(h, 'EdgeColor', 'none'); 
-   axis xy; colorbar('EastOutside'); 
-   caxis([-10 10]);
-   axis([fix(min(x)) ceil(max(x)) 0 6]) 
-   set(gca, 'XTick',  xData)
-   set(gca,'XMinorTick','on')
-   xAx = get(gca,'XAxis');
-   xAx.MinorTickValues=xData_m;
-    set(gca,'TickDir','out');
-   set(gca,'TickLength',[0.005; 0.0025]);
-   hh = title({[node, ' T_{standard} - T_{HRRR} (K)']},...
-        'fontweight','b','fontsize',font_size);  
-   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
-   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-  colormap(redblue)
-   set(gca,'Fontsize',font_size,'Fontweight','b'); 
-   grid on 
-   grid(gca, 'minor')
-   
- 
+
+% figure(101)
+%  semilogy(comb_duration, comb_ABC(8,:))
+% hold on
+%  semilogy(comb_duration, comb_ABC(9,:))
+%  semilogy(comb_duration, comb_ABC(10,:))
+% hold off
+%   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+%   title('MPD03 Aerosol Backscatter Coefficient m^{-1} sr^{-1}')
+%  legend(num2str(y(8)), num2str(y(9)), num2str(y(10)))
+
+
+
    %MultiPlot
    
    figure10 = figure('Position',[1 1 1920 250*4]);
    font_size = 16;
-   subplot1=subplot(4,1,1,'Parent',figure10,'YGrid','on', 'XGrid','on');
+   subplot1=subplot(3,1,1,'Parent',figure10,'YGrid','on', 'XGrid','on');
    box(subplot1,'on');
- %  hold(subplot1,'all');
-%       Z = real(comb_ABC);
-%       set(gcf,'renderer','zbuffer');
-%       h = pcolor(x,y,Z);
-%       set(h, 'EdgeColor', 'none');
-%       set(gca,'TickDir','out');
-%       set(gca,'TickLength',[0.005; 0.0025]);  figure10 = figure('Position',[1 1 1920 250*4]);
+  % hold(subplot1,'all');
       Z = real(comb_ABC);
       set(gcf,'renderer','zbuffer');
       h = pcolor(x,y,Z);
       set(h, 'EdgeColor', 'none');
       set(gca,'TickDir','out');
-      set(gca,'TickLength',[0.005; 0.0025]);
+      set(gca,'TickLength',[0.005; 0.0025]);  
       set(gca, 'XTick',  xData) 
       colorbar('EastOutside');
       axis([fix(min(x))  ceil(max(x)) 0 6])
-%       caxis([1 10]);
-%       hh = title({[node, ' ', ' Backscatter Ratio']},'fontweight','b','fontsize',font_size);  
-      caxis([1e-8 1e-3]);
-      hh = title({[node, ' ', ' Backscatter Coefficient [m^{-1}sr^{-1}]']},'fontweight','b','fontsize',font_size);  
+      % caxis([1 10]);
+      % hh = title({[node, ' ', ' Backscatter Ratio']},'fontweight','b','fontsize',font_size);  
+      % caxis([1e-8 1e-3]);
+      % hh = title({[node, ' ', ' Backscatter Coefficient [m^{-1}sr^{-1}]']},'fontweight','b','fontsize',font_size);  
+      caxis([1e2 1e6]);
+      hh = title({[node, ' ', ' Relative Backscatter ']},'fontweight','b','fontsize',font_size);   
       datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
       ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
       set(gca,'Fontsize',font_size,'Fontweight','b');
-      set(gca,'Zscale', 'log')
+      %set(gca,'Zscale', 'log')
       set(gca,'Colorscale', 'log')
       set(gca,'Zscale', 'linear')
-      colormap(subplot1, viridis)
       colormap(subplot1, jet)
       grid on
-      box(subplot1,'off'); 
-      set(gca, 'XTick',  xData) 
-      colorbar('EastOutside');
-      axis([fix(min(x))  ceil(max(x)) 0 6])
-%       caxis([1 10]);
-%       hh = title({[node, ' ', ' Backscatter Ratio']},'fontweight','b','fontsize',font_size);  
-      caxis([1e-8 1e-4]);
-      hh = title({[node, ' ', ' Backscatter Coefficient [m^{-1}sr^{-1}]']},'fontweight','b','fontsize',font_size);  
-      datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-      ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
-      set(gca,'Fontsize',font_size,'Fontweight','b');
-      set(gca,'Zscale', 'log')
-      set(gca,'Colorscale', 'log')
-      set(gca,'Zscale', 'linear')
-      colormap(subplot1, viridis)
-      colormap(subplot1, jet)
-      grid on
-      box(subplot1,'off'); 
-  subplot2=subplot(4,1,2,'Parent',figure10,'YGrid','on', 'XGrid','on');
+  subplot2=subplot(3,1,2,'Parent',figure10,'YGrid','on', 'XGrid','on');
   box(subplot2,'on');
-      Z = real(comb_AH);    
+      Z = real(comb_AH);  
+     % Z = real(comb_AH_stand); 
       set(gcf,'renderer','zbuffer');
       h = pcolor(x,y,Z);
       set(h, 'EdgeColor', 'none');
       colorbar('EastOutside');
       axis([fix(min(x)) ceil(max(x)) 0 6])
-      caxis([0 6]);
+      caxis([0 25]);
       colormap(subplot2, CM_YlGnBu(64))
       ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
       set(gca, 'XTick',  xData)
       set(gca,'TickDir','out');
       set(gca,'TickLength',[0.005; 0.0025]);
-      hh = title({[node, ' Water Vapor (g m^{-3})']},'fontweight','b','fontsize',font_size);
+      hh = title({[node, ' Water Vapor PTV (g m^{-3})']},'fontweight','b','fontsize',font_size);
+      hh = title({[node, ' Water Vapor Standard (g m^{-3})']},'fontweight','b','fontsize',font_size);
       datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
       set(gca,'Fontsize',font_size,'Fontweight','b');
       grid on
-  subplot3=subplot(4,1,3,'Parent',figure10,'YGrid','on', 'XGrid','on');
+  subplot3=subplot(3,1,3,'Parent',figure10,'YGrid','on', 'XGrid','on');
   box(subplot3,'on'); 
       Z = real(comb_T-273.15);
       set(gcf,'renderer','zbuffer');
@@ -601,37 +624,72 @@ end
       set(gca, 'XTick',  xData)
       colorbar('EastOutside');
       axis([fix(min(x))  ceil(max(x)) 0 6])
-      caxis([-20 20]);
+      caxis([-20 30]);
       hh = title({[node, ' ', ' Temp PTV (C)']},'fontweight','b','fontsize',font_size);  
       datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
       ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
       set(gca,'Fontsize',font_size,'Fontweight','b');
       colormap(subplot3, plasma)
-  subplot4=subplot(4,1,4,'Parent',figure10,'YGrid','on', 'XGrid','on');
-  box(subplot4,'on'); 
-      Z = real(comb_T_std-273.15);    
-      set(gcf,'renderer','zbuffer');
-      h = pcolor(x,y,Z);
-      set(h, 'EdgeColor', 'none');
-      colorbar('EastOutside');
-      axis([fix(min(x)) ceil(max(x)) 0 6])
-      caxis([-20 20]);
-      colormap(subplot4, plasma)
-      ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
-      set(gca, 'XTick',  xData)
-      set(gca,'TickDir','out');
-      set(gca,'TickLength',[0.005; 0.0025]);
-      hh = title({[node, ' Temp Standard (C.)']},'fontweight','b','fontsize',font_size);
-      datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-      set(gca,'Fontsize',font_size,'Fontweight','b');
-     % set(gca,'Zscale', 'log')
-     % set(gca,'Colorscale', 'log')
-     % set(gca,'Zscale', 'linear')
+  % subplot4=subplot(4,1,4,'Parent',figure10,'YGrid','on', 'XGrid','on');
+  % box(subplot4,'on'); 
+  %     Z = real(comb_T_stand-273.15);    
+  %     set(gcf,'renderer','zbuffer');
+  %     h = pcolor(x,y,Z);
+  %     set(h, 'EdgeColor', 'none');
+  %     set(gca, 'XTick',  xData)
+  %     set(gca,'TickDir','out');
+  %     set(gca,'TickLength',[0.005; 0.0025]);
+  %     colorbar('EastOutside');
+  %     axis([fix(min(x)) ceil(max(x)) 0 6])
+  %     caxis([-20 30]);
+  %     hh = title({[node, ' Temp Standard (C.)']},'fontweight','b','fontsize',font_size);
+  %     datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+  %     ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
+  %     set(gca,'Fontsize',font_size,'Fontweight','b');
+  %     colormap(subplot4, plasma)
+  %    % set(gca,'Fontsize',font_size,'Fontweight','b');
+  %    % set(gca,'Zscale', 'log')
+  %    % set(gca,'Colorscale', 'log')
+  %    % set(gca,'Zscale', 'linear')
    
-   
+
+ % bin = 3;    
+ % range_plot = fix(alt{1}(bin))
+ % 
+ % 
+ % figure(111)
+ % plot(comb_duration, comb_AH_stand(bin,:))
+ % hold on
+ % plot(comb_duration, comb_AH(bin,:))
+ % hold off            
+ % ylabel('Absoultue Humidity (g m^{-3})');
+ % title_string = sprintf('Absolute Humidity at %d m', range_plot);
+ % title(title_string)
+ % datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ % legend ('standard AH', 'PTV AH')
+ % grid on
+ % grid minor
+ % ylim([10 25])
+ % 
+ % figure(112)
+ % plot(comb_duration, comb_T_stand(bin,:))
+ % hold on
+ % plot(comb_duration, comb_T(bin,:))
+ % hold off            
+ % ylabel('Temperature (K)');
+ % title_string = sprintf('Temperature at %d m', range_plot);
+ % title(title_string)
+ % datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ % legend ('standard T', 'PTV T')
+ % grid on
+ % grid minor
+ % ylim([280 310])
+
+
+
+
  cd(strcat(plot_path,'/mpd/Plots'))
 
-   
   FigH = figure(1);
   set(gca,'Fontsize',16,'Fontweight','b'); 
   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 3000 250]);
@@ -645,30 +703,31 @@ end
 %   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
  if flag.PTV == 1
-%   FigH = figure(1);
-%   set(gca,'Fontsize',16,'Fontweight','b'); 
-%   set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 1920 250]);
-%   name=strcat(date, node, ' T_Python_multi'); 
-%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+  FigH = figure(1);
+  FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+  FigH.Position = [100 100 1920 300]; % x, y, width, height in pixels
+  name=char(strcat(node, "_", date, 'T_Python_multi')); 
+  exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
   
- FigH = figure(2);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 3000 250]);
-  name=strcat(date, node, ' T_HRRR'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+ % FigH = figure(2);
+ %  set(gca,'Fontsize',16,'Fontweight','b'); 
+ %  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 3000 250]);
+ %  name=strcat(date, node, ' T_HRRR'); 
+ %  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
-  FigH = figure(3);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 3000 250]);
-  name=strcat(date, node, ' T_global-T_HRRR'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+  % FigH = figure(3);
+  % set(gca,'Fontsize',16,'Fontweight','b'); 
+  % set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 3000 250]);
+  % name=strcat(date, node, ' T_global-T_HRRR'); 
+  % print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
-%   FigH = figure(4);
-%   set(gca,'Fontsize',16,'Fontweight','b'); 
-%   set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 1920 250]);
-%   name=strcat(date, node, 'WV_Python_multi'); 
-%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
-  
+  % FigH = figure(4);
+  % FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+  % FigH.Position = [100 100 1920 300]; % x, y, width, height in pixels
+  % name=char(strcat(node, "_", date, '_WV_Python_multi')); 
+  % exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
+
+
 %   FigH = figure(5);
 %   set(gca,'Fontsize',16,'Fontweight','b'); 
 %   set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 1920 250]);
@@ -682,17 +741,32 @@ end
 %   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
 %   
     
-  FigH = figure(7);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 3000 250]);
-  name=strcat(date, node, ' T_standard_minus_HRRR'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+  % FigH = figure(7);
+  % set(gca,'Fontsize',16,'Fontweight','b'); 
+  % set(FigH, 'PaperUnits', 'points', 'PaperPosition',  [1 1 3000 250]);
+  % name=strcat(date, node, ' T_standard_minus_HRRR'); 
+  % print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
-   FigH = figure(8);
-   set(gca,'Fontsize',16,'Fontweight','b');  
-   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 275*4]);
-   name=strcat(node, "_", date, '_all_comb'); 
-   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+   FigH = figure(4);
+   FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+   FigH.Position = [0 0 1920 275*4]; % x, y, width, height in pixels
+   name=char(strcat(node, "_", date, '_all_comb')); 
+   exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
+
+   % 
+   % FigH = figure(111);
+   % FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+   % FigH.Position = [0 0 1920/1.5 275/1.5]; % x, y, width, height in pixels
+   % name=char(strcat(node, "_", date, '_AH_timeseries')); 
+   % exportgraphics(FigH, [name, '.png'], 'Resolution', 75);
+   % 
+   % FigH = figure(112);
+   % FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+   % FigH.Position = [0 0 1920/1.5 275/1.5]; % x, y, width, height in pixels
+   % name=char(strcat(node, "_", date, '_temp_timeseries')); 
+   % exportgraphics(FigH, [name, '.png'], 'Resolution', 75);
+
+
   
  end  
   

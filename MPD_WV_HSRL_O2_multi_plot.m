@@ -1,11 +1,23 @@
 clear all; close all;
 tic
 
- node = 'MPD05';
- date = '15 Feb 2025';   
+ node = 'MPD01';
+ date = '06 Aug 2025';   
  days = 8; skip = 1;
  flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
- WV_max_scale = 6;
+ WV_max_scale = 10;
+
+%  node = 'MPD04';
+%  date = '20 Jul 2025';
+%  days = 8 ; skip = 1;
+%  WV_max_scale = 25;
+%  % 
+ % node = 'MPD04';
+ % date = '7 May 2025';
+ % days = 90; skip = 9;
+ % WV_max_scale = 25;
+
+ % 
  
  
 serv_path = '/Volumes/smaug1/rsfdata/MPD/';
@@ -60,7 +72,7 @@ for i=1:days
      if exist(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))==2
         load(strcat(node, '_', datestr(date, 'yyyymmdd'), '_WV.mat'))
         range_limit = size(N_avg,2);
-%         range_limit = 490
+         range_limit = 490
         N_avg_comb=N_avg;
         N_error_comb=N_error;
         RB_comb=RB;
@@ -326,7 +338,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
    box(subplot1,'on');
    hold(subplot1,'all');
    plot(durationWV, (lambda_comb_on),'k','LineWidth',2,'DisplayName','Lambda_{on}') % these plot diode Temps
-   axis([fix(min(durationWV)) ceil(max(durationWV)) 828.190 828.200])
+   axis([fix(min(durationWV)) ceil(max(durationWV)) 828.196 828.207])
    YTick = [100 120 140 160 180];
    ylabel('wavelength, nm', 'Fontsize', font_size, 'Fontweight', 'b');  
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
@@ -337,7 +349,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
    hold(subplot2,'all');
    plot(durationWV, t_bench,'r', 'LineWidth',1, 'DisplayName','Bench T')
    plot(durationWV, surf_T, 'b', 'LineWidth',1, 'DisplayName','Surface T')
-  axis([fix(min(duration)) ceil(max(duration)) -10 40]);   % -20 40]) %PRECIP
+  axis([fix(min(duration)) ceil(max(duration)) 10 40]);   % -20 40]) %PRECIP
       YTick = [-25 0 25 50];
    ylabel('Temp, C', 'Fontsize', font_size, 'Fontweight', 'b'); 
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
@@ -384,23 +396,31 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
    linkaxes(ax, 'x');
    hold off;
 
-      
+figure(101)
+semilogy(durationWV, background_comb_off)
+datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+title('WV offline Background')
+
+
+
       
       
  %% save figure 
   cd(plot_path)
    
-%   FigH = figure(1);
-%   set(gca,'Fontsize',16,'Fontweight','b'); 
-%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);      
-%   name=strcat(node, "_", date, "_Backscatter_Ratio_comb");
-%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+   FigH = figure(1);
+%   drawnow;
+   FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+   FigH.Position = [100 100 1920 300]; % x, y, width, height in pixels
+   name=char(strcat(node, "_", date, '_Backscatter_Ratio_comb')); 
+%   exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
 %    
-%   FigH = figure(2);
-%   set(gca,'Fontsize',16,'Fontweight','b'); 
-%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920*1.5 250]);      
-%   name=strcat(node, "_", date, "_Backscatter_Coeff_comb");
-%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+   FigH = figure(2);
+ %  drawnow;
+   FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+   FigH.Position = [100 100 1920 300]; % x, y, width, height in pixels
+   name=char(strcat(node, "_", date, '_Backscatter_Coeff_comb')); 
+%   exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
   
 %   FigH = figure(3);
 %   set(gca,'Fontsize',16,'Fontweight','b'); 
@@ -408,11 +428,14 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
 %   name=strcat(node, "_", date, "_O2_extinction_Coeff_comb");
 %   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 %   
-%   FigH = figure(4);
-%   set(gca,'Fontsize',16,'Fontweight','b');  
-%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920*1.5 250]);
-%   name=strcat(node, "_", date, '_WV_comb'); 
-%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+   FigH = figure(4);
+ %  drawnow;
+   FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+   FigH.Position = [100 100 1920 300]; % x, y, width, height in pixels
+   name=char(strcat(node, "_", date, '_WV_comb')); 
+ %  exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
+
+
 % %  
 %   FigH = figure(5);
 %   set(gca,'Fontsize',16,'Fontweight','b');  
@@ -421,17 +444,21 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
 %   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 %   
    FigH = figure(6);
-   set(gca,'Fontsize',16,'Fontweight','b');  
-   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 275*4]);
-   name=strcat(node, "_", date, '_all_comb'); 
-   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+   drawnow;
+   FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+   FigH.Position = [0 0 1920 1100]; % x, y, width, height in pixels
+   name=char(strcat(node, "_", date, '_all_comb')); 
+  % exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
+   print(FigH, name, '-dpng', '-r75') % set at the screen resolution 
+
   
-%   FigH = figure(7);
-%   %set(gca,'Fontsize',16,'Fontweight','b');  
-%   set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 275*2]);
-%   name=strcat(node, "_", date, '_house_comb'); 
-%   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-%   
+  % FigH = figure(7);
+  %  FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
+  %  FigH.Position = [100 100 1920 550]; % x, y, width, height in pixels
+  %  name=char(strcat(node, "_", date, '_house_comb')); 
+  %  exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
+
+
   
  cd(dd);  % point back to original directory 
 

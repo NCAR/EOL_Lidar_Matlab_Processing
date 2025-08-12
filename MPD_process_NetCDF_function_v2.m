@@ -23,13 +23,10 @@ flag.OF = 1; % correct for geometric overlap functions
 flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 20; % hour to show troubleshooting profiles
-
-ave_time.wv = 5; %10.0; % averaging time (in minutes) for the water vapor and O2 
-ave_time.rb = 5; %5.0; % averaging time (in minutes) for the relative backscatter
-% ave_time.wv = 1.0; % averaging time (in minutes) for the water vapor and O2 
-%  ave_time.rb = 1.0; % averaging time (in minutes) for the relative backscatter
+ave_time.wv = 10; %10.0; % averaging time (in minutes) for the water vapor and O2 
+ave_time.rb = 1; %5.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
-ave_range.gr = 75; % grid data to this range (useful for SmartSwitch tests)
+%ave_range.gr = 75; % grid data to this range (useful for SmartSwitch tests)
 
 if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1  % when running on fog server
    serv_path = '/export/smaug1/rsfdata/MPD/'; 
@@ -48,10 +45,13 @@ else % running locally but use calibration from fog server
    cal_serv_path = '/Volumes/eol/smaug1/rsfdata/MPD/calibration/' % 
 end
 
-
 nodeStr = extractAfter(node, 'MPD')
 year_folder = cell2mat(textscan(daystr,'%4c', 1));
-files = strcat(serv_path, 'mpd_', nodeStr, '_data/', year_folder,'/', daystr);
+if nodeStr == "06"
+ files = strcat(serv_path, 'adihsrl', '_data/', year_folder,'/', daystr);
+else
+ files = strcat(serv_path, 'mpd_', nodeStr, '_data/', year_folder,'/', daystr);
+end
 
 catalog = '/pub/incoming/catalog/operations';
 
@@ -61,10 +61,9 @@ folder_in=folder;
 date_in = date;
 serial_date = datenum(num2str(date_in),'yymmdd');
 MPD_read_calvals % read in the calvals
-read_time_in = 2; % set read data in time increments of seconds (default it 2sec) 
+read_time_in
 profiles2ave.wv = 2*round(((ave_time.wv*60/read_time_in)+1)/2)   
 profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
-
 
 % read in all the data
  if  strcmp(channels,'WV') == 1 
@@ -73,6 +72,9 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
  end
  if  strcmp(channels,'O2') == 1 
    [data_wv_on, data_wv_off, data_O2_on_comb, data_O2_off_comb, data_O2_on_mol, data_O2_off_mol, MCS] = MPD_File_Retrieval_NetCDF_v6(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+ end
+ if  strcmp(channels,'HSRL') == 1 
+   [data_mol, data_comb, MCS] = MPD_File_Retrieval_NetCDF_HSRL(flag, MCS, folder_in); %use to read binary data (bin number passed in) 
  end
  
 % Pause here to create an afterpulse file if desired (run MPS_afterpulse_cals_v2.m)
@@ -107,7 +109,21 @@ end
   O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
          time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr, write_data_folder, flag);
  end 
- 
+
+% % process the oxygen channels
+ if (strcmp(channels,'HSRL') == 1)  && strcmp(correction,'AP_OFF') == 1 
+   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+   flag.near = 0; flag.afterpulse = 0; 
+   gates2ave = 1; %number of gates to average
+  [HSRL_comb, ~, range, RB_comb, time_comb, Surf_T, Surf_P, O2_on_wavelength, O2_off_wavelength] =  MPD_Analysis_function_O2_v1(data_comb, data_comb, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+         profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave, Afterpulse_File, cal_serv_path);%
+  [HSRL_mol, ~, range, RB_mol,  time_mol] =  MPD_Analysis_function_O2_v1(data_mol, data_mol, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...
+         profiles2ave, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, gates2ave, Afterpulse_File, cal_serv_path);%
+  [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(HSRL_comb, HSRL_comb,...
+         HSRL_mol,HSRL_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder,cal_serv_path, receiver_scale_factor);
+ end 
+
+
  
  
 %% change plots when runnning locally to focus on lower ranges 

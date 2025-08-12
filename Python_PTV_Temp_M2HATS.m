@@ -1,10 +1,17 @@
 
 clear all; close all
 % day = datenum('23 Jul 2023'); % automated to pick the first day
-UTC_convert = 7;
-offset1 = 2; % parcel method surface temp offset
-offset2 = 0; % parcel method surface temp offset
-offset3 = -2; % parcel method surface temp offset
+UTC_convert = 0;  
+flag.single_day = 0 % used to plot single days
+flag.overlay_HRRR = 0;
+if flag.single_day == 1
+    UTC_convert = 7;  % convert to local time
+end
+
+offset1 = 0.5; % parcel method surface temp offset
+offset2 = 1; % parcel method surface temp offset
+offset3 = 1.5; % parcel method surface temp offset
+
 
 skip = 1
 node = 'MPD03';
@@ -67,6 +74,7 @@ jj=1;
    variable{21} =  'Surface_Temperature';
    variable{22} =  'Surface_Pressure';
    variable{23} =  'Surface_Absolute_Humidity';
+   variable{24} = 'Backscatter_Photon_Counts_828'; 
  end
 
     
@@ -118,6 +126,7 @@ end
     ABC_var{jj}(ABC_mask{jj} == 1) = nan; 
    % ABC{jj}(ABC_var{jj} > 1e-11) = nan;
     ABC{jj}(ABC{jj} < 1e-12) = nan;
+    Counts{jj} = ncread(filename,variable{24});   
     
     if flag.PTV == 1
       % P{jj}(P_mask{jj} == 1) = nan;
@@ -155,6 +164,7 @@ end
         comb_T_surf = T_surf{jj}; 
         comb_P_surf = P_surf{jj}; 
         comb_AH_surf = AH_surf{jj}; 
+        comb_Counts = Counts{jj}; 
       end
   else
       comb_duration = [comb_duration; duration{jj}];
@@ -175,6 +185,7 @@ end
         comb_T_surf = [comb_T_surf; T_surf{jj}];
         comb_P_surf = [comb_P_surf; P_surf{jj}];
         comb_AH_surf = [comb_AH_surf; AH_surf{jj}];
+        comb_Counts = [comb_Counts Counts{jj}];
       end
   end
   
@@ -193,20 +204,22 @@ xData_m =  linspace( fix(min(x)),  ceil(max(x)), round((ceil(max(x))-fix(min(x))
 
 if flag.PTV == 1
 % % plot the T
-  Z = real(comb_T-273.15);
+ % Z = real(comb_T-273.15);
+  Z = real(comb_T);
   figure3 = figure('Position',plot_size1);
   set(gcf,'renderer','zbuffer');
   h = pcolor(x, y, Z);
   set(h, 'EdgeColor', 'none'); 
   axis xy; colorbar('EastOutside'); 
-  caxis([-15 30]);
-  axis([fix(min(x)) ceil(max(x)) 0 6000]) 
+%  caxis([-15 30]);
+  caxis([268 298]);
+  axis([fix(min(x)) ceil(max(x)) 0 6]) 
 %  shading interp
   set(gca, 'XTick',  xData)
   set(gca,'XMinorTick','on')
   set(gca,'TickDir','out');
   set(gca,'TickLength',[0.005; 0.0025]);
-  hh = title({[node, ' Temp (C)']},...
+  hh = title({[node, ' Temp (K)']},...
        'fontweight','b','fontsize',font_size);  
   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
@@ -242,44 +255,59 @@ if flag.PTV == 1
   
   B = repmat(comb_T_p_surf, 1, size(comb_T_p,1));
 
-  B_test = B'+offset1; % offset virtual potential temp at surface by 2deg
-  PBLH = comb_T_p;
-  PBLH (PBLH >B_test) = nan;
-  B_test_2 = ~isnan(PBLH);
-  Indices = arrayfun(@(x) find(B_test_2(:,x), 1, 'last'), 1:size(PBLH, 2), 'UniformOutput', false);
+  VPT_surf = B'+offset1; % offset surface virtual potential temp 
+  PBLH = comb_T_p; % set the PBLH equal to the VPT to set variable dim
+  PBLH(comb_T_p>VPT_surf) = nan;
+    PBLH(VPT_surf-comb_T_p>2) = nan;  % threshold of 2K difference
+  PBLH_check_top = ~isnan(PBLH);
+  Indices = arrayfun(@(x) find(PBLH_check_top(:,x), 1, 'last'), 1:size(PBLH, 2), 'UniformOutput', false);
   idx = cellfun(@isempty,Indices);
   Indices(idx) = {1};
   BLH_Indices = cell2mat(Indices);
   Thermo_BLH1 = y(BLH_Indices); 
   Thermo_BLH1(Thermo_BLH1==0) = nan; 
   
-  B_test = B'+offset2; % offset virtual potential temp at surface by 2deg
+  VPT_surf = B'+offset2; % offset surface virtual potential temp 
   PBLH = comb_T_p;
-  PBLH (PBLH >B_test) = nan;
-  B_test_2 = ~isnan(PBLH);
-  Indices = arrayfun(@(x) find(B_test_2(:,x), 1, 'last'), 1:size(PBLH, 2), 'UniformOutput', false);
+  PBLH (PBLH >VPT_surf) = nan;
+    PBLH(VPT_surf-comb_T_p>2) = nan;  % threshold of 2K difference
+  PBLH_check_top = ~isnan(PBLH);
+  Indices = arrayfun(@(x) find(PBLH_check_top(:,x), 1, 'last'), 1:size(PBLH, 2), 'UniformOutput', false);
   idx = cellfun(@isempty,Indices);
   Indices(idx) = {1};
   BLH_Indices = cell2mat(Indices);
   Thermo_BLH2 = y(BLH_Indices); 
   Thermo_BLH2(Thermo_BLH2==0) = nan; 
   
-  B_test = B'+offset3; % offset virtual potential temp at surface by 2deg
+  VPT_surf = B'+offset3; % offset surface virtual potential temp  
   PBLH = comb_T_p;
-  PBLH (PBLH >B_test) = nan;
-  B_test_2 = ~isnan(PBLH);
-  Indices = arrayfun(@(x) find(B_test_2(:,x), 1, 'last'), 1:size(PBLH, 2), 'UniformOutput', false);
+  PBLH (PBLH >VPT_surf) = nan;
+    PBLH(VPT_surf-comb_T_p>2) = nan;  % threshold of 2K difference
+  PBLH_check_top = ~isnan(PBLH);
+  Indices = arrayfun(@(x) find(PBLH_check_top(:,x), 1, 'last'), 1:size(PBLH, 2), 'UniformOutput', false);
   idx = cellfun(@isempty,Indices);
   Indices(idx) = {1};
   BLH_Indices = cell2mat(Indices);
   Thermo_BLH3 = y(BLH_Indices); 
   Thermo_BLH3(Thermo_BLH3==0) = nan; 
   
+%   B_test = B'+offset4; % offset virtual potential temp at surface by 2deg
+%   PBLH = comb_T_p;
+%   PBLH (PBLH >B_test) = nan;
+%   B_test_2 = ~isnan(PBLH);
+%   Indices = arrayfun(@(x) find(B_test_2(:,x), 1, 'last'), 1:size(PBLH, 2), 'UniformOutput', false);
+%   idx = cellfun(@isempty,Indices);
+%   Indices(idx) = {1};
+%   BLH_Indices = cell2mat(Indices);
+%   Thermo_BLH4 = y(BLH_Indices); 
+%   Thermo_BLH4(Thermo_BLH4==0) = nan; 
+  
   
   % set this to just plot the first day selected for plots
   day = datenum( Pythonfilename{1}(end-15:end-8), 'yyyymmdd');
 
-  Z = real(comb_T_p);
+   offset_avg = mean([offset1 offset2 offset3]);
+   Z = real((B'+ offset_avg)-comb_T_p);
    %Z = real(FY);
    %Z = real(comb_P);
    %Z = real(comb_T_vp);  % directly from Matt's processing   
@@ -289,7 +317,8 @@ if flag.PTV == 1
    h = pcolor(x, y, Z);
    set(h, 'EdgeColor', 'none'); 
    axis xy; colorbar('EastOutside'); 
-   caxis([305 325]);
+   caxis([-10 10]);
+   %caxis([305 325]);
    axis([fix(min(x)) ceil(max(x)) 0 6]) 
    set(gca, 'XTick',  xData)
    set(gca,'XMinorTick','on')
@@ -297,25 +326,32 @@ if flag.PTV == 1
    xAx.MinorTickValues=xData_m;
     set(gca,'TickDir','out');
    set(gca,'TickLength',[0.005; 0.0025]);
-   hh = title({[node, ' Virtual Potential T (K)']},...
+   hh = title({[node, ' Virtual Potential Temperature Difference (Surface-Atmosphere) [K]']},...
         'fontweight','b','fontsize',font_size);  
    ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
    datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
  %  colormap(jet)
-   colormap(plasma)
+ %  colormap(plasma)
+   colormap(redblue)
    set(gca,'Fontsize',font_size,'Fontweight','b'); 
    grid on 
    grid(gca, 'minor')
-   xlim([day day+1])
-    
-     % add the overlay of PBLH
+   if flag.single_day == 1 
+       xlim([day day+1]) % just show one single day
+     % xlim([day+5/24 day+20/24]) % to match Luke's MLH paper
+     % ylim([0 4.5])
+   end
+
+  
+  Thermo_BLH_avg = mean([Thermo_BLH1 Thermo_BLH2 Thermo_BLH3],2,'omitnan');
+  % add the overlay of PBLH
   ax2 = axes(figure4);
-  %plot(x, comb_PBLH/1000, 'ro')
-  plot(x, Thermo_BLH1, 'g+')
-  hold on 
-  plot(x, Thermo_BLH2, 'go')
-  plot(x, Thermo_BLH3, 'g+')
-  hold off
+  plot(x, Thermo_BLH_avg, 'ks')
+  % hold on 
+  %   plot(x, Thermo_BLH1, 'g+', 'MarkerSize', 1)
+  %   plot(x, Thermo_BLH2, 'g+', 'MarkerSize', 1)
+  %   plot(x, Thermo_BLH3, 'g+', 'MarkerSize', 1)
+  % hold off
   colorbar('EastOutside'); 
   axis([fix(min(x)) ceil(max(x)) 0 6])
   ax2.Color = 'none';
@@ -328,7 +364,35 @@ if flag.PTV == 1
   % Kludge to remove the colorbar font, but not rescale the axis
   c = colorbar;
   c.FontSize = 0.01;
-  xlim([day day+1])
+  if flag.single_day == 1 
+       xlim([day day+1]) % just show one single day
+     % xlim([day+5/24 day+20/24]) % to match Luke's MLH paper
+     % ylim([0 4.5])
+  end
+  
+if flag.overlay_HRRR == 1 
+  % add the overlay of PBLH
+   ax2 = axes(figure4);
+   plot(x, comb_PBLH/1000, 'ro')
+   colorbar('EastOutside'); 
+   axis([fix(min(x)) ceil(max(x)) 0 6])
+   ax2.Color = 'none';
+   ax2.XAxisLocation = 'top';
+   ax2.YAxisLocation = 'right';
+   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+   set(gca,'Fontsize',font_size,'Fontweight','b');
+   ax2.YColor = 'none';
+   ax2.XColor = 'none';
+   % Kludge to remove the colorbar font, but not rescale the axis
+   c = colorbar;
+   c.FontSize = 0.01;
+   if flag.single_day == 1 
+        xlim([day day+1]) % just show one single day
+      % xlim([day+5/24 day+20/24]) % to match Luke's MLH paper
+      % ylim([0 4.5])
+   end
+ end
+
    
 %   % add the overlay of Lifting Level
 %   ax3 = axes(figure4);
@@ -395,25 +459,34 @@ end
 %  colormap(jet)
   colormap(CM_YlGnBu(64))
   set(gca,'Fontsize',font_size,'Fontweight','b');
-  xlim([day day+1])
+  if flag.single_day == 1 
+       xlim([day day+1]) % just show one single day
+     % xlim([day+5/24 day+20/24]) % to match Luke's MLH paper
+     % ylim([0 4.5])
+   end
   
- % add the overlay of PBLH
-  ax2 = axes(figure1);
-  plot(x, comb_PBLH/1000, 'ro')
-  colorbar('EastOutside'); 
-  axis([fix(min(x)) ceil(max(x)) 0 6])
-  ax2.Color = 'none';
-  ax2.XAxisLocation = 'top';
-  ax2.YAxisLocation = 'right';
-  datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-  set(gca,'Fontsize',font_size,'Fontweight','b');
-  ax2.YColor = 'none';
-  ax2.XColor = 'none';
-  % Kludge to remove the colorbar font, but not rescale the axis
-  c = colorbar;
-  c.FontSize = 0.01;
-  xlim([day day+1])
-  
+if flag.overlay_HRRR == 1 
+  % add the overlay of PBLH
+   ax2 = axes(figure1);
+   plot(x, comb_PBLH/1000, 'ro')
+   colorbar('EastOutside'); 
+   axis([fix(min(x)) ceil(max(x)) 0 6])
+   ax2.Color = 'none';
+   ax2.XAxisLocation = 'top';
+   ax2.YAxisLocation = 'right';
+   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+   set(gca,'Fontsize',font_size,'Fontweight','b');
+   ax2.YColor = 'none';
+   ax2.XColor = 'none';
+   % Kludge to remove the colorbar font, but not rescale the axis
+   c = colorbar;
+   c.FontSize = 0.01;
+   if flag.single_day == 1 
+        xlim([day day+1]) % just show one single day
+      % xlim([day+5/24 day+20/24]) % to match Luke's MLH paper
+      % ylim([0 4.5])
+   end
+ end
   
  
  % plot the atmospheric backscatter coefficient 
@@ -445,68 +518,134 @@ end
  % colormap(jet)
   colormap(viridis)
   set(gca,'Fontsize',font_size,'Fontweight','b');
-  caxis([1e-8 1e-6]);
-  xlim([day day+1])
+  caxis([5e-9 1e-6]);
+  if flag.single_day == 1 
+       xlim([day day+1]) % just show one single day
+     % xlim([day+5/24 day+20/24]) % to match Luke's MLH paper
+     % ylim([0 4.5])
+  end
   
+if flag.overlay_HRRR == 1 
   % add the overlay of PBLH
-  ax2 = axes(figure2);
-  plot(x, comb_PBLH/1000, 'ro')
-  colorbar('EastOutside'); 
-  axis([fix(min(x)) ceil(max(x)) 0 6])
-  ax2.Color = 'none';
-  ax2.XAxisLocation = 'top';
-  ax2.YAxisLocation = 'right';
-  datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-  set(gca,'Fontsize',font_size,'Fontweight','b');
-  ax2.YColor = 'none';
-  ax2.XColor = 'none';
-  % Kludge to remove the colorbar font, but not rescale the axis
-  c = colorbar;
-  c.FontSize = 0.01;
-  xlim([day day+1])
+   ax2 = axes(figure2);
+   plot(x, comb_PBLH/1000, 'ro')
+   colorbar('EastOutside'); 
+   axis([fix(min(x)) ceil(max(x)) 0 6])
+   ax2.Color = 'none';
+   ax2.XAxisLocation = 'top';
+   ax2.YAxisLocation = 'right';
+   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+   set(gca,'Fontsize',font_size,'Fontweight','b');
+   ax2.YColor = 'none';
+   ax2.XColor = 'none';
+   % Kludge to remove the colorbar font, but not rescale the axis
+   c = colorbar;
+   c.FontSize = 0.01;
+   if flag.single_day == 1 
+        xlim([day day+1]) % just show one single day
+      % xlim([day+5/24 day+20/24]) % to match Luke's MLH paper
+      % ylim([0 4.5])
+   end
+ end
 
-   
+% plot the atmospheric backscatter coefficient 
+  Z = real(comb_Counts);
+  figure2 = figure('Position',plot_size1);
+  set(gcf,'renderer','zbuffer');
+  h = pcolor(x, y, Z);
+  set(h, 'EdgeColor', 'none'); 
+  axis xy; 
+  colorbar('EastOutside'); 
+  %caxis([0 12]);
+  %ylim([-.1 6]);
+  axis([fix(min(x)) ceil(max(x)) 0 6])
+  %  shading interp
+  set(gca, 'XTick',  xData)
+  set(gca,'XMinorTick','on')
+  xAx = get(gca,'XAxis');
+  xAx.MinorTickValues=xData_m;
+  set(gca,'TickDir','out');
+  set(gca,'TickLength',[0.005; 0.0025]);
+  set(gca,'Zscale', 'log')
+  set(gca,'Colorscale', 'log')
+  set(gca,'Zscale', 'linear')
+  hh = title({[node, ' Attenuated Backscatter ']},...
+       'fontweight','b','fontsize',font_size);     
+  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size); 
+  datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+ % datetick('x','HH:MM');
+ % colormap(jet)
+  colormap(viridis)
+  set(gca,'Fontsize',font_size,'Fontweight','b');
+  caxis([1e3 1e6]);
+  if flag.single_day == 1 
+       xlim([day day+1]) % just show one single day
+     % xlim([day+5/24 day+20/24]) % to match Luke's MLH paper
+     % ylim([0 4.5])
+  end
+
+
  
  cd(strcat(plot_path,'/mpd/Plots'))
 
+if flag.single_day == 1
+    plot_size = [1 1 1000 385];
+else
+    plot_size = [1 1 1920 250];
+end
+
    
-  FigH = figure(1);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, node, ' WV_Python_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-  
-  FigH = figure(2);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);
-  name=strcat(date, node, ' Back_Coeff_Python_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
-  
- if flag.PTV == 1
-  FigH = figure(1);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1000 385]);
-  name=strcat(date, node, ' T_Python_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
-  
- FigH = figure(2);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1000 385]);
-  name=strcat(date, node, ' Potential_T_multi'); 
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
-  
   FigH = figure(3);
   set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1000 385]);
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  plot_size);  
   name=strcat(date, node, ' WV_Python_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
   FigH = figure(4);
   set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1000 385]);
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  plot_size);
   name=strcat(date, node, ' Back_Coeff_Python_multi'); 
   print(FigH, name, '-dpng', '-r0') % set at the screen resolution
   
+  FigH = figure(2);
+  set(gca,'Fontsize',16,'Fontweight','b'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  plot_size);
+  name=strcat(date, node, ' VPT_Diff_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+
+
+
+ if flag.PTV == 1
+  FigH = figure(1);
+  set(gca,'Fontsize',16,'Fontweight','b'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  plot_size);
+  name=strcat(date, node, ' T_Python_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+  
+ FigH = figure(2);
+  set(gca,'Fontsize',16,'Fontweight','b'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  plot_size);
+  name=strcat(date, node, ' Potential_T_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+  
+  FigH = figure(3);
+  set(gca,'Fontsize',16,'Fontweight','b'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  plot_size);
+  name=strcat(date, node, ' WV_Python_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+  
+  FigH = figure(4);
+  set(gca,'Fontsize',16,'Fontweight','b'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  plot_size);
+  name=strcat(date, node, ' Back_Coeff_Python_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+  
+  FigH = figure(5);
+  set(gca,'Fontsize',16,'Fontweight','b'); 
+  set(FigH, 'PaperUnits', 'points', 'PaperPosition',  plot_size);
+  name=strcat(date, node, ' 828_Counts_multi'); 
+  print(FigH, name, '-dpng', '-r0') % set at the screen resolution
+
  
  end  
   
@@ -517,6 +656,12 @@ end
   range = alt{1}'; 
   N_avg_comb = (comb_AH./1e6.*6.022E23./18.015);
   duration = duration;
+  % test1 = datestr(comb_duration(1:2), 'yyyy-mmm-dd HH:MM');
+  % test2 = Thermo_BLH2(1:2);
+  test3 = [comb_duration Thermo_BLH1 Thermo_BLH2 Thermo_BLH3];  
+  figure(1)
+  plot(test3(:,1), test3(:,2))
+  datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
 
 
   

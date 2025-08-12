@@ -12,8 +12,10 @@ addpath('./jsonlab')
 %  blank_range = 525; % This was the original blank range in 2019
   blank_range = 300; %  This was the blank range prior to adding the WFOV receiver in summer of 2020
   blank_range = 150; %  For testing turn off the blanking
+  read_time_in = 2; % set read data in time increments of seconds (default it 2sec) 
 
-if strcmp(node,'MPD01')==1
+  
+  if strcmp(node,'MPD01')==1
   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial1_calvals.json')],'SimplifyCell',1);
   if (serial_date >= 737988 && serial_date < datenum(2023,11,29)) % day the WFOV channel was installed
       blank_range = 37.5*7
@@ -42,6 +44,9 @@ elseif strcmp(node,'MPD05')==1
   if (serial_date >= 738014) % day the WFOV channel was installed
        blank_range = 37.5*7; % 1µs pulse requires 6 range bins
   end
+ elseif strcmp(node,'MPD06')==1
+   dat=loadjson([strcat(cal_serv_path, 'eol-lidar-calvals/calvals/dial6_calvals.json')],'SimplifyCell',1);
+   blank_range = 37.5*7; % 1µs pulse requires 6 range bins
 end
 
 

@@ -19,18 +19,19 @@ for d = 1:length(MCSsample.dirListing)
   %read in the MCS photo count data  
   MCSsample.filename=MCSsample.dirListing(d).name;
  % MCSsample.data = ncread(MCSsample.filename,'Data'); 
-  MCSsample.data = h5read(MCSsample.filename,'/Data');  % changed to the h5read
+  MCSsample.data = double(h5read(MCSsample.filename,'/Data'));  % changed to the h5read
   MCSsample.time = ncread(MCSsample.filename,'time'); 
   MCSsample.channel = ncread(MCSsample.filename,'Channel'); 
   MCSsample.ChannelAssignment = h5read(MCSsample.filename,'/ChannelAssignment');   % note the special type of read
-  MCSsample.nsPerBin = ncread(MCSsample.filename,'nsPerBin'); 
-  MCSsample.NBins = ncread(MCSsample.filename,'NBins'); 
-  MCSsample.ProfilesPerHist = ncread(MCSsample.filename,'ProfilesPerHist'); 
+  MCSsample.nsPerBin = double(ncread(MCSsample.filename,'nsPerBin')); 
+  MCSsample.NBins = double(ncread(MCSsample.filename,'NBins')); 
+  MCSsample.ProfilesPerHist = double(ncread(MCSsample.filename,'ProfilesPerHist')); 
   
   MCS.bins = median(MCSsample.NBins);  % overide the number from the calfiles
   MCS.bin_duration = median(MCSsample.nsPerBin);  % overide the number from the calfiles
   MCS.accum = median(MCSsample.ProfilesPerHist);   % overide the number from the calfiles
   
+ 
 
   if d>1   % sum the days nc data files into a single array
     if size(MCSsample.data,2)==  size(MCSsample.data1,2) % check the MSC didn't change
@@ -95,7 +96,7 @@ end
   Pow.filename = Pow.dirListing(d).name;
  % if exist(Pow.filename) == 2 
     Pow.time = ncread(Pow.filename,'time');
-    Pow.power = ncread(Pow.filename,'Power');
+    Pow.power = double(ncread(Pow.filename,'Power'));  %Changed this line for MCX int32
     Pow.channel = h5read(Pow.filename,'/ChannelAssignment');
     if d>1   % sum the days nc data files into a single array
       Pow.time1 = [Pow.time1; Pow.time];
@@ -171,7 +172,7 @@ end
 
 
 % combine time and data 
-MCSsample.all = [MCSsample.time1,MCSsample.data1];
+MCSsample.all = [MCSsample.time1,MCSsample.data1];  % changed this line for MCX int32
 % parse out the channels based on searches for channel mapping and populate
 % if it exists
 index.wvonline = find(contains(MCSsample.ChannelAssignment,'WVOnline') & not(contains(MCSsample.ChannelAssignment,'WVOnlineLow')))-1;
@@ -195,202 +196,233 @@ end
 %    MCSsample.off_near_time = MCSsample.time1(MCSsample.channel1==index.wvoffline_near,:); % 
 % end
 
-index.O2online_comb = find(contains(MCSsample.ChannelAssignment,'O2OnlineComb'))-1;
+index.O2online_comb = find(contains(MCSsample.ChannelAssignment,'O2OnlineComb') & not(contains(MCSsample.ChannelAssignment,'O2OnlineCombLow')))-1;
 if isempty(index.O2online_comb) == 0
    MCSsample.O2online_comb = MCSsample.all(MCSsample.channel1==index.O2online_comb,:); % 
    MCSsample.O2online_comb_time = MCSsample.time1(MCSsample.channel1==index.O2online_comb,:); % 
 end
 
-index.O2offline_comb = find(contains(MCSsample.ChannelAssignment,'O2OfflineComb'))-1;
+index.O2offline_comb = find(contains(MCSsample.ChannelAssignment,'O2OfflineComb') & not(contains(MCSsample.ChannelAssignment,'O2OfflineCombLow')))-1;
 if isempty(index.O2offline_comb) == 0
    MCSsample.O2offline_comb = MCSsample.all(MCSsample.channel1==index.O2offline_comb,:); % 
    MCSsample.O2offline_comb_time = MCSsample.time1(MCSsample.channel1==index.O2offline_comb,:); % 
 end
 
-index.O2online_mol = find(contains(MCSsample.ChannelAssignment,'O2OnlineMol'))-1;
+index.O2online_mol = find(contains(MCSsample.ChannelAssignment,'O2OnlineMol')  & not(contains(MCSsample.ChannelAssignment,'O2OnlineMolLow')))-1;
 if isempty(index.O2online_mol) == 0
    MCSsample.O2online_mol = MCSsample.all(MCSsample.channel1==index.O2online_mol,:); % 
    MCSsample.O2online_mol_time = MCSsample.time1(MCSsample.channel1==index.O2online_mol,:); % 
 end
 
-index.O2offline_mol = find(contains(MCSsample.ChannelAssignment,'O2OfflineMol'))-1;
+index.O2offline_mol = find(contains(MCSsample.ChannelAssignment,'O2OfflineMol')  & not(contains(MCSsample.ChannelAssignment,'O2OfflineMolLow')))-1;
 if isempty(index.O2offline_mol) == 0
    MCSsample.O2offline_mol = MCSsample.all(MCSsample.channel1==index.O2offline_mol,:); % 
    MCSsample.O2offline_mol_time = MCSsample.time1(MCSsample.channel1==index.O2offline_mol,:); % 
 end
 
-
-
-%MCS.time_step = mean(diff(MCSsample.time1))*60*60
-%figure(100)
-%plot((diff(MCSsample.online_time))*60*60)
-%median((diff(MCSsample.online_time))*60*60)
-figure(101)
-plot((diff(MCSsample.offline_time))*60*60)
-offline_timestep = median((diff(MCSsample.offline_time))*60*60)
-online_timestep = median((diff(MCSsample.online_time))*60*60)
-%read_time_in = min(offline_timestep, online_timestep)
-try
-  O2offline_timestep = median((diff(MCSsample.O2offline_mol_time))*60*60)
-  O2online_timestep = median((diff(MCSsample.O2online_mol_time))*60*60)
-catch
+index.HSRL_Mol = find(contains(MCSsample.ChannelAssignment,'HSRLMol'))-1;
+if isempty(index.HSRL_Mol) == 0
+   MCSsample.HSRL_Mol = MCSsample.all(MCSsample.channel1==index.HSRL_Mol,:); % 
+   MCSsample.HSRL_Mol_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Mol,:); % 
 end
 
-if isfield(LL,'time') == 1
-  LL.all = [LL.time1, LL.wavelength1, LL.wavediff1, LL.current1];
-  LL.online = LL.all(strcmp(LL.name1,'WVOnline'),:);
-  LL.offline = LL.all(strcmp(LL.name1,'WVOffline'),:);
-  LL.O2online = LL.all(strcmp(LL.name1,'O2Online'),:);
-  LL.O2offline = LL.all(strcmp(LL.name1,'O2Offline'),:);
+index.HSRL_Combined = find(contains(MCSsample.ChannelAssignment,'HSRLCombined'))-1;
+if isempty(index.HSRL_Combined) == 0
+   MCSsample.HSRL_Combined = MCSsample.all(MCSsample.channel1==index.HSRL_Combined,:); % 
+   MCSsample.HSRL_Combined_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Combined,:); % 
 end
 
-if isfield(Etalon,'time') == 1
-  Etalon.all = [Etalon.time1, Etalon.temp1];
-  Etalon.WV_temp = Etalon.all(strcmp(Etalon.name1,'WVEtalon'),:);
-  Etalon.O2_temp = Etalon.all(strcmp(Etalon.name1,'O2Etalon'),:);
-end
- figure(11)
- plot(Etalon.WV_temp(:,2))
- hold on
- plot(Etalon.O2_temp(:,2))
- grid on
- 
-%LL.hsrl =  LL.all(strcmp(LL.name1,'HSRL'),:);
-if isfield(HKeep,'time') == 1
-  try
-    HKeep.all = [HKeep.time1, HKeep.temp1];
-  catch
-  end
-end
-
-if isfield(Pow,'time') == 1
-  Pow.all = [Pow.time1, Pow.power1];
-end
-
-if isfield(WS,'time') == 1
-  WS.all = [WS.time1, WS.temp1, WS.press1, WS.relhum1];
-else
-  flag.WS = 0
-end
-
-% grid to a fixed time base
-ave_time = read_time_in;  % time grid in seconds
-time_grid = (floor(min(MCSsample.time1)):1/60/60*(ave_time):ceil(max(MCSsample.time1)))';
-LL.online_grid = interp1(LL.online(:,1), LL.online(:,2:end), time_grid, 'nearest', 'extrap'); 
-LL.offline_grid = interp1(LL.offline(:,1), LL.offline(:,2:end), time_grid, 'nearest', 'extrap'); 
-LL.O2online_grid = interp1(LL.O2online(:,1), LL.O2online(:,2:end), time_grid, 'nearest', 'extrap'); 
-LL.O2offline_grid = interp1(LL.O2offline(:,1), LL.O2offline(:,2:end), time_grid, 'nearest', 'extrap'); 
-%LL.hsrl_grid = interp1(LL.hsrl(:,1), LL.hsrl(:,2:end), time_grid, 'nearest', 'extrap');
 
 if isempty(index.wvonline) == 0
-  [x, ia, ic] = unique(MCSsample.online(:,1),'rows');  % remove duplicate time points
-  uA = MCSsample.online(ia,:);  % apply those to the other rows
-  MCSsample.online_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+
+            
+            figure(101)
+            plot((diff(MCSsample.offline_time))*60*60)
+            offline_timestep = median((diff(MCSsample.offline_time))*60*60)
+            online_timestep = median((diff(MCSsample.online_time))*60*60)
+            try
+              O2offline_timestep = median((diff(MCSsample.O2offline_mol_time))*60*60)
+              O2online_timestep = median((diff(MCSsample.O2online_mol_time))*60*60)
+            catch
+            end
+            
+               
+            if isfield(LL,'time') == 1
+              LL.all = [LL.time1, LL.wavelength1, LL.wavediff1, LL.current1];
+              LL.online = LL.all(strcmp(LL.name1,'WVOnline'),:);
+              LL.offline = LL.all(strcmp(LL.name1,'WVOffline'),:);
+              LL.O2online = LL.all(strcmp(LL.name1,'O2Online'),:);
+              LL.O2offline = LL.all(strcmp(LL.name1,'O2Offline'),:);
+            end
+            
+            if isfield(Etalon,'time') == 1
+              Etalon.all = [Etalon.time1, Etalon.temp1];
+              Etalon.WV_temp = Etalon.all(strcmp(Etalon.name1,'WVEtalon'),:);
+              Etalon.O2_temp = Etalon.all(strcmp(Etalon.name1,'O2Etalon'),:);
+            end
+             figure(11)
+             plot(Etalon.WV_temp(:,2))
+             hold on
+             plot(Etalon.O2_temp(:,2))
+             grid on
+             
+            %LL.hsrl =  LL.all(strcmp(LL.name1,'HSRL'),:);
+            if isfield(HKeep,'time') == 1
+              try
+                HKeep.all = [HKeep.time1, HKeep.temp1];
+              catch
+              end
+            end
+            
+            if isfield(Pow,'time') == 1
+              Pow.all = [Pow.time1, Pow.power1];
+            end
+            
+            if isfield(WS,'time') == 1
+              WS.all = [WS.time1, WS.temp1, WS.press1, WS.relhum1];
+            else
+              flag.WS = 0
+            end
+            
+            % grid to a fixed time base
+            ave_time = read_time_in;  % time grid in seconds
+            time_grid = (floor(min(MCSsample.time1)):1/60/60*(ave_time):ceil(max(MCSsample.time1)))';
+            LL.online_grid = interp1(LL.online(:,1), LL.online(:,2:end), time_grid, 'nearest', 'extrap'); 
+            LL.offline_grid = interp1(LL.offline(:,1), LL.offline(:,2:end), time_grid, 'nearest', 'extrap'); 
+            LL.O2online_grid = interp1(LL.O2online(:,1), LL.O2online(:,2:end), time_grid, 'nearest', 'extrap'); 
+            LL.O2offline_grid = interp1(LL.O2offline(:,1), LL.O2offline(:,2:end), time_grid, 'nearest', 'extrap'); 
+            %LL.hsrl_grid = interp1(LL.hsrl(:,1), LL.hsrl(:,2:end), time_grid, 'nearest', 'extrap');
+            
+            % photon counts need to be converted to a flux before gridding,
+            % then returned to total counts in the gridding time bin
+            
+            if isempty(index.wvonline) == 0
+%               [x, ia, ic] = unique(MCSsample.online(:,1),'rows');  % remove duplicate time points
+%               uA = MCSsample.online(ia,:);  % apply those to the other rows
+%               MCSsample.online_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+              [MCSsample.online_grid, ~] = grid_photon_counts_2D(MCSsample.online, time_grid, ave_time);
+            end        
+           
+            if isempty(index.wvoffline) == 0
+%               [x, ia, ic] = unique(MCSsample.offline(:,1),'rows');  % remove duplicate time points
+%               uA = MCSsample.offline(ia,:);  % apply those to the other rows
+%               MCSsample.offline_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
+               [MCSsample.offline_grid, ~] = grid_photon_counts_2D(MCSsample.offline, time_grid, ave_time);
+            end
+                   
+            if isempty(index.O2online_comb) == 0
+%               [x, ia, ic] = unique(MCSsample.O2online_comb(:,1),'rows');  % remove duplicate time points
+%               uA = MCSsample.O2online_comb(ia,:);  % apply those to the other rows
+%               MCSsample.O2online_comb_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
+              [MCSsample.O2online_comb_grid, ~] = grid_photon_counts_2D(MCSsample.O2online_comb, time_grid, ave_time);
+            else
+              MCSsample.O2online_comb_grid = zeros(size(MCSsample.O2online_comb_grid));
+            end
+            
+            if isempty(index.O2offline_comb) == 0
+%               [x, ia, ic] = unique(MCSsample.O2offline_comb(:,1),'rows');  % remove duplicate time points
+%               uA = MCSsample.O2offline_comb(ia,:);  % apply those to the other rows
+%               MCSsample.O2offline_comb_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
+              [MCSsample.O2offline_comb_grid, ~] = grid_photon_counts_2D(MCSsample.O2offline_comb, time_grid, ave_time);
+            else
+              MCSsample.O2offline_comb_grid = zeros(size(MCSsample.O2offline_comb_grid));
+            end
+            
+            if isempty(index.O2online_mol) == 0
+%               [x, ia, ic] = unique(MCSsample.O2online_mol(:,1),'rows');  % remove duplicate time points
+%               uA = MCSsample.O2online_mol(ia,:);  % apply those to the other rows
+%               MCSsample.O2online_mol_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
+              [MCSsample.O2online_mol_grid, ~] = grid_photon_counts_2D(MCSsample.O2online_mol, time_grid, ave_time);
+            else
+              MCSsample.O2online_mol_grid = zeros(size(MCSsample.O2online_mol_grid));
+            end
+            
+            if isempty(index.O2offline_mol) == 0
+%               [x, ia, ic] = unique(MCSsample.O2offline_mol(:,1),'rows');  % remove duplicate time points
+%               uA = MCSsample.O2offline_mol(ia,:);  % apply those to the other rows
+%               MCSsample.O2offline_mol_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
+              [MCSsample.O2offline_mol_grid, ~] = grid_photon_counts_2D(MCSsample.O2offline_mol, time_grid, ave_time);
+            else
+              MCSsample.O2offline_mol_grid = zeros(size(MCSsample.O2offline_mol_grid));
+            end 
+
+
+           if isfield(HKeep,'time') == 1
+              [x, ia, ic] = unique(HKeep.all(:,1),'rows');  % remove duplicate time points
+              uA = HKeep.all(ia,:);  % apply those to the other rows  
+              HKeep.temp1 = interp1(uA(:,1), uA(:,2), time_grid, 'nearest');  
+              %HKeep.temp1 = interp1(HKeep.all(:,1), HKeep.all(:,2), time_grid, 'nearest');  
+              if size(HKeep.all,2)>=3
+                HKeep.temp2 = interp1(uA(:,1), uA(:,3), time_grid, 'nearest');
+              else
+                HKeep.temp2 = interp1(uA(:,1), uA(:,2), time_grid, 'nearest');
+              end
+            end
+            
+            [~, ia, ~] = unique(Pow.all(:,1),'rows');  % remove duplicate time points
+            uA = Pow.all(ia,:);  % apply those to the other rows
+            Pow.online = interp1(uA(:,1), uA(:,2), time_grid, 'nearest', 'extrap');
+            Pow.offline = interp1(uA(:,1), uA(:,8), time_grid, 'nearest', 'extrap');
+            %Pow.online = HKeep.temp1;
+            %Pow.offline = HKeep.temp2;
+            if isfield(WS,'time') == 1
+              [~, ia, ~] = unique(WS.all(:,1),'rows');  % remove duplicate time points
+              uA = WS.all(ia,:);  % apply those to the other rows
+              WS.online = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
+            end
+            
+            
+            % combine all of the data into original data format
+            if isfield(HKeep,'time') == 1 && isfield(WS,'time') == 1
+              online_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.online_grid];
+              offline_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.offline_grid];
+             % on_near_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.on_near_grid];
+             % off_near_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.off_near_grid];
+              O2online_comb_merged = [time_grid, LL.O2online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.O2online_comb_grid];
+              O2offline_comb_merged = [time_grid, LL.O2offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.O2offline_comb_grid];
+              O2online_mol_merged = [time_grid, LL.O2online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.O2online_mol_grid];
+              O2offline_mol_merged = [time_grid, LL.O2offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.O2offline_mol_grid];
+            else
+              online_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.online_grid];
+              offline_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.offline_grid];
+              %on_near_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.on_near_grid];
+              %off_near_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.off_near_grid];
+              O2online_comb_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.O2online_comb_grid];
+              O2offline_comb_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.O2offline_comb_grid];
+              O2online_mol_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.O2online_mol_grid];
+              O2offline_mol_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.O2offline_mol_grid]; 
+            end
+            %hsrl_com_merged = [time_grid, LL.hsrl_grid, Pow.online, WS.online, MCS.combined_grid];
+            %hsrl_mol_merged = [time_grid, LL.hsrl_grid, HKeep.temp1, WS.online, MCS.molecular_grid];
+
+elseif isempty(index.HSRL_Combined) == 0
+
+
+    if isfield(LL,'time') == 1
+      LL.all = [LL.time1, LL.wavelength1, LL.wavediff1, LL.current1];
+      LL.molecular = LL.all(strcmp(LL.name1,'WVOnline'),:);
+      LL.combined  = LL.all(strcmp(LL.name1,'WVOffline'),:);
+    end
+    
+    if isfield(Etalon,'time') == 1
+      Etalon.all = [Etalon.time1, Etalon.temp1];
+      Etalon.WV_temp = Etalon.all(strcmp(Etalon.name1,'WVEtalon'),:);
+      Etalon.O2_temp = Etalon.all(strcmp(Etalon.name1,'O2Etalon'),:);
+    end
+     figure(11)
+     plot(Etalon.WV_temp(:,2))
+     hold on
+     plot(Etalon.O2_temp(:,2))
+     grid on
+
 end
 
-if isempty(index.wvoffline) == 0
-  [x, ia, ic] = unique(MCSsample.offline(:,1),'rows');  % remove duplicate time points
-  uA = MCSsample.offline(ia,:);  % apply those to the other rows
-  MCSsample.offline_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-end
-
-% if isempty(index.wvonline_near) == 0
-%   [x, ia, ic] = unique(MCSsample.on_near(:,1),'rows');  % remove duplicate time points
-%   uA = MCSsample.on_near(ia,:);  % apply those to the other rows
-%   MCSsample.on_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-% else
-%   MCSsample.on_near_grid = zeros(size(MCSsample.online_grid));
-% end
-% 
-% if isempty(index.wvoffline_near) == 0
-%   [x, ia, ic] = unique(MCSsample.off_near(:,1),'rows');  % remove duplicate time points
-%   uA = MCSsample.off_near(ia,:);  % apply those to the other rows
-%   MCSsample.off_near_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-% else
-%   MCSsample.off_near_grid = zeros(size(MCSsample.offline_grid));
-% end
-
-if isempty(index.O2online_comb) == 0
-  [x, ia, ic] = unique(MCSsample.O2online_comb(:,1),'rows');  % remove duplicate time points
-  uA = MCSsample.O2online_comb(ia,:);  % apply those to the other rows
-  MCSsample.O2online_comb_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-else
-  MCSsample.O2online_comb_grid = zeros(size(MCSsample.O2online_comb_grid));
-end
-
-if isempty(index.O2offline_comb) == 0
-  [x, ia, ic] = unique(MCSsample.O2offline_comb(:,1),'rows');  % remove duplicate time points
-  uA = MCSsample.O2offline_comb(ia,:);  % apply those to the other rows
-  MCSsample.O2offline_comb_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-else
-  MCSsample.O2offline_comb_grid = zeros(size(MCSsample.O2offline_comb_grid));
-end
-
-if isempty(index.O2online_mol) == 0
-  [x, ia, ic] = unique(MCSsample.O2online_mol(:,1),'rows');  % remove duplicate time points
-  uA = MCSsample.O2online_mol(ia,:);  % apply those to the other rows
-  MCSsample.O2online_mol_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-else
-  MCSsample.O2online_mol_grid = zeros(size(MCSsample.O2online_mol_grid));
-end
-
-if isempty(index.O2offline_mol) == 0
-  [x, ia, ic] = unique(MCSsample.O2offline_mol(:,1),'rows');  % remove duplicate time points
-  uA = MCSsample.O2offline_mol(ia,:);  % apply those to the other rows
-  MCSsample.O2offline_mol_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-else
-  MCSsample.O2offline_mol_grid = zeros(size(MCSsample.O2offline_mol_grid));
-end
-
-%MCS.combined_grid = interp1(MCS.combined(:,1), MCS.combined(:,2:end), time_grid, 'nearest', 'extrap'); 
-%MCS.molecular_grid = interp1(MCS.molecular(:,1), MCS.molecular(:,2:end), time_grid, 'nearest', 'extrap');
-if isfield(HKeep,'time') == 1
-  [x, ia, ic] = unique(HKeep.all(:,1),'rows');  % remove duplicate time points
-  uA = HKeep.all(ia,:);  % apply those to the other rows  
-  HKeep.temp1 = interp1(uA(:,1), uA(:,2), time_grid, 'nearest');  
-  %HKeep.temp1 = interp1(HKeep.all(:,1), HKeep.all(:,2), time_grid, 'nearest');  
-  if size(HKeep.all,2)>=3
-    HKeep.temp2 = interp1(uA(:,1), uA(:,3), time_grid, 'nearest');
-  else
-    HKeep.temp2 = interp1(uA(:,1), uA(:,2), time_grid, 'nearest');
-  end
-end
-
-[~, ia, ~] = unique(Pow.all(:,1),'rows');  % remove duplicate time points
-uA = Pow.all(ia,:);  % apply those to the other rows
-Pow.online = interp1(uA(:,1), uA(:,2), time_grid, 'nearest', 'extrap');
-Pow.offline = interp1(uA(:,1), uA(:,8), time_grid, 'nearest', 'extrap');
-%Pow.online = HKeep.temp1;
-%Pow.offline = HKeep.temp2;
-if isfield(WS,'time') == 1
-  [~, ia, ~] = unique(WS.all(:,1),'rows');  % remove duplicate time points
-  uA = WS.all(ia,:);  % apply those to the other rows
-  WS.online = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
-end
 
 
-% combine all of the data into original data format
-if isfield(HKeep,'time') == 1 && isfield(WS,'time') == 1
-  online_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.online_grid];
-  offline_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.offline_grid];
- % on_near_merged = [time_grid, LL.online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.on_near_grid];
- % off_near_merged = [time_grid, LL.offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.off_near_grid];
-  O2online_comb_merged = [time_grid, LL.O2online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.O2online_comb_grid];
-  O2offline_comb_merged = [time_grid, LL.O2offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.O2offline_comb_grid];
-  O2online_mol_merged = [time_grid, LL.O2online_grid, Pow.online, HKeep.temp1, WS.online, MCSsample.O2online_mol_grid];
-  O2offline_mol_merged = [time_grid, LL.O2offline_grid, Pow.offline,  HKeep.temp2, WS.online, MCSsample.O2offline_mol_grid];
-else
-  online_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.online_grid];
-  offline_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.offline_grid];
-  %on_near_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.on_near_grid];
-  %off_near_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.off_near_grid];
-  O2online_comb_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.O2online_comb_grid];
-  O2offline_comb_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.O2offline_comb_grid];
-  O2online_mol_merged = [time_grid, LL.online_grid, Pow.online, MCSsample.O2online_mol_grid];
-  O2offline_mol_merged = [time_grid, LL.offline_grid, Pow.offline, MCSsample.O2offline_mol_grid]; 
-end
-%hsrl_com_merged = [time_grid, LL.hsrl_grid, Pow.online, WS.online, MCS.combined_grid];
-%hsrl_mol_merged = [time_grid, LL.hsrl_grid, HKeep.temp1, WS.online, MCS.molecular_grid];
+
+
+
+
 
 cd(dd) % point back to original directory
 
