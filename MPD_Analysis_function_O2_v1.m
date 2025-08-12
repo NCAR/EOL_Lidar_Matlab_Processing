@@ -447,12 +447,12 @@ end
  RB = interp1(range_act, RB_act', range, method)';
  % grid to regular range bins
  if gate < 37.5
-   range_grid = 0:37.5:range(end);   
-   Offline_sum2 = interp1(range, Offline_sum2', range_grid, method, extrapolation)';  
+   range_grid = 0:37.5:range(end);
+   Offline_sum2 = interp1(range, Offline_sum2', range_grid, method, extrapolation)';
    Online_sum2 = interp1(range, Online_sum2', range_grid, method, extrapolation)';
-   Background_on_sum2 = interp1(range,Background_on_sum2', range_grid, method, extrapolation)';  
+   Background_on_sum2 = interp1(range,Background_on_sum2', range_grid, method, extrapolation)';
    Background_off_sum2 = interp1(range, Background_off_sum2', range_grid, method, extrapolation)'; 
-   RB = interp1(range, RB', range_grid, method, extrapolation)'; 
+   RB = interp1(range, RB', range_grid, method, extrapolation)';
    RB_on = interp1(range, RB_on', range_grid, method, extrapolation)';
    range = range_grid;
    gate = 37.5;
