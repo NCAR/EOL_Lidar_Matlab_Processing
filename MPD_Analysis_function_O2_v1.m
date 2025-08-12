@@ -364,30 +364,7 @@ end
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
   Offline_sub = (bsxfun(@minus, Offline, background_off));%./accumulations;
    
-   
-%   figure(110)
-%   semilogy(range, mean(Online(33314:37323,:)), 'r')
-%   semilogy(range, mean(Offline(33314:37323,:)), 'k')
-%   hold on
-%   semilogy(range, ap_spline_sub_on, 'r-')
-%   semilogy(range, ap_spline_sub_off, 'k-')
-%   semilogy(range, mean(Online_ap_sub(33314:37323,:)), 'r-')
-%   semilogy(range, mean(Offline_ap_sub(33314:37323,:)), 'k-')
-%   grid on
-%   xlim([0 2000])
-%   
-%   figure(111)
-%   plot(range, mean(Online_ap_sub(33314:37323,:)), 'r-')
-%   hold on
-%   plot(range, mean(Offline_ap_sub(33314:37323,:)), 'k-')
-%   grid on
-%   xlim([0 8000])
-%   ylim([-10 10])
-  
-  
-  
-  
- % smooth RB for 1 minute and set spatial average
+% smooth RB for 1 minute and set spatial average
    %window_temporal = ones(aerosol_temporal_average,1)/aerosol_temporal_average;
    %window_spatial = ones(1,1)/1; % preserve high spatial res in RB
    %mask=window_temporal*window_spatial;
