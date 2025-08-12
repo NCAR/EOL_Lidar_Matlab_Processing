@@ -584,49 +584,7 @@ end
     RB_on(real(RB_on) < -10) = 0;
   
    
-%% QE bleaching effect (only valid for Nov 1 MPD02 data)
-
-     start = 1116;
-     stop = 1242;
-% 
-%    % Calc Normalized QE  
-% 
-     Online_Norm_QE = 1+((mean(Online_Temp_Spatial_Avg(start:stop,:)))./mean(Online_Temp_Spatial_back(start:stop,:)));
-     Offline_Norm_QE = 1+((mean(Offline_Temp_Spatial_Avg(start:stop,:)))./mean(Offline_Temp_Spatial_back(start:stop,:)));
-%   
-% %   load('NormQE_MPD02.mat')
-% 
-    
-%      figure(105)
-%      plot(range, mean(Online_Temp_Spatial_Avg(start:stop,:)),'r')
-%      hold on
-%      plot(range, mean(Offline_Temp_Spatial_Avg(start:stop,:)),'k')
-%      xlim([0 18000])
-%      grid on
-%      
-%      figure(106)
-%      semilogy(range, afterpulse_on ,'r')
-%      hold on
-%      semilogy(range, afterpulse_off,'k')
-%      hold on
-%      semilogy(range, mean(Offline_Temp_Spatial_Avg(start:stop,:)),'k')
-%      xlim([0 18000])
-%      grid on
-% 
-%      figure(107)
-%      plot(range, Online_Norm_QE,'r')
-%      hold on
-%      plot(range, Offline_Norm_QE,'k')
-%      xlim([0 18000])
-%      grid on
-%     
-% %    % test removing the affect of the bleached QE
-%     Online_Temp_Spatial_Avg = Online_Temp_Spatial_Avg./Online_Norm_QE;
-%     Offline_Temp_Spatial_Avg = Offline_Temp_Spatial_Avg./Offline_Norm_QE;
-
-    
-  
-  
+ 
   
 % clear Online_Raw_Data Online Offline Online_sub Offline_sub data_on data_off C_Online C_Offline ... 
 %      Offline_sum1 Online_sum1 Background_on_sum1 Background_off_sum1 Background_off Background_on 
