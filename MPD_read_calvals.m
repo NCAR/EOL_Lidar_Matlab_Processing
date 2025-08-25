@@ -12,7 +12,7 @@ addpath('./jsonlab')
 %  blank_range = 525; % This was the original blank range in 2019
   blank_range = 300; %  This was the blank range prior to adding the WFOV receiver in summer of 2020
   blank_range = 150; %  For testing turn off the blanking
-  read_time_in = 2; % set read data in time increments of seconds (default it 2sec) 
+%  read_time_in = 4; % set read data in time increments of seconds (default it 2sec) 
 
   
   if strcmp(node,'MPD01')==1

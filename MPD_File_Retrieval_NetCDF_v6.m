@@ -300,21 +300,21 @@ if isempty(index.wvonline) == 0
 %               [x, ia, ic] = unique(MCSsample.online(:,1),'rows');  % remove duplicate time points
 %               uA = MCSsample.online(ia,:);  % apply those to the other rows
 %               MCSsample.online_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-              [MCSsample.online_grid, ~] = grid_photon_counts_2D(MCSsample.online, time_grid, ave_time);
+              [MCSsample.online_grid, ~] = grid_photon_counts_2D_v3(MCSsample.online, time_grid, ave_time);
             end        
            
             if isempty(index.wvoffline) == 0
 %               [x, ia, ic] = unique(MCSsample.offline(:,1),'rows');  % remove duplicate time points
 %               uA = MCSsample.offline(ia,:);  % apply those to the other rows
 %               MCSsample.offline_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap'); 
-               [MCSsample.offline_grid, ~] = grid_photon_counts_2D(MCSsample.offline, time_grid, ave_time);
+               [MCSsample.offline_grid, ~] = grid_photon_counts_2D_v3(MCSsample.offline, time_grid, ave_time);
             end
                    
             if isempty(index.O2online_comb) == 0
 %               [x, ia, ic] = unique(MCSsample.O2online_comb(:,1),'rows');  % remove duplicate time points
 %               uA = MCSsample.O2online_comb(ia,:);  % apply those to the other rows
 %               MCSsample.O2online_comb_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
-              [MCSsample.O2online_comb_grid, ~] = grid_photon_counts_2D(MCSsample.O2online_comb, time_grid, ave_time);
+              [MCSsample.O2online_comb_grid, ~] = grid_photon_counts_2D_v3(MCSsample.O2online_comb, time_grid, ave_time);
             else
               MCSsample.O2online_comb_grid = zeros(size(MCSsample.O2online_comb_grid));
             end
@@ -323,7 +323,7 @@ if isempty(index.wvonline) == 0
 %               [x, ia, ic] = unique(MCSsample.O2offline_comb(:,1),'rows');  % remove duplicate time points
 %               uA = MCSsample.O2offline_comb(ia,:);  % apply those to the other rows
 %               MCSsample.O2offline_comb_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
-              [MCSsample.O2offline_comb_grid, ~] = grid_photon_counts_2D(MCSsample.O2offline_comb, time_grid, ave_time);
+              [MCSsample.O2offline_comb_grid, ~] = grid_photon_counts_2D_v3(MCSsample.O2offline_comb, time_grid, ave_time);
             else
               MCSsample.O2offline_comb_grid = zeros(size(MCSsample.O2offline_comb_grid));
             end
@@ -332,7 +332,7 @@ if isempty(index.wvonline) == 0
 %               [x, ia, ic] = unique(MCSsample.O2online_mol(:,1),'rows');  % remove duplicate time points
 %               uA = MCSsample.O2online_mol(ia,:);  % apply those to the other rows
 %               MCSsample.O2online_mol_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
-              [MCSsample.O2online_mol_grid, ~] = grid_photon_counts_2D(MCSsample.O2online_mol, time_grid, ave_time);
+              [MCSsample.O2online_mol_grid, ~] = grid_photon_counts_2D_v3(MCSsample.O2online_mol, time_grid, ave_time);
             else
               MCSsample.O2online_mol_grid = zeros(size(MCSsample.O2online_mol_grid));
             end
@@ -341,7 +341,7 @@ if isempty(index.wvonline) == 0
 %               [x, ia, ic] = unique(MCSsample.O2offline_mol(:,1),'rows');  % remove duplicate time points
 %               uA = MCSsample.O2offline_mol(ia,:);  % apply those to the other rows
 %               MCSsample.O2offline_mol_grid = interp1(uA(:,1), uA(:,2:end), time_grid, 'nearest', 'extrap');
-              [MCSsample.O2offline_mol_grid, ~] = grid_photon_counts_2D(MCSsample.O2offline_mol, time_grid, ave_time);
+              [MCSsample.O2offline_mol_grid, ~] = grid_photon_counts_2D_v3(MCSsample.O2offline_mol, time_grid, ave_time);
             else
               MCSsample.O2offline_mol_grid = zeros(size(MCSsample.O2offline_mol_grid));
             end 

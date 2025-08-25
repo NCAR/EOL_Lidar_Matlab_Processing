@@ -23,6 +23,7 @@ flag.OF = 1; % correct for geometric overlap functions
 flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 20; % hour to show troubleshooting profiles
+read_time_in = 4; % set read data in time increments (time in seconds) 
 ave_time.wv = 10; %10.0; % averaging time (in minutes) for the water vapor and O2 
 ave_time.rb = 1; %5.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
@@ -61,7 +62,6 @@ folder_in=folder;
 date_in = date;
 serial_date = datenum(num2str(date_in),'yymmdd');
 MPD_read_calvals % read in the calvals
-read_time_in
 profiles2ave.wv = 2*round(((ave_time.wv*60/read_time_in)+1)/2)   
 profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
 
