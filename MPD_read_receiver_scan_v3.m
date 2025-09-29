@@ -1,7 +1,8 @@
 clear %all
 close all
 d=pwd;
-cd('/Volumes/smaug1/rsfdata/MPD/mpd_03_data/2025/20250825')
+%cd('/Volumes/smaug1/rsfdata/MPD/mpd_03_data/2025/20250825')
+cd('/Volumes/Macintosh HD/Users/spuler/Downloads/EKO_Scans/20250825/')
 
 % --- USER-DEFINED GRID RESOLUTION ---
 time_interval_sec = 1; % Grid resolution in seconds.
@@ -294,45 +295,76 @@ fprintf('Data gridding complete. Gridded data stored in all_combined_data.Gridde
 cd(d)
 
 
+
+%% --- CODE for Plotting select time periods of the scans ---
+
 start_time = datetime('22 Aug 2025 18:0', 'InputFormat', 'dd MMM yyyy HH:mm')
 end_time = datetime('22 Aug 2025 18:10', 'InputFormat', 'dd MMM yyyy HH:mm')
 
 start_time = datetime('22 Aug 2025 18:17', 'InputFormat', 'dd MMM yyyy HH:mm')
 end_time = datetime('22 Aug 2025 18:24', 'InputFormat', 'dd MMM yyyy HH:mm')
+ 
+ start_time = datetime('22 Aug 2025 22:51', 'InputFormat', 'dd MMM yyyy HH:mm')
+ end_time = datetime('22 Aug 2025 23:04', 'InputFormat', 'dd MMM yyyy HH:mm')
+ 
+ start_time = datetime('25 Aug 2025 18:14', 'InputFormat', 'dd MMM yyyy HH:mm')
+ end_time = datetime('25 Aug 2025 18:26', 'InputFormat', 'dd MMM yyyy HH:mm')
 
-start_time = datetime('22 Aug 2025 22:51', 'InputFormat', 'dd MMM yyyy HH:mm')
-end_time = datetime('22 Aug 2025 23:04', 'InputFormat', 'dd MMM yyyy HH:mm')
+% start_time = datetime('26 Aug 2025 17:19', 'InputFormat', 'dd MMM yyyy HH:mm')
+% end_time = datetime('26 Aug 2025 17:55', 'InputFormat', 'dd MMM yyyy HH:mm')
 
-start_time = datetime('25 Aug 2025 18:14', 'InputFormat', 'dd MMM yyyy HH:mm')
-end_time = datetime('25 Aug 2025 18:26', 'InputFormat', 'dd MMM yyyy HH:mm')
+ start_time = datetime('25 Aug 2025 01:11:30', 'InputFormat', 'dd MMM yyyy HH:mm:ss')
+ end_time = datetime('25 Aug 2025 01:14:15', 'InputFormat', 'dd MMM yyyy HH:mm:ss')
+ check_time = datetime('25 Aug 2025 01:12:00', 'InputFormat', 'dd MMM yyyy HH:mm:ss')
+
+%check_time= start_time;
 
 
 figure(1)
-semilogy(all_combined_data.ReceiverScanMCS.time_O2OfflineMol, sum(all_combined_data.ReceiverScanMCS.data_O2OfflineMol,2),'bo')
+semilogy(all_combined_data.ReceiverScanMCS.time_O2OfflineMol, sum(all_combined_data.ReceiverScanMCS.data_O2OfflineMol(:,7:end),2),'bo')
 hold on
-semilogy(all_combined_data.ReceiverScanMCS.time_O2OfflineComb, sum(all_combined_data.ReceiverScanMCS.data_O2OfflineComb,2),'ko')
+semilogy(all_combined_data.ReceiverScanMCS.time_O2OfflineComb, sum(all_combined_data.ReceiverScanMCS.data_O2OfflineComb(:,7:end),2),'ko')
+semilogy(all_combined_data.ReceiverScanMCS.time_WVOnline, sum(all_combined_data.ReceiverScanMCS.data_WVOnline(:,7:end),2),'ro')
+semilogy(all_combined_data.ReceiverScanMCS.time_WVOffline, sum(all_combined_data.ReceiverScanMCS.data_WVOffline(:,7:end),2),'go')
 hold off
 grid on
 xlim([start_time, end_time])
 
 [~, start_index] = min(abs(master_time_grid - start_time))
 [~, end_index] = min(abs(master_time_grid - end_time))
+[~, check_index] = min(abs(master_time_grid - check_time))
 
 
 figure(2)
-plot(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineMol(start_index:end_index,:),2),'bo')
+plot(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineMol(start_index:end_index,7:end),2),'bo')
 hold on
-plot(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineComb(start_index:end_index,:),2),'ko')
+plot(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_WVOnline(start_index:end_index,7:end),2),'ro')
+plot(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineComb(start_index:end_index,7:end),2),'ko')
+plot(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_WVOffline(start_index:end_index,7:end),2),'go')
 hold off
 grid on
 xlim([770.08, 770.13])
 xlim([770.105, 770.113])
+%xlim([828.1, 828.4])
 
-
-figure(3)
-semilogy(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineMol(start_index:end_index,:),2),'bo')
+figure(4)
+semilogy(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineMol(start_index:end_index,7:end),2),'bo')
 hold on
-semilogy(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineComb(start_index:end_index,:),2),'ko')
+semilogy(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_WVOnline(start_index:end_index,7:end),2),'ro')
+semilogy(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineComb(start_index:end_index,7:end),2),'ko')
+semilogy(all_combined_data.GriddedData.ReceiverScanWavemeter.Wavelength(start_index:end_index), sum(all_combined_data.GriddedData.ReceiverScanMCS.data_WVOffline(start_index:end_index,7:end),2),'go')
 hold off
 grid on
 xlim([770.08, 770.13])
+%xlim([828.175, 828.32])
+%xlim([828.28, 828.33])
+
+
+figure(10)
+%plot(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineMol(check_index,:),'b')
+plot(all_combined_data.GriddedData.ReceiverScanMCS.data_WVOnline(check_index,:),'r')
+hold on
+plot(all_combined_data.GriddedData.ReceiverScanMCS.data_WVOffline(check_index,:),'g')
+%plot(all_combined_data.GriddedData.ReceiverScanMCS.data_O2OfflineComb(check_index,:),'k')
+hold off
+grid on

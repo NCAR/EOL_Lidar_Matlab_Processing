@@ -207,7 +207,7 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  beta_bs = ((BSR)-1).*beta_m_profile;
 
 %% simple data mask to remove low count regions
- threshold = 0.25;
+ threshold = 0.025;
  BSR(O2_offline_mol< threshold)=nan;  % remove very low count rate molecular data
  beta_bs(O2_offline_mol< threshold)=nan;  % remove very low count rate molecular data
 

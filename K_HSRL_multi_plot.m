@@ -1,13 +1,13 @@
 clear all; close all;
 tic
 
- node = 'MPD03';
- date = '16 Jun 2023';   
- days = 7; skip = 1;
- flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
+ node = 'MPD06';
+ date = '29 Sep 2025';   
+ days = 8; skip = 1;
+ flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
  
  
-serv_path = '/Volumes/fog1/rsfdata/MPD/';
+serv_path = '/Volumes/smaug1/rsfdata/MPD/';
 plot_path = '/Volumes/Macintosh HD/Users/spuler/Desktop/mpd/Plots/';
 C = importdata('NCAR_C_Map.mat');
 dd=pwd;
@@ -36,12 +36,14 @@ if strcmp(node,'MPD01')==1
     else
       cd(strcat(serv_path,'/mpd_04_processed_data/Matlab'))
     end
- elseif strcmp(node,'MPD05')==1
+elseif strcmp(node,'MPD05')==1
     if flag.afterpulse == 1
       cd(strcat(serv_path,'/mpd_05_processed_data/Matlab/afterpulse'))    
     else
       cd(strcat(serv_path,'/mpd_05_processed_data/Matlab'))
     end
+ elseif strcmp(node,'MPD06')==1
+      cd(strcat(serv_path,'/adihsrl_processed_data/Matlab'))
 end
 
 %% read and combine the data into a single file
@@ -50,8 +52,8 @@ for i=1:days
      if exist(strcat(node, '_', datestr(date, 'yyyymmdd'), '_Backscatter Coefficient.mat'))==2
         load(strcat(node, '_', datestr(date, 'yyyymmdd'), '_Backscatter Coefficient.mat'))
          BSR_comb = BSR;
-         beta_bs_comb = beta_bs;
-         alpha_O2_comb = alpha_O2;
+  %       beta_bs_comb = beta_bs;
+  %       alpha_O2_comb = alpha_O2;
          duration=x';
      end
   else
@@ -59,8 +61,8 @@ for i=1:days
     if exist(strcat(node, '_', datestr(date, 'yyyymmdd'), '_Backscatter Coefficient.mat'))==2
        load(strcat(node, '_', datestr(date, 'yyyymmdd'), '_Backscatter Coefficient.mat'))
        BSR_comb = vertcat(BSR_comb, BSR);
-       beta_bs_comb = vertcat(beta_bs_comb, beta_bs);
-       alpha_O2_comb = vertcat(alpha_O2_comb, alpha_O2);
+   %    beta_bs_comb = vertcat(beta_bs_comb, beta_bs);
+   %    alpha_O2_comb = vertcat(alpha_O2_comb, alpha_O2);
        duration = vertcat(duration, x');
     end
   end
@@ -82,8 +84,8 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   set(gca,'TickLength',[0.005; 0.0025]);
   set(gca, 'XTick',  xData) 
   colorbar('EastOutside');
-  axis([fix(min(duration))  ceil(max(duration)) 0 12])
-  caxis([1e-1 1e3]);
+  axis([fix(min(duration))  ceil(max(duration)) 0 10])
+  caxis([1e-1 1e2]);
   %caxis([1 300]);
   hh = title({[node, ' ', ' Backscatter Ratio']},'fontweight','b','fontsize',font_size);  
   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
@@ -103,50 +105,50 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
 %   set(gca, 'XTick',  xData) 
 %   datetick('x','dd-mmm-yy HH:MM','keeplimits', 'keepticks');
   
-  figure(2)
-  Z = real(double((beta_bs_comb')));
-  font_size = 14;
-  set(gcf,'renderer','zbuffer');
-  h = pcolor(x,y,Z);
-  set(h, 'EdgeColor', 'none');
-  set(gca,'TickDir','out');
-  set(gca,'TickLength',[0.005; 0.0025]);
-  set(gca, 'XTick',  xData)
-  colorbar('EastOutside');
-  axis([fix(min(duration))  ceil(max(duration)) 0 6])
-  caxis([1e-7 1e-3]);
-  hh = title({[node, ' ', ' Backscatter Coefficient [m^{-1}sr^{-1}]']},'fontweight','b','fontsize',font_size);  
-  datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-%  xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
-  set(gca,'Fontsize',font_size,'Fontweight','b');
-  set(gca,'Zscale', 'log')
-  set(gca,'Colorscale', 'log')
-  set(gca,'Zscale', 'linear')
-  colormap(jet)
-
-  
-  figure(3)
-  Z = alpha_O2_comb';
-  font_size = 14;
-  set(gcf,'renderer','zbuffer');
-  h = pcolor(x,y,Z);
-  set(h, 'EdgeColor', 'none');
-  set(gca,'TickDir','out');
-  set(gca,'TickLength',[0.005; 0.0025]);
-  set(gca, 'XTick',  xData)
-  colorbar('EastOutside');
-  axis([fix(min(duration))  ceil(max(duration)) 0 6])
-  caxis([1e-6 3e-4]);
-  hh = title({[node, ' ', ' O2 absorption coeff [m^{-1}]']},'fontweight','b','fontsize',font_size);  
-  datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
-%  xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
-  ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
-  set(gca,'Fontsize',font_size,'Fontweight','b');
+%   figure(2)
+%   Z = real(double((beta_bs_comb')));
+%   font_size = 14;
+%   set(gcf,'renderer','zbuffer');
+%   h = pcolor(x,y,Z);
+%   set(h, 'EdgeColor', 'none');
+%   set(gca,'TickDir','out');
+%   set(gca,'TickLength',[0.005; 0.0025]);
+%   set(gca, 'XTick',  xData)
+%   colorbar('EastOutside');
+%   axis([fix(min(duration))  ceil(max(duration)) 0 6])
+%   caxis([1e-7 1e-3]);
+%   hh = title({[node, ' ', ' Backscatter Coefficient [m^{-1}sr^{-1}]']},'fontweight','b','fontsize',font_size);  
+%   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+% %  xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
+%   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
+%   set(gca,'Fontsize',font_size,'Fontweight','b');
 %   set(gca,'Zscale', 'log')
 %   set(gca,'Colorscale', 'log')
 %   set(gca,'Zscale', 'linear')
-  %colormap(jet)
+%   colormap(jet)
+
+  
+%   figure(3)
+%   Z = alpha_O2_comb';
+%   font_size = 14;
+%   set(gcf,'renderer','zbuffer');
+%   h = pcolor(x,y,Z);
+%   set(h, 'EdgeColor', 'none');
+%   set(gca,'TickDir','out');
+%   set(gca,'TickLength',[0.005; 0.0025]);
+%   set(gca, 'XTick',  xData)
+%   colorbar('EastOutside');
+%   axis([fix(min(duration))  ceil(max(duration)) 0 6])
+%   caxis([1e-6 3e-4]);
+%   hh = title({[node, ' ', ' O2 absorption coeff [m^{-1}]']},'fontweight','b','fontsize',font_size);  
+%   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
+% %  xlabel('Time (UTC)','fontweight','b','fontsize',font_size);
+%   ylabel('Height (km, AGL)','fontweight','b','fontsize',font_size);
+%   set(gca,'Fontsize',font_size,'Fontweight','b');
+% %   set(gca,'Zscale', 'log')
+% %   set(gca,'Colorscale', 'log')
+% %   set(gca,'Zscale', 'linear')
+%   %colormap(jet)
   
   
  %% save figure 
@@ -165,11 +167,11 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
 %   name=strcat(node, "_", date, "_Backscatter_Coeff_comb");
 %   print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
 %   
-  FigH = figure(3);
-  set(gca,'Fontsize',16,'Fontweight','b'); 
-  set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);       % 1500 300
-  name=strcat(node, "_", date, "_O2_extinction_Coeff_comb");
-  print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
+  % FigH = figure(3);
+  % set(gca,'Fontsize',16,'Fontweight','b'); 
+  % set(FigH, 'PaperUnits', 'points', 'PaperPosition', [1 1 1920 250]);       % 1500 300
+  % name=strcat(node, "_", date, "_O2_extinction_Coeff_comb");
+  % print(FigH, name, '-dpng', '-r0') % set at the screen resolution 
   
  cd(dd);  % point back to original directory 
 

@@ -2,16 +2,16 @@ clear all; close all;
 tic
 
  node = 'MPD01';
- date = '20 Aug 2025';   
- days = 10; skip = 1;
+ date = '24 Sep 2025';   
+ days = 8; skip = 1;
  flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
- WV_max_scale = 10;
+ WV_max_scale = 12;
 
- node = 'MPD04';
- date = '15 Aug 2025';
- days = 8 ; skip = 1;
- WV_max_scale = 25;
-%  % 
+ % node = 'MPD04';
+ % date = '23 Aug 2025';
+ % days = 2 ; skip = 1;
+ % WV_max_scale = 25;
+ % 
  % node = 'MPD04';
  % date = '7 May 2025';
  % days = 90; skip = 9;
@@ -150,7 +150,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   set(gca,'Colorscale', 'log')
   set(gca,'Zscale', 'linear')
   colormap(jet)
-  colormap(viridis)
+  %colormap(viridis)
   grid on
 
   figure(2)
@@ -409,18 +409,18 @@ title('WV offline Background')
   cd(plot_path)
    
    FigH = figure(1);
-%   drawnow;
+   drawnow;
    FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
-   FigH.Position = [100 100 1920 300]; % x, y, width, height in pixels
+   FigH.Position = [100 100 1920 250]; % x, y, width, height in pixels
    name=char(strcat(node, "_", date, '_Backscatter_Ratio_comb')); 
-%   exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
+   exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
 %    
    FigH = figure(2);
- %  drawnow;
+   drawnow;
    FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
    FigH.Position = [100 100 1920 300]; % x, y, width, height in pixels
    name=char(strcat(node, "_", date, '_Backscatter_Coeff_comb')); 
-%   exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
+   exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
   
 %   FigH = figure(3);
 %   set(gca,'Fontsize',16,'Fontweight','b'); 

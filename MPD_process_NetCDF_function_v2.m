@@ -25,7 +25,7 @@ flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 20; % hour to show troubleshooting profiles
 read_time_in = 4; % set read data in time increments (time in seconds) 
 ave_time.wv = 10; %10.0; % averaging time (in minutes) for the water vapor and O2 
-ave_time.rb = 1; %5.0; % averaging time (in minutes) for the relative backscatter
+ave_time.rb = 2.0; %5.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
 %ave_range.gr = 75; % grid data to this range (useful for SmartSwitch tests)
 
@@ -74,7 +74,8 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
    [data_wv_on, data_wv_off, data_O2_on_comb, data_O2_off_comb, data_O2_on_mol, data_O2_off_mol, MCS] = MPD_File_Retrieval_NetCDF_v6(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
  end
  if  strcmp(channels,'HSRL') == 1 
-   [data_mol, data_comb, MCS] = MPD_File_Retrieval_NetCDF_HSRL(flag, MCS, folder_in); %use to read binary data (bin number passed in) 
+   [data_mol, data_comb, MCS] = MPD_File_Retrieval_NetCDF_HSRL(flag, MCS, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+    
  end
  
 % Pause here to create an afterpulse file if desired (run MPS_afterpulse_cals_v2.m)
@@ -110,9 +111,10 @@ end
          time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr, write_data_folder, flag);
  end 
 
-% % process the oxygen channels
+% % process the HSRL only 
  if (strcmp(channels,'HSRL') == 1)  && strcmp(correction,'AP_OFF') == 1 
-   write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+   %write_data_folder = strcat(serv_path, 'mpd_', nodeStr, '_processed_data/Matlab'); 
+   write_data_folder = strcat(serv_path, 'adihsrl', '_processed_data/Matlab'); 
    flag.near = 0; flag.afterpulse = 0; 
    gates2ave = 1; %number of gates to average
   [HSRL_comb, ~, range, RB_comb, time_comb, Surf_T, Surf_P, O2_on_wavelength, O2_off_wavelength] =  MPD_Analysis_function_O2_v1(data_comb, data_comb, folder, date, MCS, write_data_folder, flag, node, wavemeter_offset,...

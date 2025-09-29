@@ -5,13 +5,17 @@ clear all; close all
 
 skip = 1
 node = 'MPD04';
-flag.PTV = 1 %use the PTV data which has temperature
+flag.PTV = 0 %use the PTV data which has temperature
 offset = 2; % parcel method surface temp offset
 gradient_limit = 0.2; % mask postive gradients
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/matplotlib/';
 
-serv_path = '/Volumes/eol/sci/mhayman';
-cd(strcat(serv_path,'/DIAL/Processed_Data/M2HATS/5min_release1.0/qc_masked/'))
+%serv_path = '/Volumes/eol/sci/mhayman';
+%serv_path = '/Volumes/eol/smaug1/rsfdata/MPD';
+serv_path = '/Volumes/eol/scr-tmp/mhayman';
+%cd(strcat(serv_path,'/DIAL/Processed_Data/M2HATS/5min_release1.0/qc_masked/'))
+%cd(strcat(serv_path,'/mpd_04_processed_data/PTV/temperature/'))
+cd(strcat(serv_path,'/O2DIAL/PTV/gp_search/'))
 %cd(strcat(serv_path,'/DIAL/Processed_Data/ECLIPSE/initial_test/'))
 
 
@@ -34,7 +38,24 @@ flag.save_data = 0;  %save data at end of processing (0=off 1=on)
 low_range_mask = 0;
 
 cd(d_read_data);
-[Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
+
+% currentDir = pwd;
+% allFiles = dir(currentDir);
+% FileNames = {allFiles(~[allFiles.isdir]).name};
+% filteredFiles = FileNames(startsWith(FileNames, 'mpd04.randsearch.202505'));
+% [selection, ok] = listdlg('ListString', filteredFiles, 'SelectionMode', 'single', 'PromptString', 'Select the sonde file');
+% if ok
+%     % The user made a selection
+%     Pythonfilename = filteredFiles{selection};
+%     Pythondir = currentDir;
+% else
+%     % The user clicked Cancel
+%     Pythonfilename = 0;
+%     Pythondir = 0;
+% end
+
+%[Pythonfilename, Pythondir] = uigetfile('*.*','Select the sonde file', 'MultiSelect', 'on');
+[Pythonfilename, Pythondir] = uigetfile('mpd04.randsearch.2025*.nc', 'Select the sonde file', 'MultiSelect', 'on');
 jj=1;
 
  %variable{1} = 'Aerosol_Backscatter_Coefficient_variance';
@@ -48,11 +69,14 @@ jj=1;
  % variable{6} = 'solution_Absolute_Humidity'; 
  variable{7} = 'Absolute_Humidity_mask';
  variable{8} = 'Absolute_Humidity_variance'; 
+ variable{6} = 'Water_Vapor'; 
+ variable{8} = 'Water_Vapor_std';  
+
  % if flag.PTV == 1
  %   variable{8} = 'Absolute_Humidity_uncertainty'; 
  % end
  variable{11} = 'Aerosol_Backscatter_Coefficient_variance';
- variable{9} = 'Backscatter_Flux';
+ %variable{9} = 'Backscatter_Flux';
  variable{10} = 'Aerosol_Backscatter_Coefficient_mask';
  variable{11} = 'Aerosol_Backscatter_Coefficient_variance';
  if flag.PTV == 1

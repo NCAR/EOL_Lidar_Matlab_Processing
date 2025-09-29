@@ -1,6 +1,5 @@
 function[HSRL_Mol_merged, HSRL_Combined_merged, MCS] = MPD_File_Retrieval_NetCDF_HSRL(flag, MCS, folder, read_time_in)
 
-
 dd = pwd; % get the current path
 %cd /scr/eldora1/wvdial_2_data/2018
 %folder = '20180818';
@@ -19,18 +18,19 @@ for d = 1:length(MCSsample.dirListing)
   %read in the MCS photo count data  
   MCSsample.filename=MCSsample.dirListing(d).name;
  % MCSsample.data = ncread(MCSsample.filename,'Data'); 
-  MCSsample.data = h5read(MCSsample.filename,'/Data');  % changed to the h5read
+  MCSsample.data = double(h5read(MCSsample.filename,'/Data'));  % changed to the h5read
   MCSsample.time = ncread(MCSsample.filename,'time'); 
   MCSsample.channel = ncread(MCSsample.filename,'Channel'); 
   MCSsample.ChannelAssignment = h5read(MCSsample.filename,'/ChannelAssignment');   % note the special type of read
-  MCSsample.nsPerBin = ncread(MCSsample.filename,'nsPerBin'); 
-  MCSsample.NBins = ncread(MCSsample.filename,'NBins'); 
-  MCSsample.ProfilesPerHist = ncread(MCSsample.filename,'ProfilesPerHist'); 
+  MCSsample.nsPerBin = double(ncread(MCSsample.filename,'nsPerBin')); 
+  MCSsample.NBins = double(ncread(MCSsample.filename,'NBins')); 
+  MCSsample.ProfilesPerHist = double(ncread(MCSsample.filename,'ProfilesPerHist')); 
   
   MCS.bins = median(MCSsample.NBins);  % overide the number from the calfiles
   MCS.bin_duration = median(MCSsample.nsPerBin);  % overide the number from the calfiles
   MCS.accum = median(MCSsample.ProfilesPerHist);   % overide the number from the calfiles
   
+
 
   if d>1   % sum the days nc data files into a single array
     if size(MCSsample.data,2)==  size(MCSsample.data1,2) % check the MSC didn't change
@@ -195,6 +195,7 @@ end
 %    MCSsample.off_near_time = MCSsample.time1(MCSsample.channel1==index.wvoffline_near,:); % 
 % end
 
+
 index.O2online_comb = find(contains(MCSsample.ChannelAssignment,'O2OnlineComb') & not(contains(MCSsample.ChannelAssignment,'O2OnlineCombLow')))-1;
 if isempty(index.O2online_comb) == 0
    MCSsample.O2online_comb = MCSsample.all(MCSsample.channel1==index.O2online_comb,:); % 
@@ -219,13 +220,13 @@ if isempty(index.O2offline_mol) == 0
    MCSsample.O2offline_mol_time = MCSsample.time1(MCSsample.channel1==index.O2offline_mol,:); % 
 end
 
-index.HSRL_Mol = find(contains(MCSsample.ChannelAssignment,'HSRLMol'))-1;
+index.HSRL_Mol = find(contains(MCSsample.ChannelAssignment,'HSRLMol')  & not(contains(MCSsample.ChannelAssignment,'HSRLMolLow')))-1;
 if isempty(index.HSRL_Mol) == 0
    MCSsample.HSRL_Mol = MCSsample.all(MCSsample.channel1==index.HSRL_Mol,:); % 
    MCSsample.HSRL_Mol_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Mol,:); % 
 end
 
-index.HSRL_Combined = find(contains(MCSsample.ChannelAssignment,'HSRLCombined'))-1;
+index.HSRL_Combined = find(contains(MCSsample.ChannelAssignment,'HSRLCombined') & not(contains(MCSsample.ChannelAssignment,'HSRLCombinedLow')))-1;
 if isempty(index.HSRL_Combined) == 0
    MCSsample.HSRL_Combined = MCSsample.all(MCSsample.channel1==index.HSRL_Combined,:); % 
    MCSsample.HSRL_Combined_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Combined,:); % 
