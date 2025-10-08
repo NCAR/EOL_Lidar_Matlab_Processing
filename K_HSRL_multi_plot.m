@@ -3,7 +3,7 @@ tic
 
  node = 'MPD06';
  date = '29 Sep 2025';   
- days = 8; skip = 1;
+ days = 7; skip = 1;
  flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
  
  

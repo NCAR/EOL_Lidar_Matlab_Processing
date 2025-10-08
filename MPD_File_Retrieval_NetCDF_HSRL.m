@@ -220,16 +220,27 @@ if isempty(index.O2offline_mol) == 0
    MCSsample.O2offline_mol_time = MCSsample.time1(MCSsample.channel1==index.O2offline_mol,:); % 
 end
 
-index.HSRL_Mol = find(contains(MCSsample.ChannelAssignment,'HSRLMol')  & not(contains(MCSsample.ChannelAssignment,'HSRLMolLow')))-1;
+% %Fix names
+% MCSsample.ChannelAssignment(3,1)= 'HSRLMolCross';
+% MCSsample.ChannelAssignment(4,1)= 'HSRLCombinedCross'
+
+
+index.HSRL_Mol = find(contains(MCSsample.ChannelAssignment,'HSRLMol')  & not(contains(MCSsample.ChannelAssignment,'Low')))-1;
 if isempty(index.HSRL_Mol) == 0
-   MCSsample.HSRL_Mol = MCSsample.all(MCSsample.channel1==index.HSRL_Mol,:); % 
-   MCSsample.HSRL_Mol_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Mol,:); % 
+   % index.HSRL_Mol_log = ismember(MCSsample.channel1, index.HSRL_Mol); 
+   %   MCSsample.HSRL_Mol = MCSsample.all(index.HSRL_Mol_log,:); % 
+   % MCSsample.HSRL_Mol_time = MCSsample.time1(index.HSRL_Mol_log,:); % 
+  MCSsample.HSRL_Mol = MCSsample.all(MCSsample.channel1==index.HSRL_Mol,:); % 
+  MCSsample.HSRL_Mol_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Mol,:); % 
 end
 
-index.HSRL_Combined = find(contains(MCSsample.ChannelAssignment,'HSRLCombined') & not(contains(MCSsample.ChannelAssignment,'HSRLCombinedLow')))-1;
+index.HSRL_Combined = find(contains(MCSsample.ChannelAssignment,'HSRLCombined') & not(contains(MCSsample.ChannelAssignment,'Low')))-1;
 if isempty(index.HSRL_Combined) == 0
-   MCSsample.HSRL_Combined = MCSsample.all(MCSsample.channel1==index.HSRL_Combined,:); % 
-   MCSsample.HSRL_Combined_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Combined,:); % 
+   % index.HSRL_Combined_log = ismember(MCSsample.channel1, index.HSRL_Combined)  
+   % MCSsample.HSRL_Combined = MCSsample.all(index.HSRL_Combined_log,:); % 
+   % MCSsample.HSRL_Combined_time = MCSsample.time1(index.HSRL_Combined,:); % 
+  MCSsample.HSRL_Combined = MCSsample.all(MCSsample.channel1==index.HSRL_Combined,:); % 
+  MCSsample.HSRL_Combined_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Combined,:); % 
 end
 
 
