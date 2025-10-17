@@ -1,3 +1,4 @@
+
 clear all; close all
 
 % --- 1. CONFIGURATION AND PATHS ---
@@ -6,7 +7,7 @@ node = 'MPD04';
 serv_path = '/Volumes/eol/sci/mhayman';
 plot_path = '/Users/spuler/Desktop';
 
-data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.2');
+data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.3');
 plot_dir = fullfile(plot_path, 'mpd', 'Plots');
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/matplotlib/';
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing'
@@ -15,17 +16,21 @@ flag.save_data = 0;  %save data at end of processing (0=off 1=on)
 low_range_mask = 0;
 
 % --- PLOTTING EXCLUSION FLAGS (0=Exclude/Off, 1=Include/On) ---
-flag.plot_multi_temp = 1;      % Toggle multi panel T WV abs (Figure 1)
-flag.plot_multi_wv = 1;        % Toggle multi panel T WV diff (Figure 2)
+flag.plot_multi_temp = 0;      % Toggle multi panel T WV abs (Figure 1)
+flag.plot_multi_wv = 0;        % Toggle multi panel T WV diff (Figure 2)
 
 % Flags for REDUNDANT SINGLE PANELS (Defaulted to 0/OFF)
 flag.plot_single_temp_panels = 0; 
 flag.plot_single_wv_panels = 0;   
 
 % Flags for essential/less redundant panels
-flag.plot_aerosol_counts = 1;  
+flag.plot_aerosol_counts = 0;  
 flag.plot_uncertainty = 0;     
 flag.plot_histograms_2d = 1;   % Toggle 2D Density Maps (T_Range, AH_Range)
+flag.plot_ah_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot
+flag.plot_temp_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot
+flag.plot_ah_density_map = 1;  % Toggle AH vs ERA5 Density Map
+flag.plot_t_density_map = 1;   % Toggle Temp vs ERA5 Density Map
 
 flag.plot_1d_histograms = 0;   % Toggle 1D Histograms (T_Diff_Histogram, AH_Diff_Histogram)
 % ------------------------------------
@@ -37,7 +42,7 @@ flag.read_uncertainty = 0;     % Include reading ALL uncertainty/variance fields
 % ------------------------------------------------------------------
 
 % --- PLOTTING RESOLUTION SETTING ---
-TARGET_PIXEL_WIDTH = 7500;     % Target output width (pixels) for visual quality (used to calculate N_DECIMATE)
+TARGET_PIXEL_WIDTH = 10000;     % Target output width (pixels) for visual quality (used to calculate N_DECIMATE)
 flag.decimate_hist_data = 1;   % 0 = Use FULL RESOLUTION data for 2D Histograms (High Accuracy, Slower)
 % -----------------------------------
 
@@ -482,7 +487,10 @@ caxis_Counts = [1e2 1e6];
 
 % === HISTOGRAM/DENSITY MAP PARAMETER DEFINITIONS (FIXED LOCATION) ===
 AH_diff_bin_limits = [-10 10];
-T_diff_bin_limits = [-10 10];
+T_diff_bin_limits = [-10 10]; %
+DENSITY_CLIM = [1e-4 1e-2]; % for ERA5Global Density Plot CLim ---
+AH_density_limits = [0 25];  % Absolute Humidity (g/m3)
+T_density_limits = [265 305]; % Temperature (K)
 T_hist_limits = [-15 15];
 AH_hist_limits = [-10 10];
 
@@ -943,6 +951,88 @@ elseif flag.plot_uncertainty && ~flag.read_uncertainty
 end
 
 
+% ---------------------------------------------
+% --- AH VS. ERA5 SCATTER PLOT (CONDITIONAL) ---
+% ---------------------------------------------
+if flag.plot_ah_scatter
+    % Figure X
+    create_ah_scatter_plot(comb_AH_model, comb_AH, comb_AH_PTV, comb_AH_MultiPulse, y, ...
+        figure_idx, node, plot_size_wide, font_size, flag.read_wv_multi);
+    
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'AH_vs_ERA5_Scatter'; 
+    figure_idx=figure_idx+1; % Increment figure index
+end
+
+% ---------------------------------------------
+% --- TEMP VS. ERA5 SCATTER PLOT (CONDITIONAL) ---
+% ---------------------------------------------
+if flag.plot_temp_scatter
+    % Figure X+1
+    create_temp_scatter_plot(comb_T_model, comb_T, comb_T_Std, ...
+        figure_idx, node, plot_size_wide, font_size, flag.read_temp_std);
+    
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'T_vs_ERA5_Scatter'; 
+    figure_idx=figure_idx+1; % Increment figure index
+end
+
+% ---------------------------------------------
+% --- PRODUCT VS. MODEL DENSITY MAPS (CONDITIONAL) ---
+% ---------------------------------------------
+% AH Density Maps
+if flag.plot_ah_density_map
+    % AH PTV vs Model
+    create_product_vs_model_density(comb_AH_PTV_full, comb_AH_model_full, ...
+        'AH PTV vs ERA5 Model Density Map', 'ERA5 Model AH (g m^{-3})', 'Lidar PTV AH (g m^{-3})', ...
+        AH_density_limits, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); % 
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'AH_PTV_vs_ERA5_Density'; 
+    figure_idx=figure_idx+1;
+
+    % AH Standard vs Model
+    create_product_vs_model_density(comb_AH_full, comb_AH_model_full, ...
+        'AH Standard vs ERA5 Model Density Map', 'ERA5 Model AH (g m^{-3})', 'Lidar Standard AH (g m^{-3})', ...
+        AH_density_limits, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); %
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'AH_Std_vs_ERA5_Density'; 
+    figure_idx=figure_idx+1;
+    
+    if flag.read_wv_multi
+        % AH MultiPulse vs Model
+        create_product_vs_model_density(comb_AH_MultiPulse_full, comb_AH_model_full, ...
+            'AH MultiPulse vs ERA5 Model Density Map', 'ERA5 Model AH (g m^{-3})', 'Lidar MultiPulse AH (g m^{-3})', ...
+            AH_density_limits, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
+        figure_list{end+1} = figure_idx; 
+        suffix_list{end+1} = 'AH_MP_vs_ERA5_Density'; 
+        figure_idx=figure_idx+1;
+    end
+end
+
+% Temperature Density Maps
+if flag.plot_t_density_map
+    % T PTV vs Model
+    create_product_vs_model_density(comb_T_full, comb_T_model_full, ...
+        'T PTV vs ERA5 Model Density Map', 'ERA5 Model T (K)', 'Lidar PTV T (K)', ...
+        T_density_limits, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_density); % <-- USES cmap_density (Magma)
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'T_PTV_vs_ERA5_Density'; 
+    figure_idx=figure_idx+1;
+    
+    if flag.read_temp_std
+        % T Standard vs Model
+        create_product_vs_model_density(comb_T_Std_full, comb_T_model_full, ...
+            'T Standard vs ERA5 Model Density Map', 'ERA5 Model T (K)', 'Lidar Standard T (K)', ...
+            T_density_limits, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_density); % <-- USES cmap_density (Magma)
+        figure_list{end+1} = figure_idx; 
+        suffix_list{end+1} = 'T_Std_vs_ERA5_Density'; 
+        figure_idx=figure_idx+1;
+    end
+end
+
+
+
+
 % HISTOGRAMS and 2D DENSITY MAPS (Conditional)
 if flag.plot_histograms_2d || flag.plot_1d_histograms
     
@@ -983,34 +1073,34 @@ if flag.plot_histograms_2d || flag.plot_1d_histograms
         % Figure X+2
         create_2d_density_map(T_PTV_diff_hist, y_range, ...
             'T PTV - ERA5 Difference vs. Range (Bin Width: 0.2 K)', 'Temperature Difference (K)', ...
-            T_diff_bin_limits, [0 6], T_diff_bin_width, figure_idx, node, plot_size_wide, font_size, cmap_density); 
+            T_diff_bin_limits, [0 6], T_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_density); 
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'T_Diff_PTV_Histogram_Range'; figure_idx=figure_idx+1;
         
         if flag.read_temp_std
             % Figure X+3
             create_2d_density_map(T_Std_diff_hist, y_range, ... 
                 'T Standard - ERA5 Difference vs. Range (Bin Width: 0.2 K)', 'Temperature Difference (K)', ...
-                T_diff_bin_limits, [0 6], T_diff_bin_width, figure_idx, node, plot_size_wide, font_size, cmap_density); 
+                T_diff_bin_limits, [0 6], T_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_density); 
             figure_list{end+1} = figure_idx; suffix_list{end+1} = 'T_Diff_Standard_Histogram_Range'; figure_idx=figure_idx+1;
         end
 
         % Figure X+4
         create_2d_density_map(AH_Std_diff_hist, y_range, ...
             'AH Standard - ERA5 Difference vs. Range (Bin Width: 0.2 g/m\textsuperscript{3})', 'Absolute Humidity Difference (g/m\textsuperscript{3})', ...
-            AH_diff_bin_limits, [0 6], AH_diff_bin_width, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
+            AH_diff_bin_limits, [0 6], AH_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'AH_Diff_Standard_Histogram_Range'; figure_idx=figure_idx+1;
         
         % Figure X+5
         create_2d_density_map(AH_PTV_diff_hist, y_range, ...
             'AH PTV - ERA5 Difference vs. Range (Bin Width: 0.2 g/m\textsuperscript{3})', 'Absolute Humidity Difference (g/m\textsuperscript{3})', ...
-            AH_diff_bin_limits, [0 6], AH_diff_bin_width, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
+            AH_diff_bin_limits, [0 6], AH_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'AH_PTV_Diff_Histogram_Range'; figure_idx=figure_idx+1;
 
         if flag.read_wv_multi
             % Figure X+6
             create_2d_density_map(AH_MultiPulse_diff_hist, y_range, ...
                 'AH MultiPulse - ERA5 Difference vs. Range (Bin Width: 0.2 g/m\textsuperscript{3})', 'Absolute Humidity Difference (g/m\textsuperscript{3})', ...
-                AH_diff_bin_limits, [0 6], AH_diff_bin_width, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
+                AH_diff_bin_limits, [0 6], AH_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
             figure_list{end+1} = figure_idx; suffix_list{end+1} = 'AH_MultiPulse_Diff_Histogram_Range'; figure_idx=figure_idx+1;
         end
     end
@@ -1041,8 +1131,9 @@ for k_idx = 1:num_plots
         FigH.Position = plot_size_7panel;
     elseif strcmp(suffix, 'Core_4Panel_Parameters')
         FigH.Position = plot_size_4panel;
-    elseif contains(suffix, 'Histogram_Range') || contains(suffix, 'Histogram')
-        FigH.Position = plot_size_square;
+%    elseif contains(suffix, 'Histogram_Range') || contains(suffix, 'Histogram') || strcmp(suffix, 'AH_vs_ERA5_Scatter') || strcmp(suffix, 'T_vs_ERA5_Scatter')l% 
+    elseif contains(suffix, 'Histogram') || contains(suffix, 'Density') || contains(suffix, 'Scatter')
+       FigH.Position = plot_size_square;
     else
         % Default wide size for single pcolor plots
         FigH.Position = plot_size; 
@@ -1052,7 +1143,7 @@ for k_idx = 1:num_plots
     exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
     
     % --- CRITICAL EFFICIENCY IMPROVEMENT ---
-    close(FigH); % Close the figure immediately to free up memory
+   % close(FigH); % Close the figure immediately to free up memory
 end
 
 disp(['Plotting and saving complete. Time elapsed: ', num2str(toc(tic_plot_save)), ' seconds.']);
@@ -1060,8 +1151,9 @@ disp(['Total script runtime: ', num2str(toc(tic_total)), ' seconds.']);
 disp('--- Script End ---');
 
 
-
-
+% ylim([0 3])
+% colormap(viridis)
+%clim([0 20])
 
 
 

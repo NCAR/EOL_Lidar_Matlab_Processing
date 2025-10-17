@@ -1,4 +1,4 @@
-function create_2d_density_map(diff_data, y_range, title_str, xlabel_str, x_bin_limits, y_bin_limits, x_bin_width, fig_num, node, plot_size1, font_size, cmap)
+function create_2d_density_map(diff_data, y_range, title_str, xlabel_str, x_bin_limits, y_bin_limits, x_bin_width, caxis_val, fig_num, node, plot_size1, font_size, cmap)
     figure(fig_num);
     set(gcf, 'Position', plot_size1);
     
@@ -21,6 +21,9 @@ function create_2d_density_map(diff_data, y_range, title_str, xlabel_str, x_bin_
         'YBinLimits', y_bin_limits, ...   
         'Normalization', 'probability', ...  
         'DisplayStyle', 'tile');            
+
+    set(gca, 'Colorscale', 'log'); % Apply log scale to the color axis
+    clim(caxis_val);               % Apply the fixed color limits
 
     % --- Formatting ---
     title({[node, ' ', title_str]}, 'fontweight', 'b', 'fontsize', font_size, 'Interpreter', 'latex'); % <-- ADDED

@@ -1,0 +1,115 @@
+function create_product_vs_model_density(data_lidar, data_model, title_str, xlabel_str, ylabel_str, plot_limits, caxis_val, fig_num, node, plot_size1, font_size, cmap_to_use)
+% Function to create a 2D density map comparing a Lidar product (Y) against an ERA5 model (X).
+    figure(fig_num);
+    set(gcf, 'Position', plot_size1);
+    
+    % Prepare data (Flatten and Filter NaN)
+    model_vector = data_model(:); % X-axis
+    lidar_vector = data_lidar(:);  % Y-axis
+    
+    % Total number of possible data points (N_rows * N_cols) ***
+    % This is the denominator for the percentage calculation.
+    N_total_possible = length(model_vector);
+
+    % --- 1. NaN Filter (Initial Filter) ---
+    valid_idx = ~isnan(model_vector) & ~isnan(lidar_vector);
+    
+    % Use 'temp' vectors to hold data AFTER NaN filtering, but BEFORE IQR filtering
+    model_valid_temp = model_vector(valid_idx); 
+    lidar_valid_temp = lidar_vector(valid_idx); 
+
+    % --- 2. Outlier Filter (IQR on Lidar Data) ---
+    
+    % 2a. Calculate IQR bounds (using only Lidar data, as requested)
+    Q1 = prctile(lidar_valid_temp, 25);
+    Q3 = prctile(lidar_valid_temp, 75);
+    IQR = Q3 - Q1;
+    lower_bound_IQR = Q1 - 1.5 * IQR;
+    
+    % Define the maximum physical limit (taken from plot_limits)
+    max_physical_limit = plot_limits(2); 
+
+    % 2b. Create the logical index for points NOT considered outliers (Hybrid Filter)
+    % Keeps data > IQR lower bound AND <= physical upper bound
+    lidar_iqr_idx = (lidar_valid_temp >= lower_bound_IQR) & (lidar_valid_temp <= max_physical_limit);
+
+    % 2c. Apply the filter index to BOTH data vectors
+    model_valid = model_valid_temp(lidar_iqr_idx);
+    lidar_valid = lidar_valid_temp(lidar_iqr_idx);
+
+    % --- 3. Final Metrics Calculation ---
+    % N_valid is the count of points remaining after all filtering
+    N_valid = length(lidar_valid);
+    
+    % Calculate Data Availability Ratio (%)
+    Data_Availability_Ratio = (N_valid / N_total_possible) * 100;
+
+    % Calculate Pearson Correlation Coefficient (rho)
+    rho_matrix = corrcoef(model_valid, lidar_valid, 'Rows', 'complete');
+    rho = rho_matrix(1, 2);
+    
+    % --- Define Bin Parameters (Constant Resolution) ---
+    bin_width = 0.5; 
+    
+    % Define the 1:1 line coordinates for reference
+    min_limit = plot_limits(1);
+    max_limit = plot_limits(2);
+    
+    % Create the 2D histogram
+    h_hist2 = histogram2(model_valid, lidar_valid, ...
+        'BinWidth', [bin_width bin_width], ... 
+        'XBinLimits', plot_limits, ... 
+        'YBinLimits', plot_limits, ...   
+        'Normalization', 'probability', ...  
+        'DisplayStyle', 'tile');            
+    hold on;
+    
+    % Plot the 1:1 Line on top of the density map
+    plot([min_limit max_limit], [min_limit max_limit], 'w--', 'LineWidth', 2, 'DisplayName', '1:1 Line');
+    hold off;
+    
+    set(gca, 'Colorscale', 'log');
+    clim(caxis_val); 
+    
+    % --- Formatting ---
+    title({[node, ' ', title_str]}, 'fontweight', 'b', 'fontsize', font_size);
+    xlabel(xlabel_str, 'fontweight', 'b', 'fontsize', font_size);              
+    ylabel(ylabel_str, 'fontweight', 'b', 'fontsize', font_size);
+    grid on;
+    set(gca, 'Layer', 'top', 'Box', 'on'); 
+    axis equal; 
+    
+    xlim(plot_limits); 
+    ylim(plot_limits); 
+    
+    h_cb = colorbar('EastOutside'); 
+    ylabel(h_cb, 'Probability Density', 'fontweight', 'b', 'fontsize', font_size-2);
+    
+    colormap(cmap_to_use); 
+    set(gca, 'Fontsize', font_size, 'Fontweight', 'b');
+    
+    % --- FINAL: Add All Three Metrics to Text Annotation ---
+    
+    % Format N_valid in scientific notation
+    N_str_sci = sprintf('%.2e', N_valid);
+    
+    % Format percentage
+    N_str_percent = sprintf('%.2f%%', Data_Availability_Ratio);
+    
+    % Place the text annotation in the top-left corner
+    text_x_pos = plot_limits(1) + (plot_limits(2) - plot_limits(1)) * 0.05;
+    text_y_pos = plot_limits(2) - (plot_limits(2) - plot_limits(1)) * 0.15;
+    
+    text_str = {
+        sprintf('N: %s', N_str_sci), ...
+        sprintf('Avail: %s', N_str_percent), ...
+        sprintf('\\rho: %.3f', rho)
+    };
+    
+    text(text_x_pos, text_y_pos, text_str, ...
+         'FontSize', font_size-4, ...
+         'FontWeight', 'bold', ...
+         'BackgroundColor', [1 1 1 0.7], ... 
+         'EdgeColor', 'k', ...
+         'VerticalAlignment', 'top');
+end

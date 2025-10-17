@@ -175,67 +175,46 @@ end
 MCSsample.all = [MCSsample.time1,MCSsample.data1];  % changed this line for MCX int32
 % parse out the channels based on searches for channel mapping and populate
 % if it exists
-index.wvonline = find(contains(MCSsample.ChannelAssignment,'WVOnline') & not(contains(MCSsample.ChannelAssignment,'WVOnlineLow')))-1;
+
+index.wvonline = find(strcmp(MCSsample.ChannelAssignment, 'WVOnline')) - 1;
 if isempty(index.wvonline) == 0
    MCSsample.online = MCSsample.all(MCSsample.channel1==index.wvonline,:); % 
    MCSsample.online_time = MCSsample.time1(MCSsample.channel1==index.wvonline,:); % 
 end
-index.wvoffline = find(contains(MCSsample.ChannelAssignment,'WVOffline') & not(contains(MCSsample.ChannelAssignment,'WVOfflineLow')))-1;
+
+index.wvoffline = find(strcmp(MCSsample.ChannelAssignment, 'WVOffline')) - 1;
 if isempty(index.wvoffline) == 0
    MCSsample.offline = MCSsample.all(MCSsample.channel1==index.wvoffline,:); % 
    MCSsample.offline_time = MCSsample.time1(MCSsample.channel1==index.wvoffline,:); % 
 end
-% index.wvonline_near = find(contains(MCSsample.ChannelAssignment,'WVOnlineLow'))-1;
-% if isempty(index.wvonline_near) == 0
-%    MCSsample.on_near = MCSsample.all(MCSsample.channel1==index.wvonline_near,:); % 
-%    MCSsample.on_near_time = MCSsample.time1(MCSsample.channel1==index.wvonline_near,:); %  
-% end
-% index.wvoffline_near = find(contains(MCSsample.ChannelAssignment,'WVOfflineLow'))-1;
-% if isempty(index.wvoffline_near) == 0
-%    MCSsample.off_near = MCSsample.all(MCSsample.channel1==index.wvoffline_near,:); % 
-%    MCSsample.off_near_time = MCSsample.time1(MCSsample.channel1==index.wvoffline_near,:); % 
-% end
 
-index.O2online_comb = find(contains(MCSsample.ChannelAssignment,'O2OnlineComb') & not(contains(MCSsample.ChannelAssignment,'O2OnlineCombLow')))-1;
+index.O2online_comb = find(strcmp(MCSsample.ChannelAssignment, 'O2OnlineComb')) - 1;
 if isempty(index.O2online_comb) == 0
    MCSsample.O2online_comb = MCSsample.all(MCSsample.channel1==index.O2online_comb,:); % 
    MCSsample.O2online_comb_time = MCSsample.time1(MCSsample.channel1==index.O2online_comb,:); % 
 end
 
-index.O2offline_comb = find(contains(MCSsample.ChannelAssignment,'O2OfflineComb') & not(contains(MCSsample.ChannelAssignment,'O2OfflineCombLow')))-1;
-if isempty(index.O2offline_comb) == 0
+index.O2offline_comb = find(strcmp(MCSsample.ChannelAssignment, 'O2OfflineComb')) - 1;
+if isempty(index.O2offline_comb) == 0 
    MCSsample.O2offline_comb = MCSsample.all(MCSsample.channel1==index.O2offline_comb,:); % 
    MCSsample.O2offline_comb_time = MCSsample.time1(MCSsample.channel1==index.O2offline_comb,:); % 
 end
 
-index.O2online_mol = find(contains(MCSsample.ChannelAssignment,'O2OnlineMol')  & not(contains(MCSsample.ChannelAssignment,'O2OnlineMolLow')))-1;
+index.O2online_mol = find(strcmp(MCSsample.ChannelAssignment, 'O2OnlineMol')) - 1;
 if isempty(index.O2online_mol) == 0
-   MCSsample.O2online_mol = MCSsample.all(MCSsample.channel1==index.O2online_mol,:); % 
-   MCSsample.O2online_mol_time = MCSsample.time1(MCSsample.channel1==index.O2online_mol,:); % 
+   MCSsample.O2online_mol = MCSsample.all(MCSsample.channel1==index.O2online_mol,:);
+   MCSsample.O2online_mol_time = MCSsample.time1(MCSsample.channel1==index.O2online_mol,:);
 end
 
-index.O2offline_mol = find(contains(MCSsample.ChannelAssignment,'O2OfflineMol')  & not(contains(MCSsample.ChannelAssignment,'O2OfflineMolLow')))-1;
+index.O2offline_mol = find(strcmp(MCSsample.ChannelAssignment, 'O2OfflineMol')) - 1;
 if isempty(index.O2offline_mol) == 0
    MCSsample.O2offline_mol = MCSsample.all(MCSsample.channel1==index.O2offline_mol,:); % 
    MCSsample.O2offline_mol_time = MCSsample.time1(MCSsample.channel1==index.O2offline_mol,:); % 
 end
 
-index.HSRL_Mol = find(contains(MCSsample.ChannelAssignment,'HSRLMol')  & not(contains(MCSsample.ChannelAssignment,'HSRLMolLow')))-1;
-if isempty(index.HSRL_Mol) == 0
-   MCSsample.HSRL_Mol = MCSsample.all(MCSsample.channel1==index.HSRL_Mol,:); % 
-   MCSsample.HSRL_Mol_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Mol,:); % 
-end
-
-index.HSRL_Combined = find(contains(MCSsample.ChannelAssignment,'HSRLCombined') & not(contains(MCSsample.ChannelAssignment,'HSRLCombinedLow')))-1;
-if isempty(index.HSRL_Combined) == 0
-   MCSsample.HSRL_Combined = MCSsample.all(MCSsample.channel1==index.HSRL_Combined,:); % 
-   MCSsample.HSRL_Combined_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Combined,:); % 
-end
 
 
 if isempty(index.wvonline) == 0
-
-            
             figure(101)
             plot((diff(MCSsample.offline_time))*60*60)
             offline_timestep = median((diff(MCSsample.offline_time))*60*60)

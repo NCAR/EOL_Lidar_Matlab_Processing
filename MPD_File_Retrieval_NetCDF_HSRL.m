@@ -225,7 +225,8 @@ end
 % MCSsample.ChannelAssignment(4,1)= 'HSRLCombinedCross'
 
 
-index.HSRL_Mol = find(contains(MCSsample.ChannelAssignment,'HSRLMol')  & not(contains(MCSsample.ChannelAssignment,'Low')))-1;
+%index.HSRL_Mol = find(contains(MCSsample.ChannelAssignment,'HSRLMol')  & not(contains(MCSsample.ChannelAssignment,'Low')) & not(contains(MCSsample.ChannelAssignment,'Cross')))-1;
+index.HSRL_Mol = find(strcmp(MCSsample.ChannelAssignment, 'HSRLMol')) - 1;
 if isempty(index.HSRL_Mol) == 0
    % index.HSRL_Mol_log = ismember(MCSsample.channel1, index.HSRL_Mol); 
    %   MCSsample.HSRL_Mol = MCSsample.all(index.HSRL_Mol_log,:); % 
@@ -234,7 +235,8 @@ if isempty(index.HSRL_Mol) == 0
   MCSsample.HSRL_Mol_time = MCSsample.time1(MCSsample.channel1==index.HSRL_Mol,:); % 
 end
 
-index.HSRL_Combined = find(contains(MCSsample.ChannelAssignment,'HSRLCombined') & not(contains(MCSsample.ChannelAssignment,'Low')))-1;
+%index.HSRL_Combined = find(contains(MCSsample.ChannelAssignment,'HSRLCombined') & not(contains(MCSsample.ChannelAssignment,'Low')) & not(contains(MCSsample.ChannelAssignment,'Cross')))-1;
+index.HSRL_Combined = find(strcmp(MCSsample.ChannelAssignment, 'HSRLCombined')) - 1;
 if isempty(index.HSRL_Combined) == 0
    % index.HSRL_Combined_log = ismember(MCSsample.channel1, index.HSRL_Combined)  
    % MCSsample.HSRL_Combined = MCSsample.all(index.HSRL_Combined_log,:); % 
