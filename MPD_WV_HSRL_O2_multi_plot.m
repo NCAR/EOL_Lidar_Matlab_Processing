@@ -2,7 +2,7 @@ clear all; close all;
 tic
 
  node = 'MPD01';
- date = '08 Oct 2025';   
+ date = '15 Oct 2025';   
  days = 8; skip = 1;
  flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
  WV_max_scale = 12;
@@ -446,7 +446,7 @@ title('WV offline Background')
    FigH = figure(6);
    drawnow;
    FigH.Units = 'pixels'; % Ensure units are pixels for direct mapping to your old 'PaperPosition' width/height
-   FigH.Position = [0 0 1920 1100]; % x, y, width, height in pixels
+   FigH.Position = [0 0 1920 1025]; % x, y, width, height in pixels
    name=char(strcat(node, "_", date, '_all_comb')); 
   exportgraphics(FigH, [name, '.png'], 'Resolution', 150);
    % print(FigH, name, '-dpng', '-r75') % set at the screen resolution 

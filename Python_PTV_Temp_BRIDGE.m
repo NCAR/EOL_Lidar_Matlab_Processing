@@ -55,7 +55,7 @@ for jj = 1:size(Pythonfilename,2)
   
   ncid = netcdf.open(filename, 'NC_NOWRITE');
     %ncdisp(filename, '/', 'min') % use this to display all variables
-    ncdisp(filename) % use this to display all variables
+
     time{jj} = ncread(filename,variable{1}); 
     alt{jj} = ncread(filename,variable{2});
 

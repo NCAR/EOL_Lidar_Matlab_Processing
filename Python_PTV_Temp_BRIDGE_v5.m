@@ -7,7 +7,7 @@ node = 'MPD04';
 serv_path = '/Volumes/eol/sci/mhayman';
 plot_path = '/Users/spuler/Desktop';
 
-data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.3');
+data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.6');
 plot_dir = fullfile(plot_path, 'mpd', 'Plots');
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/matplotlib/';
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing'
@@ -16,29 +16,24 @@ flag.save_data = 0;  %save data at end of processing (0=off 1=on)
 low_range_mask = 0;
 
 % --- PLOTTING EXCLUSION FLAGS (0=Exclude/Off, 1=Include/On) ---
-flag.plot_multi_temp = 0;      % Toggle multi panel T WV abs (Figure 1)
-flag.plot_multi_wv = 0;        % Toggle multi panel T WV diff (Figure 2)
-
-% Flags for REDUNDANT SINGLE PANELS (Defaulted to 0/OFF)
+flag.plot_aerosol_counts = 0;  % Toggle multi panel aersol overview
+flag.plot_multi_temp = 1;      % Toggle multi panel T WV abs 
+flag.plot_multi_wv = 1;        % Toggle multi panel T WV diff
 flag.plot_single_temp_panels = 0; 
 flag.plot_single_wv_panels = 0;   
-
-% Flags for essential/less redundant panels
-flag.plot_aerosol_counts = 0;  
-flag.plot_uncertainty = 0;     
+flag.plot_uncertainty = 1;     
 flag.plot_histograms_2d = 1;   % Toggle 2D Density Maps (T_Range, AH_Range)
 flag.plot_ah_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot
 flag.plot_temp_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot
 flag.plot_ah_density_map = 1;  % Toggle AH vs ERA5 Density Map
 flag.plot_t_density_map = 1;   % Toggle Temp vs ERA5 Density Map
-
 flag.plot_1d_histograms = 0;   % Toggle 1D Histograms (T_Diff_Histogram, AH_Diff_Histogram)
 % ------------------------------------
 
 % --- DATA READING EXCLUSION FLAGS (0=Exclude/Off, 1=Include/On) ---
 flag.read_temp_std = 1;        % Include reading Temperature_Standard and related fields
 flag.read_wv_multi = 1;        % Include reading Absolute_Humidity_MultiPulse fields
-flag.read_uncertainty = 0;     % Include reading ALL uncertainty/variance fields (T_var, AH_var, etc.)
+
 % ------------------------------------------------------------------
 
 % --- PLOTTING RESOLUTION SETTING ---
@@ -84,7 +79,7 @@ for jj = 1:num_files
     n = datenum(date_str, 'yyyymmdd');
     
     ncid = netcdf.open(filename, 'NC_NOWRITE');
-    
+   % ncdisp(filename, '/', 'min') % use this to display all variables
 
     % Read data (Base variables - always read)
     time{jj} = ncread(filename,variables{1}); 
@@ -98,23 +93,15 @@ for jj = 1:num_files
     T{jj}  = ncread(filename,variables{3});  
     T_mask{jj} = ncread(filename,variables{4}); 
     T_model{jj}  = ncread(filename,variables{41}); 
+    T_var{jj} = ncread(filename,variables{5}); 
 
-    % Conditional: PTV Temperature Uncertainty
-    if flag.read_uncertainty % Include reading T_var if flag is 1
-        T_var{jj} = ncread(filename,variables{5}); 
-    else
-        T_var{jj} = nan(num_ranges_file, num_timesteps_file);
-    end
     
-    % Conditional: Temperature Standard (NEW)
+    % Conditional: Temperature Standard 
     if flag.read_temp_std % Include reading T_Std if flag is 1
         T_Std{jj}  = ncread(filename,variables{13});  
         T_Std_mask{jj} = ncread(filename,variables{14}); 
-        if flag.read_uncertainty
-             T_Std_var{jj} = ncread(filename,variables{15}); 
-        else
-             T_Std_var{jj} = nan(num_ranges_file, num_timesteps_file);
-        end
+        T_Std_var{jj} = ncread(filename,variables{15}); 
+
     else
         % Fill with NaNs if excluding (flag.read_temp_std is 0)
         T_Std{jj} = nan(num_ranges_file, num_timesteps_file);
@@ -122,37 +109,27 @@ for jj = 1:num_files
         T_Std_var{jj} = nan(num_ranges_file, num_timesteps_file);
     end
     
-    % Surface Data (Always read)
+    % Surface Data 
     T_surf{jj} =  ncread(filename,variables{30});
     P_surf{jj} =  ncread(filename,variables{31});
     AH_surf{jj} =  ncread(filename,variables{32});
     
-    % Absolute Humidity Standard (Always read, but uncertainty is conditional)
+    % Absolute Humidity Standard 
     AH{jj}  = ncread(filename,variables{6});  
     AH_mask{jj} = ncread(filename,variables{7}); 
     AH_PTV{jj}  = ncread(filename,variables{16});  
     AH_PTV_mask{jj} = ncread(filename,variables{17}); 
     AH_model{jj}  = ncread(filename,variables{40});  
-    
-    % Conditional: AH Standard and PTV Uncertainty
-    if flag.read_uncertainty % Include reading uncertainty if flag is 1
-        AH_var{jj} = ncread(filename,variables{8}); 
-        AH_PTV_var{jj} = ncread(filename,variables{18});
-    else
-        AH_var{jj} = nan(num_ranges_file, num_timesteps_file);
-        AH_PTV_var{jj} = nan(num_ranges_file, num_timesteps_file);
-    end
+    AH_var{jj} = ncread(filename,variables{8}); 
+    AH_PTV_var{jj} = ncread(filename,variables{18});
+
 
     % Conditional: Absolute Humidity MultiPulse
     if flag.read_wv_multi % Include reading MultiPulse data if flag is 1
         try
           AH_MultiPulse{jj}  = ncread(filename,variables{26});  
           AH_MultiPulse_mask{jj} = ncread(filename,variables{27}); 
-          if flag.read_uncertainty
-              AH_MultiPulse_var{jj} = ncread(filename,variables{28});
-          else
-              AH_MultiPulse_var{jj} = nan(num_ranges_file, num_timesteps_file);
-          end
+          AH_MultiPulse_var{jj} = ncread(filename,variables{28});
         catch
            warning(['MultiPulse data missing in file: ', filename]);
            AH_MultiPulse{jj} = nan(num_ranges_file, num_timesteps_file);
@@ -166,16 +143,12 @@ for jj = 1:num_files
         AH_MultiPulse_var{jj} = nan(num_ranges_file, num_timesteps_file);
     end
     
-    % ABC/Counts (Uncertainty is conditional)
+    % ABC/Counts
     ABC{jj}  = ncread(filename,variables{9});   
     ABC_mask{jj} = ncread(filename,variables{10}); 
     Counts{jj} = ncread(filename,variables{12});   
-    
-    if flag.read_uncertainty % Include reading uncertainty if flag is 1
-        ABC_var{jj} = ncread(filename,variables{11});
-    else
-        ABC_var{jj} = nan(num_ranges_file, num_timesteps_file);
-    end
+    ABC_var{jj} = ncread(filename,variables{11});
+
 
 
     % --- MASKING ---
@@ -195,12 +168,49 @@ for jj = 1:num_files
     ABC{jj}(ABC_mask{jj} == 1) = nan;
 
     netcdf.close(ncid); 
-    
+  
+     
     % Convert from Unix time to date number
     duration{jj} = n + double(time{jj}/86400); % 86400 = 3600*24
 end
 
 disp(['Data reading and masking complete. Time elapsed: ', num2str(toc(tic_read)), ' seconds.']);
+
+% --- TEST FOR RANGE GATE CONSISTENCY ---
+disp(' ');
+disp('--- STARTING RANGE GATE CONSISTENCY CHECK ---');
+
+% Get the number of vertical range gates (rows) for the AH matrix in each file
+all_num_ranges = cellfun('size', AH, 1);
+num_files = length(AH); % Use the actual number of files read
+
+% Get the filename strings for display
+file_names = Pythonfilename;
+
+% Display the range gate count for each file
+for jj = 1:num_files
+    fprintf('File %d: %s | Range Gates (Rows): %d\n', jj, file_names{jj}, all_num_ranges(jj));
+end
+
+% Identify min, max, and unique counts
+min_ranges = min(all_num_ranges);
+max_ranges = max(all_num_ranges);
+unique_ranges = unique(all_num_ranges);
+
+disp(' ');
+fprintf('Minimum Range Gates found: %d\n', min_ranges);
+fprintf('Maximum Range Gates found: %d\n', max_ranges);
+
+if length(unique_ranges) > 1
+    disp('*** Inconsistent vertical range gate count found! ***');
+    fprintf('Unique range counts: %s\n', num2str(unique_ranges));
+else
+    disp('Range gate count is consistent across all files');
+end
+disp('--- END RANGE GATE CONSISTENCY CHECK ---');
+disp(' ');
+% --------------------------------------------------
+
 
 % --- 5. PREALLOCATION AND COMBINATION ---
 disp('Starting data combination...');
@@ -811,10 +821,7 @@ if flag.plot_aerosol_counts % Using this flag to control the new plot
         axis([floor(min(x)), ceil(max(x)), 0, 6]);
         caxis(caxis_val);
         
-        % *** FIX: Use the FUNCTIONAL FORM for colormap assignment to handle 'jet' and 'viridis' strings ***
         colormap(h_ax, cmap_val); 
-        % h_ax.Colormap = cmap_val; % <-- Original failing line
-        % ---------------------------------------------------------------------------------------------------
         
         % Apply SMALLER FONT SIZE
         set(gca,'Fontsize',font_size_small,'Fontweight','b'); 
@@ -833,7 +840,6 @@ if flag.plot_aerosol_counts % Using this flag to control the new plot
         % Only show X-label on the bottom panel
         if i ~= num_panels 
             xlabel('');
-            %set(gca, 'XTickLabel', []); % Explicitly hide tick labels
         else
             % Add X-label to the bottom panel
             xlabel('Time (UTC)','fontweight','b','fontsize',font_size_small); 
@@ -926,7 +932,7 @@ if flag.plot_aerosol_counts
 end
 
 % UNCERTAINTY (Conditional)
-if flag.plot_uncertainty && flag.read_uncertainty
+if flag.plot_uncertainty 
     % Figure X
     create_pcolor_plot(x, y, comb_AH_var, 'Absolute Humidity Standard Uncertainty (g m^{-3})', caxis_uncertainty, smooth_gray_cmap_AH, node, plot_size_wide, font_size, xData, xData_m, figure_idx, 0); 
     figure_list{end+1} = figure_idx; suffix_list{end+1} = 'WV_Standard_Uncertainty'; figure_idx=figure_idx+1;
@@ -946,8 +952,6 @@ if flag.plot_uncertainty && flag.read_uncertainty
         create_pcolor_plot(x, y, comb_T_Std_var, 'Temperature Standard Uncertainty (K)', caxis_uncertainty, smooth_gray_cmap_T, node, plot_size_wide, font_size, xData, xData_m, figure_idx, 0); 
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'T_Standard_Uncertainty'; figure_idx=figure_idx+1; 
     end
-elseif flag.plot_uncertainty && ~flag.read_uncertainty
-    warning('Uncertainty plots requested, but flag.read_uncertainty is 0. Skipping uncertainty plots.');
 end
 
 
