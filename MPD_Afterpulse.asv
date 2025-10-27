@@ -52,7 +52,7 @@ N_bins = length(R);
 
 %% Lidar Forward Model 
 
-% System Constant, note 1e20 was empirically selected to get a reasonable number of summed counts per/bin
+% System Constant, note 1e30 was empirically selected to get a reasonable number of summed counts per/bin
 C_sys = (P_laser * c * tau_pulse / 2) * 1e30; 
 
 % Geometric Overlap Function 
@@ -130,7 +130,7 @@ Relative_Error(Relative_Error < -max_err) = -max_err;
 
 % Calculate Water Vapor Optical Depth at R_end (4 km) ---
 R_4km_idx = find(R >= 4000, 1, 'first');
-WV_OD_4km = (OD_on(R_4km_idx) - OD_off(R_4km_idx))% / 2;
+WV_OD_4km = 2*(OD_on(R_4km_idx) - OD_off(R_4km_idx)); %two-way WV OD
 disp('should be close to 1 for optimal profile retrievals');
 disp('-------------------------------------------------------------------');
 

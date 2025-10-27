@@ -16,7 +16,7 @@ sigma_on_cm2 = 0.99e-23;    % Online cross-section (cm^2/molecule): [use for 20 
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 
 % Detector/Afterpulse Parameters
-N_dark = 0;                  % Constant Dark Count Rate (counts/bin)
+%N_dark = 0;                  % Constant Dark Count Rate (counts/bin)
 lambda_AP = 50;             % Afterpulse decay length (m)
 AP_fraction = 1e-13;         % Afterpulse peak as fraction of C_sys
 
@@ -25,7 +25,7 @@ R_full_overlap = 1500;       % Range at which O(R) approaches 1 (m)
 O_scale = 100;               % Scaling factor for the exponential rise 
 
 % Simple Atmosphere Parameters 
-N_solar = 0;              % Solar background Count Rate (counts/bin)
+%N_solar = 0;              % Solar background Count Rate (counts/bin)
 alpha_non_abs = 1e-8;     % Total aerosol and molecular (non-absorbing) extinction (m^-1)
 wv_mass_surf = 20;        % Water Vapor Density Profile
 %wv_mass_surf = 7.5;      % Water Vapor Density Profile
@@ -77,12 +77,13 @@ N_off_true = C_sys * (1./R.^2) .* O_R .* beta_R(R) .* exp(-2 * OD_off);
 
 N_AP_peak = C_sys * AP_fraction;
 N_AP_decay = N_AP_peak * exp(-(R - R_start) / lambda_AP);
-N_AP_total = N_AP_decay + N_dark;
+%N_AP_total = N_AP_decay + N_dark;
+%N_bg = N_dark + N_solar;  % this is not needed
 
-% Contaminated signal profiles 
-N_off_raw = N_off_true + N_AP_total;
-N_on_raw = N_on_true + N_AP_total;
-N_bg = N_dark + N_solar;  
+% Contaminated signal profiles (after background subtraction)
+N_off_raw = N_off_true + N_AP_decay;
+N_on_raw = N_on_true + N_AP_decay;
+
 
 %% Contaminated Retrieval using analytical error addition
 
@@ -130,7 +131,7 @@ Relative_Error(Relative_Error < -max_err) = -max_err;
 
 % Calculate Water Vapor Optical Depth at R_end (4 km) ---
 R_4km_idx = find(R >= 4000, 1, 'first');
-WV_OD_4km = (OD_on(R_4km_idx) - OD_off(R_4km_idx))% / 2;
+WV_OD_4km = (OD_on(R_4km_idx) - OD_off(R_4km_idx)) % one-way WV OD
 disp('should be close to 1 for optimal profile retrievals');
 disp('-------------------------------------------------------------------');
 
@@ -143,14 +144,14 @@ figure('Position', [100, 100, 1400, 450]);
 subplot(1, 3, 1);
 semilogy(R, N_off_raw, 'b-', 'DisplayName', 'N_{off} Raw'); hold on;
 semilogy(R, N_on_raw, 'r-', 'DisplayName', 'N_{on} Raw');
-semilogy(R, N_AP_total, 'k--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
+semilogy(R, N_AP_decay, 'k--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
 %semilogy(R, N_bg * ones(size(R)), 'g:', 'LineWidth', 1, 'DisplayName', 'Constant BG');
 title('Raw Measured Signals (Semilogy)');
 xlabel('Range (m)');
 ylabel('Counts/Bin');
 legend('Location', 'southwest');
 xlim([R_start, R_end]);
-ylim([N_dark/2, max(N_off_raw)*1.1]);
+ylim([0, max(N_off_raw)*1.1]);
 grid on;
 
 % True vs. Retrieved Water Vapor Density (check that these are the same)
