@@ -6,17 +6,20 @@ clear; close all; clc;
 
 % System Parameters
 tau_pulse = 200e-9;         % Pulse width (s)
-R_start = 100;              % Start range for retrieval (m)
+R_start = 200;              % Start range for retrieval (m)
 R_end = 5000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
 P_laser = 50e-3;            % Avg laser power (W) 
-sigma_on_cm2 = 0.99e-23;    % Online cross-section (cm^2/molecule): % 0.99e-23 for 20 g/m^3  or 2.52-23 for 7.5 g/m^3  
+sigma_on_cm2 = 0.99e-23;    % Online cross-section (cm^2/molecule):  % 0.99e-23 for 20 g/m^3  or 2.52-23 for 7.5 g/m^3  
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 
-% Detector/Afterpulse Parameters
-%N_dark = 0;                  % Constant Dark Count Rate (counts/bin)
-lambda_AP = 90;             % Afterpulse decay length (m)
-AP_fraction = 5e-14;         % Afterpulse peak as fraction of C_sys
+% Detector Afterpulse Parameters
+%N_dark = 0;                 % Constant Dark Count Rate (counts/bin)
+lambda_AP_1 = 90;             % Afterpulse decay length 1 (m)
+lambda_AP_2 = 2000;           % Afterpulse decay length 2 (m)
+A_1 = 40;                     % Scaling factor for short decay component
+A_2 = 1;                      % Scaling factor for long decay component
+AP_fraction = 1e-15;         % Afterpulse peak as fraction of C_sys
 
 % Geometric Overlap Parameters
 R_full_overlap = 1500;       % Range at which O(R) approaches 1 (m)
@@ -24,9 +27,9 @@ O_scale = 100;               % Scaling factor for the exponential rise
 
 % Simple Atmosphere Parameters 
 %N_solar = 0;              % Solar background Count Rate (counts/bin)
-alpha_non_abs = 1e-8;     % Total aerosol and molecular (non-absorbing) extinction (m^-1)
 wv_mass_surf = 20;        % Water Vapor Density Profile
 wv_mass_true = @(R) wv_mass_surf .* exp(-R/2000); % Mass density profile (g/m^3)
+alpha_non_abs = 1e-8;     % Total aerosol and molecular (non-absorbing) extinction (m^-1)
 beta_a = 1e-7;            % general backscatter coefficient (m^-1 sr^-1)
 beta_R = @(R) beta_a.* exp(-R/8000); % backscatter profile (m^-1 sr^-1)
 
@@ -48,8 +51,8 @@ N_bins = length(R);
 
 %% Lidar Forward Model 
 
-% System Constant, note 1e30 was empirically selected to get a reasonable number of summed counts per/bin
-C_sys = (P_laser * c * tau_pulse / 2) * 1e30; 
+% System Constant, note 1e17 was empirically determined to get a reasonable number of accumulated counts per/bin
+C_sys = (P_laser * c * tau_pulse / 2) * 1e17; 
 
 % Geometric Overlap Function 
 O_R_model = 1 - exp(-(R / O_scale).^2);
@@ -68,16 +71,27 @@ OD_on = cumsum( alpha_on * dR );
 N_on_true = C_sys * (1./R.^2) .* O_R .* beta_R(R) .* exp(-2 * OD_on);
 N_off_true = C_sys * (1./R.^2) .* O_R .* beta_R(R) .* exp(-2 * OD_off);
 
+% Analytical Derivative of N_off_true with respect to R
+% N_off_true is proportional to: O(R) * (1/R^2) * beta_R(R) * exp(-2 * OD_off)
+% Since the expression is complex, using the numerical gradient is simpler and accurate enough:
+dNoff_dR = gradient(N_off_true, dR);
+
+
 %% Detector Contamination Model
 
+
 N_AP_peak = C_sys * AP_fraction;
-N_AP_decay = N_AP_peak * exp(-(R - R_start) / lambda_AP);
+%N_AP_decay = N_AP_peak * exp(-(R - R_start) / lambda_AP);
+% use bi-exponential function
+N_AP_decay = N_AP_peak * (A_1*exp(-(R - R_start)/lambda_AP_1)+ (A_2*exp(-(R - R_start) / lambda_AP_2)));
 %N_AP_total = N_AP_decay + N_dark;
 %N_bg = N_dark + N_solar;  % this is not needed
+
 
 % Contaminated signal profiles (after background subtraction)
 N_off_raw = N_off_true + N_AP_decay;
 N_on_raw = N_on_true + N_AP_decay;
+
 
 %% Contaminated Retrieval using analytical error addition
 
@@ -88,22 +102,39 @@ for i = 1 : N_bins - 1
     % Get the true water vapor density
     R_mid = R(i) + Delta_R / 2;
     wv_true_at_mid = wv_mass_true(R_mid); % in g/m^3
-    
+
     % Use N_off_true at the start of the bin for the error denominator
     N_off_true_at_R = N_off_true(i);
-    
+
     % Calculate the AP derivative (slope) at R(i)
     R_for_slope = R(i);
-    AP_slope = N_AP_peak * (-1/lambda_AP) * exp(-(R_for_slope - R_start) / lambda_AP);
+    % AP_slope = N_AP_peak * (-1/lambda_AP) * exp(-(R_for_slope - R_start) / lambda_AP);
+    % bi-exponential derivative 
+    AP_slope = N_AP_peak * (A_1*(-1/lambda_AP_1) * exp(-(R_for_slope - R_start)/lambda_AP_1) + ...
+                       (A_2*(-1/lambda_AP_2) * exp(-(R_for_slope - R_start) / lambda_AP_2)));
+
+   
+    % Signal derivative for the second term ---
+    dNoff_dR_at_R = dNoff_dR(i);
+    N_AP_at_R = N_AP_decay(i);
+
+    % wv_error calculation (Full Quotient Rule) ---
+    % rho_error ≈ -1/(2*K_delta) * [ (N_sig * dNAP/dR) - (NAP * dNsig/dR) ] / (N_sig)^2
+    Numerator_Term = (N_off_true_at_R * AP_slope) - (N_AP_at_R * dNoff_dR_at_R);
+    Denominator_Term = N_off_true_at_R^2;
+    wv_error = (-1 / (2 * K_delta)) * (Numerator_Term / Denominator_Term);
+    
+    
     
     % Calculate the Error Term
     % rho_error ≈ -1/(2*K_delta) * (d(N_AP)/dR) / N_off_true
     % The negative sign on AP_slope and the external negative sign ensures a positive rho_error.
-    wv_error = (-1 / (2 * K_delta)) * (AP_slope / N_off_true_at_R);
-    
+%    wv_error = (-1 / (2 * K_delta)) * (AP_slope / N_off_true_at_R);
+
     % Final Contaminated Retrieval 
     wv_retrieved(i) = wv_true_at_mid + wv_error;
 end
+
 
 %% Error Calculation and Plotting
 
@@ -126,7 +157,9 @@ WV_OD_4km = (OD_on(R_4km_idx) - OD_off(R_4km_idx)) % one-way WV OD
 disp('should be close to 1 for optimal profile retrievals');
 disp('-------------------------------------------------------------------');
 
+
 %% Plotting Results
+
 figure('Position', [100, 100, 1400, 450]);
 
 % Raw Measured Signals 
@@ -165,7 +198,6 @@ ylabel('Relative Error (%)');
 ylim([-50, 50]);
 xlim([R_start, R_end/2]);
 grid on;
-
 
 
 %% Full Contaminated Retrieval (No Taylor Approximation)

@@ -7,29 +7,30 @@ clear; close all; clc;
 
 % System Parameters
 tau_pulse = 200e-9;         % Pulse width (s)
-R_start = 100;              % Start range for retrieval (m)
+R_start = 200;              % Start range for retrieval (m)
 R_end = 4000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
 P_laser = 50e-3;            % Avg laser power (W) 
-sigma_on_cm2 = 0.99e-23;    % Online cross-section (cm^2/molecule): [use for 20 g/m^3 wv surf] 
-%sigma_on_cm2 = 2.5e-23;    % Online cross-section (cm^2/molecule): [use for 7.5 g/m^3 wv surf] 
+sigma_on_cm2 =0.99e-23;    % Online cross-section (cm^2/molecule):  % 0.99e-23 for 20 g/m^3  or 2.52-23 for 7.5 g/m^3  
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 
-% Detector/Afterpulse Parameters
-N_dark = 0;                  % Constant Dark Count Rate (counts/bin)
-lambda_AP = 50;             % Afterpulse decay length (m)
-AP_fraction = 1e-13;         % Afterpulse peak as fraction of C_sys
+% Detector Afterpulse Parameters
+%N_dark = 0;                 % Constant Dark Count Rate (counts/bin)
+lambda_AP_1 = 90;             % Afterpulse decay length 1 (m)
+lambda_AP_2 = 2000;           % Afterpulse decay length 2 (m)
+A_1 = 40;                     % Scaling factor for short decay component
+A_2 = 1;                      % Scaling factor for long decay component
+AP_fraction = 1e-15;         % Afterpulse peak as fraction of C_sys
 
 % Geometric Overlap Parameters
 R_full_overlap = 1500;       % Range at which O(R) approaches 1 (m)
 O_scale = 100;               % Scaling factor for the exponential rise 
 
 % Simple Atmosphere Parameters 
-N_solar = 0;              % Solar background Count Rate (counts/bin)
-alpha_non_abs = 1e-8;     % Total aerosol and molecular (non-absorbing) extinction (m^-1)
+%N_solar = 0;              % Solar background Count Rate (counts/bin)
 wv_mass_surf = 20;        % Water Vapor Density Profile
-%wv_mass_surf = 7.5;      % Water Vapor Density Profile
 wv_mass_true = @(R) wv_mass_surf .* exp(-R/2000); % Mass density profile (g/m^3)
+alpha_non_abs = 1e-8;     % Total aerosol and molecular (non-absorbing) extinction (m^-1)
 beta_a = 1e-7;            % general backscatter coefficient (m^-1 sr^-1)
 beta_R = @(R) beta_a.* exp(-R/8000); % backscatter profile (m^-1 sr^-1)
 
@@ -52,8 +53,8 @@ N_bins = length(R);
 
 %% Lidar Forward Model 
 
-% System Constant, note 1e30 was empirically selected to get a reasonable number of summed counts per/bin
-C_sys = (P_laser * c * tau_pulse / 2) * 1e30; 
+% System Constant, note 1e17 was empirically determined to get a reasonable number of accumulated counts per/bin
+C_sys = (P_laser * c * tau_pulse / 2) * 1e17; 
 
 % Geometric Overlap Function 
 O_R_model = 1 - exp(-(R / O_scale).^2);
@@ -75,14 +76,24 @@ N_off_true = C_sys * (1./R.^2) .* O_R .* beta_R(R) .* exp(-2 * OD_off);
 
 %% Detector Contamination Model
 
-N_AP_peak = C_sys * AP_fraction;
-N_AP_decay = N_AP_peak * exp(-(R - R_start) / lambda_AP);
-N_AP_total = N_AP_decay + N_dark;
 
-% Contaminated signal profiles 
-N_off_raw = N_off_true + N_AP_total;
-N_on_raw = N_on_true + N_AP_total;
-N_bg = N_dark + N_solar;  
+N_AP_peak = C_sys * AP_fraction;
+%N_AP_decay = N_AP_peak * exp(-(R - R_start) / lambda_AP);
+% use bi-exponential function
+N_AP_decay = N_AP_peak * (A_1*exp(-(R - R_start)/lambda_AP_1)+ (A_2*exp(-(R - R_start) / lambda_AP_2)));
+%N_AP_total = N_AP_decay + N_dark;
+%N_bg = N_dark + N_solar;  % this is not needed
+
+
+% Contaminated signal profiles (after background subtraction)
+N_off_raw = N_off_true + N_AP_decay;
+N_on_raw = N_on_true + N_AP_decay;
+
+
+
+
+
+
 
 %% Contaminated Retrieval using analytical error addition
 
@@ -101,7 +112,10 @@ for i = 1 : N_bins - 1
 
     % Calculate the AP derivative (slope) at R(i)
     R_for_slope = R(i);
-    AP_slope = N_AP_peak * (-1/lambda_AP) * exp(-(R_for_slope - R_start) / lambda_AP);
+    % AP_slope = N_AP_peak * (-1/lambda_AP) * exp(-(R_for_slope - R_start) / lambda_AP);
+    % bi-exponential derivative 
+    AP_slope = N_AP_peak * (A_1*(-1/lambda_AP_1) * exp(-(R_for_slope - R_start)/lambda_AP_1) + ...
+                       (A_2*(-1/lambda_AP_2) * exp(-(R_for_slope - R_start) / lambda_AP_2)));
 
     % Calculate the Error Term
     % rho_error ≈ -1/(2*K_delta) * (d(N_AP)/dR) / N_off_true
@@ -130,7 +144,7 @@ Relative_Error(Relative_Error < -max_err) = -max_err;
 
 % Calculate Water Vapor Optical Depth at R_end (4 km) ---
 R_4km_idx = find(R >= 4000, 1, 'first');
-WV_OD_4km = 2*(OD_on(R_4km_idx) - OD_off(R_4km_idx)); %two-way WV OD
+WV_OD_4km = (OD_on(R_4km_idx) - OD_off(R_4km_idx)) % one-way WV OD
 disp('should be close to 1 for optimal profile retrievals');
 disp('-------------------------------------------------------------------');
 
@@ -143,14 +157,14 @@ figure('Position', [100, 100, 1400, 450]);
 subplot(1, 3, 1);
 semilogy(R, N_off_raw, 'b-', 'DisplayName', 'N_{off} Raw'); hold on;
 semilogy(R, N_on_raw, 'r-', 'DisplayName', 'N_{on} Raw');
-semilogy(R, N_AP_total, 'k--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
+semilogy(R, N_AP_decay, 'k--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
 %semilogy(R, N_bg * ones(size(R)), 'g:', 'LineWidth', 1, 'DisplayName', 'Constant BG');
 title('Raw Measured Signals (Semilogy)');
 xlabel('Range (m)');
 ylabel('Counts/Bin');
 legend('Location', 'southwest');
 xlim([R_start, R_end]);
-ylim([N_dark/2, max(N_off_raw)*1.1]);
+ylim([1, max(N_off_raw)*1.1]);
 grid on;
 
 % True vs. Retrieved Water Vapor Density (check that these are the same)
@@ -175,3 +189,40 @@ ylabel('Relative Error (%)');
 ylim([-50, 50]);
 xlim([R_start, R_end/2]);
 grid on;
+
+
+
+
+%% Full Contaminated Retrieval (No Taylor Approximation)
+
+% 1. Calculate the contaminated log ratio (often called the 'A-ratio' log)
+% N_off_raw and N_on_raw already include N_AP_decay
+Log_Ratio_Raw = log(N_off_raw ./ N_on_raw);
+
+% 2. Calculate the derivative (slope) using the finite difference method (gradient)
+% The 'gradient' function handles the differences between bins and divides by dR
+% The output has the same size as Log_Ratio_Raw, with endpoints being approximations.
+dLogRatio_dR_Raw = gradient(Log_Ratio_Raw, dR);
+
+% 3. Apply the DIAL equation to get the full retrieval
+% The factor is 1 / (2 * K_delta)
+wv_retrieved_full = (1 / (2 * K_delta)) * dLogRatio_dR_Raw;
+
+
+%% Comparison Logic (Run this after the 'Error Calculation' section)
+% Use the middle bins (R_plot range) for comparison
+R_comp_idx = 1:length(R_plot);
+
+rho_retrieved_analytical = wv_retrieved(R_comp_idx);
+rho_retrieved_full_comp = wv_retrieved_full(R_comp_idx);
+
+% Calculate the difference between your analytical approximation and the full retrieval
+% This is the error introduced *by the Taylor approximation itself*
+Taylor_Error_Difference = 100 * (rho_retrieved_analytical - rho_retrieved_full_comp) ./ rho_retrieved_full_comp;
+
+R_mid = R_plot; % Use R_plot, which is the correct length (N_bins - 1)
+% Display the maximum magnitude of the error introduced by the approximation
+fprintf('\n--------------------------------------------------------------\n');
+fprintf('MAX ERROR DUE TO TAYLOR APPROXIMATION (near range): %.2f%%\n', max(abs(Taylor_Error_Difference(R < 500))));
+fprintf('MAX ERROR DUE TO TAYLOR APPROXIMATION (far range):  %.2f%%\n', max(abs(Taylor_Error_Difference(R > 3000))));
+fprintf('--------------------------------------------------------------\n');
