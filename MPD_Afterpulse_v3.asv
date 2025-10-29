@@ -1,4 +1,4 @@
-%% MicroPulse DIAL Afterpulse Error Simulation (Refactored)
+%% MicroPulse DIAL Afterpulse Error Simulation 
 
 clear; close all; clc;
 
@@ -6,7 +6,7 @@ clear; close all; clc;
 
 % System Parameters
 tau_pulse = 200e-9;         % Pulse width (s)
-R_start = 200;              % Start range for retrieval (m)
+R_start = 0;              % Start range for retrieval (m)
 R_end = 5000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
 P_laser = 50e-3;            % Avg laser power (W) 
@@ -14,15 +14,16 @@ sigma_on_cm2 =0.99e-23;    % Online cross-section (cm^2/molecule)
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 
 % Detector Afterpulse Parameters
-lambda_AP_1 = 90;             % Afterpulse decay length 1 (m)
+N_dark = 5;                 % Constant Dark Count Rate (counts/bin)
+lambda_AP_1 = 100;             % Afterpulse decay length 1 (m)
 lambda_AP_2 = 2000;           % Afterpulse decay length 2 (m)
-A_1 = 40;                     % Scaling factor for short decay component
-A_2 = 1;                      % Scaling factor for long decay component
-AP_fraction = 5e-16;         % Afterpulse peak as fraction of C_sys
+A_1 = 1;                     % Scaling factor for short decay component
+A_2 = 1/40;                  % Scaling factor for long decay component
+AP_fraction = 5e-15;         % Afterpulse peak as fraction of C_sys
 
 % Geometric Overlap Parameters
-R_full_overlap = 1000;       % Range at which O(R) approaches 1 (m)
-%O_scale = 100;               % Scaling factor for the exponential rise 
+R_full_overlap = 1500;       % Range at which O(R) approaches 1 (m)
+
 
 % Simple Atmosphere Parameters 
 wv_mass_surf = 20;        % Water Vapor Density Profile
@@ -77,46 +78,41 @@ N_AP_peak = C_sys * AP_fraction;
 
 % Bi-exponential afterpulse function
 N_AP_decay = N_AP_peak * (A_1*exp(-(R - R_start)/lambda_AP_1)+ (A_2*exp(-(R - R_start) / lambda_AP_2)));
+N_AP_total = N_AP_decay + N_dark;
 
 % Contaminated signal profiles
 N_off_raw = N_off_true + N_AP_decay;
 N_on_raw = N_on_true + N_AP_decay;
 
-%% 1. FULL Contaminated Retrieval (Most Accurate Result - No Approximation)
+%% Full Contaminated Retrieval (No Approximation)
 
-% a. Calculate the contaminated log ratio
+% Calculate the contaminated log ratio
 Log_Ratio_Raw = log(N_off_raw ./ N_on_raw);
 
-% b. Calculate the derivative (slope) using the finite difference method
+% Calculate the derivative (slope) using the finite difference method
 dLogRatio_dR_Raw = gradient(Log_Ratio_Raw, dR);
 
-% c. Apply the DIAL equation to get the full retrieval
+% Apply the DIAL equation to get the full retrieval
 wv_retrieved_full = (1 / (2 * K_delta)) * dLogRatio_dR_Raw;
 
-% SET PRIMARY RETRIEVAL TO FULL RESULT
+% Set Primary retrieval to the full resultT
 wv_retrieved = wv_retrieved_full;
 
-%% 2. ANALYTICAL Error Calculation (Vectorized Full Quotient Rule)
+%% Analytical Error Calculation 
 % This recalculates the analytical error term (rho_error_analytical) for comparison
 
-% Use the first N_bins - 1 elements for derivatives and plotting
-R_comp = R(1:end-1);
-N_off_true_at_R = N_off_true(1:end-1);
-N_AP_at_R = N_AP_decay(1:end-1);
-dNoff_dR_at_R = dNoff_dR(1:end-1);
+% Term inside the derivative: N_AP * ( 1/N_off_true - 1/N_on_true )
+Difference_Term = N_AP_decay .* (1 ./ N_off_true - 1 ./ N_on_true);
 
-% Analytical AP_slope (dN_AP/dR) vectorized
-AP_slope_analytic = N_AP_peak * (A_1*(-1/lambda_AP_1) * exp(-(R_comp - R_start)/lambda_AP_1) + ...
-                       (A_2*(-1/lambda_AP_2) * exp(-(R_comp - R_start) / lambda_AP_2)));
+% Calculate the derivative of this term using gradient (numerical derivative)
+dDifferenceTerm_dR = gradient(Difference_Term, dR);
 
-% Full Quotient Rule (Analytic Approximation of the Error)
-% Numerator: (N_sig * dNAP/dR) - (NAP * dNsig/dR)
-Numerator_Analytic = (N_off_true_at_R .* AP_slope_analytic) - (N_AP_at_R .* dNoff_dR_at_R);
-% Denominator: (N_sig)^2
-Denominator_Analytic = N_off_true_at_R.^2;
+% Apply the DIAL factor: -1/(2 * K_delta)
+% We use the full N_bins length here, then trim later.
+rho_error_analytical_full_R = (1 / (2 * K_delta)) * dDifferenceTerm_dR;
 
-% rho_error_analytical ≈ -1/(2*K_delta) * d/dR [ N_AP/N_sig ]
-rho_error_analytical = (-1 / (2 * K_delta)) * (Numerator_Analytic ./ Denominator_Analytic);
+% Trim the analytical error vector to match R_plot length (N_bins - 1)
+rho_error_analytical = rho_error_analytical_full_R(1:end-1);
 
 
 %% Error Comparison and Plotting Setup
@@ -134,7 +130,6 @@ rho_error_true = rho_retrieved_plot - rho_true_plot;
 Taylor_Error_Difference = 100 * (rho_error_analytical - rho_error_true) ./ rho_true_plot;
 
 
-
 % Calculate and Clamp Total Relative Error (based on the accurate wv_retrieved)
 Relative_Error = 100 * (rho_retrieved_plot - rho_true_plot) ./ rho_true_plot;
 max_err = 500;
@@ -147,46 +142,50 @@ WV_OD_4km = (OD_on(R_4km_idx) - OD_off(R_4km_idx)) % one-way WV OD
 disp('should be close to 1 for optimal profile retrievals');
 disp('-------------------------------------------------------------------');
 
-% Display the Taylor approximation error using R_plot (R_mid)
-R_mid = R_plot; 
-fprintf('\n--------------------------------------------------------------\n');
-fprintf('MAX ERROR OF ANALYTICAL APPROXIMATION (NEAR R<500m): %.2f%%\n', max(abs(Taylor_Error_Difference(R_mid < 500))));
-fprintf('MAX ERROR OF ANALYTICAL APPROXIMATION (FAR R>3000m): %.2f%%\n', max(abs(Taylor_Error_Difference(R_mid > 3000))));
-fprintf('--------------------------------------------------------------\n');
 
-
-%% Plotting Results (Use the accurate wv_retrieved)
+%% Plotting Results 
 figure('Position', [100, 100, 1400, 450]);
 % Raw Measured Signals 
 subplot(1, 3, 1);
 semilogy(R, N_off_raw, 'b-', 'DisplayName', 'N_{off} Raw'); hold on;
 semilogy(R, N_on_raw, 'r-', 'DisplayName', 'N_{on} Raw');
+%semilogy(R, N_AP_total, 'g--', 'LineWidth', 2, 'DisplayName', 'Afterpulse+Dark');
 semilogy(R, N_AP_decay, 'k--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
-title('Raw Measured Signals (Semilogy)');
+title('Raw Measured Signals ilogy)');
 xlabel('Range (m)');
 ylabel('Counts/Bin');
-legend('Location', 'southwest');
+legend('Location', 'southwest','FontSize', 10);
 xlim([R_start, R_end]);
 ylim([1, max(N_off_raw)*1.1]);
 grid on;
 % True vs. Retrieved Water Vapor Density
 subplot(1, 3, 2);
 plot(R_plot, rho_true_plot, 'k-', 'LineWidth', 3, 'DisplayName', 'wv_{true}'); hold on;
-plot(R_plot, rho_retrieved_plot, 'r--', 'LineWidth', 2, 'DisplayName', 'wv_{retrieved}');
+plot(R_plot, rho_retrieved_plot, 'r--', 'LineWidth', 2, 'DisplayName', 'wv_{numerical retrieval}');
 title('Water Vapor Profile Retrieval');
 xlabel('Range (m)');
 ylabel('Density \rho (g/m^3)');
-legend('Location', 'northeast');
+legend('Location', 'northeast','FontSize', 12);
 ylim([0, wv_mass_surf * 2]);
 xlim([R_start, R_end/2]);
 grid on;
 % Systematic Relative Error 
 subplot(1, 3, 3);
-plot(R_plot, Relative_Error, 'm-', 'LineWidth', 2); hold on;
-plot([R_start, R_end], [0, 0], 'k--');
-title('Systematic Relative Error');
+% plot(R_plot, Relative_Error, 'm-', 'LineWidth', 2); hold on;
+% plot([R_start, R_end], [0, 0], 'k--');
+% title('Systematic Relative Error');
+% xlabel('Range (m)');
+% ylabel('Relative Error (%)');
+% ylim([-50, 50]);
+% xlim([R_start, R_end/2]);
+% grid on;
+plot(R_plot, rho_error_true,'k-', 'LineWidth', 2.5, 'DisplayName', 'Numerical Error' );
+hold on
+plot(R_plot, rho_error_analytical,'r--', 'LineWidth', 1.5, 'DisplayName', 'Analyitcal Error Approximation' );
+%plot([R_start, R_end], [0, 0], 'k:', 'LineWidth', 1);
 xlabel('Range (m)');
-ylabel('Relative Error (%)');
-ylim([-50, 50]);
+ylabel('Systematic Density Bias (g/m^3)');
+legend('Location','southeast','FontSize', 10);
+ylim([-3, 3]);
 xlim([R_start, R_end/2]);
-grid on;
+grid on

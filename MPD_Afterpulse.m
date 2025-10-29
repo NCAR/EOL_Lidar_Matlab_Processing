@@ -16,11 +16,10 @@ sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 % Detector/Afterpulse Parameters
 %N_dark = 0;                  % Constant Dark Count Rate (counts/bin)
 lambda_AP = 90;             % Afterpulse decay length (m)
-AP_fraction = 5e-14;         % Afterpulse peak as fraction of C_sys
+AP_fraction = 2e-15;         % Afterpulse peak as fraction of C_sys
 
 % Geometric Overlap Parameters
 R_full_overlap = 1500;       % Range at which O(R) approaches 1 (m)
-O_scale = 100;               % Scaling factor for the exponential rise 
 
 % Simple Atmosphere Parameters 
 %N_solar = 0;              % Solar background Count Rate (counts/bin)
@@ -52,7 +51,7 @@ N_bins = length(R);
 C_sys = (P_laser * c * tau_pulse / 2) * 1e30; 
 
 % Geometric Overlap Function 
-O_R_model = 1 - exp(-(R / O_scale).^2);
+O_R_model = 1 - exp(-(R / R_full_overlap).^2);
 O_R_model(R < R_start) = 0; % Ensure 0 until the start of the retrieval
 O_R = O_R_model;
 
@@ -165,40 +164,3 @@ ylabel('Relative Error (%)');
 ylim([-50, 50]);
 xlim([R_start, R_end/2]);
 grid on;
-
-
-
-%% Full Contaminated Retrieval (No Taylor Approximation)
-
-% 1. Calculate the contaminated log ratio (often called the 'A-ratio' log)
-% N_off_raw and N_on_raw already include N_AP_decay
-Log_Ratio_Raw = log(N_off_raw ./ N_on_raw);
-
-% 2. Calculate the derivative (slope) using the finite difference method (gradient)
-% The 'gradient' function handles the differences between bins and divides by dR
-% The output has the same size as Log_Ratio_Raw, with endpoints being approximations.
-dLogRatio_dR_Raw = gradient(Log_Ratio_Raw, dR);
-
-% 3. Apply the DIAL equation to get the full retrieval
-% The factor is 1 / (2 * K_delta)
-wv_retrieved_full = (1 / (2 * K_delta)) * dLogRatio_dR_Raw;
-
-
-%% Comparison Logic 
-% Use the middle bins (R_plot range) for comparison
-R_comp_idx = 1:length(R_plot);
-
-rho_retrieved_analytical = wv_retrieved(R_comp_idx);
-rho_retrieved_full_comp = wv_retrieved_full(R_comp_idx);
-
-% Calculate the difference between your analytical approximation and the full retrieval
-% This is the error introduced *by the Taylor approximation itself*
-Taylor_Error_Difference = 100 * (rho_retrieved_analytical - rho_retrieved_full_comp) ./ rho_retrieved_full_comp;
-
-R_mid = R_plot; % Use R_plot, which is the correct length (N_bins - 1)
-
-% Display the maximum magnitude of the error introduced by the approximation
-fprintf('\n--------------------------------------------------------------\n');
-fprintf('MAX ERROR DUE TO TAYLOR APPROXIMATION (<500 m): %.2f%%\n', max(abs(Taylor_Error_Difference(R_mid < 500))));
-fprintf('MAX ERROR DUE TO TAYLOR APPROXIMATION (>3000 m):  %.2f%%\n', max(abs(Taylor_Error_Difference(R_mid > 3000))));
-fprintf('--------------------------------------------------------------\n');

@@ -85,7 +85,7 @@ xData =  linspace( fix(min(duration)),  ceil(max(duration)), round((ceil(max(dur
   set(gca, 'XTick',  xData) 
   colorbar('EastOutside');
   axis([fix(min(duration))  ceil(max(duration)) 0 10])
-  caxis([1e-1 1e2]);
+  caxis([1e-2 1e2]);
   %caxis([1 300]);
   hh = title({[node, ' ', ' Backscatter Ratio']},'fontweight','b','fontsize',font_size);  
   datetick('x','dd-mmm-yy','keeplimits', 'keepticks');
