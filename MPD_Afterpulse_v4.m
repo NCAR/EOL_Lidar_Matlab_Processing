@@ -10,27 +10,29 @@ R_start = 200;              % Start range for retrieval (m)
 R_end = 6000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
 P_laser = 50e-3;            % Avg laser power (W) 
-sigma_on_cm2 =0.5e-23;      % Online cross-section (cm^2/molecule)
+sigma_on_cm2 =0.5e-23;    % Online cross-section (cm^2/molecule)
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
-M = 20;                     % Smoothing 150 m / 7.5 m/bin = 20 bins
 
 % Detector Afterpulse Parameters
-N_dark = 5;                  % Constant Dark Count Rate (counts/bin)
-lambda_AP_1 = 200;           % Afterpulse decay length 1 (m)
-lambda_AP_2 = 2000;          % Afterpulse decay length 2 (m)
+N_dark = 5;                 % Constant Dark Count Rate (counts/bin)
+lambda_AP_1 = 150;             % Afterpulse decay length 1 (m)
+lambda_AP_2 = 2000;           % Afterpulse decay length 2 (m)
 A_1 = 1;                     % Scaling factor for short decay component
 A_2 = 1/80;                  % Scaling factor for long decay component
-AP_fraction = 5e-15;         % Afterpulse peak as fraction of C_sys
-C_sys_scale = 0.4e18;        % Scale counts/bin to something reasonable
+AP_fraction = 4e-15;         % Afterpulse peak as fraction of C_sys
+C_sys_scale = 0.4e18;          % Scales the counts/bin to something reasonable
+
+% Define smoothing window (150 m / 7.5 m/bin = 20 bins)
+M = 40; 
 
 % Geometric Overlap Parameters
 R_full_overlap = 1250;       % Range at which O(R) approaches 1 (m)
-R_sigmoid_width = 150;
+R_sigmoid_width = 175;
 
 % Simple Atmosphere Parameters 
 wv_mass_surf = 20;        % Water Vapor Density Profile
 wv_mass_true = @(R) wv_mass_surf .* exp(-R/2000); % Mass density profile (g/m^3)
-alpha_non_abs = 1e-5;     % Total aerosol and molecular (non-absorbing) extinction (m^-1)
+alpha_non_abs = 1e-8;     % Total aerosol and molecular (non-absorbing) extinction (m^-1)
 beta_a = 1e-7;            % general backscatter coefficient (m^-1 sr^-1)
 beta_R = @(R) beta_a.* exp(-R/8000); % backscatter profile (m^-1 sr^-1)
 
@@ -61,9 +63,8 @@ C_sys = (P_laser * c * tau_pulse / 2) * C_sys_scale;
 O_R_model = 1 ./ (1 + exp(-(R - R_full_overlap) / R_sigmoid_width));
 O_R_model(R < R_start) = 0; % Ensure 0 until the start of the retrieval
 O_R = O_R_model;
-%O_R(1:10) = 0; % Blank bin (R = R_start)
 % figure(2)
-% semilogy(R, O_R)
+%   semilogy(R, O_R)
 
 
 % Extinction and Optical Depth
@@ -91,9 +92,16 @@ N_off_raw = N_off_true + N_AP_decay;
 N_on_raw = N_on_true + N_AP_decay;
 
 %% Full Numerical Retrieval of contaminated signals
+% *** Applying 150 m (20 bin) smoothing for numerical stability ***
 
-% Calculate the contaminated log ratio
-Log_Ratio_Raw = log(N_off_raw ./ N_on_raw);
+
+
+% Apply moving average filter to the raw signals
+N_off_raw_smooth = movmean(N_off_raw, M);
+N_on_raw_smooth = movmean(N_on_raw, M);
+
+% Calculate the contaminated log ratio (using smoothed signals)
+Log_Ratio_Raw = log(N_off_raw_smooth ./ N_on_raw_smooth);
 
 % Calculate the derivative (slope) using the finite difference method
 dLogRatio_dR_Raw = gradient(Log_Ratio_Raw, dR);

@@ -1,29 +1,30 @@
 %% MicroPulse DIAL Afterpulse Error Simulation 
 
-clear; close all; clc;
+clear; close all; 
 
 %% Initialization and Unit Conversion
 
 % System Parameters
 tau_pulse = 200e-9;         % Pulse width (s)
-R_start = 0;              % Start range for retrieval (m)
-R_end = 5000;               % End range for retrieval (m)
+R_start = 200;              % Start range for retrieval (m)
+R_end = 6000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
 P_laser = 50e-3;            % Avg laser power (W) 
-sigma_on_cm2 =0.99e-23;    % Online cross-section (cm^2/molecule)
+sigma_on_cm2 =0.49e-23;    % Online cross-section (cm^2/molecule)
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 
 % Detector Afterpulse Parameters
 N_dark = 5;                 % Constant Dark Count Rate (counts/bin)
-lambda_AP_1 = 90;             % Afterpulse decay length 1 (m)
+lambda_AP_1 = 175;             % Afterpulse decay length 1 (m)
 lambda_AP_2 = 2000;           % Afterpulse decay length 2 (m)
 A_1 = 1;                     % Scaling factor for short decay component
-A_2 = 1/40;                  % Scaling factor for long decay component
+A_2 = 1/80;                  % Scaling factor for long decay component
 AP_fraction = 5e-15;         % Afterpulse peak as fraction of C_sys
+C_sys_scale = 0.5e18;          % Scales the counts/bin to something reasonable
 
 % Geometric Overlap Parameters
 R_full_overlap = 1500;       % Range at which O(R) approaches 1 (m)
-
+R_sigmoid_width = 300;
 
 % Simple Atmosphere Parameters 
 wv_mass_surf = 20;        % Water Vapor Density Profile
@@ -53,12 +54,15 @@ R_plot = R(1:end-1) + dR/2;
 %% Lidar Forward Model 
 
 % System Constant
-C_sys = (P_laser * c * tau_pulse / 2) * 1e17; 
+C_sys = (P_laser * c * tau_pulse / 2) * C_sys_scale; 
 
 % Geometric Overlap Function 
-O_R_model = 1 - exp(-(R / R_full_overlap).^2); % 
+O_R_model = 1 ./ (1 + exp(-(R - R_full_overlap) / R_sigmoid_width));
 O_R_model(R < R_start) = 0; % Ensure 0 until the start of the retrieval
 O_R = O_R_model;
+figure(2)
+  semilogy(R, O_R)
+
 
 % Extinction and Optical Depth
 alpha_off = alpha_non_abs + K_off * wv_mass_true(R);
@@ -95,7 +99,7 @@ dLogRatio_dR_Raw = gradient(Log_Ratio_Raw, dR);
 % Apply the DIAL equation to get the full retrieval
 rho_retrieved_full = (1 / (2 * K_delta)) * dLogRatio_dR_Raw;
 
-% Set Primary retrieval to the full resultT
+% Set Primary retrieval to the full result
 rho_retrieved = rho_retrieved_full;
 
 %% Analytical Error Calculation 
@@ -110,22 +114,20 @@ dDifferenceTerm_dR = gradient(Difference_Term, dR);
 % Apply the DIAL factor: -1/(2 * K_delta)
 rho_error_analytical_full_R = (1 / (2 * K_delta)) * dDifferenceTerm_dR;
 
-% Trim the analytical error vector to match R_plot length (N_bins - 1)
-rho_error_analytical = rho_error_analytical_full_R(1:end-1);
-
 
 %% Error Comparison and Plotting Setup
 % True Water Vapor at plotting points
 rho_true_plot = wv_mass_true(R_plot);
 rho_retrieved_plot = rho_retrieved(1:end-1);
+rho_error_analytical = rho_error_analytical_full_R(1:end-1);
 
 % True Systematic Error (Result of Full Retrieval - True Profile) 
 rho_error_true = rho_retrieved_plot - rho_true_plot;
 
 % Error of the Analytical Approximation Relative to the True Signal 
-Analytical_Relative_Error = 100 * (rho_error_analytical - rho_error_true) ./ rho_true_plot;
+Analytical_Relative_Error = 100 * (rho_error_analytical) ./ rho_true_plot;
 
-% % Calculate and Clamp Total Relative Error (based on the accurate rho_retrieved)
+% % Calculate and Clamp Total Relative Error 
 Relative_Error = 100 * (rho_retrieved_plot - rho_true_plot) ./ rho_true_plot;
 % max_err = 500;
 % Relative_Error(Relative_Error > max_err) = max_err;
@@ -173,22 +175,24 @@ plot(R_plot, rho_error_true,'k-', 'LineWidth', 2.5, 'DisplayName', 'Full Numeric
 hold on
 plot(R_plot, rho_error_analytical,'r--', 'LineWidth', 1.5, 'DisplayName', 'Analyitcal Approximation' );
 %plot([R_start, R_end], [0, 0], 'k:', 'LineWidth', 1);
+title('Systematic Bias');
 xlabel('Range (m)');
 ylabel('Systematic Density Bias (g/m^3)');
-legend('Location','southeast','FontSize', 10);
+legend('Location','northeast','FontSize', 10);
 ylim([-3, 3]);
 xlim([R_start, R_end/2]);
 grid on
 
 % Systematic Relative Error 
  subplot(1, 4, 4);
- plot(R_plot, Relative_Error, 'b-', 'LineWidth', 2); hold on;
- plot(R_plot, Analytical_Relative_Error, 'r-', 'LineWidth', 2)
+ plot(R_plot, Relative_Error, 'k-', 'LineWidth', 2, 'DisplayName', 'Full Numerical' );
+ hold on;
+ plot(R_plot, Analytical_Relative_Error, 'r--', 'LineWidth', 2, 'DisplayName', 'Analyitcal Approximation' );
 % plot([R_start, R_end], [0, 0], 'k--');
  title('Systematic Relative Error');
  xlabel('Range (m)');
  ylabel('Relative Error (%)');
- legend('Location','southeast','FontSize', 10);
+ legend('Location','northeast','FontSize', 10);
  ylim([-10, 10]);
  xlim([R_start, R_end/2]);
  grid on;

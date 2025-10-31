@@ -1,0 +1,33 @@
+
+header = 10; % not sure if this is needed
+% show all the data summed to find calibration start stop periods
+WV_off_sum_counts=sum(data_wv_off(:,header :end),2);
+figure(1)
+semilogy(WV_off_sum_counts)
+AP_start = 14896;
+AP_stop = 15370;
+profiles =  AP_stop-AP_start;
+gap = 500; 
+
+gate=150*MCS.bin_duration/1000;
+range=0:gate:(size(data_wv_off,2)-header)*gate;
+
+AP_off=sum(data_wv_off(AP_start:AP_stop,header:end));
+AP_on=sum(data_wv_on(AP_start:AP_stop,header:end));
+Off_raw=sum(data_wv_off(AP_start-gap-profiles:AP_start-gap,header:end));
+On_raw=sum(data_wv_on(AP_start-gap-profiles:AP_start-gap,header:end));
+
+figure(2)
+semilogy(range,AP_off-median(AP_off),'r')
+hold on
+semilogy(range, AP_off,'r--')
+semilogy(range,Off_raw-median(Off_raw),'k')
+semilogy(range,Off_raw,'k--')
+semilogy(range,On_raw-median(On_raw),'b')
+semilogy(range,On_raw,'b--')
+hold off
+grid on
+xlabel('range (m)')
+ylabel('background subtracted counts/bin')
+xlim([0 10000])
+ylim([1 1e5])
