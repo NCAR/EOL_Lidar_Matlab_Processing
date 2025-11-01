@@ -5,7 +5,7 @@ clear; close all;
 %% Initialization and Unit Conversion
 
 % System Parameters
-tau_pulse = 200e-9;         % Pulse width (s)
+tau_pulse = 1e-6;         % Pulse width (s)
 R_start = 200;              % Start range for retrieval (m)
 R_end = 6000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
@@ -14,16 +14,14 @@ sigma_on_cm2 =0.5e-23;    % Online cross-section (cm^2/molecule)
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 
 % Detector Afterpulse Parameters
-N_dark = 5;                 % Constant Dark Count Rate (counts/bin)
-lambda_AP_1 = 150;             % Afterpulse decay length 1 (m)
+N_dark = 5;                   % Constant Dark Count Rate (counts/bin)
+lambda_AP_1 = 150;            % Afterpulse decay length 1 (m)
 lambda_AP_2 = 2000;           % Afterpulse decay length 2 (m)
-A_1 = 1;                     % Scaling factor for short decay component
-A_2 = 1/80;                  % Scaling factor for long decay component
-AP_fraction = 4e-15;         % Afterpulse peak as fraction of C_sys
-C_sys_scale = 0.4e18;          % Scales the counts/bin to something reasonable
-
-% Define smoothing window (150 m / 7.5 m/bin = 20 bins)
-M = 40; 
+A_1 = 1;                      % Scaling factor for short decay component
+A_2 = 1/80;                   % Scaling factor for long decay component
+AP_fraction = 4e-15;          % Afterpulse peak as fraction of C_sys
+C_sys_scale = 0.4e18;         % Scales the counts/bin to something reasonable
+M = 20;  		      % Smoothing (150 m / 7.5 m/bin = 20 bins) to simulate 1µs pulse
 
 % Geometric Overlap Parameters
 R_full_overlap = 1250;       % Range at which O(R) approaches 1 (m)
