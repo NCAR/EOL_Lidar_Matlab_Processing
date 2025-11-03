@@ -5,27 +5,27 @@ clear; close all;
 %% Initialization and Unit Conversion
 
 % System Parameters
-tau_pulse = 1e-6;         % Pulse width (s)
+tau_pulse = 1e-6;           % Pulse width (s)
 R_start = 200;              % Start range for retrieval (m)
 R_end = 6000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
 P_laser = 50e-3;            % Avg laser power (W) 
-sigma_on_cm2 =0.5e-23;    % Online cross-section (cm^2/molecule)
+sigma_on_cm2 =0.5e-23;      % Online cross-section (cm^2/molecule)
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 
 % Detector Afterpulse Parameters
 N_dark = 5;                   % Constant Dark Count Rate (counts/bin)
-lambda_AP_1 = 150;            % Afterpulse decay length 1 (m)
-lambda_AP_2 = 2000;           % Afterpulse decay length 2 (m)
+lambda_AP_1 = 80;            % Afterpulse decay length 1 (m)
+lambda_AP_2 = 1000;           % Afterpulse decay length 2 (m)
 A_1 = 1;                      % Scaling factor for short decay component
-A_2 = 1/80;                   % Scaling factor for long decay component
+A_2 = 1/20;                   % Scaling factor for long decay component
 AP_fraction = 4e-15;          % Afterpulse peak as fraction of C_sys
-C_sys_scale = 0.4e18;         % Scales the counts/bin to something reasonable
-M = 20;  		      % Smoothing (150 m / 7.5 m/bin = 20 bins) to simulate 1µs pulse
+C_sys_scale = 1e17;         % Scales the counts/bin to something reasonable
+
 
 % Geometric Overlap Parameters
-R_full_overlap = 1250;       % Range at which O(R) approaches 1 (m)
-R_sigmoid_width = 175;
+R_full_overlap = 1200;       % Range at which O(R) approaches 1 (m)
+R_sigmoid_width = 160;
 
 % Simple Atmosphere Parameters 
 wv_mass_surf = 20;        % Water Vapor Density Profile
@@ -51,6 +51,9 @@ N_bins = length(R);
 
 % Midpoint range vector for plotting (N_bins - 1 length)
 R_plot = R(1:end-1) + dR/2;
+
+% Smoothing to simulate laser pulse length
+M = c*tau_pulse/2/dR; 
 
 %% Lidar Forward Model 
 
@@ -168,18 +171,18 @@ grid on;
 % True vs. Retrieved Water Vapor Density
 subplot(1, 4, 2);
 plot(R_plot, rho_true_plot, 'k-', 'LineWidth', 3, 'DisplayName', 'wv_{true}'); hold on;
-plot(R_plot, rho_retrieved_plot, 'r--', 'LineWidth', 2, 'DisplayName', 'wv_{numerical retrieval}');
+plot(R_plot, rho_retrieved_plot, 'b-', 'LineWidth', 2, 'DisplayName', 'wv_{numerical retrieval}');
 title('Water Vapor Profile Retrieval');
 xlabel('Range (m)');
 ylabel('Density \rho (g/m^3)');
 legend('Location', 'northeast','FontSize', 12);
 ylim([0, wv_mass_surf * 2]);
-xlim([R_start, R_end/2]);
+xlim([0, R_end/2]);
 grid on;
 
 % Systematic density bias 
 subplot(1, 4, 3);
-plot(R_plot, rho_error_true,'k-', 'LineWidth', 2.5, 'DisplayName', 'Full Numerical' );
+plot(R_plot, rho_error_true,'b-', 'LineWidth', 2.5, 'DisplayName', 'Full Numerical' );
 hold on
 plot(R_plot, rho_error_analytical,'r--', 'LineWidth', 1.5, 'DisplayName', 'Analyitcal Approximation' );
 %plot([R_start, R_end], [0, 0], 'k:', 'LineWidth', 1);
@@ -188,12 +191,12 @@ xlabel('Range (m)');
 ylabel('Systematic Density Bias (g/m^3)');
 legend('Location','northeast','FontSize', 10);
 ylim([-3, 3]);
-xlim([R_start, R_end/2]);
+xlim([0, R_end/2]);
 grid on
 
 % Systematic Relative Error 
  subplot(1, 4, 4);
- plot(R_plot, Relative_Error, 'k-', 'LineWidth', 2, 'DisplayName', 'Full Numerical' );
+ plot(R_plot, Relative_Error, 'b-', 'LineWidth', 2, 'DisplayName', 'Full Numerical' );
  hold on;
  plot(R_plot, Analytical_Relative_Error, 'r--', 'LineWidth', 2, 'DisplayName', 'Analyitcal Approximation' );
 % plot([R_start, R_end], [0, 0], 'k--');
@@ -201,23 +204,23 @@ grid on
  xlabel('Range (m)');
  ylabel('Relative Error (%)');
  legend('Location','northeast','FontSize', 10);
- ylim([-10, 10]);
- xlim([R_start, R_end/2]);
+ ylim([-20, 20]);
+ xlim([0, R_end/2]);
  grid on;
 
 
 
-% figure('Position', [100, 100, 1000, 600]);
-% 
-% % Raw Measured Signals 
-% semilogy(R, N_off_raw, 'k-', 'DisplayName', 'N_{off} Raw'); hold on;
-% semilogy(R, N_on_raw, 'b-', 'DisplayName', 'N_{on} Raw');
-% %semilogy(R, N_AP_total, 'r--', 'LineWidth', 2, 'DisplayName', 'Afterpulse+Dark');
-% semilogy(R, N_AP_decay, 'r--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
-% title('Raw Measured Signals');
-% xlabel('Range (m)');
-% ylabel('Counts/Bin');
-% legend('Location', 'southwest','FontSize', 10);
-% xlim([R_start, R_end]);
-% ylim([1, max(N_off_raw)*1.1]);
-% grid on;
+figure('Position', [100, 100, 1000, 600]);
+
+% Raw Measured Signals 
+semilogy(R, N_off_raw, 'k-', 'DisplayName', 'N_{off} Raw'); hold on;
+semilogy(R, N_on_raw, 'b-', 'DisplayName', 'N_{on} Raw');
+%semilogy(R, N_AP_total, 'r--', 'LineWidth', 2, 'DisplayName', 'Afterpulse+Dark');
+semilogy(R, N_AP_decay, 'r--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
+title('Raw Measured Signals');
+xlabel('Range (m)');
+ylabel('Counts/Bin');
+legend('Location', 'southwest','FontSize', 10);
+xlim([0, R_end]);
+ylim([1, max(N_off_raw)*1.1]);
+grid on;

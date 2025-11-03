@@ -5,26 +5,27 @@ clear; close all;
 %% Initialization and Unit Conversion
 
 % System Parameters
-tau_pulse = 200e-9;         % Pulse width (s)
+tau_pulse = 1e-6;           % Pulse width (s)
 R_start = 200;              % Start range for retrieval (m)
 R_end = 6000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
 P_laser = 50e-3;            % Avg laser power (W) 
-sigma_on_cm2 =0.49e-23;    % Online cross-section (cm^2/molecule)
+sigma_on_cm2 =0.5e-23;      % Online cross-section (cm^2/molecule)
 sigma_off_cm2 = 7.0e-25;    % Offline cross-section (cm^2/molecule)
 
 % Detector Afterpulse Parameters
-N_dark = 5;                 % Constant Dark Count Rate (counts/bin)
-lambda_AP_1 = 175;             % Afterpulse decay length 1 (m)
+N_dark = 5;                   % Constant Dark Count Rate (counts/bin)
+lambda_AP_1 = 150;            % Afterpulse decay length 1 (m)
 lambda_AP_2 = 2000;           % Afterpulse decay length 2 (m)
-A_1 = 1;                     % Scaling factor for short decay component
-A_2 = 1/80;                  % Scaling factor for long decay component
-AP_fraction = 5e-15;         % Afterpulse peak as fraction of C_sys
-C_sys_scale = 0.5e18;          % Scales the counts/bin to something reasonable
+A_1 = 1;                      % Scaling factor for short decay component
+A_2 = 1/80;                   % Scaling factor for long decay component
+AP_fraction = 4e-15;          % Afterpulse peak as fraction of C_sys
+C_sys_scale = 1e17;         % Scales the counts/bin to something reasonable
+
 
 % Geometric Overlap Parameters
-R_full_overlap = 1500;       % Range at which O(R) approaches 1 (m)
-R_sigmoid_width = 300;
+R_full_overlap = 1250;       % Range at which O(R) approaches 1 (m)
+R_sigmoid_width = 175;
 
 % Simple Atmosphere Parameters 
 wv_mass_surf = 20;        % Water Vapor Density Profile
@@ -51,6 +52,9 @@ N_bins = length(R);
 % Midpoint range vector for plotting (N_bins - 1 length)
 R_plot = R(1:end-1) + dR/2;
 
+% Smoothing to simulate laser pulse length
+M = c*tau_pulse/2/dR; 
+
 %% Lidar Forward Model 
 
 % System Constant
@@ -60,8 +64,8 @@ C_sys = (P_laser * c * tau_pulse / 2) * C_sys_scale;
 O_R_model = 1 ./ (1 + exp(-(R - R_full_overlap) / R_sigmoid_width));
 O_R_model(R < R_start) = 0; % Ensure 0 until the start of the retrieval
 O_R = O_R_model;
-figure(2)
-  semilogy(R, O_R)
+% figure(2)
+%   semilogy(R, O_R)
 
 
 % Extinction and Optical Depth
@@ -89,9 +93,16 @@ N_off_raw = N_off_true + N_AP_decay;
 N_on_raw = N_on_true + N_AP_decay;
 
 %% Full Numerical Retrieval of contaminated signals
+% *** Applying 150 m (20 bin) smoothing for numerical stability ***
 
-% Calculate the contaminated log ratio
-Log_Ratio_Raw = log(N_off_raw ./ N_on_raw);
+
+
+% Apply moving average filter to the raw signals
+N_off_raw_smooth = movmean(N_off_raw, M);
+N_on_raw_smooth = movmean(N_on_raw, M);
+
+% Calculate the contaminated log ratio (using smoothed signals)
+Log_Ratio_Raw = log(N_off_raw_smooth ./ N_on_raw_smooth);
 
 % Calculate the derivative (slope) using the finite difference method
 dLogRatio_dR_Raw = gradient(Log_Ratio_Raw, dR);
@@ -145,10 +156,10 @@ figure('Position', [100, 100, 1400, 450]);
 
 % Raw Measured Signals 
 subplot(1, 4, 1);
-semilogy(R, N_off_raw, 'b-', 'DisplayName', 'N_{off} Raw'); hold on;
-semilogy(R, N_on_raw, 'r-', 'DisplayName', 'N_{on} Raw');
+semilogy(R, N_off_raw, 'k-', 'DisplayName', 'N_{off} Raw'); hold on;
+semilogy(R, N_on_raw, 'b-', 'DisplayName', 'N_{on} Raw');
 %semilogy(R, N_AP_total, 'g--', 'LineWidth', 2, 'DisplayName', 'Afterpulse+Dark');
-semilogy(R, N_AP_decay, 'k--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
+semilogy(R, N_AP_decay, 'r--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
 title('Raw Measured Signals');
 xlabel('Range (m)');
 ylabel('Counts/Bin');
@@ -196,3 +207,20 @@ grid on
  ylim([-10, 10]);
  xlim([R_start, R_end/2]);
  grid on;
+
+
+
+figure('Position', [100, 100, 1000, 600]);
+
+% Raw Measured Signals 
+semilogy(R, N_off_raw, 'k-', 'DisplayName', 'N_{off} Raw'); hold on;
+semilogy(R, N_on_raw, 'b-', 'DisplayName', 'N_{on} Raw');
+%semilogy(R, N_AP_total, 'r--', 'LineWidth', 2, 'DisplayName', 'Afterpulse+Dark');
+semilogy(R, N_AP_decay, 'r--', 'LineWidth', 2, 'DisplayName', 'Afterpulse');
+title('Raw Measured Signals');
+xlabel('Range (m)');
+ylabel('Counts/Bin');
+legend('Location', 'southwest','FontSize', 10);
+xlim([0, R_end]);
+ylim([1, max(N_off_raw)*1.1]);
+grid on;
