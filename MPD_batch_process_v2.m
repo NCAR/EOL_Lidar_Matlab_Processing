@@ -1,8 +1,8 @@
 % example batch process
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing'
 
-start_date = '20251023';   
-stop_date =  '20251027'; 
+start_date = '20251104';   
+stop_date =  '20251104'; 
 
 if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1  % when running on fog server
   prompt = 'Enter start date (e.g., 20230411)';

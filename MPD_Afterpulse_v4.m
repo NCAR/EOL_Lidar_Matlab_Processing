@@ -7,7 +7,7 @@ clear; close all;
 % System Parameters
 tau_pulse = 1e-6;           % Pulse width (s)
 R_start = 200;              % Start range for retrieval (m)
-R_end = 5000;               % End range for retrieval (m)
+R_end = 6000;               % End range for retrieval (m)
 dR = 7.5;                   % gate size (m)
 
 % Constants
@@ -24,9 +24,9 @@ N_dark = 5;                   % Constant Dark Count Rate (counts/bin)
 lambda_AP_1 = 80;             % Afterpulse decay length 1 (m)
 lambda_AP_2 = 1000;           % Afterpulse decay length 2 (m)
 A_1 = 1;                      % Scaling factor for short decay component
-A_2 = 1/20;                   % Scaling factor for long decay component
+A_2 = 1/25;                   % Scaling factor for long decay component
 AP_fraction = 4e-15;          % Afterpulse peak as fraction of C_sys
-C_sys_scale = 1e17;         
+C_sys_scale = 2e17;         
 
 % Geometric Overlap Parameters
 R_full_overlap = 1200;       

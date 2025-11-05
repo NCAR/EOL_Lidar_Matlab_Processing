@@ -4,8 +4,13 @@ header = 10; % not sure if this is needed
 WV_off_sum_counts=sum(data_wv_off(:,header :end),2);
 figure(1)
 semilogy(WV_off_sum_counts)
+
 AP_start = 14896;
 AP_stop = 15370;
+
+AP_start = 17342;
+AP_stop = 18101;
+
 profiles =  AP_stop-AP_start;
 gap = 500; 
 
@@ -29,7 +34,8 @@ hold off
 grid on
 xlabel('range (m)')
 ylabel('background subtracted counts/bin')
-xlim([0 1000])
+xlim([0 6000])
 ylim([1 1e5])
 legend('Location', 'northeast','FontSize', 12);
-title('29 Oct MPD04 Afterpulse Cal, 1\mus pulse');
+%title('29 Oct MPD04 Afterpulse Cal, 1\mus pulse');
+title('04 Nov MPD04 Afterpulse Cal, 1\mus pulse');

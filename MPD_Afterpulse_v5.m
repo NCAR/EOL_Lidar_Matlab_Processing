@@ -112,6 +112,10 @@ Log_Ratio_True_Contaminated = log(N_off_raw_true ./ N_on_raw_true);
 rho_retrieved_true_error = (1 / (2 * K_delta)) * gradient(Log_Ratio_True_Contaminated, dR);
 
 % Error is calculated relative to the smoothed baseline 
+% Othereise a systematic error inherent to pulse smearing itself occurs when using the log-ratio technique.
+% This is a processing artifact. The log-ratio of the smoothed signals is not equal to the smoothed log-ratio of the signals, 
+% which is what the DIAL equation fundamentally requires for an instantaneous measurement.
+% The smoothing (which is a convolution) and the non-linear DIAL operators do not commute.
 rho_error_true_uncorrected_AP = rho_retrieved_true_error(1:end-1) - rho_retrieved_baseline(1:end-1);
 
 
@@ -119,7 +123,7 @@ rho_error_true_uncorrected_AP = rho_retrieved_true_error(1:end-1) - rho_retrieve
 
 % Scaling factor (kappa) now represents: N_AP_subtracted / N_AP_true
 % A value of kappa=1.0 will yield the minimum retrieval error.
-kappa_test_values = [0.25, 0.5, 0.75, 1.0, 1.25 1.5]; % Updated test values for clarity
+kappa_test_values = [0.5, 0.75, 1.0, 1.25, 1.5]; % Updated test values for clarity
 error_profiles_scaled = cell(1, length(kappa_test_values));
 legend_labels = cell(1, length(kappa_test_values));
 
@@ -173,8 +177,7 @@ end
 
 % --- PLOT CHANGE ---
 plot(R_plot, 100 * rho_error_true_uncorrected_AP ./ rho_true_plot, 'k--', 'LineWidth', 2.5, 'DisplayName', 'Uncorrected Baseline ($\kappa=0$ Subtraction)');
-
-plot([R_start, R_end/2], [0, 0], 'k:');
+%plot([R_start, R_end/2], [0, 0], 'k:');
 title('Systematic Relative Error vs. Afterpulse Correction Factor ($\kappa$)', 'Interpreter', 'latex');
 xlabel('Range (m)');
 ylabel('Relative Error (%)');
