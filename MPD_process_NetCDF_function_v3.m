@@ -24,10 +24,10 @@ flag.plot_data = 1;  % need to have this one to save the figs
 flag.troubleshoot = 0; % shows extra plots used for troubleshooting
 p_hour = 20; % hour to show troubleshooting profiles
 read_time_in = 4; % set read data in time increments (time in seconds) 
-ave_time.wv = 10; %10.0; % averaging time (in minutes) for the water vapor and O2 
-ave_time.rb = 2.0; %5.0; % averaging time (in minutes) for the relative backscatter
+ave_time.wv = 15; %10.0; % averaging time (in minutes) for the water vapor and O2 
+ave_time.rb = 1.0; %5.0; % averaging time (in minutes) for the relative backscatter
 ave_time.gr = 1.0; % gridding time (in minutes) for the output files (native is 2 sec)
-%ave_range.gr = 75; % grid data to this range (useful for SmartSwitch tests)
+
 
 if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1  % when running on fog server
    serv_path = '/export/smaug1/rsfdata/MPD/'; 

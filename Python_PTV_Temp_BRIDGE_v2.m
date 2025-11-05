@@ -6,7 +6,7 @@ node = 'MPD04';
 serv_path = '/Volumes/eol/sci/mhayman';
 plot_path = '/Users/spuler/Desktop';
 
-data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.2');
+data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.7');
 plot_dir = fullfile(plot_path, 'mpd', 'Plots');
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/matplotlib/';
 addpath '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing'

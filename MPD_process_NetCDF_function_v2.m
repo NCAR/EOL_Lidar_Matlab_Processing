@@ -79,7 +79,8 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2)
  end
  
 % Pause here to create an afterpulse file if desired (run MPS_afterpulse_cals_v2.m)
- 
+
+
 % process the main ch without afterpulse correction 
 %if strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1 
 if (strcmp(channels,'ALL') == 1 || strcmp(channels,'WV') == 1) && strcmp(correction,'AP_OFF') == 1 
@@ -106,7 +107,7 @@ end
   [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
          O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder,cal_serv_path, receiver_scale_factor);
   [N_WV, N_WV_error] = MPD_WV_analysis_function_v1(data_wv_on, data_wv_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-         profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path);
+         profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path, read_time_in);
   O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
          time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr, write_data_folder, flag);
  end 
@@ -174,7 +175,7 @@ if (strcmp(channels,'ALL') == 1 || strcmp(channels,'O2') == 1) && strcmp(correct
   [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = Process_HSRL_K_data(O2_online_comb, O2_offline_comb,...
          O2_online_mol,O2_offline_mol, time_comb, range, Surf_T, Surf_P, flag, node, daystr, Receiver_Scan_File, write_data_folder,cal_serv_path, receiver_scale_factor);
   [N_WV, N_WV_error] = MPD_WV_analysis_function_v1(data_wv_on, data_wv_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-         profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path);
+         profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path, read_time_in);
   O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
          time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, O2_on_wavelength, node, daystr, write_data_folder, flag);
 end
