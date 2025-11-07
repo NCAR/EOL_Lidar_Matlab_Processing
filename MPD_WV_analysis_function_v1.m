@@ -78,7 +78,8 @@ RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
 %Spatial averaging (range average) in bins.  
 gate = round((MCS.bin_duration*1e-9*3e8/2)*100)/100
 
-delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
+res = 75;  %step resolution
+delta_r_index =  res/gate; % this is the cumlative sum photons gate spacing 
 %delta_r_index =  1; % proces at the native gate spacing
 delta_r = delta_r_index*gate*100; % delta r in cm
 r1 = round(1500/gate); % index for smoothing range 1 (1500m)
@@ -489,8 +490,8 @@ end
    RB_on = interp1(range, RB_on', range_grid, method, extrapolation)';
    range = range_grid;
    gate = 37.5;
-   delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
-   %delta_r = delta_r_index*gate*100; % delta r in cm
+   delta_r_index =  res/gate; % this is the cumlative sum photons gate spacing 
+   delta_r = delta_r_index*gate*100; % delta r in cm
    r1 = round(1500/gate); % index for smoothing range 1 (1500m)
    r2 = round(2500/gate); % index for smoothing range 2 (2500m)
    spatial_average1 = 150/gate; %150 meter smoothing range 1 
@@ -779,19 +780,38 @@ end
 
 %% DIAL Equation to calculate Number Density and error
 
- Inside = (Online_Temp_Spatial_Avg.*(circshift(Offline_Temp_Spatial_Avg, [0, -1])))./...
-     ((circshift(Online_Temp_Spatial_Avg, [0, -1])).*Offline_Temp_Spatial_Avg);
- del_cross = single(1./(2.*(sigma_on_total-sigma_off_total).*gate*100));
+% Inside = (Online_Temp_Spatial_Avg.*(circshift(Offline_Temp_Spatial_Avg, [0, -1])))./...
+%     ((circshift(Online_Temp_Spatial_Avg, [0, -1])).*Offline_Temp_Spatial_Avg);
+% del_cross = single(1./(2.*(sigma_on_total-sigma_off_total).*gate*100));
+
+% use larger DeltaR to suppress pulse smearing effect
+ Inside = (Online_Temp_Spatial_Avg.*(circshift(Offline_Temp_Spatial_Avg, [0, -delta_r_index])))./...
+     ((circshift(Online_Temp_Spatial_Avg, [0, -delta_r_index])).*Offline_Temp_Spatial_Avg);
+ del_cross = single(1./(2.*(sigma_on_total-sigma_off_total).*delta_r));
+ 
+ 
+ 
+ 
  N =  (del_cross.*log(Inside)); 
  N(N == inf) = nan; 
   
- % error calculation   
- N_error = (1/2./(sigma_on_total-sigma_off_total)./(gate*100)...    
+% error calculation   
+% N_error = (1/2./(sigma_on_total-sigma_off_total)./(gate*100)...    
+%    .*sqrt(...
+%    (Online_sum2+Background_on_sum2)./Online_sum2.^2 + ...
+%    (circshift(Online_sum2, [0, -1])+Background_on_sum2)./circshift(Online_sum2, [0, -1]).^2 + ...
+%    (Offline_sum2+Background_off_sum2)./Offline_sum2.^2 + ...
+%    (circshift(Offline_sum2, [0, -1])+Background_off_sum2)./circshift(Offline_sum2, [0, -1]).^2));
+
+
+N_error = (1/2./(sigma_on_total-sigma_off_total)./(delta_r)...    
     .*sqrt(...
     (Online_sum2+Background_on_sum2)./Online_sum2.^2 + ...
-    (circshift(Online_sum2, [0, -1])+Background_on_sum2)./circshift(Online_sum2, [0, -1]).^2 + ...
+    (circshift(Online_sum2, [0, -delta_r_index])+Background_on_sum2)./circshift(Online_sum2, [0, -delta_r_index]).^2 + ...
     (Offline_sum2+Background_off_sum2)./Offline_sum2.^2 + ...
-    (circshift(Offline_sum2, [0, -1])+Background_off_sum2)./circshift(Offline_sum2, [0, -1]).^2));
+    (circshift(Offline_sum2, [0, -delta_r_index])+Background_off_sum2)./circshift(Offline_sum2, [0, -delta_r_index]).^2));
+
+
 
  N_1_error = real(N_error./sqrt(spatial_average1));
  N_2_error = real(N_error./sqrt(spatial_average2));

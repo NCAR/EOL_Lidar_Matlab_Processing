@@ -5,10 +5,10 @@ clear; close all;
 %% Initialization and Unit Conversion
 
 % System Parameters
-tau_pulse = 1e-6;           % Pulse width (s)
+tau_pulse = 0.2e-6;           % Pulse width (s)
 R_start = 300;              % Start range for retrieval (m)
 R_end = 6000;               % End range for retrieval (m)
-dR = 7.5;                  % gate size (m)
+dR = 75;                  % gate size (m)
 
 % Constants
 c = 3e8;                    % Speed of light (m/s)
@@ -55,7 +55,11 @@ N_bins = length(R);
 R_plot = R(1:end-1) + dR/2;
 
 % Smoothing factor M (for true signal smearing)
-M = c*tau_pulse/2/dR; 
+%M = c*tau_pulse/2/dR; 
+M = round(c*tau_pulse/2/dR); 
+if M == 0; M = 1; end % Ensure M is at least 1 for movmean
+%M = 1
+
 
 %% Lidar Forward Model (Physically Resolved Signals)
 

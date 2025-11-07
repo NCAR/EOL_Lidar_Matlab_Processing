@@ -1,4 +1,4 @@
-function[N_avg, N_error] = MPD_WV_analysis_function_v2(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
+function[N_avg, N_error] = MPD_WV_analysis_function_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
     profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path)
 
 %% notes
@@ -78,7 +78,8 @@ RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
 %Spatial averaging (range average) in bins.  
 gate = round((MCS.bin_duration*1e-9*3e8/2)*100)/100
 
-delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
+res = 75;  %step resolution
+delta_r_index =  res/gate; % this is the cumlative sum photons gate spacing 
 %delta_r_index =  1; % proces at the native gate spacing
 delta_r = delta_r_index*gate*100; % delta r in cm
 r1 = round(1500/gate); % index for smoothing range 1 (1500m)
@@ -92,6 +93,21 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 %lambda_offset = 0.0;  
 
 %% Importing online and offline files from the selected date
+
+%read_time_in = 2; % read data in time increments of seconds (default it 2sec) 
+%if flag.near == 1
+%  [dummy,dummy,near_on, near_off, folder_in] = MPD_File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+%   % this is a way to process the near range data instead of the normal
+%   data_on = near_on;
+%   data_off = near_off;
+%   if strcmp(node,'MPD04') == 1 % MPD04 is using a low range channel
+%     blank_range = 187.5; % low range 
+%   end
+%else
+%  % [data_on,data_off,dummy, dummy,folder_in] = File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+%   [data_on,data_off,folder_in] = MPD_File_Retrieval_NetCDF_v3(flag, MCS.bins, folder_in, read_time_in); %use to read binary data (bin number passed in) 
+%  %[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2_noPow(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
+%end
 
 %Making the online and offline data files the same size
 try
@@ -152,7 +168,7 @@ end
 % analyze system stability 
 time_step = diff(Online_Raw_Data(:,1)); % median time step in seconds
 %time_step(time_step >= 4*median(time_step))= nan; % remove the outliers
-if flag.troubleshoot == 1
+%if flag.troubleshoot == 1
   figure(11)
   edges= 0:1:100;
   %histogram(time_step*3600*24,100, 'Normalization', 'probability')
@@ -161,7 +177,7 @@ if flag.troubleshoot == 1
   xlabel('data aquistion time, seconds')
   ylabel('probability')
   set(gca, 'YScale', 'log')
-end
+%end
 
 %Calculating average wavelength
 lambda_all=Online_Raw_Data(:,2);
@@ -306,7 +322,7 @@ if flag.afterpulse == 1   % afterpulse correction
 %        semilogy(ap_spline_sub_off, 'ro-')
 %        semilogy(ap_spline_sub_on, 'r+-')
      hold off
-     legend('hayman_{off}', 'hayman_{on}') 
+     legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
 %    legend('high-gain_{off}', 'high-gain_{on}', 'low-gain_{off}', 'low-gain_{on}') 
 %     ylim([1e-2 1e5])
 %     xlim([-200 4000])
@@ -319,17 +335,12 @@ if flag.afterpulse == 1   % afterpulse correction
 %      afterpulse_off(4:5)= 0.85.*afterpulse_off(4:5);
 %      afterpulse_on(4:5)= 0.85.*afterpulse_on(4:5);     
      
-     % --- CRITICAL FIX: Interpolate AP profile to match current range vector (size) ---
-     afterpulse_off_col = afterpulse_off(:);
-     afterpulse_on_col = afterpulse_on(:);
-     ap_range_col = ap_range(:);
-     
-     ap_interpolated_off = interp1(ap_range_col, afterpulse_off_col, range, 'linear', 0);
-     ap_interpolated_on = interp1(ap_range_col, afterpulse_on_col, range, 'linear', 0);
-     
-     ap_spline_sub_off = ap_interpolated_off(:)'; 
-     ap_spline_sub_on = ap_interpolated_on(:)'; 
-     % ---------------------------------------------------------------------------------
+     % grid to the current range and substitude nc file for mat file
+ %   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
+ %   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
+     % just use the bins
+      ap_spline_sub_off = afterpulse_off';
+      ap_spline_sub_on = afterpulse_on';
      
   end
   
@@ -479,8 +490,8 @@ end
    RB_on = interp1(range, RB_on', range_grid, method, extrapolation)';
    range = range_grid;
    gate = 37.5;
-   delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
-   %delta_r = delta_r_index*gate*100; % delta r in cm
+   delta_r_index =  res/gate; % this is the cumlative sum photons gate spacing 
+   delta_r = delta_r_index*gate*100; % delta r in cm
    r1 = round(1500/gate); % index for smoothing range 1 (1500m)
    r2 = round(2500/gate); % index for smoothing range 2 (2500m)
    spatial_average1 = 150/gate; %150 meter smoothing range 1 
@@ -489,11 +500,10 @@ end
  end
  
  
- if flag.troubleshoot == 1
    figure(101)
    semilogx(RB(round(p_hour/24*size(Offline,1)),:), range, 'b')
    hold on
-   semilogy(RB_on(round(p_hour/24*size(Online,1)),:), range, 'r')
+   semilogx(RB_on(round(p_hour/24*size(Online,1)),:), range, 'r')
    hold off
    ylim([0 1000])
    title('Raw counts, range shifted')
@@ -508,20 +518,21 @@ end
    hold off 
    ylim([0 1000])
    title('Summed range corrected and gridded counts')
- end
  
  % regular averaging
   Online_Temp_Spatial_Avg = Online_sum2./profiles2ave.wv./delta_r_index;
   Offline_Temp_Spatial_Avg = Offline_sum2./profiles2ave.wv./delta_r_index; 
    
   if flag.troubleshoot == 1
-%    figure(102)
-%    semilogx(Offline_sub(round(p_hour/24*size(Offline,1)),:), range, 'b')
-%    hold on
-%    semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
-%    hold off
-%    ylim([0 1000])
-%    title('Background subtracted raw counts, not shifted')  
+
+   
+   figure(102)
+   semilogx(Offline_sub(round(p_hour/24*size(Offline,1)),:), range, 'b')
+   hold on
+   semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
+   hold off
+   ylim([0 1000])
+   title('Background subtracted raw counts, not shifted')  
 
    figure(104)
    semilogx(Offline_Temp_Spatial_Avg(round(p_hour/24*size(Offline_sum2,1)),:), range, 'b')
@@ -630,7 +641,6 @@ end
 
 
  % delete(h)
-
 
  
 %% Spectral Line Fitting
@@ -897,7 +907,7 @@ if flag.mark_gaps ==1
   I_off(isnan(lambda_blank)) = NaN;     
   P_on(isnan(lambda_blank)) = NaN;
   P_off(isnan(lambda_blank)) = NaN;
-  if flag.WS == 1
+  if flag.WS ==1
     Surf_T(isnan(lambda_blank)) = NaN; 
     Surf_P(isnan(lambda_blank)) = NaN; 
     Surf_RH(isnan(lambda_blank)) = NaN; 
@@ -1002,91 +1012,9 @@ end
      'MPD_elevation')
    end
  end
- 
- if flag.save_netCDF == 1  % save the data as an nc file
-    % convert NaN fill values (and Inf) to -1 flag
-    time_new(isnan(time_new)==1) = -1;  % NaNs converted to -1 flag
-    N_avg(isnan(N_avg)==1) = -1; 
-    N_error(isnan(N_error)==1) = -1; 
-    N_avg(isinf(N_avg)==1) = -1;  
-    N_error(isinf(N_error)==1) = -1;  
-    Offline_Temp_Spatial_Avg(isinf(Offline_Temp_Spatial_Avg)==1) = -1;  
-    Online_Temp_Spatial_Avg(isinf(Online_Temp_Spatial_Avg)==1) = -1; 
-    time_unix = (time_new-datenum(1970,1,1))*86400; % convert to unix time
-   
-    cdf_name = strcat('wv_dial.', datestr(date_plot, 'yymmdd'));
-    ncid = netcdf.create([cdf_name '.nc'],'CLOBBER');       
-    % define the dimensions and variables
-    % netcdf.reDef(ncid);
-    dimid1 = netcdf.defDim(ncid,'time',netcdf.getConstant('NC_UNLIMITED'));
-    %dimid1 = netcdf.defDim(ncid,'time', length(time_new));
-    dimid2 = netcdf.defDim(ncid, 'range', length(range));
-    dimid3 = netcdf.defDim(ncid, 'lambda', length(lambda_on));
-    
-    myvarID1 = netcdf.defVar(ncid,'time','double',dimid1);
-      netcdf.putAtt(ncid, myvarID1, 'units', 'days since January 0, 0000')
-    myvarID2 = netcdf.defVar(ncid,'range','float',dimid2);
-      netcdf.putAtt(ncid, myvarID2, 'units', 'meters')
-    myvarID3 = netcdf.defVar(ncid,'N_avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID3, 'long_name', 'water_vapor_number_density')
-      netcdf.putAtt(ncid, myvarID3, 'units', 'molecules/cm^3')
-      netcdf.putAtt(ncid, myvarID3, 'FillValue', '-1')
-    myvarID4 = netcdf.defVar(ncid,'N_error','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID4, 'long_name', 'water_vapor_number_density_error')
-      netcdf.putAtt(ncid, myvarID4, 'units', 'molecules/cm^3')
-      netcdf.putAtt(ncid, myvarID4, 'FillValue', '-1')
-    myvarID5 = netcdf.defVar(ncid,'P','float', dimid2);
-      netcdf.putAtt(ncid, myvarID5, 'long_name', 'pressure')
-      netcdf.putAtt(ncid, myvarID5, 'units', 'atm')
-    myvarID6 = netcdf.defVar(ncid,'T','float', dimid2);
-      netcdf.putAtt(ncid, myvarID6, 'long_name', 'temperature')
-      netcdf.putAtt(ncid, myvarID6, 'units', 'degK')
-   myvarID7 = netcdf.defVar(ncid,'RB','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID7, 'long_name', 'relative_backscatter')
-      netcdf.putAtt(ncid, myvarID7, 'units', 'arbitrary_units')
-      netcdf.putAtt(ncid, myvarID7, 'FillValue', '-1')
-   myvarID8 = netcdf.defVar(ncid,'time_unix','double',dimid1);
-      netcdf.putAtt(ncid, myvarID8, 'long_name', 'unix time')
-      netcdf.putAtt(ncid, myvarID8, 'units', 'seconds since 00:00:00 UTC, January 1, 1970')
-      netcdf.putAtt(ncid, myvarID8, 'FillValue', '-1')
-   myvarID9 = netcdf.defVar(ncid,'Offline_Temp_Spatial_Avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID9, 'long_name', 'offline counts')
-      netcdf.putAtt(ncid, myvarID9, 'units', 'counts')
-      netcdf.putAtt(ncid, myvarID9, 'FillValue', '-1')
-    myvarID10 = netcdf.defVar(ncid,'Online_Temp_Spatial_Avg','float',[dimid2 dimid1]);
-      netcdf.putAtt(ncid, myvarID10, 'long_name', 'online counts')
-      netcdf.putAtt(ncid, myvarID10, 'units', 'counts')
-      netcdf.putAtt(ncid, myvarID10, 'FillValue', '-1')
-    myvarID11 = netcdf.defVar(ncid,'lambda_on','float', dimid3);
-      netcdf.putAtt(ncid, myvarID11, 'long_name', 'online wavelength')
-      netcdf.putAtt(ncid, myvarID11, 'units', 'nm')
-      netcdf.putAtt(ncid, myvarID11, 'FillValue', '-1')
-    myvarID12 = netcdf.defVar(ncid,'lambda_off','float', dimid3);
-      netcdf.putAtt(ncid, myvarID11, 'long_name', 'offline wavelength')
-      netcdf.putAtt(ncid, myvarID11, 'units', 'nm')
-      netcdf.putAtt(ncid, myvarID11, 'FillValue', '-1')
-      
-    netcdf.endDef(ncid)  
 
-    % save the variables to the file
-    
-    netcdf.putVar(ncid,myvarID1,0,length(time_new),time_new);   
-    netcdf.putVar(ncid,myvarID2,range);   
-    netcdf.putVar(ncid,myvarID3,[0,0],size(N_avg'),N_avg');  
-    netcdf.putVar(ncid,myvarID4,[0,0],size(N_error'),N_error');
-    netcdf.putVar(ncid,myvarID5,P);   
-    netcdf.putVar(ncid,myvarID6,T);
-    netcdf.putVar(ncid,myvarID7,[0,0],size(RB'),RB');
-    netcdf.putVar(ncid,myvarID8,time_unix);
-    netcdf.putVar(ncid,myvarID9,[0,0],size(Offline_Temp_Spatial_Avg'),Offline_Temp_Spatial_Avg');  
-    netcdf.putVar(ncid,myvarID10,[0,0],size(Online_Temp_Spatial_Avg'),Online_Temp_Spatial_Avg');
-    netcdf.putVar(ncid,myvarID11,lambda_on); 
-    netcdf.putVar(ncid,myvarID12,lambda_off); 
-    
-    
-  netcdf.close(ncid);
- 
- end
+
+
  
  %% plot data
 
@@ -1340,3 +1268,10 @@ cd(dd) % point back to original directory
 
   
 end
+
+
+
+
+
+
+
