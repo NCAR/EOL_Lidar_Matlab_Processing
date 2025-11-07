@@ -332,4 +332,9 @@ end
  
 cd(dd);
 toc
+
+function path = get_server_data_path()
+    if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1; path = '/export/smaug1/rsfdata/MPD/'; else; path = '/Volumes/smaug1/rsfdata/MPD/'; end
+end
+
 end

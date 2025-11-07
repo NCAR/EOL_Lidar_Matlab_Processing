@@ -1,4 +1,4 @@
-%% MPD_batch_process_v3.m: Refactored Batch Processor
+%% MPD_batch_process_v3.m: Independent Batch Processor
 
 % Add path to utilities and project folder structure (MUST be set correctly)
 addpath('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
@@ -17,66 +17,63 @@ else
   config = feval(MPD_config_script);
 end
 
-% Extract control variables for cleaner loop structure
-start_day = config.dates.start_day;
-stop_day = config.dates.stop_day;
-systems = config.systems_to_process;
+% Check for new processing flags (assuming you update MPD_config.m)
+if ~isfield(config.flags, 'process_data'); config.flags.process_data = config.flags.process; end
+if ~isfield(config.flags, 'run_plots'); config.flags.run_plots = config.flags.plot_multiday; end
 
 
-% --- 2. Daily Processing Loop (Modular Execution) ---
+% --- 2. Independent Data Processing Loop (Slow: Creates Data Files) ---
 
-if config.flags.process == 1
+if config.flags.process_data == 1
     
-    disp(['Starting daily processing from ', config.dates.start_str, ' to ', config.dates.stop_str]);
+    disp(['Starting DATA PROCESSING from ', config.dates.start_str, ' to ', config.dates.stop_str]);
     
     tStart = tic; 
-    
-    % Iterate over each day
+    start_day = config.dates.start_day;
+    stop_day = config.dates.stop_day;
+
     for current_day_num = start_day:stop_day
         
         file_date_str = datestr(current_day_num, 'yyyymmdd');
         disp(['Processing Day: ', file_date_str]);
 
-        % Iterate over each predefined system/channel job
-        for i = 1:length(systems)
-            job = systems{i};
+        for i = 1:length(config.systems_to_process)
+            job = config.systems_to_process{i};
             
-            % Create a temporary config structure specific to this job run
             current_job_config = config;
             current_job_config.job = job;
 
             fprintf('    -> Running %s: %s, %s...\n', job.node, job.channels, job.correction);
 
-            % *** NEW CALL: Use the refactored orchestrator ***
             MPD_run_daily_analysis( ...
                 job.channels, ...
                 job.correction, ...
                 job.node, ...
                 file_date_str, ...
                 current_job_config);
-            % *************************************************
-
         end
     end
     
     tElapsed = toc(tStart);
-    disp(['Daily processing complete. Total time: ', num2str(tElapsed), ' seconds.']);
+    disp(['Data processing complete. Total time: ', num2str(tElapsed), ' seconds.']);
 
 end
 
 
-% --- 3. Multi-Day Plotting Loop ---
+% --- 3. Independent Plotting Loop (Fast: Reads Data Files) ---
 
-if config.flags.plot_multiday == 1
+if config.flags.run_plots == 1
     
+    disp('Starting INDEPENDENT PLOTTING (Reading saved .mat files)...');
+    tStartPlot = tic; 
+
     % Iterate over each predefined plotting job
     for i = 1:length(config.multiday_plots)
         plot_job = config.multiday_plots{i};
         
-        disp(['Starting multi-day plot for ', plot_job.node, ...
+        disp(['Plotting Job: ', plot_job.node, ...
               ' from ', plot_job.start_date, ' to ', plot_job.stop_date]);
               
-        % *** NEW CALL: Use the refactored plotting utility ***
         MPD_plot_utility( ...
             config.flags.save_quicklook, ... 
             config.flags.save_data, ...  
@@ -86,8 +83,16 @@ if config.flags.plot_multiday == 1
             plot_job.start_date, ...
             plot_job.stop_date, ...
             plot_job.skip);
-        % *************************************************
-
     end
     
+    tElapsedPlot = toc(tStartPlot);
+    disp(['Plotting complete. Total time: ', num2str(tElapsedPlot), ' seconds.']);
+
 end
+
+% --- CRITICAL: Update your MPD_config.m to enable independent control ---
+% Please update MPD_config.m to use the new flags.
+
+% In MPD_config.m, update the flags section:
+% config.flags.process_data = 0;   % Set this to 0 when you ONLY want plots
+% config.flags.run_plots = 1;      % Set this to 1 when you ONLY want plots
