@@ -6,7 +6,7 @@ clear; close all;
 
 % System Parameters
 tau_pulse = 1e-6;           % Pulse width (s)
-R_start = 300;                % Start range for retrieval (m)
+R_start = 200;                % Start range for retrieval (m)
 R_end = 5000;               % End range for retrieval (m)
 dR = 7.5;                   % Range resolution (m/bin)
 P_laser = 50e-3;            % Avg laser power (W) 
@@ -97,9 +97,17 @@ rho_true_R_plot = wv_mass_true(R_plot);
 N_AP_peak_zero = C_sys * AP_fraction;
 N_AP_decay_zero = N_AP_peak_zero * (A_1*exp(-(R - R_start)/lambda_AP_1)+ (A_2*exp(-(R - R_start) / lambda_AP_2)));
 
+% Define the True Residual Afterpulse in the Atmosphere (N_AP_true) ---
+% Allow setting  fixed fraction (e.g., 50%) of the max calibration profile.
+%AP_true_fraction = 1;
+%N_AP_true = AP_true_fraction * N_AP_decay_zero;
+
 % Store the True Systematic Error for comparison (if no correction is applied)
+% N_off_raw_true = N_off_true + N_AP_true;
+% N_on_raw_true = N_on_true + N_AP_true;
  N_off_raw_true = N_off_true + N_AP_decay_zero;
  N_on_raw_true = N_on_true + N_AP_decay_zero;
+
 
 % Use raw signal directly for log ratio.
 Log_Ratio_True_Contaminated = log(N_off_raw_true ./ N_on_raw_true); 
@@ -107,8 +115,9 @@ Log_Ratio_True_Contaminated = log(N_off_raw_true ./ N_on_raw_true);
 rho_retrieved_true_error = (1 / (2 * K_delta)) * gradient(Log_Ratio_True_Contaminated, dR);
 
 % Error is calculated relative to the smoothed baseline 
-% A systematic error inherent to pulse smearing occurs when using the log-ratio technique.
+% Othereise a systematic error inherent to pulse smearing itself occurs when using the log-ratio technique.
 % This is a processing artifact. The log-ratio of the smoothed signals is not equal to the smoothed log-ratio of the signals, 
+% which is what the DIAL equation fundamentally requires for an instantaneous measurement.
 % The smoothing (which is a convolution) and the non-linear DIAL operators do not commute.
 rho_error_true_uncorrected_AP = rho_retrieved_true_error(1:end-1) - rho_retrieved_baseline(1:end-1);
 
@@ -129,8 +138,8 @@ for i = 1:length(kappa_test_values)
     N_AP_sub = kappa * N_AP_decay_zero; 
     
     % Create the RAW Contaminated Signal (N_true + N_AP_true)
-    N_off_raw = N_off_true + N_AP_decay_zero;
-    N_on_raw = N_on_true + N_AP_decay_zero;
+    N_off_raw = N_off_true + N_AP_true;
+    N_on_raw = N_on_true + N_AP_true;
     
     % Create the CORRECTED Raw Signal (Contamination - Smoothed Subtraction)
     N_off_corrected = N_off_raw - N_AP_sub;
@@ -151,6 +160,12 @@ end
 
 %% Final Plotting of Sensitivity Results
 rho_true_plot = wv_mass_true(R_plot);
+disp('-------------------------------------------------------------------');
+disp('True AP Fraction in Atmosphere (AP_true_fraction): '); disp(AP_true_fraction);
+disp('Retrieval error will be minimized when kappa=1.0 (N_AP_subtracted / N_AP_true).');
+disp('Error is now calculated relative to the pulse-smeared baseline retrieval.');
+disp('Residual error at kappa=1.0 should be zero (or numerically negligible).');
+disp('-------------------------------------------------------------------');
 
 
 figure('Position', [100, 100, 500, 500]);
@@ -171,7 +186,7 @@ xlabel('Range (m)');
 ylabel('Relative Error (%)');
 legend('Location','northeast','FontSize', 10, 'Interpreter', 'latex');
 ylim([-10, 10]);
-xlim([0, R_end/2]);
+xlim([R_start, R_end/2]);
 grid on;
 
 

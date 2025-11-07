@@ -6,9 +6,9 @@ clear; close all;
 
 % System Parameters
 tau_pulse = 1e-6;           % Pulse width (s)
-R_start = 200;              % Start range for retrieval (m)
+R_start = 300;              % Start range for retrieval (m)
 R_end = 6000;               % End range for retrieval (m)
-dR = 7.5;                   % gate size (m)
+dR = 7.5;                  % gate size (m)
 
 % Constants
 c = 3e8;                    % Speed of light (m/s)
