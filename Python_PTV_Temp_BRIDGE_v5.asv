@@ -1,3 +1,4 @@
+
 clear all; close all
 
 % --- 1. CONFIGURATION AND PATHS ---
@@ -20,19 +21,14 @@ flag.plot_multi_temp = 1;      % Toggle multi panel T WV abs
 flag.plot_multi_wv = 1;        % Toggle multi panel T WV diff
 flag.plot_single_temp_panels = 0; 
 flag.plot_single_wv_panels = 0;   
-flag.plot_uncertainty = 0;     
+flag.plot_uncertainty = 1;     
 flag.plot_histograms_2d = 1;   % Toggle 2D Density Maps (T_Range, AH_Range)
-flag.plot_ah_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot (suggest not using)
-flag.plot_temp_scatter = 0;    % Toggle AH vs ERA5 Scatter Plot (suggest not using)
+flag.plot_ah_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot
+flag.plot_temp_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot
 flag.plot_ah_density_map = 1;  % Toggle AH vs ERA5 Density Map
 flag.plot_t_density_map = 1;   % Toggle Temp vs ERA5 Density Map
 flag.plot_1d_histograms = 0;   % Toggle 1D Histograms (T_Diff_Histogram, AH_Diff_Histogram)
-flag.plot_profile_lines = 1;   % Toggle vertical profile line plots for a specific time/date
-
-% --- PROFILE PLOT SETTINGS ---
-PROFILE_TIME_TO_PLOT = datenum('2025-07-29 24:00:00', 'yyyy-mm-dd HH:MM:SS'); 
-% -----------------------------
-
+% ------------------------------------
 
 % --- DATA READING EXCLUSION FLAGS (0=Exclude/Off, 1=Include/On) ---
 flag.read_temp_std = 1;        % Include reading Temperature_Standard and related fields
@@ -170,9 +166,6 @@ for jj = 1:num_files
     AH_MultiPulse{jj}(mask_ah2) = nan;
     AH_MultiPulse_var{jj}(AH_MultiPulse_mask{jj} == 1) = nan; 
     ABC{jj}(ABC_mask{jj} == 1) = nan;
-
-    CORRUPTED_ROWS = [42:66];
-    AH_PTV{jj}(CORRUPTED_ROWS, :) = NaN;
 
     netcdf.close(ncid); 
   
@@ -1042,6 +1035,8 @@ if flag.plot_t_density_map
 end
 
 
+
+
 % HISTOGRAMS and 2D DENSITY MAPS (Conditional)
 if flag.plot_histograms_2d || flag.plot_1d_histograms
     
@@ -1088,7 +1083,7 @@ if flag.plot_histograms_2d || flag.plot_1d_histograms
         if flag.read_temp_std
             % Figure X+3
             create_2d_density_map(T_Std_diff_hist, y_range, ... 
-                'T Standard - ERA5 Difference vs. Range (Bin Width: 0.2 K)', 'Temperature Difference (K)',...
+                'T Standard - ERA5 Difference vs. Range (Bin Width: 0.2 K)', 'Temperature Difference (K)', ...
                 T_diff_bin_limits, [0 6], T_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_density); 
             figure_list{end+1} = figure_idx; suffix_list{end+1} = 'T_Diff_Standard_Histogram_Range'; figure_idx=figure_idx+1;
         end
@@ -1115,18 +1110,6 @@ if flag.plot_histograms_2d || flag.plot_1d_histograms
     end
 end
 
-% ---------------------------------------------
-% --- PROFILE LINE PLOTS (CONDITIONAL) ---
-% ---------------------------------------------
-if flag.plot_profile_lines
-    create_profile_plots(comb_duration, y, comb_AH, comb_AH_PTV, comb_AH_MultiPulse, comb_AH_model, ...
-        comb_T, comb_T_Std, comb_T_model, comb_AH_surf, comb_T_surf, ...
-        PROFILE_TIME_TO_PLOT, node, figure_idx);
-    
-    figure_list{end+1} = figure_idx; suffix_list{end+1} = 'Profile_AH'; figure_idx=figure_idx+1;
-    figure_list{end+1} = figure_idx; suffix_list{end+1} = 'Profile_T'; figure_idx=figure_idx+1;
-end
-
 
 % --- PLOT SAVING LOOP (Iterating over created figures only) ---
 cd(plot_dir);
@@ -1135,7 +1118,7 @@ plot_size_square = [100 100 750 750];
 plot_size_4panel = [100 100 1900 650]; 
 plot_size_5panel = [100 100 1900 800]; 
 plot_size_7panel = [100 100 1900 890]; 
-%plot_size_7panel = [100 100 1900/2 890]; 
+plot_size_7panel = [100 100 1900/2 890]; 
 num_plots = length(figure_list);
 
 for k_idx = 1:num_plots
@@ -1153,7 +1136,8 @@ for k_idx = 1:num_plots
         FigH.Position = plot_size_7panel;
     elseif strcmp(suffix, 'Core_4Panel_Parameters')
         FigH.Position = plot_size_4panel;
-    elseif contains(suffix, 'Histogram') || contains(suffix, 'Density') || contains(suffix, 'Scatter') || contains(suffix, 'Profile')
+%    elseif contains(suffix, 'Histogram_Range') || contains(suffix, 'Histogram') || strcmp(suffix, 'AH_vs_ERA5_Scatter') || strcmp(suffix, 'T_vs_ERA5_Scatter')l% 
+    elseif contains(suffix, 'Histogram') || contains(suffix, 'Density') || contains(suffix, 'Scatter')
        FigH.Position = plot_size_square;
     else
         % Default wide size for single pcolor plots
@@ -1265,73 +1249,4 @@ cmap_half2 = [cmap_half2_gray; cmap_half2_trans];
 cmap = [cmap_half1; cmap_half2];
 
 end
-
 % ==========================================================
-
-function [idx_to_plot] = find_closest_time_index(time_axis_data, target_time)
-% FIND_CLOSEST_TIME_INDEX Finds the index of the time point closest to the target_time.
-    [~, idx_to_plot] = min(abs(time_axis_data - target_time));
-end
-
-function create_profile_plots(x, y_alt, AH, AH_PTV, AH_MultiPulse, AH_model, ...
-                              T, T_Std, T_model, AH_surf, T_surf, ...
-                              target_time, node, figure_idx)
-% CREATE_PROFILE_PLOTS Generates line plots of vertical profiles at a specific time.
-
-    % Find the closest index in the time series to the target time
-    idx = find_closest_time_index(x, target_time);
-    
-    time_str = datestr(x(idx), 'dd-mmm-yyyy HH:MM:SS UTC');
-    
-    % Extract the specific profile data and surface data
-    AH_Std_profile = AH(:, idx);
-    AH_PTV_profile = AH_PTV(:, idx);
-    AH_MultiPulse_profile = AH_MultiPulse(:, idx);
-    AH_Model_profile = AH_model(:, idx);
-    T_PTV_profile = T(:, idx);
-    T_Std_profile = T_Std(:, idx);
-    T_Model_profile = T_model(:, idx);
-    
-    AH_Surf_val = AH_surf(idx);
-    T_Surf_val = T_surf(idx);
-    
-    % --- FIGURE 1: ABSOLUTE HUMIDITY PROFILES ---
-    hf1 = figure(figure_idx);
-    set(hf1, 'Position', [50 50 500 700]);
-    plot(AH_Std_profile, y_alt, 'b-', 'LineWidth', 2, 'DisplayName', 'AH Standard'); hold on;
-    plot(AH_PTV_profile, y_alt, 'r-', 'LineWidth', 2, 'DisplayName', 'AH PTV');
-    plot(AH_MultiPulse_profile, y_alt, 'g-', 'LineWidth', 2, 'DisplayName', 'AH MultiPulse');
-    plot(AH_Model_profile, y_alt, 'k--', 'LineWidth', 2, 'DisplayName', 'AH ERA5 Model');
-    
-    % Plot Surface Station Data at 0 km
-    plot(AH_Surf_val, 0, 'ms', 'MarkerSize', 10, 'MarkerFaceColor', 'm', 'DisplayName', 'AH Surface');
-
-    grid on; box on;
-    title({[node, ' Absolute Humidity Profile'], ['Time: ', time_str]}, 'fontweight', 'b');
-    xlabel('Absolute Humidity (g m^{-3})', 'fontweight', 'b');
-    ylabel('Height (km, AGL)', 'fontweight', 'b');
-    legend('show', 'Location', 'northeast');
-    ylim([0 ceil(max(y_alt))]);
-    set(gca, 'Fontsize', 12, 'Fontweight', 'b');
-    
-    figure_idx = figure_idx + 1;
-    
-    % --- FIGURE 2: TEMPERATURE PROFILES ---
-    hf2 = figure(figure_idx);
-    set(hf2, 'Position', [550 50 500 700]);
-    plot(T_PTV_profile, y_alt, 'r-', 'LineWidth', 2, 'DisplayName', 'T PTV'); hold on;
-    plot(T_Std_profile, y_alt, 'b-', 'LineWidth', 2, 'DisplayName', 'T Standard');
-    plot(T_Model_profile, y_alt, 'k--', 'LineWidth', 2, 'DisplayName', 'T ERA5 Model');
-    
-    % Plot Surface Station Data at 0 km
-    plot(T_Surf_val, 0, 'ms', 'MarkerSize', 10, 'MarkerFaceColor', 'm', 'DisplayName', 'T Surface');
-
-    grid on; box on;
-    title({[node, ' Temperature Profile'], ['Time: ', time_str]}, 'fontweight', 'b');
-    xlabel('Temperature (K)', 'fontweight', 'b');
-    ylabel('Height (km, AGL)', 'fontweight', 'b');
-    legend('show', 'Location', 'northeast');
-    ylim([0 ceil(max(y_alt))]);
-    set(gca, 'Fontsize', 12, 'Fontweight', 'b');
-
-end

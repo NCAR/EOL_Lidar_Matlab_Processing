@@ -27,10 +27,10 @@ flag.plot_temp_scatter = 0;    % Toggle AH vs ERA5 Scatter Plot (suggest not usi
 flag.plot_ah_density_map = 1;  % Toggle AH vs ERA5 Density Map
 flag.plot_t_density_map = 1;   % Toggle Temp vs ERA5 Density Map
 flag.plot_1d_histograms = 0;   % Toggle 1D Histograms (T_Diff_Histogram, AH_Diff_Histogram)
-flag.plot_profile_lines = 1;   % Toggle vertical profile line plots for a specific time/date
+flag.plot_profile_lines = 0;   % Toggle vertical profile line plots for a specific time/date
 
 % --- PROFILE PLOT SETTINGS ---
-PROFILE_TIME_TO_PLOT = datenum('2025-07-29 24:00:00', 'yyyy-mm-dd HH:MM:SS'); 
+PROFILE_TIME_TO_PLOT = datenum('2025-07-29 9:00:00', 'yyyy-mm-dd HH:MM:SS'); 
 % -----------------------------
 
 
@@ -171,7 +171,7 @@ for jj = 1:num_files
     AH_MultiPulse_var{jj}(AH_MultiPulse_mask{jj} == 1) = nan; 
     ABC{jj}(ABC_mask{jj} == 1) = nan;
 
-    CORRUPTED_ROWS = [42:66];
+    CORRUPTED_ROWS = [57, 58, 59, 60, 61, 62, 63, 64, 65, 6];
     AH_PTV{jj}(CORRUPTED_ROWS, :) = NaN;
 
     netcdf.close(ncid); 

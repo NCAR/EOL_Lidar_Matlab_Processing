@@ -1118,6 +1118,7 @@ plot_size_square = [100 100 750 750];
 plot_size_4panel = [100 100 1900 650]; 
 plot_size_5panel = [100 100 1900 800]; 
 plot_size_7panel = [100 100 1900 890]; 
+%plot_size_7panel = [100 100 1900/2 890]; 
 num_plots = length(figure_list);
 
 for k_idx = 1:num_plots

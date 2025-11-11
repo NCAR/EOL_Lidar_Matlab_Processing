@@ -2,9 +2,9 @@ clear all; close all;
 tic
 
  node = 'MPD04';
- date = '30 Oct 2025';   
+ date = '06 Nov 2025';   
  days = 8; skip = 1;
- flag.afterpulse = 1; % read in the afterpulse corrected data (0=off 1=on)
+ flag.afterpulse = 0; % read in the afterpulse corrected data (0=off 1=on)
  WV_max_scale = 12;
 
  % node = 'MPD04';
