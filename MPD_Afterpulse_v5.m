@@ -18,9 +18,9 @@ N_dark = 5;                   % Constant Dark Count Rate (counts/bin)
 lambda_AP_1 = 80;            % Afterpulse decay length 1 (m)
 lambda_AP_2 = 1000;           % Afterpulse decay length 2 (m)
 A_1 = 1;                      % Scaling factor for short decay component
-A_2 = 1/20;                   % Scaling factor for long decay component
+A_2 = 1/25;                   % Scaling factor for long decay component
 AP_fraction = 4e-15;          % Afterpulse peak as fraction of C_sys
-C_sys_scale = 1e17;         % Scales the counts/bin to something reasonable
+C_sys_scale = 2e17;         % Scales the counts/bin to something reasonable
 
 
 % Geometric Overlap Parameters
@@ -170,7 +170,7 @@ title('Systematic Relative Error vs. Afterpulse Correction Factor ($\kappa$)', '
 xlabel('Range (m)');
 ylabel('Relative Error (%)');
 legend('Location','northeast','FontSize', 10, 'Interpreter', 'latex');
-ylim([-10, 10]);
+ylim([-15, 15]);
 xlim([0, R_end/2]);
 grid on;
 

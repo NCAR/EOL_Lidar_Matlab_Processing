@@ -1,5 +1,5 @@
-function[N_avg, N_error] = MPD_WV_analysis_function_v1(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
-    profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation)
+function[N_avg, N_error] = MPD_WV_analysis_function_v2(data_on, data_off, folder_in, date_in, MCS, write_data_folder, flag, node, wavemeter_offset,...
+    profiles2ave, T, P, switch_ratio, ave_time, timing_range_correction, blank_range, p_hour, catalog, Afterpulse_File, MPD_elevation, cal_serv_path)
 
 %% notes
 %Amin Nehrir (original author)
@@ -69,8 +69,9 @@ C = importdata('NCAR_C_Map.mat');
 %C = viridis(70);
 
 %Importing HITRAN data
-Hitran.file = dlmread('815nm_841nm_HITRAN_2008.csv', ',',[1 1 1676 8]);
-%hitran = dlmread('823nm_834nm_HITRAN_2012.csv', ',',[0 0 2633 7]);
+%Hitran.file = dlmread('815nm_841nm_HITRAN_2008.csv', ',',[1 1 1676 8]);
+%Hitran.file = dlmread('823nm_834nm_HITRAN_2012.csv', ',',[0 0 2633 7]);
+Hitran.file = dlmread('823nm_834nm_HITRAN_2016.csv', ',',[0 0 2689 7]);
 
 RB_scale = 1; % use to keep the arbitrary units of RB scale the same before
 
@@ -88,24 +89,9 @@ spatial_average3 = 600/gate; %600 meter smoothing above range 2
 % this filter creates range delays 
 
 %lambda offset for testing purposes only -- set to zero
-%lambda_offset = 0;  
+%lambda_offset = 0.0;  
 
 %% Importing online and offline files from the selected date
-
-%read_time_in = 2; % read data in time increments of seconds (default it 2sec) 
-%if flag.near == 1
-%  [dummy,dummy,near_on, near_off, folder_in] = MPD_File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in, read_time_in); %use to read binary data (bin number passed in) 
-%   % this is a way to process the near range data instead of the normal
-%   data_on = near_on;
-%   data_off = near_off;
-%   if strcmp(node,'MPD04') == 1 % MPD04 is using a low range channel
-%     blank_range = 187.5; % low range 
-%   end
-%else
-%  % [data_on,data_off,dummy, dummy,folder_in] = File_Retrieval_NetCDF_v4(flag, MCS.bins, folder_in); %use to read binary data (bin number passed in) 
-%   [data_on,data_off,folder_in] = MPD_File_Retrieval_NetCDF_v3(flag, MCS.bins, folder_in, read_time_in); %use to read binary data (bin number passed in) 
-%  %[data_on,data_off,folder_in] = File_Retrieval_NetCDF_v2_noPow(MCS.bins, folder_in); %use to read binary data (bin number passed in) 
-%end
 
 %Making the online and offline data files the same size
 try
@@ -122,8 +108,8 @@ end
   %time2 = time2-0.25; % this was a fix for computer switch 20-Oct to 26-Oct 2017
   %time2(time2>292.5)= time2(time2>292.5)-0.25; % 19-Oct-2017 fix
   time = time2;
-  time = time(~(time2<(nanmedian(time2)-1.5)));
-  time= time(~(time>(nanmedian(time)+1.5)));
+  time = time(~(time2<(median(time2,'omitnan')-1.5)));
+  time= time(~(time>(median(time,'omitnan')+1.5)));
   Online_Raw_Data = Online_Raw_Data(~isnan(time),:);
   Offline_Raw_Data = Offline_Raw_Data(~isnan(time),:);
 
@@ -166,7 +152,7 @@ end
 % analyze system stability 
 time_step = diff(Online_Raw_Data(:,1)); % median time step in seconds
 %time_step(time_step >= 4*median(time_step))= nan; % remove the outliers
-%if flag.troubleshoot == 1
+if flag.troubleshoot == 1
   figure(11)
   edges= 0:1:100;
   %histogram(time_step*3600*24,100, 'Normalization', 'probability')
@@ -175,9 +161,9 @@ time_step = diff(Online_Raw_Data(:,1)); % median time step in seconds
   xlabel('data aquistion time, seconds')
   ylabel('probability')
   set(gca, 'YScale', 'log')
-%end
+end
 
-%Calculating average wavelenth
+%Calculating average wavelength
 lambda_all=Online_Raw_Data(:,2);
 lambda_diff= Online_Raw_Data(:,3);
 lambda_all_off=Offline_Raw_Data(:,2);
@@ -195,37 +181,42 @@ for ii=1:size(lambda_all,1)
     end
 end
 
+
+
 lambda_on = median(lambda_all);
 lambda_off = median(lambda_all_off);
+
+
  
 % if nanstd(lambda_all) >= 5e-4    
 %    h = msgbox('Online wavelength not stable during time period', 'Warning','warn');
 % end
     % check for multiple wavelengths
-    edges_on=828.1800:.00001:828.2200;
-    mult_fac = 1;
+    edges_on=828.1800:.00005:828.2200;
     lambda_on_set = lambda_all-lambda_diff;
-    [value,edges]=histcounts(round(mult_fac*lambda_on_set,3)/mult_fac,edges_on); % bin rounded wavelengths
-    lambda_on_N = edges(value>=1000)  % wavelength values with occurance > 10
+    lambda_on_act = lambda_all; % use the actual (not set)
+    [value,edges]=histcounts(round(lambda_on_act,5),edges_on); % bin rounded wavelengths
+    lambda_on_N = edges(value>=0.20*max(value))  % wavelength values with occurance > 5% max
     %lambda_F = value(value~=0);  % frequency of occurance
-    lambda_all_N = round(mult_fac*lambda_on_set,3)/mult_fac; 
+    lambda_all_N = round(lambda_on_act,5); 
     figure(1234)
     plot(lambda_all_N)
     hold on
     plot(lambda_all)
     hold off
 
+      
     edges_off=828.280:.00005:828.320;
-    mult_fac = 1;
     lambda_off_set = lambda_all_off-lambda_diff_off;
-    [value,edges]=histcounts(round(mult_fac*lambda_off_set,3)/mult_fac,edges_off); % bin rounded wavelengths
-    lambda_off_N = edges(value>=1000)  % wavelength values with occurance > 10
+    lambda_off_act = lambda_all_off;  % use the actual (not set)
+    [value,edges]=histcounts(round(lambda_off_act,5),edges_off); % bin rounded wavelengths
+    lambda_off_N = edges(value>=0.05*max(value));  % wavelength values with occurance > 10
     % select the most common offline values associated with the online 
       value_sort = [value; edges(1:end-1)]';
       values_sorted = sortrows(value_sort, 1);
       lambda_off_N = sort(values_sorted(end-size(lambda_on_N,2)+1:end))
     %lambda_off_F = value(value~=0);  % frequency of occurance
-    lambda_all_off_N=round(mult_fac*lambda_off_set,3)/mult_fac;
+    lambda_all_off_N=round(lambda_off_act,5);
     figure(5678)
     plot(lambda_all_off_N)
     hold on
@@ -251,67 +242,97 @@ range = single(0:gate:(size(Online,2)-1)*gate);
 %time = time2;
 %clear Online_Raw_Data  Offline_Raw_Data 
  
-  if flag.afterpulse == 1   % afterpulse correction
+if flag.pileup == 1
+% apply linear correction factor to raw counts 
+  t_d=32E-9; % module dead time of Perkin Elmber
+  %t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
+  %t_d=50E-9; %Emperical best fit to remove the noise in the WV behind clouds
+  %t_d=34E-9; %Excelitas SPCM-AQRH-13 Module 24696 for count rates < 5 Mc/s
+  % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
+  % divide by bin time in sec (e.g., 500ns) and # of acumulations (e.g., 10000)
+  % e.g., 10 accumlated counts is 2000 C/s
+  C_Online = 1./(1-(t_d.*(Online./(MCS.bin_duration*1E-9*MCS.accum))));   
+  C_Offline = 1./(1-(t_d.*(Offline./(MCS.bin_duration*1E-9*MCS.accum))));   
+  Online = Online.*C_Online;
+  Offline = Offline.*C_Offline;
+end
+
+if flag.afterpulse == 1   % afterpulse correction
    
-%  read my vesrion of the afterpulse calibration files which are now using rates     
-%      afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
-%      load (afterpulse_filename, 'ap_spline_sub_off', 'ap_spline_sub_on', 'ap_spline_sub_near_off', 'ap_spline_sub_near_on');  
-%      ap_spline_sub_off = p_spline_sub_off*MCS.accum*MCS.bin_duration*1e-9;
-%      ap_spline_sub_on = ap_spline_sub_on*MCS.accum*MCS.bin_duration*1e-9;  
-%      if flag.near == 1
-%        ap_spline_sub_off = p_spline_sub_near_off*MCS.accum*MCS.bin_duration*1e-9;
-%        ap_spline_sub_on = ap_spline_sub_near_on*MCS.accum*MCS.bin_duration*1e-9;  
-%      end  
-      
-    % read the afterpulse nc file identified in the json file 
-    if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
-     serv_path = '/home/rsfdata/Processing/'; % when running on server
-    elseif strcmp(getenv('HOSTNAME'),'')
-      serv_path = '../'; % running locally 
-    else
-     serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
-    end
-    ap_filename = strcat(serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
+  if flag.ap_quick == 1  
+  %  read my version of simple afterpulse calibration files for testing      
+      %node
+      %prompt = "enter the afterpulse file ";
+      %afterpulse_filename = input(prompt,"s");
+      afterpulse_filename = 'MPD01_afterpulse_20220812.mat'
+      %afterpulse_filename =  sscanf(Afterpulse_File, '%c', 25); 
+      load (afterpulse_filename, 'ap_wv_off', 'ap_wv_on', 'ap_range');  
+      ap_spline_sub_off = ap_wv_off*MCS.accum*MCS.bin_duration*1e-9;
+      ap_spline_sub_on = ap_wv_on*MCS.accum*MCS.bin_duration*1e-9;  
+  else    
+     % read the afterpulse nc file identified in the json file 
+%      if strcmp(getenv('HOSTNAME'),'fog.eol.ucar.edu')
+%       cal_serv_path = '/home/rsfdata/Processing/'; % when running on server
+%      elseif strcmp(getenv('HOSTNAME'),'')
+%        cal_serv_path = '../'; % running locally 
+%      else
+%       cal_serv_path = '/Volumes/eol/fog1/rsfdata/MPD/calibration/'; % 
+%      end
+     
+     ap_filename = strcat(cal_serv_path, 'eol-lidar-calvals/calfiles/', Afterpulse_File)   
    
-    ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
-    %ncdisp(ap_filename, '/', 'min') % use this to display all variables
-    if flag.near == 1
+     ncid = netcdf.open(ap_filename, 'NC_NOWRITE');
+%     ncdisp(ap_filename, '/', 'min') % use this to display all variables
+     if flag.near == 1
        ap_off_rate = ncread(ap_filename, 'WVOfflineLow_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnlineLow_afterpulse');  
-    else
+     else
        ap_off_rate = ncread(ap_filename, 'WVOffline_afterpulse');
        ap_on_rate = ncread(ap_filename, 'WVOnline_afterpulse');
-    end
-    ap_range = ncread(ap_filename, 'range');
-    netcdf.close(ncid);   
-    afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
-    afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
+     end
+     ap_range = ncread(ap_filename, 'range');
+     netcdf.close(ncid);   
+     afterpulse_off = ap_off_rate*MCS.accum*MCS.bin_duration*1e-9;
+     afterpulse_on = ap_on_rate*MCS.accum*MCS.bin_duration*1e-9;  
 
-    range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
-    range_act = range + range_shift; % %actual range points 
+     range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
+     range_act = range + range_shift; % %actual range points 
 
-%      figure(1004)
-%      semilogy(ap_range, afterpulse_off, 'bo-')
-%      hold on
-%      semilogy(ap_range, afterpulse_on, 'b+-')    
-% %     semilogy(ap_range, afterpulse_off, 'ro-')
-% %     semilogy(ap_range, afterpulse_on, 'r+-')  
-%      semilogy(range_act, ap_spline_sub_off, 'ro-')
-%      semilogy(range_act, ap_spline_sub_on, 'r+-')
-%      hold off
-%      legend('hayman_{off}', 'hayman_{on}', 'spuler_{off}', 'spuler_{on}') 
-% %    legend('high-gain_{off}', 'high-gain_{on}', 'low-gain_{off}', 'low-gain_{on}') 
+     figure(1004)
+     semilogy(afterpulse_off, 'bo-')
+     hold on
+     semilogy(afterpulse_on, 'b+-')    
+% uncomment next two lines to compare to the quick technique above
+%        semilogy(ap_spline_sub_off, 'ro-')
+%        semilogy(ap_spline_sub_on, 'r+-')
+     hold off
+     legend('hayman_{off}', 'hayman_{on}') 
+%    legend('high-gain_{off}', 'high-gain_{on}', 'low-gain_{off}', 'low-gain_{on}') 
 %     ylim([1e-2 1e5])
 %     xlim([-200 4000])
-%     ylabel('counts')
-%     xlabel('range (m)')
-%     grid on
-%     grid minor 
+     ylabel('counts')
+     xlabel('bins')
+     grid on
+     grid minor 
    
-   %grid to the current range and substitude nc file for mat file
-   ap_spline_sub_off = spline(ap_range, afterpulse_off, range_act);
-   ap_spline_sub_on = spline(ap_range, afterpulse_on, range_act);
-   
+%      testing reducing the initial bang at gates 4 (150m) and 5 (187.5m)
+%      afterpulse_off(4:5)= 0.85.*afterpulse_off(4:5);
+%      afterpulse_on(4:5)= 0.85.*afterpulse_on(4:5);     
+     
+     % --- CRITICAL FIX: Interpolate AP profile to match current range vector (size) ---
+     afterpulse_off_col = afterpulse_off(:);
+     afterpulse_on_col = afterpulse_on(:);
+     ap_range_col = ap_range(:);
+     
+     ap_interpolated_off = interp1(ap_range_col, afterpulse_off_col, range, 'linear', 0);
+     ap_interpolated_on = interp1(ap_range_col, afterpulse_on_col, range, 'linear', 0);
+     
+     ap_spline_sub_off = ap_interpolated_off(:)'; 
+     ap_spline_sub_on = ap_interpolated_on(:)'; 
+     % ---------------------------------------------------------------------------------
+     
+  end
+  
    Offline_ap_sub = (bsxfun(@minus, Offline, ap_spline_sub_off));
    Online_ap_sub = (bsxfun(@minus, Online, ap_spline_sub_on)); 
 
@@ -323,22 +344,8 @@ range = single(0:gate:(size(Online,2)-1)*gate);
     
     Online = Online_ap_sub;
     Offline = Offline_ap_sub;
-  end
-
-if flag.pileup == 1
-% apply linear correction factor to raw counts 
-  %t_d=32E-9; % module dead time of Perkin Elmber
-  t_d=37.25E-9; %Excelitas SPCM-AQRH-13 Module 24696
-  %t_d=50E-9; %Emperical best fit to remove the noise in the WV behind clouds
-  %t_d=34E-9; %Excelitas SPCM-AQRH-13 Module 24696 for count rates < 5 Mc/s
-  % MCSC gives counts accumulated for set bin duration so convert to count rate  C/s.
-  % divide by bin time in sec (e.g., 500ns) and # of acumulations (e.g., 10000)
-  % e.g., 10 accumlated counts is 2000 C/s
-  C_Online = 1./(1-(t_d.*(Online./(MCS.bin_duration*1E-9*MCS.accum))));   
-  C_Offline = 1./(1-(t_d.*(Offline./(MCS.bin_duration*1E-9*MCS.accum))));   
-  Online = Online.*C_Online;
-  Offline = Offline.*C_Offline;
 end
+
 
 % clear Online_Raw_Data Offline_Raw_Data data_on data_off
 
@@ -360,13 +367,25 @@ end
 % Online = Online_sum./profiles2ave.wv;
 % Offline = Offline_sum./profiles2ave.wv; 
  
-  background_on = mean(Online(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background
-  background_off = mean(Offline(:,end-round(1200/gate):end),2)-0; % select last ~1200 meters to measure background 
-  %background_mean = (background_on+background_off)./2;
+  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background 
+% to deal with RF switches not closing quickly during Smart MCS testing
+  background_on = mean(Online(:,end-round(1050/gate):end),2)-0; % select last ~1050 meters to measure background
+  background_off = mean(Offline(:,end-round(1050/gate):end),2)-0;
+  background_mean = (background_on+background_off)./2;
+  background_on =  background_mean;
+  background_off = background_mean;
   
   Online_sub = (bsxfun(@minus, Online, background_on));%./accumulations; 
   Offline_sub = (bsxfun(@minus, Offline, background_off));%./accumulations;
+  
    
+%test a QE perturbation at about 1 km 
+%   QE = ones(size(Offline_sub));
+%   QE(:,1050/gate)= 0.99;
+%   Offline_sub_test = Offline_sub.*QE;
+%   Offline_sub = Offline_sub_test;
+
  % smooth RB for 1 minute and set spatial average
    %window_temporal = ones(aerosol_temporal_average,1)/aerosol_temporal_average;
    %window_spatial = ones(1,1)/1; % preserve high spatial res in RB
@@ -387,15 +406,18 @@ end
   end
 % used combined geometric overlap correction from Zemax model starting in March 2020
   if ((serial_date >= 737902))
-    O_y = 0.10*O_y_near + 0.90.*O_y_primary;
+    O_y = 0.001*O_y_near + 0.999.*O_y_primary;
   end
   
-  O_x = O_x + 75; % add pulse legnth offset to geometeric overlap function (replace with real pulse duration)
-  O = interp1(O_x, O_y, range, 'linear','extrap');
+  range_shift = -(delta_r_index-1)/2*gate + timing_range_correction; % 
 
+  O_x = O_x -range_shift; % add pulse length offset to geometeric overlap function (replace with real pulse duration)
+  O = interp1(O_x, O_y, range, 'linear','extrap');
   
-  RB_overlap_on = bsxfun(@rdivide,  RB_on, O);
-  RB_overlap = bsxfun(@rdivide,  RB, O);
+ % RB_overlap_on = bsxfun(@rdivide,  RB_on, O);
+ % RB_overlap = bsxfun(@rdivide,  RB, O);
+  RB_overlap_on = RB_on./O;
+  RB_overlap = RB./O;
   
 % range correct   
   RB_on = bsxfun(@times, RB_on, range_km_squared);
@@ -445,11 +467,33 @@ end
  Background_off_sum2 = interp1(range_smoothed_act, Background_off_sum2_act', range, method)'; 
  RB_on = interp1(range_act, RB_on_act', range, method)';
  RB = interp1(range_act, RB_act', range, method)';
-
+ 
+ % grid to regular gate spacing
+ if gate < 37.5
+   range_grid = 0:37.5:range(end);   
+   Offline_sum2 = interp1(range, Offline_sum2', range_grid, method, extrapolation)';  
+   Online_sum2 = interp1(range, Online_sum2', range_grid, method, extrapolation)';
+   Background_on_sum2 = interp1(range,Background_on_sum2', range_grid, method, extrapolation)';  
+   Background_off_sum2 = interp1(range, Background_off_sum2', range_grid, method, extrapolation)'; 
+   RB = interp1(range, RB', range_grid, method, extrapolation)'; 
+   RB_on = interp1(range, RB_on', range_grid, method, extrapolation)';
+   range = range_grid;
+   gate = 37.5;
+   delta_r_index =  75/gate; % this is the cumlative sum photons gate spacing 
+   %delta_r = delta_r_index*gate*100; % delta r in cm
+   r1 = round(1500/gate); % index for smoothing range 1 (1500m)
+   r2 = round(2500/gate); % index for smoothing range 2 (2500m)
+   spatial_average1 = 150/gate; %150 meter smoothing range 1 
+   spatial_average2 = 300/gate; %300 meter smoothing between range 1 and 2
+   spatial_average3 = 600/gate; %600 meter smoothing above range 2
+ end
+ 
+ 
+ if flag.troubleshoot == 1
    figure(101)
    semilogx(RB(round(p_hour/24*size(Offline,1)),:), range, 'b')
    hold on
-   semilogx(RB_on(round(p_hour/24*size(Online,1)),:), range, 'r')
+   semilogy(RB_on(round(p_hour/24*size(Online,1)),:), range, 'r')
    hold off
    ylim([0 1000])
    title('Raw counts, range shifted')
@@ -464,21 +508,20 @@ end
    hold off 
    ylim([0 1000])
    title('Summed range corrected and gridded counts')
+ end
  
  % regular averaging
   Online_Temp_Spatial_Avg = Online_sum2./profiles2ave.wv./delta_r_index;
   Offline_Temp_Spatial_Avg = Offline_sum2./profiles2ave.wv./delta_r_index; 
    
   if flag.troubleshoot == 1
-
-   
-   figure(102)
-   semilogx(Offline_sub(round(p_hour/24*size(Offline,1)),:), range, 'b')
-   hold on
-   semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
-   hold off
-   ylim([0 1000])
-   title('Background subtracted raw counts, not shifted')  
+%    figure(102)
+%    semilogx(Offline_sub(round(p_hour/24*size(Offline,1)),:), range, 'b')
+%    hold on
+%    semilogx(Online_sub(round(p_hour/24*size(Online,1)),:), range, 'r')
+%    hold off
+%    ylim([0 1000])
+%    title('Background subtracted raw counts, not shifted')  
 
    figure(104)
    semilogx(Offline_Temp_Spatial_Avg(round(p_hour/24*size(Offline_sum2,1)),:), range, 'b')
@@ -536,7 +579,7 @@ end
   RB = interp1(time, RB, time_grid, method, extrapolation);  
   RB_on = interp1(time, RB_on, time_grid, method, extrapolation);
   
-     
+    
   % remove the time lag from cumsum
   time_shift = (ave_time.wv-1)/2 %time shift in minutes
   time_grid_act = time_grid-(1/24/60*time_shift);
@@ -554,10 +597,15 @@ end
   Online_Temp_Spatial_Avg = interp1(time_grid_act, Online_Temp_Spatial_Avg_act, time_grid, 'linear'); 
 
 % %remove any negative counts (beyond noise)
-    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -10) = 0;   
-    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = 0;  
+%    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -10) = 0;   
+%    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = 0;  
+
+  if flag.gradient_filter == 1
+    Online_Temp_Spatial_Avg(real(Online_Temp_Spatial_Avg) < -10) = nan;   
+    Offline_Temp_Spatial_Avg(real(Offline_Temp_Spatial_Avg) < -10) = nan;  
     RB(real(RB) < -10) = 0;
     RB_on(real(RB_on) < -10) = 0;
+  end
   
 % clear Online_Raw_Data Online Offline Online_sub Offline_sub data_on data_off C_Online C_Offline ... 
 %      Offline_sum1 Online_sum1 Background_on_sum1 Background_off_sum1 Background_off Background_on 
@@ -583,34 +631,7 @@ end
 
  % delete(h)
 
- %% Calculate T & P profiles from surface station
 
- const.k_B = 1.380649e-23; % (J/K, or Pa m^3/K)
- const.K_B = const.k_B * 9.869e-6; % (atm m^3/K)
- const.N_A = 6.022E23; % (/mol) Avagadros number
- const.M = 28.97E-3; % (kg/mol) air molecular mass per mol 
- const.m = const.M./const.N_A; % (kg) mass of a air molecule
- const.g = 9.80665; % (m/s^2) gravitational constant
- const.c = 299792458; % (m/s) (exact)  
- const.R = const.k_B*const.N_A; % (J/K mol) universal gas constant
-
- % Calculate temperature and pressure profile based on surface measurement and 
- % assuming a standard lapse rate (-6.5 deg/km) for the entire troposphere
- lapse = 0.0065; % (K/m) standard atmosphere lapse rate, dry adiabatic is 9.8 K/km
- if flag.WS == 1  % use surface values if they exist
-   T0 = nanmedian(Surf_T)+273.15
-   P0 = nanmedian(Surf_P)
-   T = (Surf_T+273.15)-lapse.*range;
-   P = Surf_P.*((Surf_T+273.15)./T).^-((const.M*const.g)/(const.R*lapse));   % barometric formula
- else
-   T0 = 290; % surface temperature
-   P0  = 1; % surface pressure in atm 
-   T = T0-lapse.*range; % temperature as function of range with lapse rate
-   P = P0.*(T0./T).^-((const.M*const.g)/(const.R*lapse));   % barometric formula 
- end
- 
- 
- 
  
 %% Spectral Line Fitting
 % h = waitbar(0,'Line Fiting');
@@ -625,8 +646,9 @@ line_indices = Hitran.file(1:size(Hitran.file,1),1)>WNmin & Hitran.file(1:size(H
 line = double(Hitran.file(line_indices, 1:size(Hitran.file,2)));
 
 %Get median temperature and pressure profile for the day
-T_med=nanmedian(T,1);
-P_med=nanmedian(P,1);
+T_med=median(T,1,'omitnan');
+P_med=median(P,1,'omitnan');
+
   
 Hitran.T00 = 296;              % HITRAN reference temperature [K]
 Hitran.P00 = 1;                % HITRAN reference pressure [atm]
@@ -654,7 +676,7 @@ Hitran.nu_off = 1/(lambda_off_N(l)+offset)*1e7;
 %sigma_on_total = zeros(size(Online_Temp_Spatial_Avg,1),size(Online_Temp_Spatial_Avg,2));
 
 
-for i = 1:size(Online_Temp_Spatial_Avg,2); % calculate the absorption cross section at each range
+for i = 1:size(Online_Temp_Spatial_Avg,2) % calculate the absorption cross section at each range
     j=rem(i,25);
     if j==0 
  %     waitbar(i/(size(Online_Temp_Spatial_Avg,2)),h);
@@ -801,9 +823,11 @@ end
 %% Mask the Number density data based on the error, correct for range center, and add WS data at lowest gate 
 
  N_masked = N_avg;
- N_masked(N_avg < 0) = nan; % remove non-pysical (negative) wv regions
- N_masked(abs(N_error./N_avg) > 3.00) = nan; % remove high error regions
-% check_high_counts = Offline_Raw_Data(:,9:end)./(MCS.bin_duration*1e-9*MCS.accum);
+ if flag.gradient_filter == 1
+   N_masked(N_avg < 0) = nan; % remove non-pysical (negative) wv regions
+   N_masked(abs(N_error./N_avg) > 3.00) = nan; % remove high error regions
+ end
+ % check_high_counts = Offline_Raw_Data(:,9:end)./(MCS.bin_duration*1e-9*MCS.accum);
 % N_masked(check_high_counts > 5E6) = nan; % remove raw counts above linear count threshold (5MC/s)
 
 %if strcmp(folder_CH,'NF') == 1
@@ -873,7 +897,7 @@ if flag.mark_gaps ==1
   I_off(isnan(lambda_blank)) = NaN;     
   P_on(isnan(lambda_blank)) = NaN;
   P_off(isnan(lambda_blank)) = NaN;
-  if flag.WS ==1
+  if flag.WS == 1
     Surf_T(isnan(lambda_blank)) = NaN; 
     Surf_P(isnan(lambda_blank)) = NaN; 
     Surf_RH(isnan(lambda_blank)) = NaN; 
@@ -896,12 +920,12 @@ end
   year = strread(folder_in(end-7:end-4), '%4f', 1); 
  % year = 2000+year;
   time_new = time_grid;%+datenum(year,1,0);
-  date_plot = datestr(nanmean(time_new), 'dd mmm yyyy') % this was changed
+  date_plot = datestr(mean(time_new,'omitnan'), 'dd mmm yyyy') % this was changed
  % date_plot = datestr(mean(time_new), 'dd mmm yyyy') % this was changed
   
  % OD is - ln(I/I.o), since offline is not the same as online it needs to
  % scaled by the first few good gates -- choose 300 m to 450 m
- scale_factor = nanmean(Online_Temp_Spatial_Avg(:,300/gate:525/gate),2)./nanmean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2);
+ scale_factor = mean(Online_Temp_Spatial_Avg(:,300/gate:525/gate),2,'omitnan')./mean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2,'omitnan');
 % scale_factor = mean(Online_Temp_Spatial_Avg(:,300/gate:525/gate),2)./mean(Offline_Temp_Spatial_Avg(:,300/gate:450/gate),2);
  scale = bsxfun(@times, Offline_Temp_Spatial_Avg, scale_factor);
  OD = -(log(Online_Temp_Spatial_Avg./scale)); % calculate column optical depth
@@ -978,9 +1002,91 @@ end
      'MPD_elevation')
    end
  end
+ 
+ if flag.save_netCDF == 1  % save the data as an nc file
+    % convert NaN fill values (and Inf) to -1 flag
+    time_new(isnan(time_new)==1) = -1;  % NaNs converted to -1 flag
+    N_avg(isnan(N_avg)==1) = -1; 
+    N_error(isnan(N_error)==1) = -1; 
+    N_avg(isinf(N_avg)==1) = -1;  
+    N_error(isinf(N_error)==1) = -1;  
+    Offline_Temp_Spatial_Avg(isinf(Offline_Temp_Spatial_Avg)==1) = -1;  
+    Online_Temp_Spatial_Avg(isinf(Online_Temp_Spatial_Avg)==1) = -1; 
+    time_unix = (time_new-datenum(1970,1,1))*86400; % convert to unix time
+   
+    cdf_name = strcat('wv_dial.', datestr(date_plot, 'yymmdd'));
+    ncid = netcdf.create([cdf_name '.nc'],'CLOBBER');       
+    % define the dimensions and variables
+    % netcdf.reDef(ncid);
+    dimid1 = netcdf.defDim(ncid,'time',netcdf.getConstant('NC_UNLIMITED'));
+    %dimid1 = netcdf.defDim(ncid,'time', length(time_new));
+    dimid2 = netcdf.defDim(ncid, 'range', length(range));
+    dimid3 = netcdf.defDim(ncid, 'lambda', length(lambda_on));
+    
+    myvarID1 = netcdf.defVar(ncid,'time','double',dimid1);
+      netcdf.putAtt(ncid, myvarID1, 'units', 'days since January 0, 0000')
+    myvarID2 = netcdf.defVar(ncid,'range','float',dimid2);
+      netcdf.putAtt(ncid, myvarID2, 'units', 'meters')
+    myvarID3 = netcdf.defVar(ncid,'N_avg','float',[dimid2 dimid1]);
+      netcdf.putAtt(ncid, myvarID3, 'long_name', 'water_vapor_number_density')
+      netcdf.putAtt(ncid, myvarID3, 'units', 'molecules/cm^3')
+      netcdf.putAtt(ncid, myvarID3, 'FillValue', '-1')
+    myvarID4 = netcdf.defVar(ncid,'N_error','float',[dimid2 dimid1]);
+      netcdf.putAtt(ncid, myvarID4, 'long_name', 'water_vapor_number_density_error')
+      netcdf.putAtt(ncid, myvarID4, 'units', 'molecules/cm^3')
+      netcdf.putAtt(ncid, myvarID4, 'FillValue', '-1')
+    myvarID5 = netcdf.defVar(ncid,'P','float', dimid2);
+      netcdf.putAtt(ncid, myvarID5, 'long_name', 'pressure')
+      netcdf.putAtt(ncid, myvarID5, 'units', 'atm')
+    myvarID6 = netcdf.defVar(ncid,'T','float', dimid2);
+      netcdf.putAtt(ncid, myvarID6, 'long_name', 'temperature')
+      netcdf.putAtt(ncid, myvarID6, 'units', 'degK')
+   myvarID7 = netcdf.defVar(ncid,'RB','float',[dimid2 dimid1]);
+      netcdf.putAtt(ncid, myvarID7, 'long_name', 'relative_backscatter')
+      netcdf.putAtt(ncid, myvarID7, 'units', 'arbitrary_units')
+      netcdf.putAtt(ncid, myvarID7, 'FillValue', '-1')
+   myvarID8 = netcdf.defVar(ncid,'time_unix','double',dimid1);
+      netcdf.putAtt(ncid, myvarID8, 'long_name', 'unix time')
+      netcdf.putAtt(ncid, myvarID8, 'units', 'seconds since 00:00:00 UTC, January 1, 1970')
+      netcdf.putAtt(ncid, myvarID8, 'FillValue', '-1')
+   myvarID9 = netcdf.defVar(ncid,'Offline_Temp_Spatial_Avg','float',[dimid2 dimid1]);
+      netcdf.putAtt(ncid, myvarID9, 'long_name', 'offline counts')
+      netcdf.putAtt(ncid, myvarID9, 'units', 'counts')
+      netcdf.putAtt(ncid, myvarID9, 'FillValue', '-1')
+    myvarID10 = netcdf.defVar(ncid,'Online_Temp_Spatial_Avg','float',[dimid2 dimid1]);
+      netcdf.putAtt(ncid, myvarID10, 'long_name', 'online counts')
+      netcdf.putAtt(ncid, myvarID10, 'units', 'counts')
+      netcdf.putAtt(ncid, myvarID10, 'FillValue', '-1')
+    myvarID11 = netcdf.defVar(ncid,'lambda_on','float', dimid3);
+      netcdf.putAtt(ncid, myvarID11, 'long_name', 'online wavelength')
+      netcdf.putAtt(ncid, myvarID11, 'units', 'nm')
+      netcdf.putAtt(ncid, myvarID11, 'FillValue', '-1')
+    myvarID12 = netcdf.defVar(ncid,'lambda_off','float', dimid3);
+      netcdf.putAtt(ncid, myvarID11, 'long_name', 'offline wavelength')
+      netcdf.putAtt(ncid, myvarID11, 'units', 'nm')
+      netcdf.putAtt(ncid, myvarID11, 'FillValue', '-1')
+      
+    netcdf.endDef(ncid)  
 
-
-
+    % save the variables to the file
+    
+    netcdf.putVar(ncid,myvarID1,0,length(time_new),time_new);   
+    netcdf.putVar(ncid,myvarID2,range);   
+    netcdf.putVar(ncid,myvarID3,[0,0],size(N_avg'),N_avg');  
+    netcdf.putVar(ncid,myvarID4,[0,0],size(N_error'),N_error');
+    netcdf.putVar(ncid,myvarID5,P);   
+    netcdf.putVar(ncid,myvarID6,T);
+    netcdf.putVar(ncid,myvarID7,[0,0],size(RB'),RB');
+    netcdf.putVar(ncid,myvarID8,time_unix);
+    netcdf.putVar(ncid,myvarID9,[0,0],size(Offline_Temp_Spatial_Avg'),Offline_Temp_Spatial_Avg');  
+    netcdf.putVar(ncid,myvarID10,[0,0],size(Online_Temp_Spatial_Avg'),Online_Temp_Spatial_Avg');
+    netcdf.putVar(ncid,myvarID11,lambda_on); 
+    netcdf.putVar(ncid,myvarID12,lambda_off); 
+    
+    
+  netcdf.close(ncid);
+ 
+ end
  
  %% plot data
 
@@ -1004,6 +1110,8 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
   set(gcf,'renderer','zbuffer');
   %Z = double(log10((real(RB')./RB_scale)));
   Z = double(real(RB')./RB_scale);
+  %Z = double(real(RB_on')./RB_scale);
+  %Z = Offline_Temp_Spatial_Avg';
   %Z = real(double(log10(Offline_Temp_Spatial_Avg_act')));
   %Z(isnan(Z)) = -1;
   h = pcolor(x,y,Z);
@@ -1060,7 +1168,7 @@ xData =  linspace(fix(min(time_new)),  ceil(max(time_new)), 25);
 
  if flag.save_quicklook == 1
   cd(write_data_folder) % point to the directory where data is stored 
-  date_save=datestr(nanmean(time_new), 'yyyymmdd');
+  date_save=datestr(mean(time_new,'omitnan'), 'yyyymmdd');
 %  date_save=datestr(mean(time_new), 'yyyymmdd');
 % save the image as a PNG to the local data folder 
   %name1=strcat('lidar.NCAR-WV-DIAL.', date, '0000.', folder_CH, '.png'); 
@@ -1165,7 +1273,7 @@ if flag.plot_data == 1
  figure(22)
  OD(OD == -Inf) = NaN;
  OD(OD == Inf) = NaN;
- plot(nanmean(OD,1), range)
+ plot(mean(OD,1,'omitnan'), range)
  %plot(nanmean(OD(5:650,:)),)
  xlim([0 2])
 
@@ -1176,7 +1284,7 @@ profile_start = round(5.2/24.*size(N_avg,1));
 profile_end = round(5.3/24.*size(N_avg,1));  
 semilogx(N_avg(profile_start:profile_end,:), range, 'r') % molecular
 hold on
-semilogx(nanmean(N_avg(profile_start:profile_end,:)), range, 'b') % combined 
+semilogx(mean(N_avg(profile_start:profile_end,:),'omitnan'), range, 'b') % combined 
 hold off
 ylim([0 9e3]);
 %xlim([1e-2 1e6]);
@@ -1232,10 +1340,3 @@ cd(dd) % point back to original directory
 
   
 end
-
-
-
-
-
-
-
