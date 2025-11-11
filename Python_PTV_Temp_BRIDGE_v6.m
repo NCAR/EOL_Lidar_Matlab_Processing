@@ -4,6 +4,7 @@ clear all; close all
 node = 'MPD04';
 % Use fullfile for robust path definition
 serv_path = '/Volumes/eol/sci/mhayman';
+serv_path = '/Volumes/sci/mhayman';
 plot_path = '/Users/spuler/Desktop';
 
 data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.7');
@@ -927,6 +928,34 @@ if flag.plot_single_wv_panels
 end
 
 
+% % ---------------------------------------------
+% % --- SURFACE COMPARISON TIME SERIES (NEW) ---
+% % ---------------------------------------------
+% if flag.read_wv_multi % Only run if MultiPulse is available
+%     create_surface_comparison_plot(x, comb_AH_surf, comb_AH_MultiPulse, comb_AH_model, ...
+%         node, font_size, xData, xData_m, figure_idx);
+% 
+%     figure_list{end+1} = figure_idx; 
+%     suffix_list{end+1} = 'AH_Surface_LowBin_Timeseries'; 
+%     figure_idx=figure_idx+1; % Increment figure index
+% end
+
+% ---------------------------------------------
+% --- SURFACE COMPARISON TIME SERIES (NEW) ---
+% ---------------------------------------------
+if flag.read_wv_multi % <-- This block should now be cleaner
+    
+    % Call the simplified plotting function (9 arguments total)
+    create_surface_comparison_plot(x, comb_AH_surf, comb_AH_MultiPulse, comb_AH_model, ...
+        node, font_size, xData, xData_m, figure_idx); 
+    
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'AH_Surface_LowBin_Timeseries'; 
+    figure_idx=figure_idx+1; % Increment figure index
+end
+
+
+
 % AEROSOL/COUNTS (Conditional)
 if flag.plot_aerosol_counts
     % Figure X
@@ -1333,5 +1362,101 @@ function create_profile_plots(x, y_alt, AH, AH_PTV, AH_MultiPulse, AH_model, ...
     legend('show', 'Location', 'northeast');
     ylim([0 ceil(max(y_alt))]);
     set(gca, 'Fontsize', 12, 'Fontweight', 'b');
+  
 
+end
+
+% function create_surface_comparison_plot(x, AH_surf, AH_MP, AH_model, node, font_size, xData, xData_m, figure_idx)
+% % CREATE_SURFACE_COMPARISON_PLOT Generates a time-series plot comparing the AH surface 
+% % observation with the lowest valid bins of MultiPulse and ERA5 data.
+% 
+%     hf = figure(figure_idx);
+%     set(hf, 'Position', [100 100 1000 350], 'renderer', 'zbuffer'); % Custom wide plot size
+% 
+%     % The lowest valid bin in the 2D matrices is assumed to be row 1, 
+%     % based on the common practice of indexing after masking/trimming the lowest range.
+%     AH_MP_lowest = AH_MP(5, :); 
+%     AH_Model_lowest = AH_model(1, :); 
+% 
+%     % Plot the three time series
+%     plot(x, AH_surf, 'k-', 'LineWidth', 2, 'DisplayName', 'Surface Station AH'); hold on;
+%     plot(x, AH_MP_lowest, 'b--', 'LineWidth', 1.5, 'DisplayName', 'MultiPulse (Lowest Bin)');
+%     plot(x, AH_Model_lowest, 'r:', 'LineWidth', 1.5, 'DisplayName', 'ERA5 Model (Lowest Bin)');
+% 
+%     grid on; box on;
+% 
+%     title({[node, ': AH Lowest Bin vs. Surface Station Time Series'], ...
+%            ['Comparison Period: ', datestr(min(x), 'dd-mmm-yy'), ' to ', datestr(max(x), 'dd-mmm-yy')]}, ...
+%            'fontweight', 'b', 'fontsize', font_size);
+% 
+%     xlabel('Time (UTC)', 'fontweight', 'b', 'fontsize', font_size);
+%     ylabel('Absolute Humidity (g m^{-3})', 'fontweight', 'b', 'fontsize', font_size);
+% 
+%     % Apply X-axis formatting
+%     set(gca, 'XTick', xData);
+%     set(gca, 'XMinorTick', 'on');
+%     xAx = get(gca, 'XAxis');
+%     xAx.MinorTickValues = xData_m;
+%     datetick('x', 'dd-mmm-yy', 'keeplimits', 'keepticks');
+% 
+%     legend('show', 'Location', 'best', 'fontsize', font_size-4);
+%     set(gca, 'Fontsize', font_size-2, 'Fontweight', 'b', 'TickDir', 'out');
+% 
+%     % Set Y-axis limits based on AH max/min
+%     ylim([min(min(AH_surf), min(AH_MP_lowest)) - 1, max(max(AH_surf), max(AH_MP_lowest)) + 1]);
+% 
+%     hold off;
+% end
+
+function create_surface_comparison_plot(x, AH_surf, AH_MP, AH_model, node, font_size, xData, xData_m, figure_idx)
+% CREATE_SURFACE_COMPARISON_PLOT Generates a time-series plot comparing the AH surface 
+% observation with the lowest valid bins of MultiPulse and ERA5 data, using smoothing.
+    
+    hf = figure(figure_idx);
+    set(hf, 'Position', [100 100 1000 350], 'renderer', 'zbuffer'); % Custom wide plot size
+    
+    % --- 1. Define Smoothing Window and Data Slicing ---
+    SMOOTHING_WINDOW = 10; 
+    
+    % Assuming the lowest usable data bin is row 1 after any previous masking (e.g., rows 57-59)
+    MP_lowest_valid_row = 5;
+    lowest_valid_row = 1;
+
+    AH_MP_lowest = AH_MP(MP_lowest_valid_row, :); 
+    AH_Model_lowest = AH_model(lowest_valid_row , :); 
+
+    % --- 2. Apply 5-Point Moving Mean (Smoothing) ---
+    % movmean handles NaN values automatically by ignoring them in the calculation.
+    AH_surf_smoothed    = movmean(AH_surf, SMOOTHING_WINDOW, 'omitnan');
+    AH_MP_smoothed      = movmean(AH_MP_lowest, SMOOTHING_WINDOW, 'omitnan');
+    AH_Model_smoothed   = movmean(AH_Model_lowest, SMOOTHING_WINDOW, 'omitnan');
+    
+    % --- 3. Plot the time series ---
+    plot(x, AH_surf_smoothed, 'k-', 'LineWidth', 2, 'DisplayName', 'Surface Station AH (Smoothed)'); hold on;
+    plot(x, AH_MP_smoothed, 'b--', 'LineWidth', 1.5, 'DisplayName', ['MultiPulse (Bin ', num2str(MP_lowest_valid_row), ' Smoothed)']);
+    plot(x, AH_Model_smoothed, 'r:', 'LineWidth', 1.5, 'DisplayName', ['ERA5 Model (Bin ', num2str(lowest_valid_row), ' Smoothed)']);
+    
+    grid on; box on;
+    
+    title({[node, ': AH Lowest Bin vs. Surface Station Time Series (5-pt Mean)'], ...
+           ['Comparison Period: ', datestr(min(x), 'dd-mmm-yy'), ' to ', datestr(max(x), 'dd-mmm-yy')]}, ...
+           'fontweight', 'b', 'fontsize', font_size);
+    
+    xlabel('Time (UTC)', 'fontweight', 'b', 'fontsize', font_size);
+    ylabel('Absolute Humidity (g m^{-3})', 'fontweight', 'b', 'fontsize', font_size);
+    
+    % Apply X-axis formatting
+    set(gca, 'XTick', xData);
+    set(gca, 'XMinorTick', 'on');
+    xAx = get(gca, 'XAxis');
+    xAx.MinorTickValues = xData_m;
+    datetick('x', 'dd-mmm-yy', 'keeplimits', 'keepticks');
+    
+    legend('show', 'Location', 'best', 'fontsize', font_size-4);
+    set(gca, 'Fontsize', font_size-2, 'Fontweight', 'b', 'TickDir', 'out');
+
+    % Set Y-axis limits based on AH max/min
+    ylim([min(min(AH_surf_smoothed), min(AH_MP_smoothed)) - 1, max(max(AH_surf_smoothed), max(AH_MP_smoothed)) + 1]);
+    
+    hold off;
 end
