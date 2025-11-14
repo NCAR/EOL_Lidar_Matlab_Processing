@@ -23,10 +23,12 @@ flag.plot_single_temp_panels = 0;
 flag.plot_single_wv_panels = 0;   
 flag.plot_uncertainty = 0;     
 flag.plot_histograms_2d = 1;   % Toggle 2D Density Maps (T_Range, AH_Range)
+flag.plot_ah_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot (suggest not using)
+flag.plot_temp_scatter = 0;    % Toggle AH vs ERA5 Scatter Plot (suggest not using)
 flag.plot_ah_density_map = 1;  % Toggle AH vs ERA5 Density Map
 flag.plot_t_density_map = 1;   % Toggle Temp vs ERA5 Density Map
 flag.plot_1d_histograms = 0;   % Toggle 1D Histograms (T_Diff_Histogram, AH_Diff_Histogram)
-flag.plot_profile_lines = 0;   % Toggle vertical profile line plots for a specific time/date5
+flag.plot_profile_lines = 1;   % Toggle vertical profile line plots for a specific time/date5
 
 % --- PROFILE PLOT SETTINGS ---
 PROFILE_TIME_TO_PLOT = datenum('2025-07-29 07:00:00', 'yyyy-mm-dd HH:MM:SS'); 
@@ -978,6 +980,31 @@ if flag.plot_uncertainty
 end
 
 
+% ---------------------------------------------
+% --- AH VS. ERA5 SCATTER PLOT (CONDITIONAL) ---
+% ---------------------------------------------
+if flag.plot_ah_scatter
+    % Figure X
+    create_ah_scatter_plot(comb_AH_model, comb_AH, comb_AH_PTV, comb_AH_MultiPulse, y, ...
+        figure_idx, node, plot_size_wide, font_size, flag.read_wv_multi);
+    
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'AH_vs_ERA5_Scatter'; 
+    figure_idx=figure_idx+1; % Increment figure index
+end
+
+% ---------------------------------------------
+% --- TEMP VS. ERA5 SCATTER PLOT (CONDITIONAL) ---
+% ---------------------------------------------
+if flag.plot_temp_scatter
+    % Figure X+1
+    create_temp_scatter_plot(comb_T_model, comb_T, comb_T_Std, ...
+        figure_idx, node, plot_size_wide, font_size, flag.read_temp_std);
+    
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'T_vs_ERA5_Scatter'; 
+    figure_idx=figure_idx+1; % Increment figure index
+end
 
 % ---------------------------------------------
 % --- PRODUCT VS. MODEL DENSITY MAPS (CONDITIONAL) ---

@@ -23,10 +23,12 @@ flag.plot_single_temp_panels = 0;
 flag.plot_single_wv_panels = 0;   
 flag.plot_uncertainty = 0;     
 flag.plot_histograms_2d = 1;   % Toggle 2D Density Maps (T_Range, AH_Range)
+flag.plot_ah_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot (suggest not using)
+flag.plot_temp_scatter = 0;    % Toggle AH vs ERA5 Scatter Plot (suggest not using)
 flag.plot_ah_density_map = 1;  % Toggle AH vs ERA5 Density Map
 flag.plot_t_density_map = 1;   % Toggle Temp vs ERA5 Density Map
 flag.plot_1d_histograms = 0;   % Toggle 1D Histograms (T_Diff_Histogram, AH_Diff_Histogram)
-flag.plot_profile_lines = 0;   % Toggle vertical profile line plots for a specific time/date5
+flag.plot_profile_lines = 1;   % Toggle vertical profile line plots for a specific time/date5
 
 % --- PROFILE PLOT SETTINGS ---
 PROFILE_TIME_TO_PLOT = datenum('2025-07-29 07:00:00', 'yyyy-mm-dd HH:MM:SS'); 
@@ -382,7 +384,22 @@ else
 end
 
 disp(['Gap insertion complete. Time elapsed: ', num2str(toc(tic_gap)), ' seconds.']);
- 
+
+% --- AVAILABILITY CALCULATION (FOR PLOT ANNOTATION) ---
+disp('Starting availability calculation...');
+MAX_ALT_KM = 3.0; % The cutoff for low-altitude availability
+y_alt_km = (alt{1}./1000); % y is defined later, use the original alt array
+
+% Use full resolution matrices for the most accurate statistics
+avail.T_PTV = calculate_low_range_availability(comb_T_full, y_alt_km, MAX_ALT_KM);
+avail.T_Std = calculate_low_range_availability(comb_T_Std_full, y_alt_km, MAX_ALT_KM);
+avail.AH_PTV = calculate_low_range_availability(comb_AH_PTV_full, y_alt_km, MAX_ALT_KM);
+avail.AH_Std = calculate_low_range_availability(comb_AH_full, y_alt_km, MAX_ALT_KM);
+avail.AH_MultiPulse = calculate_low_range_availability(comb_AH_MultiPulse_full, y_alt_km, MAX_ALT_KM);
+
+disp('Availability calculation complete.');
+% -----------------------------------------------------
+
 % --- APPLY SMART DECIMATION HERE ---
 disp('Starting smart decimation...');
 tic_decimate = tic;
@@ -537,14 +554,14 @@ if flag.plot_multi_temp % Keeping the flag name, but changing its function
     % Initial list of all 7 plots (Absolute Values, Top to Bottom)
     all_abs_plots = {
         % ABSOLUTE HUMIDITY
-        comb_AH_model, 'Absolute Humidity ERA5 Model (g m^{-3})', caxis_AH, cmap_AH;
-        comb_AH, 'Absolute Humidity Standard (g m^{-3})', caxis_AH, cmap_AH;
-        comb_AH_PTV, 'Absolute Humidity PTV (g m^{-3})', caxis_AH, cmap_AH;
-        comb_AH_MultiPulse, 'Absolute Humidity MultiPulse (g m^{-3})', caxis_AH, cmap_AH;
+        comb_AH_model, 'Absolute Humidity ERA5 Model (g m^{-3})', caxis_AH, cmap_AH, 'Model';
+        comb_AH, 'Absolute Humidity Standard (g m^{-3})', caxis_AH, cmap_AH, 'AH_Std';
+        comb_AH_PTV, 'Absolute Humidity PTV (g m^{-3})', caxis_AH, cmap_AH, 'AH_PTV';
+        comb_AH_MultiPulse, 'Absolute Humidity MultiPulse (g m^{-3})', caxis_AH, cmap_AH, 'AH_MultiPulse';
         % TEMPERATURE
-        comb_T_model, 'Temperature ERA5 Model (K)', caxis_T_abs, plasma_cmap;
-        comb_T_Std, 'Temperature Standard (K)', caxis_T_abs, plasma_cmap;
-        comb_T, 'Temperature PTV (K)', caxis_T_abs, plasma_cmap;
+        comb_T_model, 'Temperature ERA5 Model (K)', caxis_T_abs, plasma_cmap, 'Model';
+        comb_T_Std, 'Temperature Standard (K)', caxis_T_abs, plasma_cmap, 'T_Std';
+        comb_T, 'Temperature PTV (K)', caxis_T_abs, plasma_cmap, 'T_PTV';
     };
     
     % --- CONDITIONAL PANEL REMOVAL ---
@@ -582,6 +599,7 @@ if flag.plot_multi_temp % Keeping the flag name, but changing its function
         plot_title = all_abs_plots{i, 2};
         caxis_val = all_abs_plots{i, 3};
         cmap_val = all_abs_plots{i, 4};
+        product_tag = all_abs_plots{i, 5};
         
         % 2. Pcolor plot (Core logic from create_pcolor_plot)
         h = pcolor(h_ax, x, y, data_plot); 
@@ -626,6 +644,29 @@ if flag.plot_multi_temp % Keeping the flag name, but changing its function
             xlabel('Time (UTC)','fontweight','b','fontsize',font_size_small); 
         end
         
+        % 6. Add Availability Text Annotation
+        avail_val = NaN; % Default to NaN
+        if strcmp(product_tag, 'AH_Std')
+            avail_val = avail.AH_Std;
+        elseif strcmp(product_tag, 'AH_PTV')
+            avail_val = avail.AH_PTV;
+        elseif strcmp(product_tag, 'AH_MultiPulse')
+            avail_val = avail.AH_MultiPulse;
+        elseif strcmp(product_tag, 'T_Std')
+            avail_val = avail.T_Std;
+        elseif strcmp(product_tag, 'T_PTV')
+            avail_val = avail.T_PTV;
+        end
+        
+        if isfinite(avail_val)
+            % Format the text string
+            avail_str = {['<', num2str(MAX_ALT_KM), ' km Avail: '], [num2str(avail_val, '%.1f'), '%']};
+            % Use the 'text' function in normalized axes units (relative to the subplot)
+            text(0.99, 0.9, avail_str, 'Units', 'normalized', ...
+                 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', ...
+                 'FontSize', font_size_small - 2, 'FontWeight', 'bold', 'Color', 'k');
+        end
+
         set(gca,'TickDir','out');
         set(gca,'TickLength',[0.005; 0.0025]);
     end
@@ -648,14 +689,14 @@ if flag.plot_multi_wv % Keeping the flag name, but changing its function
     % Initial list of all 7 plots (Model and Differences, Top to Bottom)
     all_diff_plots = {
         % ABSOLUTE HUMIDITY
-        comb_AH_model, 'Absolute Humidity ERA5 Model (g m^{-3})', caxis_AH, cmap_AH; % Model Plot
-        comb_AH - comb_AH_model, 'AH Standard - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH;
-        comb_AH_PTV - comb_AH_model, 'AH PTV - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH;
-        comb_AH_MultiPulse - comb_AH_model, 'AH MultiPulse - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH;
+        comb_AH_model, 'Absolute Humidity ERA5 Model (g m^{-3})', caxis_AH, cmap_AH, 'Model'; % Model Plot
+        comb_AH - comb_AH_model, 'AH Standard - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH, 'AH_Std';
+        comb_AH_PTV - comb_AH_model, 'AH PTV - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH, 'AH_PTV';
+        comb_AH_MultiPulse - comb_AH_model, 'AH MultiPulse - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH, 'AH_MultiPulse';
         % TEMPERATURE
-        comb_T_model, 'Temperature ERA5 Model (K)', caxis_T_abs, plasma_cmap; % Model Plot
-        comb_T_Std - comb_T_model, 'T Standard - Model Difference (K)', caxis_diff_T, smooth_gray_cmap_T;
-        comb_T - comb_T_model, 'T PTV - Model Difference (K)', caxis_diff_T, smooth_gray_cmap_T;
+        comb_T_model, 'Temperature ERA5 Model (K)', caxis_T_abs, plasma_cmap, 'Model'; % Model Plot
+        comb_T_Std - comb_T_model, 'T Standard - Model Difference (K)', caxis_diff_T, smooth_gray_cmap_T, 'T_Std';
+        comb_T - comb_T_model, 'T PTV - Model Difference (K)', caxis_diff_T, smooth_gray_cmap_T, 'T_PTV';
     };
     
     % --- CONDITIONAL PANEL REMOVAL ---
@@ -693,6 +734,7 @@ if flag.plot_multi_wv % Keeping the flag name, but changing its function
         plot_title = all_diff_plots{i, 2};
         caxis_val = all_diff_plots{i, 3};
         cmap_val = all_diff_plots{i, 4}; 
+        product_tag = all_diff_plots{i, 5};
         
         % 2. Pcolor plot
         h = pcolor(h_ax, x, y, data_plot); 
@@ -745,6 +787,29 @@ if flag.plot_multi_wv % Keeping the flag name, but changing its function
             xlabel('Time (UTC)','fontweight','b','fontsize',font_size_small); 
         end
         
+        % 6. Add Availability Text Annotation
+        avail_val = NaN; % Default to NaN
+        if strcmp(product_tag, 'AH_Std')
+            avail_val = avail.AH_Std;
+        elseif strcmp(product_tag, 'AH_PTV')
+            avail_val = avail.AH_PTV;
+        elseif strcmp(product_tag, 'AH_MultiPulse')
+            avail_val = avail.AH_MultiPulse;
+        elseif strcmp(product_tag, 'T_Std')
+            avail_val = avail.T_Std;
+        elseif strcmp(product_tag, 'T_PTV')
+            avail_val = avail.T_PTV;
+        end
+        
+        if isfinite(avail_val)
+            % Format the text string
+            avail_str = {['<', num2str(MAX_ALT_KM), ' km Avail: '], [num2str(avail_val, '%.1f'), '%']};
+            % Use the 'text' function in normalized axes units (relative to the subplot)
+            text(0.99, 0.9, avail_str, 'Units', 'normalized', ...
+                 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', ...
+                 'FontSize', font_size_small - 2, 'FontWeight', 'bold', 'Color', 'k');
+        end
+        
         set(gca,'TickDir','out');
         set(gca,'TickLength',[0.005; 0.0025]);
     end
@@ -775,10 +840,10 @@ if flag.plot_aerosol_counts % Using this flag to control the new plot
     panel_height = total_height / num_panels;
 
     core_plots = {
-        comb_Counts, 'Attenuated Backscatter, 828 nm (Log Scale)', caxis_Counts, 'jet', 1;       % Data, Title, Clim, CMap, LogScale
-        comb_ABC, 'Aerosol Backscatter Coefficient, PTV (m^{-1} sr^{-1})', caxis_ABC, 'viridis', 1;
-        comb_AH_PTV, 'Absolute Humidity PTV (g m^{-3})', caxis_AH, cmap_AH, 0;
-        comb_T, 'Temperature PTV (K)', caxis_T_abs, plasma_cmap, 0;
+        comb_Counts, 'Attenuated Backscatter, 828 nm (Log Scale)', caxis_Counts, 'jet', 1, 'Counts';       % Data, Title, Clim, CMap, LogScale, Tag
+        comb_ABC, 'Aerosol Backscatter Coefficient, PTV (m^{-1} sr^{-1})', caxis_ABC, 'viridis', 1, 'ABC';
+        comb_AH_PTV, 'Absolute Humidity PTV (g m^{-3})', caxis_AH, cmap_AH, 0, 'AH_PTV';
+        comb_T, 'Temperature PTV (K)', caxis_T_abs, plasma_cmap, 0, 'T_PTV';
     };
 
 
@@ -796,6 +861,7 @@ if flag.plot_aerosol_counts % Using this flag to control the new plot
         caxis_val = core_plots{i, 3};
         cmap_val = core_plots{i, 4};
         log_scale = core_plots{i, 5};
+        product_tag = core_plots{i, 6};
         
         % 2. Pcolor plot
         h = pcolor(h_ax, x, y, data_plot); 
@@ -849,6 +915,23 @@ if flag.plot_aerosol_counts % Using this flag to control the new plot
         else
             % Add X-label to the bottom panel
             xlabel('Time (UTC)','fontweight','b','fontsize',font_size_small); 
+        end
+        
+        % 8. Add Availability Text Annotation (Only for AH and T)
+        avail_val = NaN; % Default to NaN
+        if strcmp(product_tag, 'AH_PTV')
+            avail_val = avail.AH_PTV;
+        elseif strcmp(product_tag, 'T_PTV')
+            avail_val = avail.T_PTV;
+        end
+        
+        if isfinite(avail_val)
+            % Format the text string
+            avail_str = {['<', num2str(MAX_ALT_KM), ' km Avail: '], [num2str(avail_val, '%.1f'), '%']};
+            % Use the 'text' function in normalized axes units (relative to the subplot)
+            text(0.99, 0.9, avail_str, 'Units', 'normalized', ...
+                 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', ...
+                 'FontSize', font_size_small - 2, 'FontWeight', 'bold', 'Color', 'k');
         end
         
         set(gca,'TickDir','out');
@@ -926,6 +1009,17 @@ if flag.plot_single_wv_panels
 end
 
 
+% % ---------------------------------------------
+% % --- SURFACE COMPARISON TIME SERIES (NEW) ---
+% % ---------------------------------------------
+% if flag.read_wv_multi % Only run if MultiPulse is available
+%     create_surface_comparison_plot(x, comb_AH_surf, comb_AH_MultiPulse, comb_AH_model, ...
+%         node, font_size, xData, xData_m, figure_idx);
+% 
+%     figure_list{end+1} = figure_idx; 
+%     suffix_list{end+1} = 'AH_Surface_LowBin_Timeseries'; 
+%     figure_idx=figure_idx+1; % Increment figure index
+% end
 
 % ---------------------------------------------
 % --- SURFACE COMPARISON TIME SERIES (NEW) ---
@@ -933,8 +1027,8 @@ end
 if flag.read_wv_multi % <-- This block should now be cleaner
     
     % Call the simplified plotting function (9 arguments total)
- %   create_surface_comparison_plot(x, comb_AH_surf, comb_AH_MultiPulse, comb_AH_model, ...
- %       node, font_size, xData, xData_m, figure_idx); 
+    create_surface_comparison_plot(x, comb_AH_surf, comb_AH_MultiPulse, comb_AH_model, ...
+        node, font_size, xData, xData_m, figure_idx); 
     
     figure_list{end+1} = figure_idx; 
     suffix_list{end+1} = 'AH_Surface_LowBin_Timeseries'; 
@@ -978,6 +1072,31 @@ if flag.plot_uncertainty
 end
 
 
+% ---------------------------------------------
+% --- AH VS. ERA5 SCATTER PLOT (CONDITIONAL) ---
+% ---------------------------------------------
+if flag.plot_ah_scatter
+    % Figure X
+    create_ah_scatter_plot(comb_AH_model, comb_AH, comb_AH_PTV, comb_AH_MultiPulse, y, ...
+        figure_idx, node, plot_size_wide, font_size, flag.read_wv_multi);
+    
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'AH_vs_ERA5_Scatter'; 
+    figure_idx=figure_idx+1; % Increment figure index
+end
+
+% ---------------------------------------------
+% --- TEMP VS. ERA5 SCATTER PLOT (CONDITIONAL) ---
+% ---------------------------------------------
+if flag.plot_temp_scatter
+    % Figure X+1
+    create_temp_scatter_plot(comb_T_model, comb_T, comb_T_Std, ...
+        figure_idx, node, plot_size_wide, font_size, flag.read_temp_std);
+    
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'T_vs_ERA5_Scatter'; 
+    figure_idx=figure_idx+1; % Increment figure index
+end
 
 % ---------------------------------------------
 % --- PRODUCT VS. MODEL DENSITY MAPS (CONDITIONAL) ---
@@ -1190,6 +1309,32 @@ function output_matrix = decimate_matrix(input_matrix, N_decimate)
     % Reshape and average: (N_range) x (N_time/N_decimate)
     output_matrix = mean(reshape(input_matrix, N_range, N_decimate, N_time/N_decimate), 2);
     output_matrix = squeeze(output_matrix);
+end
+
+% ==========================================================
+function availability_percent = calculate_low_range_availability(data_matrix, alt_vector, max_alt_km)
+% CALCULATE_LOW_RANGE_AVAILABILITY Calculates the percentage of valid data 
+% points below a specified altitude.
+
+    % Find the indices (rows) corresponding to altitudes <= max_alt_km
+    low_range_indices = find(alt_vector <= max_alt_km * 1000); % Convert km to m
+
+    if isempty(low_range_indices)
+        availability_percent = 0;
+        return;
+    end
+    
+    % Extract the low-range subset
+    low_range_data = data_matrix(low_range_indices, :);
+    
+    % Total number of possible data points in this range
+    total_possible_points = numel(low_range_data);
+    
+    % Number of valid (non-NaN) data points
+    num_valid_points = sum(isfinite(low_range_data), 'all');
+    
+    % Calculate availability percentage
+    availability_percent = (num_valid_points / total_possible_points) * 100;
 end
 
 % ==========================================================
@@ -1562,11 +1707,13 @@ function create_surface_comparison_plot(x, AH_surf, AH_MP, AH_model, node, font_
     AH_MP_lowest_filt = manual_medfilt1(AH_MP_lowest, FILTER_ORDER);
     AH_Model_lowest_filt = manual_medfilt1(AH_Model_lowest, FILTER_ORDER);
 
+    % Define the MultiPulse color for consistency with profile plots: [0 0.6 0]
+    color_MP = [0 0.6 0];
 
     % --- 3. PLOT THE FILTERED TIME SERIES ---
-    plot(x, AH_surf_filt, 'k-', 'LineWidth', 2, 'DisplayName', 'Surface Station AH (Filtered)'); hold on;
-    plot(x, AH_MP_lowest_filt, 'b--', 'LineWidth', 1.5, 'DisplayName', 'MultiPulse Lowest Bin (Filtered)');
-    plot(x, AH_Model_lowest_filt, 'r:', 'LineWidth', 1.5, 'DisplayName', 'ERA5 Model Lowest Bin (Filtered)');
+    plot(x, AH_surf_filt, 'm-', 'LineWidth', 2, 'DisplayName', 'Surface Station AH (Filtered)'); hold on;
+    plot(x, AH_MP_lowest_filt, 'g-', 'LineWidth', 1.5, 'DisplayName', 'MultiPulse Lowest Bin (Filtered)');
+    plot(x, AH_Model_lowest_filt, 'k--', 'LineWidth', 1.5, 'DisplayName', 'ERA5 Model Lowest Bin (Filtered)');
 
     grid on; box on;
 

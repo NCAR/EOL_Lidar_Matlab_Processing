@@ -1,10 +1,10 @@
-
 clear all; close all
 
 % --- 1. CONFIGURATION AND PATHS ---
 node = 'MPD04';
 % Use fullfile for robust path definition
 serv_path = '/Volumes/eol/sci/mhayman';
+%serv_path = '/Volumes/sci/mhayman';
 plot_path = '/Users/spuler/Desktop';
 
 data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.7');
@@ -21,14 +21,19 @@ flag.plot_multi_temp = 1;      % Toggle multi panel T WV abs
 flag.plot_multi_wv = 1;        % Toggle multi panel T WV diff
 flag.plot_single_temp_panels = 0; 
 flag.plot_single_wv_panels = 0;   
-flag.plot_uncertainty = 1;     
+flag.plot_uncertainty = 0;     
 flag.plot_histograms_2d = 1;   % Toggle 2D Density Maps (T_Range, AH_Range)
-flag.plot_ah_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot
-flag.plot_temp_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot
+flag.plot_ah_scatter = 0;      % Toggle AH vs ERA5 Scatter Plot (suggest not using)
+flag.plot_temp_scatter = 0;    % Toggle AH vs ERA5 Scatter Plot (suggest not using)
 flag.plot_ah_density_map = 1;  % Toggle AH vs ERA5 Density Map
 flag.plot_t_density_map = 1;   % Toggle Temp vs ERA5 Density Map
 flag.plot_1d_histograms = 0;   % Toggle 1D Histograms (T_Diff_Histogram, AH_Diff_Histogram)
-% ------------------------------------
+flag.plot_profile_lines = 1;   % Toggle vertical profile line plots for a specific time/date5
+
+% --- PROFILE PLOT SETTINGS ---
+PROFILE_TIME_TO_PLOT = datenum('2025-07-29 07:00:00', 'yyyy-mm-dd HH:MM:SS'); 
+% -----------------------------
+
 
 % --- DATA READING EXCLUSION FLAGS (0=Exclude/Off, 1=Include/On) ---
 flag.read_temp_std = 1;        % Include reading Temperature_Standard and related fields
@@ -167,6 +172,9 @@ for jj = 1:num_files
     AH_MultiPulse_var{jj}(AH_MultiPulse_mask{jj} == 1) = nan; 
     ABC{jj}(ABC_mask{jj} == 1) = nan;
 
+    CORRUPTED_ROWS = [42:66];
+    AH_PTV{jj}(CORRUPTED_ROWS, :) = NaN;
+
     netcdf.close(ncid); 
   
      
@@ -220,7 +228,7 @@ total_timesteps = sum(cellfun('size', duration, 1));
 num_ranges = size(AH{1}, 1); 
 
 % -----------------------------------------------------------
-% --- FULL RESOLUTION COPIES (For Histograms if NOT decimating) ---
+% --- FULL RESOLUTION COPIES (For Histograms if NOT decimating and for profile plots) ---
 % -----------------------------------------------------------
 comb_AH_full = nan(num_ranges, total_timesteps);
 comb_AH_var_full = nan(num_ranges, total_timesteps);
@@ -376,7 +384,22 @@ else
 end
 
 disp(['Gap insertion complete. Time elapsed: ', num2str(toc(tic_gap)), ' seconds.']);
- 
+
+% --- AVAILABILITY CALCULATION (FOR PLOT ANNOTATION) ---
+disp('Starting availability calculation...');
+MAX_ALT_KM = 3.0; % The cutoff for low-altitude availability
+y_alt_km = (alt{1}./1000); % y is defined later, use the original alt array
+
+% Use full resolution matrices for the most accurate statistics
+avail.T_PTV = calculate_low_range_availability(comb_T_full, y_alt_km, MAX_ALT_KM);
+avail.T_Std = calculate_low_range_availability(comb_T_Std_full, y_alt_km, MAX_ALT_KM);
+avail.AH_PTV = calculate_low_range_availability(comb_AH_PTV_full, y_alt_km, MAX_ALT_KM);
+avail.AH_Std = calculate_low_range_availability(comb_AH_full, y_alt_km, MAX_ALT_KM);
+avail.AH_MultiPulse = calculate_low_range_availability(comb_AH_MultiPulse_full, y_alt_km, MAX_ALT_KM);
+
+disp('Availability calculation complete.');
+% -----------------------------------------------------
+
 % --- APPLY SMART DECIMATION HERE ---
 disp('Starting smart decimation...');
 tic_decimate = tic;
@@ -531,14 +554,14 @@ if flag.plot_multi_temp % Keeping the flag name, but changing its function
     % Initial list of all 7 plots (Absolute Values, Top to Bottom)
     all_abs_plots = {
         % ABSOLUTE HUMIDITY
-        comb_AH_model, 'Absolute Humidity ERA5 Model (g m^{-3})', caxis_AH, cmap_AH;
-        comb_AH, 'Absolute Humidity Standard (g m^{-3})', caxis_AH, cmap_AH;
-        comb_AH_PTV, 'Absolute Humidity PTV (g m^{-3})', caxis_AH, cmap_AH;
-        comb_AH_MultiPulse, 'Absolute Humidity MultiPulse (g m^{-3})', caxis_AH, cmap_AH;
+        comb_AH_model, 'Absolute Humidity ERA5 Model (g m^{-3})', caxis_AH, cmap_AH, 'Model';
+        comb_AH, 'Absolute Humidity Standard (g m^{-3})', caxis_AH, cmap_AH, 'AH_Std';
+        comb_AH_PTV, 'Absolute Humidity PTV (g m^{-3})', caxis_AH, cmap_AH, 'AH_PTV';
+        comb_AH_MultiPulse, 'Absolute Humidity MultiPulse (g m^{-3})', caxis_AH, cmap_AH, 'AH_MultiPulse';
         % TEMPERATURE
-        comb_T_model, 'Temperature ERA5 Model (K)', caxis_T_abs, plasma_cmap;
-        comb_T_Std, 'Temperature Standard (K)', caxis_T_abs, plasma_cmap;
-        comb_T, 'Temperature PTV (K)', caxis_T_abs, plasma_cmap;
+        comb_T_model, 'Temperature ERA5 Model (K)', caxis_T_abs, plasma_cmap, 'Model';
+        comb_T_Std, 'Temperature Standard (K)', caxis_T_abs, plasma_cmap, 'T_Std';
+        comb_T, 'Temperature PTV (K)', caxis_T_abs, plasma_cmap, 'T_PTV';
     };
     
     % --- CONDITIONAL PANEL REMOVAL ---
@@ -576,6 +599,7 @@ if flag.plot_multi_temp % Keeping the flag name, but changing its function
         plot_title = all_abs_plots{i, 2};
         caxis_val = all_abs_plots{i, 3};
         cmap_val = all_abs_plots{i, 4};
+        product_tag = all_abs_plots{i, 5};
         
         % 2. Pcolor plot (Core logic from create_pcolor_plot)
         h = pcolor(h_ax, x, y, data_plot); 
@@ -620,6 +644,29 @@ if flag.plot_multi_temp % Keeping the flag name, but changing its function
             xlabel('Time (UTC)','fontweight','b','fontsize',font_size_small); 
         end
         
+        % 6. Add Availability Text Annotation
+        avail_val = NaN; % Default to NaN
+        if strcmp(product_tag, 'AH_Std')
+            avail_val = avail.AH_Std;
+        elseif strcmp(product_tag, 'AH_PTV')
+            avail_val = avail.AH_PTV;
+        elseif strcmp(product_tag, 'AH_MultiPulse')
+            avail_val = avail.AH_MultiPulse;
+        elseif strcmp(product_tag, 'T_Std')
+            avail_val = avail.T_Std;
+        elseif strcmp(product_tag, 'T_PTV')
+            avail_val = avail.T_PTV;
+        end
+        
+        if isfinite(avail_val)
+            % Format the text string
+            avail_str = {['<', num2str(MAX_ALT_KM), ' km Avail: '], [num2str(avail_val, '%.1f'), '%']};
+            % Use the 'text' function in normalized axes units (relative to the subplot)
+            text(0.99, 0.9, avail_str, 'Units', 'normalized', ...
+                 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', ...
+                 'FontSize', font_size_small - 2, 'FontWeight', 'bold', 'Color', 'k');
+        end
+
         set(gca,'TickDir','out');
         set(gca,'TickLength',[0.005; 0.0025]);
     end
@@ -642,14 +689,14 @@ if flag.plot_multi_wv % Keeping the flag name, but changing its function
     % Initial list of all 7 plots (Model and Differences, Top to Bottom)
     all_diff_plots = {
         % ABSOLUTE HUMIDITY
-        comb_AH_model, 'Absolute Humidity ERA5 Model (g m^{-3})', caxis_AH, cmap_AH; % Model Plot
-        comb_AH - comb_AH_model, 'AH Standard - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH;
-        comb_AH_PTV - comb_AH_model, 'AH PTV - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH;
-        comb_AH_MultiPulse - comb_AH_model, 'AH MultiPulse - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH;
+        comb_AH_model, 'Absolute Humidity ERA5 Model (g m^{-3})', caxis_AH, cmap_AH, 'Model'; % Model Plot
+        comb_AH - comb_AH_model, 'AH Standard - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH, 'AH_Std';
+        comb_AH_PTV - comb_AH_model, 'AH PTV - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH, 'AH_PTV';
+        comb_AH_MultiPulse - comb_AH_model, 'AH MultiPulse - Model Difference (g m^{-3})', caxis_diff_AH, smooth_gray_cmap_AH, 'AH_MultiPulse';
         % TEMPERATURE
-        comb_T_model, 'Temperature ERA5 Model (K)', caxis_T_abs, plasma_cmap; % Model Plot
-        comb_T_Std - comb_T_model, 'T Standard - Model Difference (K)', caxis_diff_T, smooth_gray_cmap_T;
-        comb_T - comb_T_model, 'T PTV - Model Difference (K)', caxis_diff_T, smooth_gray_cmap_T;
+        comb_T_model, 'Temperature ERA5 Model (K)', caxis_T_abs, plasma_cmap, 'Model'; % Model Plot
+        comb_T_Std - comb_T_model, 'T Standard - Model Difference (K)', caxis_diff_T, smooth_gray_cmap_T, 'T_Std';
+        comb_T - comb_T_model, 'T PTV - Model Difference (K)', caxis_diff_T, smooth_gray_cmap_T, 'T_PTV';
     };
     
     % --- CONDITIONAL PANEL REMOVAL ---
@@ -687,6 +734,7 @@ if flag.plot_multi_wv % Keeping the flag name, but changing its function
         plot_title = all_diff_plots{i, 2};
         caxis_val = all_diff_plots{i, 3};
         cmap_val = all_diff_plots{i, 4}; 
+        product_tag = all_diff_plots{i, 5};
         
         % 2. Pcolor plot
         h = pcolor(h_ax, x, y, data_plot); 
@@ -739,6 +787,29 @@ if flag.plot_multi_wv % Keeping the flag name, but changing its function
             xlabel('Time (UTC)','fontweight','b','fontsize',font_size_small); 
         end
         
+        % 6. Add Availability Text Annotation
+        avail_val = NaN; % Default to NaN
+        if strcmp(product_tag, 'AH_Std')
+            avail_val = avail.AH_Std;
+        elseif strcmp(product_tag, 'AH_PTV')
+            avail_val = avail.AH_PTV;
+        elseif strcmp(product_tag, 'AH_MultiPulse')
+            avail_val = avail.AH_MultiPulse;
+        elseif strcmp(product_tag, 'T_Std')
+            avail_val = avail.T_Std;
+        elseif strcmp(product_tag, 'T_PTV')
+            avail_val = avail.T_PTV;
+        end
+        
+        if isfinite(avail_val)
+            % Format the text string
+            avail_str = {['<', num2str(MAX_ALT_KM), ' km Avail: '], [num2str(avail_val, '%.1f'), '%']};
+            % Use the 'text' function in normalized axes units (relative to the subplot)
+            text(0.99, 0.9, avail_str, 'Units', 'normalized', ...
+                 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', ...
+                 'FontSize', font_size_small - 2, 'FontWeight', 'bold', 'Color', 'k');
+        end
+        
         set(gca,'TickDir','out');
         set(gca,'TickLength',[0.005; 0.0025]);
     end
@@ -769,10 +840,10 @@ if flag.plot_aerosol_counts % Using this flag to control the new plot
     panel_height = total_height / num_panels;
 
     core_plots = {
-        comb_Counts, 'Attenuated Backscatter, 828 nm (Log Scale)', caxis_Counts, 'jet', 1;       % Data, Title, Clim, CMap, LogScale
-        comb_ABC, 'Aerosol Backscatter Coefficient, PTV (m^{-1} sr^{-1})', caxis_ABC, 'viridis', 1;
-        comb_AH_PTV, 'Absolute Humidity PTV (g m^{-3})', caxis_AH, cmap_AH, 0;
-        comb_T, 'Temperature PTV (K)', caxis_T_abs, plasma_cmap, 0;
+        comb_Counts, 'Attenuated Backscatter, 828 nm (Log Scale)', caxis_Counts, 'jet', 1, 'Counts';       % Data, Title, Clim, CMap, LogScale, Tag
+        comb_ABC, 'Aerosol Backscatter Coefficient, PTV (m^{-1} sr^{-1})', caxis_ABC, 'viridis', 1, 'ABC';
+        comb_AH_PTV, 'Absolute Humidity PTV (g m^{-3})', caxis_AH, cmap_AH, 0, 'AH_PTV';
+        comb_T, 'Temperature PTV (K)', caxis_T_abs, plasma_cmap, 0, 'T_PTV';
     };
 
 
@@ -790,6 +861,7 @@ if flag.plot_aerosol_counts % Using this flag to control the new plot
         caxis_val = core_plots{i, 3};
         cmap_val = core_plots{i, 4};
         log_scale = core_plots{i, 5};
+        product_tag = core_plots{i, 6};
         
         % 2. Pcolor plot
         h = pcolor(h_ax, x, y, data_plot); 
@@ -843,6 +915,23 @@ if flag.plot_aerosol_counts % Using this flag to control the new plot
         else
             % Add X-label to the bottom panel
             xlabel('Time (UTC)','fontweight','b','fontsize',font_size_small); 
+        end
+        
+        % 8. Add Availability Text Annotation (Only for AH and T)
+        avail_val = NaN; % Default to NaN
+        if strcmp(product_tag, 'AH_PTV')
+            avail_val = avail.AH_PTV;
+        elseif strcmp(product_tag, 'T_PTV')
+            avail_val = avail.T_PTV;
+        end
+        
+        if isfinite(avail_val)
+            % Format the text string
+            avail_str = {['<', num2str(MAX_ALT_KM), ' km Avail: '], [num2str(avail_val, '%.1f'), '%']};
+            % Use the 'text' function in normalized axes units (relative to the subplot)
+            text(0.99, 0.9, avail_str, 'Units', 'normalized', ...
+                 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', ...
+                 'FontSize', font_size_small - 2, 'FontWeight', 'bold', 'Color', 'k');
         end
         
         set(gca,'TickDir','out');
@@ -918,6 +1007,34 @@ if flag.plot_single_wv_panels
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'WV_Diff_MultiPulse_Model'; figure_idx=figure_idx+1;
     end
 end
+
+
+% % ---------------------------------------------
+% % --- SURFACE COMPARISON TIME SERIES (NEW) ---
+% % ---------------------------------------------
+% if flag.read_wv_multi % Only run if MultiPulse is available
+%     create_surface_comparison_plot(x, comb_AH_surf, comb_AH_MultiPulse, comb_AH_model, ...
+%         node, font_size, xData, xData_m, figure_idx);
+% 
+%     figure_list{end+1} = figure_idx; 
+%     suffix_list{end+1} = 'AH_Surface_LowBin_Timeseries'; 
+%     figure_idx=figure_idx+1; % Increment figure index
+% end
+
+% ---------------------------------------------
+% --- SURFACE COMPARISON TIME SERIES (NEW) ---
+% ---------------------------------------------
+if flag.read_wv_multi % <-- This block should now be cleaner
+    
+    % Call the simplified plotting function (10 arguments total, passing N_DECIMATE_DYNAMIC)
+    create_surface_comparison_plot(x, comb_AH_surf, comb_AH_MultiPulse, comb_AH_model, ...
+        node, font_size, xData, xData_m, figure_idx, N_DECIMATE_DYNAMIC); 
+    
+    figure_list{end+1} = figure_idx; 
+    suffix_list{end+1} = 'AH_Surface_LowBin_Timeseries'; 
+    figure_idx=figure_idx+1; % Increment figure index
+end
+
 
 
 % AEROSOL/COUNTS (Conditional)
@@ -1035,8 +1152,6 @@ if flag.plot_t_density_map
 end
 
 
-
-
 % HISTOGRAMS and 2D DENSITY MAPS (Conditional)
 if flag.plot_histograms_2d || flag.plot_1d_histograms
     
@@ -1083,7 +1198,7 @@ if flag.plot_histograms_2d || flag.plot_1d_histograms
         if flag.read_temp_std
             % Figure X+3
             create_2d_density_map(T_Std_diff_hist, y_range, ... 
-                'T Standard - ERA5 Difference vs. Range (Bin Width: 0.2 K)', 'Temperature Difference (K)', ...
+                'T Standard - ERA5 Difference vs. Range (Bin Width: 0.2 K)', 'Temperature Difference (K)',...
                 T_diff_bin_limits, [0 6], T_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_density); 
             figure_list{end+1} = figure_idx; suffix_list{end+1} = 'T_Diff_Standard_Histogram_Range'; figure_idx=figure_idx+1;
         end
@@ -1110,6 +1225,19 @@ if flag.plot_histograms_2d || flag.plot_1d_histograms
     end
 end
 
+% ---------------------------------------------
+% --- PROFILE LINE PLOTS (CONDITIONAL) ---
+% ---------------------------------------------
+if flag.plot_profile_lines
+    % CORRECTED CALL: Use full-resolution time (comb_duration) and full-resolution 2D data (*_full)
+    create_profile_plots(comb_duration, y, comb_AH_full, comb_AH_PTV_full, comb_AH_MultiPulse_full, comb_AH_model_full, ...
+        comb_T_full, comb_T_Std_full, comb_T_model_full, comb_AH_surf, comb_T_surf, ...
+        PROFILE_TIME_TO_PLOT, node, figure_idx);
+    
+    figure_list{end+1} = figure_idx; suffix_list{end+1} = 'Profile_AH'; figure_idx=figure_idx+1;
+    figure_list{end+1} = figure_idx; suffix_list{end+1} = 'Profile_T'; figure_idx=figure_idx+1;
+end
+
 
 % --- PLOT SAVING LOOP (Iterating over created figures only) ---
 cd(plot_dir);
@@ -1118,7 +1246,7 @@ plot_size_square = [100 100 750 750];
 plot_size_4panel = [100 100 1900 650]; 
 plot_size_5panel = [100 100 1900 800]; 
 plot_size_7panel = [100 100 1900 890]; 
-plot_size_7panel = [100 100 1900/2 890]; 
+%plot_size_7panel = [100 100 1900/2 890]; 
 num_plots = length(figure_list);
 
 for k_idx = 1:num_plots
@@ -1136,8 +1264,7 @@ for k_idx = 1:num_plots
         FigH.Position = plot_size_7panel;
     elseif strcmp(suffix, 'Core_4Panel_Parameters')
         FigH.Position = plot_size_4panel;
-%    elseif contains(suffix, 'Histogram_Range') || contains(suffix, 'Histogram') || strcmp(suffix, 'AH_vs_ERA5_Scatter') || strcmp(suffix, 'T_vs_ERA5_Scatter')l% 
-    elseif contains(suffix, 'Histogram') || contains(suffix, 'Density') || contains(suffix, 'Scatter')
+    elseif contains(suffix, 'Histogram') || contains(suffix, 'Density') || contains(suffix, 'Scatter') || contains(suffix, 'Profile')
        FigH.Position = plot_size_square;
     else
         % Default wide size for single pcolor plots
@@ -1185,7 +1312,33 @@ function output_matrix = decimate_matrix(input_matrix, N_decimate)
     output_matrix = squeeze(output_matrix);
 end
 
+% ==========================================================
+function availability_percent = calculate_low_range_availability(data_matrix, alt_vector, max_alt_km)
+% CALCULATE_LOW_RANGE_AVAILABILITY Calculates the percentage of valid data 
+% points below a specified altitude.
 
+    % Find the indices (rows) corresponding to altitudes <= max_alt_km
+    low_range_indices = find(alt_vector <= max_alt_km * 1000); % Convert km to m
+
+    if isempty(low_range_indices)
+        availability_percent = 0;
+        return;
+    end
+    
+    % Extract the low-range subset
+    low_range_data = data_matrix(low_range_indices, :);
+    
+    % Total number of possible data points in this range
+    total_possible_points = numel(low_range_data);
+    
+    % Number of valid (non-NaN) data points
+    num_valid_points = sum(isfinite(low_range_data), 'all');
+    
+    % Calculate availability percentage
+    availability_percent = (num_valid_points / total_possible_points) * 100;
+end
+
+% ==========================================================
 function cmap = create_diverging_cmap(N, T_max, T_gray)
 % CREATE_DIVERGING_CMAP Generates a custom diverging colormap (Blue-Gray-Red)
 % with a fixed gray center that corresponds to a user-defined data range.
@@ -1249,4 +1402,364 @@ cmap_half2 = [cmap_half2_gray; cmap_half2_trans];
 cmap = [cmap_half1; cmap_half2];
 
 end
+
 % ==========================================================
+function [idx_to_plot] = find_closest_time_index(time_axis_data, target_time)
+% FIND_CLOSEST_TIME_INDEX Finds the index of the time point closest to the target_time.
+    [~, idx_to_plot] = min(abs(time_axis_data - target_time));
+end
+
+
+% ==========================================================
+function [med, sd] = calc_nan_stats(data)
+% Calculates median and standard deviation while ignoring NaNs,
+% acting as a fallback for nanmedian and nanstd.
+    
+    % Get the number of rows (range gates)
+    N_rows = size(data, 1); 
+    med = nan(N_rows, 1);
+    sd = nan(N_rows, 1);
+
+    for r = 1:N_rows
+        % Extract the time series for the current range gate
+        row_data = data(r, :); 
+        
+        % Remove NaNs
+        valid_data = row_data(isfinite(row_data));
+        
+        if ~isempty(valid_data)
+            med(r) = median(valid_data);
+            sd(r) = std(valid_data);
+        end
+    end
+end
+
+% ==========================================================
+% ==========================================================
+
+function shaded_area(y_alt, median_data, std_data, color_val, alpha_val, display_name)
+% SHADED_AREA Plots a shaded region representing the median +/- 3 * standard deviation.
+    
+    % Calculate upper and lower bounds using 3 * std_data
+    upper_bound = median_data + 3 * std_data;
+    lower_bound = median_data - 3 * std_data;
+    
+    % Create coordinates for the patch: [lower_rev, upper] vs [y, y_rev]
+    x_patch = [lower_bound; flipud(upper_bound)];
+    y_patch = [y_alt; flipud(y_alt)];
+    
+    % Remove NaNs and corresponding height values
+    valid_indices = isfinite(x_patch) & isfinite(y_patch);
+    x_patch_clean = x_patch(valid_indices);
+    y_patch_clean = y_patch(valid_indices);
+
+    % Plot the filled area
+    h_fill = fill(x_patch_clean, y_patch_clean, color_val);
+    set(h_fill, 'EdgeColor', 'none', 'FaceAlpha', alpha_val, 'DisplayName', display_name);
+end
+
+
+% ==========================================================
+% ==========================================================
+
+function create_profile_plots(full_time_axis, y_alt, AH, AH_PTV, AH_MultiPulse, AH_model, ...
+                              T, T_Std, T_model, AH_surf, T_surf, ...
+                              target_time, node, figure_idx)
+% CREATE_PROFILE_PLOTS Generates line plots of vertical profiles at a specific time,
+% showing the median and a 3-sigma shaded area over a 1-hour window.
+
+    % --- 1. DEFINE TIME WINDOW ---
+    % Window size is set back to 1 hour
+    window_hr = 1;
+    TIME_WINDOW_HALF = 0.5 / 24; % 30 minutes in datenum units
+    
+    start_time = target_time - TIME_WINDOW_HALF;
+    end_time = target_time + TIME_WINDOW_HALF;
+
+    % Find the closest single index for the warning message fallback
+    [~, idx_closest_single] = min(abs(full_time_axis - target_time)); % Uses full_time_axis
+    
+    disp(' ');
+    disp('--- PROFILE PLOT DIAGNOSTICS ---');
+    fprintf('Profile Window Size: %d Hours\n', window_hr);
+    fprintf('Target Time: %s\n', datestr(target_time, 'dd-mmm-yyyy HH:MM:SS'));
+    fprintf('Search Start: %s (datenum: %.10f)\n', datestr(start_time, 'dd-mmm-yyyy HH:MM:SS'), start_time);
+    fprintf('Search End:   %s (datenum: %.10f)\n', datestr(end_time, 'dd-mmm-yyyy HH:MM:SS'), end_time);
+    
+    % --- Robustness Adjustment: Use a small tolerance for floating point comparison ---
+    TOLERANCE = 1e-10; % Equivalent to microseconds of time tolerance (very small)
+
+    % Find indices for the window using tolerance
+    time_indices = find(full_time_axis >= start_time - TOLERANCE & full_time_axis <= end_time + TOLERANCE); % Uses full_time_axis
+    
+    num_profiles_found = length(time_indices);
+    fprintf('Profiles Found in Window: %d\n', num_profiles_found);
+    
+    % --- Determine which indices to use for statistics ---
+    if num_profiles_found < 2 % Need at least two profiles to calculate variance (std)
+        if num_profiles_found == 0
+            % Fallback: Find the single closest profile index
+            idx_to_use = idx_closest_single;
+            time_indices = idx_to_use; % Use only the single closest point
+            warning(['No data found in the %d-hour window around: ', datestr(target_time)], window_hr);
+        else
+            % One profile found, but need more for shaded area
+            idx_to_use = time_indices(1);
+            warning(['Only ONE profile found in the %d-hour window. Cannot calculate variability (shaded area will be zero).'], window_hr);
+        end
+        
+        fprintf('Falling back to single closest profile at: %s\n', datestr(full_time_axis(idx_to_use), 'dd-mmm-yyyy HH:MM:SS'));
+    else
+        % Use the found indices for the window
+        idx_to_use = time_indices;
+    end
+    
+    % --- 2. EXTRACT WINDOW DATA & MODEL DATA ---
+    % NOTE: This extracts only a few columns, preventing memory overload.
+    AH_Std_window = AH(:, idx_to_use);
+    AH_PTV_window = AH_PTV(:, idx_to_use);
+    AH_MultiPulse_window = AH_MultiPulse(:, idx_to_use);
+    T_PTV_window = T(:, idx_to_use);
+    T_Std_window = T_Std(:, idx_to_use);
+    
+    % For model data, just take the first profile's time index if multiple were found
+    if length(idx_to_use) > 1
+         model_idx = idx_to_use(1);
+    else
+         model_idx = idx_to_use;
+    end
+    
+    AH_Model_profile = AH_model(:, model_idx);
+    T_Model_profile = T_model(:, model_idx);
+    
+    AH_Surf_window = AH_surf(idx_to_use);
+    T_Surf_window = T_surf(idx_to_use);
+
+    % --- 3. CALCULATE MEDIAN AND 1-SIGMA (STANDARD DEVIATION) ---
+    [AH_Std_median, AH_Std_std] = calc_nan_stats(AH_Std_window);
+    [AH_PTV_median, AH_PTV_std] = calc_nan_stats(AH_PTV_window);
+    [AH_MultiPulse_median, AH_MultiPulse_std] = calc_nan_stats(AH_MultiPulse_window);
+    
+    [T_PTV_median, T_PTV_std] = calc_nan_stats(T_PTV_window);
+    [T_Std_median, T_Std_std] = calc_nan_stats(T_Std_window);
+    
+    % Surface Data Median/Std for the time window
+    AH_Surf_valid = AH_Surf_window(isfinite(AH_Surf_window));
+    T_Surf_valid = T_Surf_window(isfinite(T_Surf_window));
+    
+    AH_Surf_median = median(AH_Surf_valid);
+    AH_Surf_std = std(AH_Surf_valid);
+    T_Surf_median = median(T_Surf_valid);
+    T_Surf_std = std(T_Surf_valid);
+    
+    
+    % Handle case where only one profile was used (std is 0 or NaN)
+    if num_profiles_found < 2
+        AH_Std_std(:) = 0; AH_PTV_std(:) = 0; AH_MultiPulse_std(:) = 0;
+        T_PTV_std(:) = 0; T_Std_std(:) = 0;
+        AH_Surf_std = 0; T_Surf_std = 0;
+        
+        time_str_range = ['Single Profile: ', datestr(full_time_axis(idx_closest_single), 'dd-mmm-yyyy HH:MM:SS UTC')];
+    else
+        time_str_range = [datestr(full_time_axis(idx_to_use(1)), 'dd-mmm-yyyy HH:MM') ' to ' datestr(full_time_axis(idx_to_use(end)), 'HH:MM UTC')];
+    end
+    disp('--- END DIAGNOSTICS ---');
+    disp(' ');
+    
+    % --- 4. AH PROFILE PLOT (Median + Shaded Area) ---
+    hf1 = figure(figure_idx);
+    set(hf1, 'Position', [50 50 500 700]);
+    hold on;
+    
+    % Define common colors and transparency
+    color_Std = [0 0 1]; color_PTV = [1 0 0]; color_MP = [0 0.6 0];
+    alpha_val = 0.15; % Transparency for the shaded area
+
+    % --- AH Standard (Blue) ---
+    shaded_area(y_alt, AH_Std_median, AH_Std_std, color_Std, alpha_val, 'AH Std $\pm 3\sigma$');
+    plot(AH_Std_median, y_alt, '-', 'Color', color_Std, 'LineWidth', 2, 'DisplayName', 'AH Std Median');
+    
+    % --- AH PTV (Red) ---
+    shaded_area(y_alt, AH_PTV_median, AH_PTV_std, color_PTV, alpha_val, 'AH PTV $\pm 3\sigma$');
+    plot(AH_PTV_median, y_alt, '-', 'Color', color_PTV, 'LineWidth', 2, 'DisplayName', 'AH PTV Median');
+    
+    % --- AH MultiPulse (Green) ---
+    shaded_area(y_alt, AH_MultiPulse_median, AH_MultiPulse_std, color_MP, alpha_val, 'AH MultiPulse $\pm 3\sigma$');
+    plot(AH_MultiPulse_median, y_alt, '-', 'Color', color_MP, 'LineWidth', 2, 'DisplayName', 'AH MultiPulse Median');
+    
+    % --- AH ERA5 Model (Black Dashed) ---
+    plot(AH_Model_profile, y_alt, 'k--', 'LineWidth', 2, 'DisplayName', 'AH ERA5 Model');
+
+    % --- AH Surface Station (Magenta) ---
+    % Plot median as the marker center
+    plot(AH_Surf_median, 0, 'ms', 'MarkerSize', 10, 'MarkerFaceColor', 'm', 'DisplayName', 'AH Surface Median');
+    % Plot 1-sigma as error bars (horizontal)
+    errorbar(AH_Surf_median, 0, AH_Surf_std, 'horizontal', 'Color', 'm', 'LineWidth', 1.5, 'CapSize', 10, 'HandleVisibility', 'off');
+
+    grid on; box on;
+    title({[node, ' Absolute Humidity Profile (', num2str(window_hr), '-Hour Window)'], ['Window: ', time_str_range]}, 'fontweight', 'b');
+    xlabel('Absolute Humidity (g m^{-3})', 'fontweight', 'b');
+    ylabel('Height (km, AGL)', 'fontweight', 'b');
+    legend('show', 'Location', 'northeast', 'interpreter', 'latex');
+    ylim([0 ceil(max(y_alt))]);
+    set(gca, 'Fontsize', 12, 'Fontweight', 'b');
+    hold off;
+    
+    figure_idx = figure_idx + 1;
+    
+    % --- 5. TEMPERATURE PROFILE PLOT (Median + Shaded Area) ---
+    hf2 = figure(figure_idx);
+    set(hf2, 'Position', [550 50 500 700]);
+    hold on;
+    
+    % --- T PTV (Red) ---
+    shaded_area(y_alt, T_PTV_median, T_PTV_std, color_PTV, alpha_val, 'T PTV $\pm 3\sigma$');
+    plot(T_PTV_median, y_alt, '-', 'Color', color_PTV, 'LineWidth', 2, 'DisplayName', 'T PTV Median');
+    
+    % --- T Standard (Blue) ---
+    shaded_area(y_alt, T_Std_median, T_Std_std, color_Std, alpha_val, 'T Std $\pm 3\sigma$');
+    plot(T_Std_median, y_alt, '-', 'Color', color_Std, 'LineWidth', 2, 'DisplayName', 'T Std Median');
+
+    % --- T ERA5 Model (Black Dashed) ---
+    plot(T_Model_profile, y_alt, 'k--', 'LineWidth', 2, 'DisplayName', 'T ERA5 Model');
+
+    % --- T Surface Station (Magenta) ---
+    % Plot median as the marker center
+    plot(T_Surf_median, 0, 'ms', 'MarkerSize', 10, 'MarkerFaceColor', 'm', 'DisplayName', 'T Surface Median');
+    % Plot 1-sigma as error bars (horizontal)
+    errorbar(T_Surf_median, 0, T_Surf_std, 'horizontal', 'Color', 'm', 'LineWidth', 1.5, 'CapSize', 10, 'HandleVisibility', 'off');
+
+    grid on; box on;
+    title({[node, ' Temperature Profile (', num2str(window_hr), '-Hour Window)'], ['Window: ', time_str_range]}, 'fontweight', 'b');
+    xlabel('Temperature (K)', 'fontweight', 'b');
+    ylabel('Height (km, AGL)', 'fontweight', 'b');
+    legend('show', 'Location', 'northeast', 'interpreter', 'latex');
+    ylim([0 ceil(max(y_alt))]);
+    set(gca, 'Fontsize', 12, 'Fontweight', 'b');
+    hold off;
+end
+
+% ==========================================================
+% ==========================================================
+
+% ==========================================================
+% NEW LOCAL FUNCTION: manual_medfilt1 (Toolbox-independent)
+% ==========================================================
+
+function y_filtered = manual_medfilt1(y_input, order)
+% MANUAL_MEDFILT1 Implements a toolbox-independent 1D median filter.
+% Handles edges by truncating the window and omits NaN values.
+    
+    N = length(y_input);
+    y_filtered = nan(1, N);
+    
+    % Ensure filter order is odd for a symmetrical window
+    if mod(order, 2) == 0
+        order = order - 1; 
+    end
+    
+    half_window = floor(order / 2);
+    
+    for i = 1:N
+        % Define the window boundaries, truncating at the edges
+        start_idx = max(1, i - half_window);
+        end_idx = min(N, i + half_window);
+        
+        % Extract data window
+        window_data = y_input(start_idx:end_idx);
+        
+        % Calculate the median of the valid (non-NaN) data in the window
+        valid_data = window_data(isfinite(window_data));
+        
+        if ~isempty(valid_data)
+            y_filtered(i) = median(valid_data);
+        end
+    end
+end
+
+
+% ==========================================================
+% ==========================================================
+
+function create_surface_comparison_plot(x, AH_surf_full, AH_MP_dec, AH_model_dec, node, font_size, xData, xData_m, figure_idx, N_decimate)
+% CREATE_SURFACE_COMPARISON_PLOT Generates a time-series plot comparing the AH surface 
+% observation with the lowest valid bins of MultiPulse and ERA5 data, using a 
+% manual median filter to smooth data anomalies.
+
+    % --- 1. CONFIGURATION ---
+    FILTER_ORDER = 20; 
+    
+    hf = figure(figure_idx);
+    set(hf, 'Position', [100 100 1000 350], 'renderer', 'zbuffer'); % Custom wide plot size
+
+    % --- 1D Surface Data Decimation (CRITICAL FIX) ---
+    % Input AH_surf_full is the full-resolution data.
+    % We need to decimate it to match the size of x (N_time_decimated).
+    AH_surf_decimated = AH_surf_full(:); % Ensure column vector for decimation
+    
+    % Pad with NaNs if necessary (using logic derived from decimate_matrix)
+    N_total = length(AH_surf_decimated);
+    N_remainder = mod(N_total, N_decimate);
+    if N_remainder ~= 0
+        N_pad = N_decimate - N_remainder;
+        padding = nan(N_pad, 1);
+        AH_surf_decimated = [AH_surf_decimated; padding];
+        N_total = length(AH_surf_decimated);
+    end
+    
+    % Calculate the average over the N_decimate bins
+    AH_surf_decimated = mean(reshape(AH_surf_decimated, N_decimate, N_total/N_decimate), 1);
+    
+    % Extract the already decimated lowest bin data
+    AH_MP_lowest = AH_MP_dec(5, :); 
+    AH_Model_lowest = AH_model_dec(1, :); 
+    
+    % Ensure data is a row vector for filtering consistency
+    AH_surf_decimated = AH_surf_decimated(:)'; 
+    AH_MP_lowest = AH_MP_lowest(:)'; 
+    AH_Model_lowest = AH_Model_lowest(:)'; 
+    
+    % --- 2. APPLY MANUAL MEDIAN FILTER (Toolbox-independent) ---
+    
+    AH_surf_filt = manual_medfilt1(AH_surf_decimated, FILTER_ORDER); % Apply filter to decimated data
+    AH_MP_lowest_filt = manual_medfilt1(AH_MP_lowest, FILTER_ORDER);
+    AH_Model_lowest_filt = manual_medfilt1(AH_Model_lowest, FILTER_ORDER);
+
+
+    % --- 3. PLOT THE FILTERED TIME SERIES ---
+    
+    color_MP = [0 0.6 0];  % Define the MultiPulse color for consistency with profile plots 
+
+    plot(x, AH_surf_filt, 'k-', 'LineWidth', 2, 'DisplayName', 'Surface Station AH (Filtered)'); hold on;
+    plot(x, AH_MP_lowest_filt, 'Color', color_MP, 'LineStyle', '--', 'LineWidth', 1.5, 'DisplayName', 'MultiPulse Lowest Bin (Filtered)');
+    plot(x, AH_Model_lowest_filt, 'r:', 'LineWidth', 1.5, 'DisplayName', 'ERA5 Model Lowest Bin (Filtered)');
+
+    grid on; box on;
+
+    title({[node, ': AH Lowest Bin vs. Surface Station Time Series (Median Filtered)'], ...
+           ['Comparison Period: ', datestr(min(x), 'dd-mmm-yy'), ' to ', datestr(max(x), 'dd-mmm-yy')]}, ...
+           'fontweight', 'b', 'fontsize', font_size);
+
+    xlabel('Time (UTC)', 'fontweight', 'b', 'fontsize', font_size);
+    ylabel('Absolute Humidity (g m^{-3})', 'fontweight', 'b', 'fontsize', font_size);
+
+    % Apply X-axis formatting
+    set(gca, 'XTick', xData);
+    set(gca, 'XMinorTick', 'on');
+    xAx = get(gca, 'XAxis');
+    xAx.MinorTickValues = xData_m;
+    datetick('x', 'dd-mmm-yy', 'keeplimits', 'keepticks');
+
+    legend('show', 'Location', 'best', 'fontsize', font_size-4);
+    set(gca, 'Fontsize', font_size-2, 'Fontweight', 'b', 'TickDir', 'out');
+
+    % Set Y-axis limits based on AH max/min of the filtered data
+    min_data = min([AH_surf_filt, AH_MP_lowest_filt, AH_Model_lowest_filt], [], 'all', 'omitnan');
+    max_data = max([AH_surf_filt, AH_MP_lowest_filt, AH_Model_lowest_filt], [], 'all', 'omitnan');
+    
+    if isfinite(min_data) && isfinite(max_data)
+        ylim([min_data - 1, max_data + 1]);
+    end
+
+    hold off;
+end
