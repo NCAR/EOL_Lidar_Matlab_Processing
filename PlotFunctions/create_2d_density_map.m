@@ -26,8 +26,10 @@ function create_2d_density_map(diff_data, y_range, title_str, xlabel_str, x_bin_
     clim(caxis_val);               % Apply the fixed color limits
 
     % --- Formatting ---
-    title({[node, ' ', title_str]}, 'fontweight', 'b', 'fontsize', font_size, 'Interpreter', 'latex'); % <-- ADDED
-    xlabel(xlabel_str, 'fontweight', 'b', 'fontsize', font_size, 'Interpreter', 'latex');              % <-- ADDED
+   % title({[node, ' ', title_str]}, 'fontweight', 'b', 'fontsize', font_size, 'Interpreter', 'tex'); 
+   % xlabel(xlabel_str, 'fontweight', 'b', 'fontsize', font_size, 'Interpreter', 'latex');       
+    title({[node, ' ', title_str]}, 'fontweight', 'b', 'fontsize', font_size); 
+    xlabel(xlabel_str, 'fontweight', 'b', 'fontsize', font_size);    
     ylabel('Height (km, AGL)', 'fontweight', 'b', 'fontsize', font_size);
     grid on;
     set(gca, 'Layer', 'top'); 
