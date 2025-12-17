@@ -472,6 +472,10 @@ disp('O2_v2: Afterpulse correction complete. Starting Background subtraction.');
 
 disp('O2_v2: All temporal and spatial gridding complete.');
 
+
+
+
+
 % --- FINAL OUTPUT ASSIGNMENT ---
 % Map the internal computed variables to the function's nine defined output arguments.
 

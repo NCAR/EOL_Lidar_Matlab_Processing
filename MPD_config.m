@@ -21,6 +21,7 @@ config.flags.save_quicklook  = 0;
 config.flags.save_data       = 1;   % Save daily .mat file (used by plots)
 config.flags.save_netCDF     = 0;
 config.flags.save_catalog    = 0;
+config.flags.dev_mode        = 1;  % Set to 1 for fast local processing (using copied files)
 
 % --- 3. Processing Parameters (Global to the pipeline) ---
 config.processing.read_time_in     = 4;     
@@ -34,15 +35,24 @@ config.processing.flag_pileup      = 1;
 config.processing.flag_WS          = 1; 
 config.processing.flag_OF          = 1; 
 config.processing.flag_ap_quick    = 0;
+config.processing.flag_mark_gaps   = 1; % sets gaps in data to NaNs
+config.processing.flag_decimate    = 0; % decimate all data to half the wv resoltuion
 
 % --- 4. System/Channel Matrix (Define the jobs to run) ---
 config.systems_to_process = {
     % The job originally requested:
-    struct('node', 'MPD04', 'channels', 'O2', 'correction', 'AP_ON', 'save_data', 1, 'save_netCDF', 0);
+    struct('node', 'MPD04', 'channels', 'O2', 'correction', 'AP_OFF', 'save_data', 1, 'save_netCDF', 0);
 };
 
 % --- 6. Path Definitions (for upload/catalog) ---
 config.paths.catalog = '/pub/incoming/catalog/operations';
+if config.flags.dev_mode == 1
+    % Set the base path to your local copy
+    config.paths.raw_data_base = '/Users/Spuler/Desktop/MPD_Dev_Data/'; 
+else
+    % Set the base path to the server (production)
+    config.paths.raw_data_base = '/Volumes/smaug1/rsfdata/MPD/';
+end
 
 % --- 5. Multi-Day Plot Parameters ---
 config.multiday_plots = {

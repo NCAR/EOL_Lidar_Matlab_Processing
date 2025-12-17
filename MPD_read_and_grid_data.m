@@ -104,17 +104,27 @@ try
     % Interpolate HK and LL data (Nearest/Extrap)
     
     % **LL Interpolation (Robust Check)**
-    if length(LL.time1) >= 2
-        data_struct.LL_grid.online = interp1(LL.time1, LL.wavelength1, time_grid, 'nearest', 'extrap'); 
-        data_struct.LL_grid.online(:,2) = interp1(LL.time1, LL.wavediff1, time_grid, 'nearest', 'extrap'); 
-        data_struct.LL_grid.online(:,3) = interp1(LL.time1, LL.current1, time_grid, 'nearest', 'extrap'); 
-        
-        data_struct.LL_grid.offline = data_struct.LL_grid.online; % Assume same structure for offline LL data
+    % --- 1. WV LL Interpolation (using LL.online) ---
+    if ~isempty(LL.online) && size(LL.online,1) >= 2
+        data_struct.LL_grid.online = interp1(LL.online(:,1), LL.online(:,2), time_grid, 'nearest', 'extrap'); % Wvl
+        data_struct.LL_grid.online(:,2) = interp1(LL.online(:,1), LL.online(:,3), time_grid, 'nearest', 'extrap'); % WvlDiff
+        data_struct.LL_grid.online(:,3) = interp1(LL.online(:,1), LL.online(:,4), time_grid, 'nearest', 'extrap'); % Curr
     else
-        warning('LL data incomplete (less than 2 unique points). Using placeholder arrays.');
         data_struct.LL_grid.online = zeros(N_grid, N_time_shift);
-        data_struct.LL_grid.offline = zeros(N_grid, N_time_shift);
     end
+    data_struct.LL_grid.offline = data_struct.LL_grid.online; % Default offline to online for WV
+    
+    % --- 2. O2 LL Interpolation (using LL.O2online) ---
+    if ~isempty(LL.O2online) && size(LL.O2online,1) >= 2
+        data_struct.LL_grid.O2online = interp1(LL.O2online(:,1), LL.O2online(:,2), time_grid, 'nearest', 'extrap'); % Wvl
+        data_struct.LL_grid.O2online(:,2) = interp1(LL.O2online(:,1), LL.O2online(:,3), time_grid, 'nearest', 'extrap'); % WvlDiff
+        data_struct.LL_grid.O2online(:,3) = interp1(LL.O2online(:,1), LL.O2online(:,4), time_grid, 'nearest', 'extrap'); % Curr
+    else
+        % Fallback for O2 if no O2 LL data is available
+        data_struct.LL_grid.O2online = zeros(N_grid, N_time_shift); 
+    end
+    data_struct.LL_grid.O2offline = data_struct.LL_grid.O2online; % Default O2 offline to O2 online
+
     
     % **HKeep Interpolation (Robust Check)**
     if length(HKeep.time1) >= 2
@@ -195,16 +205,30 @@ try
     % Reconstruct the assumed 10-column header for compatibility with analysis functions
     % [1:time] [2-4:LL] [5:Pow] [6:HKeep_T1] [7:WS_T] [8:WS_P] [9:WS_RH] [10:WS_AH]
     
-    header_10_cols = [data_struct.time_grid, data_struct.LL_grid.online, ...
+    % WV Header (Uses LL_grid.online - which is the WV wavelength)
+    wv_header_cols = [data_struct.time_grid, data_struct.LL_grid.online, ...
                       data_struct.Pow_grid.online, data_struct.HKeep_grid.temp1, ...
                       data_struct.WS_grid.online]; 
     
-    data_struct.online_merged = [header_10_cols, data_struct.online_grid];
-    data_struct.offline_merged = [header_10_cols, data_struct.offline_grid];
-    data_struct.O2online_comb_merged = [header_10_cols, data_struct.O2online_comb_grid];
-    data_struct.O2offline_comb_merged = [header_10_cols, data_struct.O2offline_comb_grid];
-    data_struct.O2online_mol_merged = [header_10_cols, data_struct.O2online_mol_grid];
-    data_struct.O2offline_mol_merged = [header_10_cols, data_struct.O2offline_mol_grid];
+    % O2 Header (Uses LL_grid.O2online - which is the O2 wavelength)
+    O2_header_cols = [data_struct.time_grid, data_struct.LL_grid.O2online, ...
+                      data_struct.Pow_grid.online, data_struct.HKeep_grid.temp1, ...
+                      data_struct.WS_grid.online];
+                      
+    % Assign WV merged arrays
+    data_struct.online_merged = [wv_header_cols, data_struct.online_grid];
+    data_struct.offline_merged = [wv_header_cols, data_struct.offline_grid];
+    
+    % Assign O2 merged arrays
+    data_struct.O2online_comb_merged = [O2_header_cols, data_struct.O2online_comb_grid];
+    data_struct.O2offline_comb_merged = [O2_header_cols, data_struct.O2offline_comb_grid];
+    data_struct.O2online_mol_merged = [O2_header_cols, data_struct.O2online_mol_grid];
+    data_struct.O2offline_mol_merged = [O2_header_cols, data_struct.O2offline_mol_grid];
+    
+    % The HSRL arrays may need an HSRL-specific header, but for now, use the O2 one:
+    % (assuming HSRL uses the O2 laser/metadata, which is standard)
+    data_struct.HSRL_Mol_merged = [O2_header_cols, data_struct.HSRL_Mol_grid];
+    data_struct.HSRL_Combined_merged = [O2_header_cols, data_struct.HSRL_Combined_grid];
     
     
 catch ME
@@ -450,6 +474,9 @@ function [MCSsample, LL, HKeep, Pow, WS, Etalon] = read_and_combine_files_v6_log
         MCSsample.O2online_mol.raw = []; MCSsample.O2offline_mol.raw = [];
         MCSsample.HSRL_Mol.raw = []; MCSsample.HSRL_Combined.raw = [];
     end
+
+
+
 
 
     cd(dd) % Return to original directory

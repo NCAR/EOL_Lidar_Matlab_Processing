@@ -51,7 +51,7 @@ gate_int = range(2)*gates2use;
   der_off = (diff(pad_off)./(gate))';
   Inside_v2 = ((1./O2_online_comb).*der_on - (1./O2_offline_comb).*der_off);
   alpha_O2_0th2 = double(-1./(2).*(Inside_v2));  % absorption coef in m^-1
-  alpha_O2_0th_sg = sgolayfilt(alpha_O2_0th2,3,5);
+  %alpha_O2_0th_sg = sgolayfilt(alpha_O2_0th2,3,5);
   
  
  % for Rayleigh scattering theory, the lidar ratio is equal to 8*pi/3
@@ -62,8 +62,8 @@ gate_int = range(2)*gates2use;
  
  % smooth the result over the range 
  alpha_O2_avg = nanmoving_average(alpha_O2_0th,gates2use/2,2,0);
-% alpha_O2_avg2 = nanmoving_average(alpha_O2_0th2,gates2use/2,2,0);
- alpha_O2_avg2 = nanmoving_average(alpha_O2_0th_sg,gates2use/2,2,0);
+ alpha_O2_avg2 = nanmoving_average(alpha_O2_0th2,gates2use/2,2,0);
+ %alpha_O2_avg2 = nanmoving_average(alpha_O2_0th_sg,gates2use/2,2,0);
   
   figure(11)
   x = (time_comb)';

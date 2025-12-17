@@ -9,10 +9,31 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  % Initialize ALL outputs to safe, empty values in case of early failure
  T = []; P = []; BSR = []; RD = []; HSRLMolecular_scan_wavelength = []; const = []; beta_m_profile = [];
 
- % FIX: Explicitly use the input receiver_scale_factor as the combined channel efficiency (eta_comb).
+ % Explicitly use the input receiver_scale_factor as the combined channel efficiency (eta_comb).
  eta_comb = receiver_scale_factor;
 
-%% Define Physics Constants (GUARANTEED SCOPE)
+if isempty(O2_online_comb) || isempty(O2_offline_comb) || size(O2_online_comb, 1) < 2
+    warning('HSRL/K-ratio input data (O2 combined counts) is empty or too small. Exiting HSRL processing gracefully.');
+    cd(dd); 
+    % The function is designed to return the initialized [] arrays if it exits here.
+    return; 
+end
+
+% Check if all four main input arrays have consistent dimensions
+ [N_rows, N_cols] = size(O2_online_comb);
+ 
+ if ~isequal(size(O2_offline_comb), [N_rows, N_cols]) || ...
+    ~isequal(size(O2_online_mol), [N_rows, N_cols]) || ...
+    ~isequal(size(O2_offline_mol), [N_rows, N_cols])
+    
+    warning('HSRL input: O2 count matrices have inconsistent dimensions. Exiting HSRL processing gracefully.');
+    cd(dd); 
+    return;
+ end
+
+
+ 
+ %% Define Physics Constants (GUARANTEED SCOPE)
  const.k_B = 1.380649e-23; % (J/K, or Pa m^3/K)
  const.K_B = const.k_B * 9.869e-6; % (atm m^3/K)
  const.N_A = 6.022E23; % (/mol) Avagadros number

@@ -31,6 +31,13 @@ save_catalog   = global_config_struct.flags.save_catalog;
 serv_path = get_server_data_path(); 
 cal_serv_path = get_calibration_server_path(); 
 
+if isfield(global_config_struct.flags, 'dev_mode') && global_config_struct.flags.dev_mode == 1
+    % Use the local path defined in MPD_config.m instead of the server path
+    serv_path = global_config_struct.paths.raw_data_base;
+    disp(['DEV MODE ON: Using local path: ', serv_path]);
+end
+
+
 % Load Calibration & System Constants
 calvals = load_system_calvals(node, daystr, cal_serv_path);
 MCS = calvals.MCS;
@@ -116,19 +123,19 @@ if (strcmp(channels, 'O2') == 1 || strcmp(channels, 'ALL') == 1)
         
         % 3c. HSRL/K-Ratio Processing (Must call new v2 version)
         [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = ...
-            Process_HSRL_K_data_v2(O2_online_comb, O2_offline_comb, O2_online_mol, O2_offline_mol, ...
+           Process_HSRL_K_data(O2_online_comb, O2_offline_comb, O2_online_mol, O2_offline_mol, ...
                                 time_comb, range, Surf_T, Surf_P, flag, node, daystr, ...
                                 calvals.Receiver_Scan_File, write_data_folder, cal_serv_path, calvals.receiver_scale_factor);
-        
+
         % 3d. WV Re-Analysis (Must call new v2 version)
         [N_WV, N_WV_error] = MPD_WV_analysis_function_v2(data_wv_on, data_wv_off, raw_data_folder, daystr, MCS, write_data_folder, flag, node, calvals.wavemeter_offset,...
                                                         profiles2ave, T, P, calvals.switch_ratio, ave_time, calvals.timing_range_correction, calvals.blank_range, p_hour, catalog, calvals.Afterpulse_File, calvals.MPD_elevation, cal_serv_path);
 
         % 3e. O2 Absorption Calculation (Must call new v2 version)
-        O2_absorption_v2(const, T, P, O2_online_comb, O2_offline_comb, ...
+        O2_absorption(const, T, P, O2_online_comb, O2_offline_comb, ...
                       time_comb, range, BSR, RD, HSRLMolecular_scan_wavelength, N_WV, beta_m_profile, ...
                       O2_on_wavelength, node, daystr, write_data_folder, flag);
-                          
+
         disp(['    --> Finished O2/HSRL processing (Correction: ', correction, ')']);
 
     catch ME
@@ -150,7 +157,7 @@ disp(['Daily processing for ', node, ' on ', daystr, ' complete.']);
 % --- HELPER FUNCTIONS (MUST BE INSIDE THE FUNCTION DEFINITION, BEFORE THE FINAL END) ---
 
 function path = get_server_data_path()
-    if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1; path = '/export/smaug1/rsfdata/MPD/'; else; path = '/Volumes/smaug1/rsfdata/MPD/'; end
+   if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1; path = '/export/smaug1/rsfdata/MPD/'; else; path = '/Volumes/smaug1/rsfdata/MPD/'; end
 end
 
 function path = get_calibration_server_path()
@@ -164,6 +171,8 @@ function flag = setup_analysis_flags(save_quicklook, save_data, save_netCDF, sav
     flag.save_catalog = save_catalog;
     
     flag.ap_quick = g_config.processing.flag_ap_quick;
+    flag.mark_gaps = g_config.processing.flag_mark_gaps;
+    flag.decimate = g_config.processing.flag_decimate; 
     flag.mask_data = g_config.processing.flag_mask_data;
     flag.gradient_filter = g_config.processing.flag_gradient_filter;
     flag.pileup = g_config.processing.flag_pileup;
