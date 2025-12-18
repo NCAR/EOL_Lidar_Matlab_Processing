@@ -6,7 +6,8 @@ function config = MPD_config(start_date_in, stop_date_in)
 [~, hostname] = system('hostname');
 if contains(hostname, 'eol-smaug') || contains(hostname, 'fog')
     config.env.flag_dev = 0; % We are on the NCAR Server
-    addpath('/home/rsfdata/Processing/EOL_Lidar_Matlab_Processing')
+   % addpath('/home/rsfdata/Processing/EOL_Lidar_Matlab_Processing');
+    addpath('/home/rsfdata/Processing/EOL_Lidar_Stable');
     addpath('/home/rsfdata/Processing/EOL_Lidar_Matlab_Processing/jsonlab');
     addpath('/home/rsfdata/Processing/eol-lidar-calvals');
 else

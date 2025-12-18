@@ -103,8 +103,8 @@ catch err
 end
 
   % add trap error associated with Perdigao instrument crash 
-  serial_date = datenum(num2str(date_in),'yyyyMMdd');
-  time2 = double((Online_Raw_Data(:,1)))./24+serial_date-1;
+  serial_date = datenum(num2str(date_in),'yyyymmdd');
+  time2 = double((Online_Raw_Data(:,1)))./24+serial_date;
   %time2 = time2-0.25; % this was a fix for computer switch 20-Oct to 26-Oct 2017
   %time2(time2>292.5)= time2(time2>292.5)-0.25; % 19-Oct-2017 fix
   time = time2;

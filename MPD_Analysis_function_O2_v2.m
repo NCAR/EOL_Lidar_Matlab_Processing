@@ -54,8 +54,8 @@ if isempty(Online_Raw_Data); error('Input data is empty.'); end
   % add trap error associated with Perdigao instrument crash 
 %  serial_date = datenum(num2str(date_in),'yymmdd');
 %  time2 = double((Online_Raw_Data(:,1)))./24+serial_date;
-  serial_date = datenum(num2str(date_in),'yyyyMMdd');
-  time2 = double((Online_Raw_Data(:,1)))./24+serial_date-1;
+  serial_date = datenum(num2str(date_in),'yyyymmdd');
+  time2 = double((Online_Raw_Data(:,1)))./24+serial_date;
   time = time2;
   time = time(~(time2<(median(time2,'omitnan')-1.5)));
   time= time(~(time>(median(time,'omitnan')+1.5)));
