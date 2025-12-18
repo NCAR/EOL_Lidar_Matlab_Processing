@@ -4,7 +4,7 @@ clear all; close all
 node = 'MPD04';
 % Use fullfile for robust path definition
 serv_path = '/Volumes/eol/sci/mhayman';
-%serv_path = '/Volumes/sci/mhayman';
+serv_path = '/Volumes/sci/mhayman';
 plot_path = '/Users/spuler/Desktop';
 
 data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.7');
