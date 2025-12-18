@@ -19,10 +19,10 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2);
 p_hour = global_config_struct.processing.p_hour;
 catalog = global_config_struct.paths.catalog;
 
-flag.save_data = global_config_struct.job.save_data;  % saving the data is job dependent 
-flag.save_netCDF  = global_config_struct.job.save_netCDF;  % saving the data is job dependent 
-flag.afterpulse = strcmp(correction, 'AP_ON'); % setting an afterpulse flag job dependent
-flag = global_config_struct.flags;  % pull in all the remaining flags
+flag.save_data = global_config_struct.job.save_data; 
+flag.save_netCDF  = global_config_struct.job.save_netCDF;
+flag = global_config_struct.flags;
+flag.afterpulse = strcmp(correction, 'AP_ON');
 
 
 % --- 1. Setup, Path, and Calibration ---
@@ -147,6 +147,7 @@ if (strcmp(channels, 'WV') == 1 || strcmp(channels, 'ALL') == 1) && strcmp(corre
 end % CORRECT END OF WV AP_ON IF BLOCK
 
 disp(['Daily processing for ', node, ' on ', daystr, ' complete.']);
+
 
 
 
