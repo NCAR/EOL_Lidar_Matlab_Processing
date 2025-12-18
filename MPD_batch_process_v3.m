@@ -1,8 +1,8 @@
 %% MPD_batch_process_v3.m: Independent Batch Processor
 
 % Add path to utilities and project folder structure (MUST be set correctly)
-addpath('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
-addpath('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/jsonlab');
+%addpath('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
+%addpath('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/jsonlab');
 
 % Define the configuration function name
 MPD_config_script = 'MPD_config'; 
