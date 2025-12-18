@@ -2,7 +2,7 @@
 
 % Add path to utilities and project folder structure (MUST be set correctly)
 addpath('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing')
-addpath('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/jsonlab');
+addpath(/'jsonlab'));
 
 % Define the configuration function name
 MPD_config_script = 'MPD_config'; 

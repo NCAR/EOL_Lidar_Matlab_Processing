@@ -3,8 +3,8 @@
 function calvals = load_system_calvals(node, date_str, cal_serv_path)
 % NOTE: Relies on external function 'loadjson' from the 'jsonlab' library.
 
-calvals.t_date = datetime(date_str, 'InputFormat', 'yyyymmdd');
-calvals.serial_date = datenum(date_str, 'yyyymmdd');
+calvals.t_date = datetime(date_str, 'InputFormat', 'yyyyMMdd');
+calvals.serial_date = datenum(date_str, 'yyyyMMdd');
 
 % --- 1. Load Calibration JSON Data ---
 calvals.config_file = '';

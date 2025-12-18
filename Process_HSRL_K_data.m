@@ -18,7 +18,7 @@ function [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] =
  O2_geometric_correction(O2_geometric_correction==Inf | O2_geometric_correction==-Inf)=nan;
  try
    % the geometric correction is ignored for now  
-   eta_comb = median(O2_geometric_correction(1:end/3), 'omitnan')  
+   eta_comb = median(O2_geometric_correction(1:round(end/3)), 'omitnan')  
  catch
    warning('Problem with the geometric correction, assigning a fixed value.');
    eta_comb = 0.6  % override, and use this value for now 

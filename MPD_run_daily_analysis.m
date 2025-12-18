@@ -2,6 +2,7 @@
 
 function [] = MPD_run_daily_analysis(channels, correction, node, daystr, global_config_struct)
 
+
 % --- 0. Initialization & Configuration Extraction ---
 
 % Extract key processing times for calculation
@@ -28,8 +29,12 @@ save_catalog   = global_config_struct.flags.save_catalog;
 % --- 1. Setup, Path, and Calibration ---
 
 % HELPER CALLS ARE RESOLVED HERE:
-serv_path = get_server_data_path(); 
-cal_serv_path = get_calibration_server_path(); 
+% serv_path = get_server_data_path(); 
+% cal_serv_path = get_calibration_server_path(); 
+serv_path     = global_config_struct.paths.serv_path; 
+cal_serv_path = global_config_struct.paths.cal_path; 
+
+fprintf('>> Processing using path: %s\n', serv_path);
 
 % Load Calibration & System Constants
 calvals = load_system_calvals(node, daystr, cal_serv_path);
@@ -116,7 +121,7 @@ if (strcmp(channels, 'O2') == 1 || strcmp(channels, 'ALL') == 1)
         
         % 3c. HSRL/K-Ratio Processing (Must call new v2 version)
         [T, P, BSR, RD, HSRLMolecular_scan_wavelength, const, beta_m_profile] = ...
-            Process_HSRL_K_data_v2(O2_online_comb, O2_offline_comb, O2_online_mol, O2_offline_mol, ...
+            Process_HSRL_K_data(O2_online_comb, O2_offline_comb, O2_online_mol, O2_offline_mol, ...
                                 time_comb, range, Surf_T, Surf_P, flag, node, daystr, ...
                                 calvals.Receiver_Scan_File, write_data_folder, cal_serv_path, calvals.receiver_scale_factor);
         
@@ -130,6 +135,11 @@ if (strcmp(channels, 'O2') == 1 || strcmp(channels, 'ALL') == 1)
                       O2_on_wavelength, node, daystr, write_data_folder, flag);
                           
         disp(['    --> Finished O2/HSRL processing (Correction: ', correction, ')']);
+
+% Temporary diagnostic
+if ~isscalar(flag.mark_gaps)
+    fprintf('DEBUG: flag.mark_gaps is size %s\n', mat2str(size(flag.mark_gaps)));
+end
 
     catch ME
         warning(['Core O2/HSRL Processing Chain Failed for ', daystr, '. Skipping rest of chain. Error: ', ME.message]);
@@ -149,24 +159,19 @@ disp(['Daily processing for ', node, ' on ', daystr, ' complete.']);
 
 % --- HELPER FUNCTIONS (MUST BE INSIDE THE FUNCTION DEFINITION, BEFORE THE FINAL END) ---
 
-function path = get_server_data_path()
-    if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1; path = '/export/smaug1/rsfdata/MPD/'; else; path = '/Volumes/smaug1/rsfdata/MPD/'; end
-end
-
-function path = get_calibration_server_path()
-    if strcmp(getenv('HOSTNAME'),'eol-smaug.eol.ucar.edu') == 1; path = '/home/rsfdata/Processing/Python/'; else; path = '../'; end
-end
-
 function flag = setup_analysis_flags(save_quicklook, save_data, save_netCDF, save_catalog, correction, g_config)
     flag.save_quicklook = save_quicklook;
     flag.save_data = save_data;
     flag.save_netCDF = save_netCDF;
     flag.save_catalog = save_catalog;
     
+    flag.mark_gaps = g_config.processing.flag_mark_gaps;
     flag.ap_quick = g_config.processing.flag_ap_quick;
     flag.mask_data = g_config.processing.flag_mask_data;
+    flag.decimate = g_config.processing.flag_decimate;
     flag.gradient_filter = g_config.processing.flag_gradient_filter;
     flag.pileup = g_config.processing.flag_pileup;
+    flag.int = g_config.processing.flag_int;       
     flag.WS = g_config.processing.flag_WS;
     flag.OF = g_config.processing.flag_OF;
     flag.afterpulse = strcmp(correction, 'AP_ON'); 
