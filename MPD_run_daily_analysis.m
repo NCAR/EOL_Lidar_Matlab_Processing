@@ -19,18 +19,13 @@ profiles2ave.rb = 2*round(((ave_time.rb*60/read_time_in)+1)/2);
 p_hour = global_config_struct.processing.p_hour;
 catalog = global_config_struct.paths.catalog;
 
-save_quicklook = global_config_struct.flags.save_quicklook;
-save_data      = global_config_struct.job.save_data; 
-save_netCDF    = global_config_struct.job.save_netCDF;
-save_catalog   = global_config_struct.flags.save_catalog;
-
+flag.save_data = global_config_struct.job.save_data;  % saving the data is job dependent 
+flag.save_netCDF  = global_config_struct.job.save_netCDF;  % saving the data is job dependent 
+flag.afterpulse = strcmp(correction, 'AP_ON'); % setting an afterpulse flag job dependent
+flag = global_config_struct.flags;  % pull in all the remaining flags
 
 
 % --- 1. Setup, Path, and Calibration ---
-
-% HELPER CALLS ARE RESOLVED HERE:
-% serv_path = get_server_data_path(); 
-% cal_serv_path = get_calibration_server_path(); 
 serv_path     = global_config_struct.paths.serv_path; 
 cal_serv_path = global_config_struct.paths.cal_path; 
 
@@ -47,9 +42,6 @@ if strcmp(correction, 'AP_ON') == 1
     write_data_folder = fullfile(write_data_folder, 'afterpulse');
 end
 
-% Set up the main processing flags
-flag = setup_analysis_flags(save_quicklook, save_data, save_netCDF, save_catalog, ...
-                            correction, global_config_struct);
 
 % Define input data folder path
 year_folder = daystr(1:4);
@@ -157,30 +149,6 @@ end % CORRECT END OF WV AP_ON IF BLOCK
 disp(['Daily processing for ', node, ' on ', daystr, ' complete.']);
 
 
-% --- HELPER FUNCTIONS (MUST BE INSIDE THE FUNCTION DEFINITION, BEFORE THE FINAL END) ---
 
-function flag = setup_analysis_flags(save_quicklook, save_data, save_netCDF, save_catalog, correction, g_config)
-    flag.save_quicklook = save_quicklook;
-    flag.save_data = save_data;
-    flag.save_netCDF = save_netCDF;
-    flag.save_catalog = save_catalog;
-    
-    flag.mark_gaps = g_config.processing.flag_mark_gaps;
-    flag.ap_quick = g_config.processing.flag_ap_quick;
-    flag.mask_data = g_config.processing.flag_mask_data;
-    flag.decimate = g_config.processing.flag_decimate;
-    flag.gradient_filter = g_config.processing.flag_gradient_filter;
-    flag.pileup = g_config.processing.flag_pileup;
-    flag.int = g_config.processing.flag_int;       
-    flag.WS = g_config.processing.flag_WS;
-    flag.OF = g_config.processing.flag_OF;
-    flag.afterpulse = strcmp(correction, 'AP_ON'); 
-    flag.plot_data = 1; 
-    flag.near = 0; 
-    flag.int = 0; 
-    flag.troubleshoot = 0;
-end
 
-% --- END OF HELPER FUNCTIONS ---
-
-end % FINAL END OF FUNCTION FILE
+end 

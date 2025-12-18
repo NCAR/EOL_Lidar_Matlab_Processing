@@ -1,8 +1,8 @@
 MPD_batch_process_v3
 Starting DATA PROCESSING from 20251106 to 20251107
 Processing Day: 20251106
-    -> Running MPD04: O2, AP_ON...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
 Loaded CalVals for MPD04 on 20251106
 
 gate =
@@ -11,116 +11,14 @@ gate =
 
 --- O2_v2: START EXECUTION ---
 O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 770.1086
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 113)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',113,0)">line 113</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.541806 seconds.
-
-gate =
-
-    7.5000
-
---- O2_v2: START EXECUTION ---
-O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 770.1086
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 119)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',119,0)">line 119</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 4.903518 seconds.
-
-eta_comb =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.5724
-
-
-T0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-  288.9082
-
-
-P0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.8242
-
-Elapsed time is 1.154894 seconds.
-
-gate =
-
-    7.5000
-
-
-lambda_on_N =
-
-  828.1959  828.1960  828.1961
-
-
-lambda_off_N =
-
-  828.2951  828.2951  828.2952
-
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-[Warning: Ignoring extra legend entries.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('legend>process_inputs', '/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m', 567)" style="font-weight:bold">legend>process_inputs</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m',567,0)">line 567</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('legend>make_legend', '/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m', 294)" style="font-weight:bold">legend>make_legend</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m',294,0)">line 294</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('legend', '/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m', 245)" style="font-weight:bold">legend</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m',245,0)">line 245</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v1', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v1.m', 325)" style="font-weight:bold">MPD_WV_analysis_function_v1</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v1.m',325,0)">line 325</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 129)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',129,0)">line 129</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-[Warning: Core O2/HSRL Processing Chain Failed for 20251106. Skipping rest of chain.
-Error: Non-singleton dimensions of the two input arrays must match each other.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 145)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',145,0)">line 145</a>)
+[Warning: Core O2/HSRL Processing Chain Failed for 20251106. Skipping rest of chain. Error:
+Unrecognized field name "WS".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 143)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',143,0)">line 143</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
 Daily processing for MPD04 on 20251106 complete.
 Processing Day: 20251107
-    -> Running MPD04: O2, AP_ON...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
 Loaded CalVals for MPD04 on 20251107
 
 gate =
@@ -129,124 +27,18 @@ gate =
 
 --- O2_v2: START EXECUTION ---
 O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 828.194
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 113)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',113,0)">line 113</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.415294 seconds.
-
-gate =
-
-    7.5000
-
---- O2_v2: START EXECUTION ---
-O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 828.194
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 119)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',119,0)">line 119</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.024087 seconds.
-
-eta_comb =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.5539
-
-
-T0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-  284.4492
-
-
-P0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.8252
-
-Elapsed time is 1.152335 seconds.
-
-gate =
-
-    7.5000
-
-
-lambda_on_N =
-
-  828.1959  828.1960  828.1961
-
-
-lambda_off_N =
-
-  828.2932  828.2951  828.2952
-
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-[Warning: Ignoring extra legend entries.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('legend>process_inputs', '/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m', 567)" style="font-weight:bold">legend>process_inputs</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m',567,0)">line 567</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('legend>make_legend', '/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m', 294)" style="font-weight:bold">legend>make_legend</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m',294,0)">line 294</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('legend', '/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m', 245)" style="font-weight:bold">legend</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2024b.app/toolbox/matlab/graphics/graphics/scribe/legend.m',245,0)">line 245</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v1', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v1.m', 325)" style="font-weight:bold">MPD_WV_analysis_function_v1</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v1.m',325,0)">line 325</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 129)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',129,0)">line 129</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-[Warning: Core O2/HSRL Processing Chain Failed for 20251107. Skipping rest of chain.
-Error: Non-singleton dimensions of the two input arrays must match each other.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 145)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',145,0)">line 145</a>)
+[Warning: Core O2/HSRL Processing Chain Failed for 20251107. Skipping rest of chain. Error:
+Unrecognized field name "WS".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 143)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',143,0)">line 143</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
 Daily processing for MPD04 on 20251107 complete.
-Data processing complete. Total time: 72.0768 seconds.
-[Warning: Negative data ignored] 
-[> In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate>calculateLooseInset
-In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate>updateStartingLayoutPosition
-In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate] 
-diary ('mpd_log_output.txt')
+Data processing complete. Total time: 44.9825 seconds.
+diary off
 MPD_batch_process_v3
 Starting DATA PROCESSING from 20251106 to 20251107
 Processing Day: 20251106
-    -> Running MPD04: O2, AP_ON...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
 Loaded CalVals for MPD04 on 20251106
 
 gate =
@@ -255,131 +47,15 @@ gate =
 
 --- O2_v2: START EXECUTION ---
 O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 770.1086
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 113)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',113,0)">line 113</a>)
+O2_v2: Wavelength median calculated: 769.7963
+[Warning: Core O2/HSRL Processing Chain Failed for 20251106. Skipping rest of chain. Error:
+Unrecognized field name "afterpulse".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 143)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',143,0)">line 143</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.352318 seconds.
-
-gate =
-
-    7.5000
-
---- O2_v2: START EXECUTION ---
-O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 770.1086
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 119)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',119,0)">line 119</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 4.876027 seconds.
-
-eta_comb =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.5724
-
-
-T0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-  288.9082
-
-
-P0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.8242
-
-Elapsed time is 1.143602 seconds.
-
-gate =
-
-    7.5000
-
-
-lambda_on_N =
-
-  828.1959  828.1960  828.1961
-
-
-lambda_off_N =
-
-  828.2951  828.2951  828.2952
-
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-
-range_shift_N =
-
-   18.7500
-
-
-date_plot =
-
-    '11 Jan 2022'
-
-[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 129)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',129,0)">line 129</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 35.068339 seconds.
-    --> Finished O2/HSRL processing (Correction: AP_ON)
 Daily processing for MPD04 on 20251106 complete.
 Processing Day: 20251107
-    -> Running MPD04: O2, AP_ON...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
 Loaded CalVals for MPD04 on 20251107
 
 gate =
@@ -388,466 +64,30 @@ gate =
 
 --- O2_v2: START EXECUTION ---
 O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 828.194
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 113)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',113,0)">line 113</a>)
+O2_v2: Wavelength median calculated: 769.7963
+[Warning: Core O2/HSRL Processing Chain Failed for 20251107. Skipping rest of chain. Error:
+Unrecognized field name "afterpulse".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 143)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',143,0)">line 143</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.275891 seconds.
-
-gate =
-
-    7.5000
-
---- O2_v2: START EXECUTION ---
-O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 828.194
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 119)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',119,0)">line 119</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 4.799949 seconds.
-
-eta_comb =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.5539
-
-
-T0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-  284.4492
-
-
-P0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.8252
-
-Elapsed time is 1.147929 seconds.
-
-gate =
-
-    7.5000
-
-
-lambda_on_N =
-
-  828.1959  828.1960  828.1961
-
-
-lambda_off_N =
-
-  828.2932  828.2951  828.2952
-
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-
-range_shift_N =
-
-   18.7500
-
-
-date_plot =
-
-    '11 Jan 2022'
-
-[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 129)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',129,0)">line 129</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 34.750263 seconds.
-    --> Finished O2/HSRL processing (Correction: AP_ON)
 Daily processing for MPD04 on 20251107 complete.
-Data processing complete. Total time: 143.2712 seconds.
-[Warning: Negative data ignored] 
-[> In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate>calculateLooseInset
-In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate>updateStartingLayoutPosition
-In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate] 
-MPD_batch_process_v3
-Starting DATA PROCESSING from 20251106 to 20251107
-Processing Day: 20251106
-    -> Running MPD04: O2, AP_ON...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
-Loaded CalVals for MPD04 on 20251106
-
-gate =
-
-    7.5000
-
---- O2_v2: START EXECUTION ---
-O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 770.1086
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 113)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',113,0)">line 113</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.665440 seconds.
-
-gate =
-
-    7.5000
-
---- O2_v2: START EXECUTION ---
-O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 770.1086
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 119)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',119,0)">line 119</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 4.814158 seconds.
-
-eta_comb =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.5724
-
-
-T0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-  288.9082
-
-
-P0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.8242
-
-Elapsed time is 1.196365 seconds.
-
-gate =
-
-    7.5000
-
-
-lambda_on_N =
-
-  828.1959  828.1960  828.1961
-
-
-lambda_off_N =
-
-  828.2951  828.2951  828.2952
-
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-
-range_shift_N =
-
-   18.7500
-
-
-date_plot =
-
-    '11 Jan 2022'
-
-[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 129)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',129,0)">line 129</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 35.477748 seconds.
-    --> Finished O2/HSRL processing (Correction: AP_ON)
-Daily processing for MPD04 on 20251106 complete.
-Processing Day: 20251107
-    -> Running MPD04: O2, AP_ON...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
-Loaded CalVals for MPD04 on 20251107
-
-gate =
-
-    7.5000
-
---- O2_v2: START EXECUTION ---
-O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 828.194
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 113)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',113,0)">line 113</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.397396 seconds.
-
-gate =
-
-    7.5000
-
---- O2_v2: START EXECUTION ---
-O2_v2: Data Size: Online=21601 rows.
-O2_v2: Wavelength median calculated: 828.194
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-O2_v2: Afterpulse correction complete. Starting Background subtraction.
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-O2_v2: All temporal and spatial gridding complete.
-[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 119)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',119,0)">line 119</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.037733 seconds.
-
-eta_comb =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.5539
-
-
-T0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-  284.4492
-
-
-P0 =
-
-  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
-
-    0.8252
-
-Elapsed time is 1.168749 seconds.
-
-gate =
-
-    7.5000
-
-
-lambda_on_N =
-
-  828.1959  828.1960  828.1961
-
-
-lambda_off_N =
-
-  828.2932  828.2951  828.2952
-
-
-ap_filename =
-
-    '../eol-lidar-calvals/calfiles/MPD04_afterpulseV2_20251104T192500.nc'
-
-
-range_shift =
-
-   -15
-
-
-time_shift =
-
-    4.5000
-
-
-range_shift_N =
-
-   18.7500
-
-
-date_plot =
-
-    '11 Jan 2022'
-
-[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 129)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',129,0)">line 129</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 35.481132 seconds.
-    --> Finished O2/HSRL processing (Correction: AP_ON)
-Daily processing for MPD04 on 20251107 complete.
-Data processing complete. Total time: 149.0064 seconds.
-[Warning: Negative data ignored] 
-[> In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate>calculateLooseInset
-In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate>updateStartingLayoutPosition
-In matlab.graphics.shape.internal.AxesLayoutManager/doUpdate] 
-diary ('mpd_log_output.txt')
+Data processing complete. Total time: 48.6492 seconds.
 MPD_batch_process_v3
 Starting DATA PROCESSING from 20251106 to 20251107
 Processing Day: 20251106
     -> Running MPD04: O2, AP_OFF...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
-Loaded CalVals for MPD04 on 20251106
-[Warning: Error reading or processing files in
-/Users/Spuler/Desktop/MPD_Dev_Data/mpd_04_data/2025/20251106: Unrecognized field name "O2online".] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_read_and_grid_data', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_read_and_grid_data.m', 236)" style="font-weight:bold">MPD_read_and_grid_data</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_read_and_grid_data.m',236,0)">line 236</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 66)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',66,0)">line 66</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-[Warning: Skipping day 20251106. Data ingestion failed (returned empty). Cannot proceed with analysis.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 76)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',76,0)">line 76</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Processing Day: 20251107
-    -> Running MPD04: O2, AP_OFF...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
-Loaded CalVals for MPD04 on 20251107
-[Warning: Error reading or processing files in
-/Users/Spuler/Desktop/MPD_Dev_Data/mpd_04_data/2025/20251107: Unrecognized field name "O2online".] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_read_and_grid_data', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_read_and_grid_data.m', 236)" style="font-weight:bold">MPD_read_and_grid_data</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_read_and_grid_data.m',236,0)">line 236</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 66)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',66,0)">line 66</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-[Warning: Skipping day 20251107. Data ingestion failed (returned empty). Cannot proceed with analysis.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 76)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',76,0)">line 76</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Data processing complete. Total time: 45.9522 seconds.
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',28,1)">28  </a>serv_path     = global_config_struct.paths.serv_path; 
+config.systems_to_process = {
+    % The job originally requested:
+    struct('node', 'MPD04', 'channels', 'O2', 'correction', 'AP_OFF', 'save_data', 1, 'save_netCDF', 0);
+};
+if system_dependent('IsDebugMode')==1, dbquit; end
 MPD_batch_process_v3
 Starting DATA PROCESSING from 20251106 to 20251107
 Processing Day: 20251106
     -> Running MPD04: O2, AP_OFF...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
-Loaded CalVals for MPD04 on 20251106
-[Warning: Error reading or processing files in
-/Users/Spuler/Desktop/MPD_Dev_Data/mpd_04_data/2025/20251106: Unrecognized field name "O2online".] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_read_and_grid_data', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_read_and_grid_data.m', 236)" style="font-weight:bold">MPD_read_and_grid_data</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_read_and_grid_data.m',236,0)">line 236</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 66)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',66,0)">line 66</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-[Warning: Skipping day 20251106. Data ingestion failed (returned empty). Cannot proceed with analysis.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 76)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',76,0)">line 76</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Processing Day: 20251107
-    -> Running MPD04: O2, AP_OFF...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
-Loaded CalVals for MPD04 on 20251107
-[Warning: Error reading or processing files in
-/Users/Spuler/Desktop/MPD_Dev_Data/mpd_04_data/2025/20251107: Unrecognized field name "O2online".] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_read_and_grid_data', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_read_and_grid_data.m', 236)" style="font-weight:bold">MPD_read_and_grid_data</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_read_and_grid_data.m',236,0)">line 236</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 66)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',66,0)">line 66</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-[Warning: Skipping day 20251107. Data ingestion failed (returned empty). Cannot proceed with analysis.] 
-[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 76)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',76,0)">line 76</a>)
-In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Data processing complete. Total time: 40.6557 seconds.
-MPD_batch_process_v3
-Starting DATA PROCESSING from 20251106 to 20251107
-Processing Day: 20251106
-    -> Running MPD04: O2, AP_OFF...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',34,1)">34  </a>serv_path     = global_config_struct.paths.serv_path; 
+if system_dependent('IsDebugMode')==1, dbcont; end
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
 Loaded CalVals for MPD04 on 20251106
 
 gate =
@@ -873,7 +113,7 @@ O2_v2: All temporal and spatial gridding complete.
 [> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 113)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',113,0)">line 113</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.674388 seconds.
+Elapsed time is 5.763833 seconds.
 
 gate =
 
@@ -898,7 +138,7 @@ O2_v2: All temporal and spatial gridding complete.
 [> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 119)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',119,0)">line 119</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 4.777263 seconds.
+Elapsed time is 4.716974 seconds.
 
 eta_comb =
 
@@ -920,7 +160,7 @@ P0 =
 
     0.8242
 
-Elapsed time is 1.258831 seconds.
+Elapsed time is 1.397577 seconds.
 
 gate =
 
@@ -960,12 +200,12 @@ date_plot =
 [> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 129)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',129,0)">line 129</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 40.161094 seconds.
+Elapsed time is 42.450386 seconds.
     --> Finished O2/HSRL processing (Correction: AP_OFF)
 Daily processing for MPD04 on 20251106 complete.
 Processing Day: 20251107
     -> Running MPD04: O2, AP_OFF...
->> Processing using path: /Users/Spuler/Desktop/MPD_Dev_Data/
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
 Loaded CalVals for MPD04 on 20251107
 
 gate =
@@ -991,7 +231,7 @@ O2_v2: All temporal and spatial gridding complete.
 [> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 113)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',113,0)">line 113</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 6.131788 seconds.
+Elapsed time is 5.192767 seconds.
 
 gate =
 
@@ -1016,7 +256,7 @@ O2_v2: All temporal and spatial gridding complete.
 [> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 119)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',119,0)">line 119</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 5.313984 seconds.
+Elapsed time is 4.892153 seconds.
 
 eta_comb =
 
@@ -1038,7 +278,7 @@ P0 =
 
     0.8252
 
-Elapsed time is 1.309757 seconds.
+Elapsed time is 1.217992 seconds.
 
 gate =
 
@@ -1082,15 +322,1768 @@ In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batc
 [> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1285)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1285,0)">line 1285</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 129)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',129,0)">line 129</a>)
 In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
-Elapsed time is 37.483518 seconds.
+Elapsed time is 36.160796 seconds.
     --> Finished O2/HSRL processing (Correction: AP_OFF)
 Daily processing for MPD04 on 20251107 complete.
-Data processing complete. Total time: 153.5247 seconds.
-[~, hostname] = system('hostname');
-[~, hostname] = system('hostname')
+Data processing complete. Total time: 157.8389 seconds.
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+{Unrecognized field name "flag".
 
-hostname =
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis/setup_analysis_flags', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 167)" style="font-weight:bold">MPD_run_daily_analysis/setup_analysis_flags</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',167,0)">line 167</a>)
+    flag.mark_gaps = g_config.flag.mark_gaps;
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 50)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',50,0)">line 50</a>)
+flag = setup_analysis_flags(save_quicklook, save_data, save_netCDF, save_catalog, ...
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)
+            MPD_run_daily_analysis( ...
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+{Unrecognized field name "ap_quick".
 
-    'vpn69-62.vpnclient.ucar.edu
-     '
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis/setup_analysis_flags', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 168)" style="font-weight:bold">MPD_run_daily_analysis/setup_analysis_flags</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',168,0)">line 168</a>)
+    flag.ap_quick = g_config.flags.ap_quick;
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 50)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',50,0)">line 50</a>)
+flag = setup_analysis_flags(save_quicklook, save_data, save_netCDF, save_catalog, ...
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)
+            MPD_run_daily_analysis( ...
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
 
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 112)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',112,0)">line 112</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.334789 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 118)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',118,0)">line 118</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.712375 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5769
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  288.9082
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8242
+
+Elapsed time is 1.206068 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 128)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',128,0)">line 128</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 37.437737 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 112)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',112,0)">line 112</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.372908 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 118)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',118,0)">line 118</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.707487 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5591
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  284.4492
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8252
+
+Elapsed time is 1.189386 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 128)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',128,0)">line 128</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1285)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1285,0)">line 1285</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 128)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',128,0)">line 128</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 35.679132 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251107 complete.
+Data processing complete. Total time: 146.275 seconds.
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+[Warning: Core O2/HSRL Processing Chain Failed for 20251106. Skipping rest of chain. Error: Unrecognized
+field name "near".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 144)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',144,0)">line 144</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+[Warning: Core O2/HSRL Processing Chain Failed for 20251107. Skipping rest of chain. Error: Unrecognized
+field name "near".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 144)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',144,0)">line 144</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251107 complete.
+Data processing complete. Total time: 46.4603 seconds.
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+   flag_check =  g_config.flags;
+{Attempt to add "flag_check" to a static workspace.
+
+<a href="matlab:helpview('matlab','error_err_static_workspace_violation')" style="font-weight:bold">Related documentation</a>
+} 
+flag.mark_gaps = g_config.flags.mark_gaps;
+flag.ap_quick = g_config.flags.ap_quick;
+  flag =  g_config.flags;
+if system_dependent('IsDebugMode')==1, dbquit; end
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+[Warning: Core O2/HSRL Processing Chain Failed for 20251106. Skipping rest of chain. Error: Unrecognized
+field name "near".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 144)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',144,0)">line 144</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+[Warning: Core O2/HSRL Processing Chain Failed for 20251107. Skipping rest of chain. Error: Unrecognized field
+name "near".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 144)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',144,0)">line 144</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251107 complete.
+Data processing complete. Total time: 57.5578 seconds.
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 112)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',112,0)">line 112</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.636410 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 118)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',118,0)">line 118</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.759348 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5769
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  288.9082
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8242
+
+Elapsed time is 1.213545 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 128)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',128,0)">line 128</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 38.942622 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbquit; end
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+[Warning: Core O2/HSRL Processing Chain Failed for 20251106. Skipping rest of chain. Error: Unrecognized
+field name "troubleshoot".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 144)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',144,0)">line 144</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+[Warning: Negative data ignored] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis/setup_analysis_flags', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 165)" style="font-weight:bold">MPD_run_daily_analysis/setup_analysis_flags</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,0)">line 165</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 50)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',50,0)">line 50</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+[Warning: Core O2/HSRL Processing Chain Failed for 20251107. Skipping rest of chain. Error: Unrecognized
+field name "troubleshoot".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 144)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',144,0)">line 144</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251107 complete.
+Data processing complete. Total time: 64.3494 seconds.
+[Warning: Negative data ignored] 
+[Warning: Negative data ignored] 
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 112)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',112,0)">line 112</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.001303 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 118)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',118,0)">line 118</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.835735 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5769
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  288.9082
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8242
+
+Elapsed time is 1.312240 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 128)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',128,0)">line 128</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 34.599375 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbquit; end
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 112)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',112,0)">line 112</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.252380 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 118)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',118,0)">line 118</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.877205 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5769
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  288.9082
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8242
+
+Elapsed time is 1.200943 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 128)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',128,0)">line 128</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 37.001965 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbquit; end
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+[Warning: Core O2/HSRL Processing Chain Failed for 20251106. Skipping rest of chain. Error: Unrecognized
+field name "near".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 144)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',144,0)">line 144</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+if system_dependent('IsDebugMode')==1, dbquit; end
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 112)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',112,0)">line 112</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 6.660673 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 118)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',118,0)">line 118</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.119592 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5769
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  288.9082
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8242
+
+Elapsed time is 1.325845 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 128)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',128,0)">line 128</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 36.261666 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',165,1)">165 </a>    flag.save_catalog = save_catalog;
+if system_dependent('IsDebugMode')==1, dbquit; end
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',23,1)">23  </a>save_data      = global_config_struct.job.save_data; 
+if system_dependent('IsDebugMode')==1, dbcont; end
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+{Unable to resolve the name 'g_config.flags'.
+
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 58)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',58,0)">line 58</a>)
+    flag = g_config.flags;
+           ^^^^^^^^^^^^^^
+Error in <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)
+            MPD_run_daily_analysis( ...
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 124)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',124,0)">line 124</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.779250 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 130)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',130,0)">line 130</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.968894 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5769
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  288.9082
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8242
+
+Elapsed time is 1.251936 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 140)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',140,0)">line 140</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 34.983253 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 124)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',124,0)">line 124</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.583219 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 130)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',130,0)">line 130</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.635534 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5591
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  284.4492
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8252
+
+Elapsed time is 1.401527 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 140)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',140,0)">line 140</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1285)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1285,0)">line 1285</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 140)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',140,0)">line 140</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 34.977263 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251107 complete.
+Data processing complete. Total time: 146.0412 seconds.
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 105)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',105,0)">line 105</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.701498 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 111)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',111,0)">line 111</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.818813 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5769
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  288.9082
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8242
+
+Elapsed time is 1.200946 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 121)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',121,0)">line 121</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 33.678241 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 105)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',105,0)">line 105</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.334653 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 111)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',111,0)">line 111</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.998149 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5591
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  284.4492
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8252
+
+Elapsed time is 1.141763 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 121)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',121,0)">line 121</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1285)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1285,0)">line 1285</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 121)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',121,0)">line 121</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 36.285697 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251107 complete.
+Data processing complete. Total time: 144.0491 seconds.
+matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+[Warning: Core O2/HSRL Processing Chain Failed for 20251106. Skipping rest of chain. Error: Unrecognized
+field name "afterpulse".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 137)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',137,0)">line 137</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+[Warning: Core O2/HSRL Processing Chain Failed for 20251107. Skipping rest of chain. Error: Unrecognized
+field name "afterpulse".] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 137)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',137,0)">line 137</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Daily processing for MPD04 on 20251107 complete.
+Data processing complete. Total time: 51.5093 seconds.
+MPD_batch_process_v3
+Starting DATA PROCESSING from 20251106 to 20251107
+Processing Day: 20251106
+    -> Running MPD04: O2, AP_OFF...
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',22,1)">22  </a>flag.save_data = global_config_struct.job.save_data; 
+if system_dependent('IsDebugMode')==1, dbcont; end
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251106
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 105)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',105,0)">line 105</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 6.029747 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 111)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',111,0)">line 111</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.955259 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5769
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  288.9082
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8242
+
+Elapsed time is 1.255760 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 121)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',121,0)">line 121</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 35.076049 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251106 complete.
+Processing Day: 20251107
+    -> Running MPD04: O2, AP_OFF...
+<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',22,1)">22  </a>flag.save_data = global_config_struct.job.save_data; 
+if system_dependent('IsDebugMode')==1, dbcont; end
+>> Processing using path: /Users/spuler/Desktop/MPD_Dev_Data/
+Loaded CalVals for MPD04 on 20251107
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 105)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',105,0)">line 105</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 5.547843 seconds.
+
+gate =
+
+    7.5000
+
+--- O2_v2: START EXECUTION ---
+O2_v2: Data Size: Online=21601 rows.
+O2_v2: Wavelength median calculated: 769.7963
+O2_v2: Afterpulse correction complete. Starting Background subtraction.
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+O2_v2: All temporal and spatial gridding complete.
+[Warning: MPD_Analysis_function_O2_v2 successfully reached end of script.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_Analysis_function_O2_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m', 507)" style="font-weight:bold">MPD_Analysis_function_O2_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_Analysis_function_O2_v2.m',507,0)">line 507</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 111)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',111,0)">line 111</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 4.888890 seconds.
+
+eta_comb =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.5591
+
+
+T0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+  284.4492
+
+
+P0 =
+
+  <a href="matlab:helpPopup('single')" style="font-weight:bold">single</a>
+
+    0.8252
+
+Elapsed time is 1.294215 seconds.
+
+gate =
+
+    7.5000
+
+
+lambda_on_N =
+
+  828.1959  828.1960  828.1961
+
+
+lambda_off_N =
+
+  828.3199  828.3199  828.3200
+
+
+range_shift =
+
+   -15
+
+
+time_shift =
+
+    4.5000
+
+
+range_shift_N =
+
+   18.7500
+
+
+date_plot =
+
+    '11 Jan 2022'
+
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1276)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1276,0)">line 1276</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 121)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',121,0)">line 121</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+[Warning: Imaginary parts of complex X and/or Y arguments ignored.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_WV_analysis_function_v2', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m', 1285)" style="font-weight:bold">MPD_WV_analysis_function_v2</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_WV_analysis_function_v2.m',1285,0)">line 1285</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_run_daily_analysis', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m', 121)" style="font-weight:bold">MPD_run_daily_analysis</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_run_daily_analysis.m',121,0)">line 121</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('MPD_batch_process_v3', '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m', 49)" style="font-weight:bold">MPD_batch_process_v3</a> (<a href="matlab: opentoline('/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/MPD_batch_process_v3.m',49,0)">line 49</a>)] 
+Elapsed time is 38.396793 seconds.
+    --> Finished O2/HSRL processing (Correction: AP_OFF)
+Daily processing for MPD04 on 20251107 complete.
+Data processing complete. Total time: 406.3773 seconds.

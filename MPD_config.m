@@ -29,7 +29,20 @@ config.flags.save_quicklook  = 0;
 config.flags.save_data       = 1;   % Save daily .mat file (used by plots)
 config.flags.save_netCDF     = 0;
 config.flags.save_catalog    = 0;
-config.flags.dev_mode = 1;   % Set to 1 for fast local processing (using copied files)
+config.flags.mask_data       = 1; % mask applied to data based on error analysis threshold
+config.flags.decimate        = 0; % decimate all data to half the wv resoltuion
+config.flags.mark_gaps       = 1; % sets gaps in data to NaNs
+config.flags.int             = 0; % interpolate nans in nanmoving_average
+config.flags.gradient_filter = 1; % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
+config.flags.pileup          = 1; % use pileup correction for detectors
+config.flags.WS              = 1; % use the surface weather station data to calcuate spectroscopy
+config.flags.OF              = 1; % correct for geometric overlap functions
+config.flags.ap_quick        = 0;
+config.flags.plot_data       = 1; % need to have this one to save the figs
+config.flags.troubleshoot    = 0; % shows extra plots used for troubleshooting
+config.flags.near            = 0; % defunct, but used to process near ragne ony data
+config.flags.dev_mode        = 1;   % Set to 1 for fast local processing (using copied files)
+
 
 % --- 3. Processing Parameters (Global to the pipeline) ---
 config.processing.read_time_in     = 4;   % set read data in time increments (time in seconds)    
@@ -37,15 +50,7 @@ config.processing.ave_time_wv      = 10;  % 10.0; % averaging time (in minutes) 
 config.processing.ave_time_rb      = 2.0;  %5.0; % averaging time (in minutes) for the relative backscatter
 config.processing.ave_time_gr      = 1.0;   
 config.processing.p_hour           = 20;    
-config.processing.flag_mask_data   = 1; % mask applied to data based on error analysis threshold
-config.processing.flag_decimate    = 0; % decimate all data to half the wv resoltuion
-config.processing.flag_mark_gaps   = 1; % sets gaps in data to NaNs
-config.processing.flag_int         = 0; % interpolate nans in nanmoving_average
-config.processing.flag_gradient_filter = 1; % this is used to mask regions with 'high' backscatter gradients which tend to cause errors
-config.processing.flag_pileup      = 1; % use pileup correction for detectors
-config.processing.flag_WS          = 1; % use the surface weather station data to calcuate spectroscopy
-config.processing.flag_OF          = 1; % correct for geometric overlap functions
-config.processing.flag_ap_quick    = 0;
+
 
 
 % --- 4. System/Channel Matrix (Define the jobs to run) ---
@@ -57,7 +62,8 @@ config.systems_to_process = {
 % --- 6. Path Definitions (for upload/catalog) ---
 config.paths.catalog = '/pub/incoming/catalog/operations';
 if config.env.flag_dev == 1
-    config.paths.serv_path = '/Users/Spuler/Desktop/MPD_Dev_Data/';
+    config.paths.serv_path = '/Users/spuler/Desktop/MPD_Dev_Data/';
+    config.paths.jsonlab = '/Users/spuler/Documents/GitHub/EOL_Lidar_Matlab_Processing/jsonlab';
     config.paths.cal_path  = '../';
 else
     config.paths.serv_path = '/export/smaug1/rsfdata/MPD/';
