@@ -3,7 +3,12 @@
 function config = MPD_config(start_date_in, stop_date_in)
 
 % --- 0. Environment Settings ---
-config.env.flag_dev = 1;   % 1 for Desktop, 0 for Server
+[~, hostname] = system('hostname');
+if contains(hostname, 'eol-smaug') || contains(hostname, 'fog')
+    config.env.flag_dev = 0; % We are on the NCAR Server
+else
+    config.env.flag_dev = 1; % We are on the Local Desktop
+end
 
 % --- 1. Processing Dates (Can be overridden by user input) ---
 if nargin < 2

@@ -1086,3 +1086,11 @@ Elapsed time is 37.483518 seconds.
     --> Finished O2/HSRL processing (Correction: AP_OFF)
 Daily processing for MPD04 on 20251107 complete.
 Data processing complete. Total time: 153.5247 seconds.
+[~, hostname] = system('hostname');
+[~, hostname] = system('hostname')
+
+hostname =
+
+    'vpn69-62.vpnclient.ucar.edu
+     '
+
