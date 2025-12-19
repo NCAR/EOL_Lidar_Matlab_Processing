@@ -72023,3 +72023,6 @@ Elapsed time is 36.806733 seconds.
     --> Finished O2/HSRL processing (Correction: AP_OFF)
 Daily processing for MPD04 on 20251107 complete.
 Data processing complete. Total time: 152.4399 seconds.
+clear all
+close all
+diary off
