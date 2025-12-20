@@ -10,6 +10,7 @@ cd(folder_in);
 
 read_time_in = config.read_time_in; % seconds
 
+
 try
     % --- 1. Consolidated File Listing and Reading ---
     
@@ -191,6 +192,8 @@ try
             
             [counts_grid, ~] = grid_photon_counts_2D_v3(time_data_cols, time_grid, read_time_in);
             data_struct.(strcat(ch_var, '_grid')) = counts_grid;
+
+            
         else
             % Pad with zeros matching the grid size/bin count
             data_struct.(strcat(ch_var, '_grid')) = zeros(N_grid, MCS.bins); 

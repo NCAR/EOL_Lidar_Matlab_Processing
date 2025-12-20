@@ -25,7 +25,6 @@ function [totalCounts_inGridInterval, griddedFluxRate_countsPerSec] = grid_photo
 % --- 1. Pre-processing: Remove duplicates and calculate time intervals ---
 [~, ia, ~] = unique(dataArray(:,1), 'rows');
 uA = dataArray(ia, :);
-
 time_hours = uA(:, 1);
 photonCountsData = uA(:, 2:end);
 
