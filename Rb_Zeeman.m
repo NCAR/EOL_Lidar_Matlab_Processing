@@ -1,5 +1,6 @@
 % =========================================================================
-% Rb87 D2 LINE SPECTROSCOPY MODEL (HSRL & DAVLL)
+% Rb87 D2 LINE SPECTROSCOPY MODEL for 
+% Dichroic Atomic Vapor Laser Locking (DAVLL)
 % This script models the absorption profile of Rubidium 87 under 
 % varying magnetic fields, from Zeeman to Paschen-Back regimes.
 % =========================================================================
@@ -20,8 +21,8 @@ A_e = 84.7185;   % Excited state magnetic dipole constant
 gJ_e = 1.3362;   % Excited state Lande g-factor
 gI = -0.000995;  % Nuclear g-factor
 
-% --- CALIBRATION (Pinning the HSRL Lock Point) ---
-% We define "0 MHz" as the strongest transition (F=2 -> F'=3) at low field.
+% --- CALIBRATION (Pinning the Lock Point) ---
+% Define "0 MHz" as the strongest transition (F=2 -> F'=3) at low field.
 % Eg(8) is the highest energy ground sublevel; Ee(16) is the highest excited.
 [E0g, ~, ~, ~] = diagonalize_H(I_val, J_g, A_g, gJ_g, gI, 0.1, muB);
 [E0e, ~, ~, ~] = diagonalize_H(I_val, J_e, A_e, gJ_e, gI, 0.1, muB);
@@ -46,7 +47,7 @@ for f_idx = 1:length(fields)
     spec_m = zeros(size(detuning_axis)); % Sigma- spectrum (Red shifted)
     
     % 2. COMPUTE TRANSITIONS
-    % We loop through all 8 ground states (g) and 16 excited states (e)
+    % Loop through all 8 ground states (g) and 16 excited states (e)
     for g = 1:8
         for e = 1:16
             freq = (Ee(e) - Eg(g)) - f_ref; % Transition frequency relative to lock

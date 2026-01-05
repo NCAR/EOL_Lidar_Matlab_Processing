@@ -4,7 +4,7 @@ clear all; close all
 node = 'MPD04';
 % Use fullfile for robust path definition
 serv_path = '/Volumes/eol/sci/mhayman';
-serv_path = '/Volumes/sci/mhayman';
+%serv_path = '/Volumes/sci/mhayman';
 plot_path = '/Users/spuler/Desktop';
 
 data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.7');
@@ -427,6 +427,58 @@ x = comb_duration_decimated;
 disp(['Decimation complete. Time elapsed: ', num2str(toc(tic_decimate)), ' seconds.']);
 
 
+
+% --- QUANTITATIVE COMPARISON: ACCURACY & PRECISION ---
+T_tolerance = 3.0; 
+num_ranges_dec = size(comb_T, 1);
+y_diag = (alt{1}./1000); 
+
+% Preallocate
+acc_PTV_prof = nan(num_ranges_dec, 1);  acc_Std_prof = nan(num_ranges_dec, 1);
+bias_PTV_prof = nan(num_ranges_dec, 1); bias_Std_prof = nan(num_ranges_dec, 1);
+width_PTV_prof = nan(num_ranges_dec, 1); width_Std_prof = nan(num_ranges_dec, 1);
+prec_PTV_prof = nan(num_ranges_dec, 1); prec_Std_prof = nan(num_ranges_dec, 1);
+
+for i = 1:num_ranges_dec
+    T_ref = comb_T_model(i, :);
+    
+    % PTV Calculations
+    diff_PTV = comb_T(i, :) - T_ref;
+    v_PTV = isfinite(diff_PTV);
+    if sum(v_PTV) > 10
+        valid_PTV = diff_PTV(v_PTV);
+        m_bias = median(valid_PTV);
+        acc_PTV_prof(i) = (sum(abs(valid_PTV) <= T_tolerance) / length(valid_PTV)) * 100;
+        bias_PTV_prof(i) = m_bias;
+        width_PTV_prof(i) = prctile(abs(valid_PTV), 90); % Total Error
+        prec_PTV_prof(i) = prctile(abs(valid_PTV - m_bias), 90); % Spread only
+    end
+    
+    % Standard Calculations
+    diff_Std = comb_T_Std(i, :) - T_ref;
+    v_Std = isfinite(diff_Std);
+    if sum(v_Std) > 10
+        valid_Std = diff_Std(v_Std);
+        m_bias_std = median(valid_Std);
+        acc_Std_prof(i) = (sum(abs(valid_Std) <= T_tolerance) / length(valid_Std)) * 100;
+        bias_Std_prof(i) = m_bias_std;
+        width_Std_prof(i) = prctile(abs(valid_Std), 90); % Total Error
+        prec_Std_prof(i) = prctile(abs(valid_Std - m_bias_std), 90); % Spread only
+    end
+end
+
+
+
+% Create a diagnostic table for manual inspection
+DiagnosticTable = table(y_diag(1:num_ranges_dec), counts_PTV, bias_PTV_prof, width_PTV_prof, acc_PTV_prof, ...
+    'VariableNames', {'Altitude_km', 'ValidPoints', 'MedianBias_K', 'ErrorEnvelope_90th_K', 'Accuracy_3K_Pct'});
+
+disp('Troubleshooting: "DiagnosticTable" created in Workspace. Open it to inspect values.');
+
+
+
+
+
 % --- 6. PLOT SETUP AND CALLS (Conditional Plotting Implemented) ---
 disp('Starting plotting and saving...');
 tic_plot_save = tic;
@@ -436,6 +488,7 @@ date_str = datestr(comb_duration(1), 'yyyy-mmm-dd'); % Use first day of combined
 plot_size_wide = [scrsz(4)/1.5 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/3]; % Used for single plots
 plot_size_5panel = [100 100 1200 800]; % Custom size for 5 vertical panels (Figure 1 uses this)
 plot_size_7panel = [100 100 1200 1100]; % Custom size for 7 vertical panels (Figure 2 uses this)
+plot_size_square = [100 100 750 750];
 
 font_size = 20; % ORIGINAL FONT SIZE FOR ALL SINGLE PANEL PLOTS
 font_size_small = 8; % REDUCED FONT SIZE FOR MULTI-PANEL PLOTS
@@ -597,6 +650,48 @@ if flag.plot_single_wv_panels
 end
 
 
+
+
+
+
+% ---------------------------------------------------
+% --- SQUARE PROFILE COMPARISON (Matched to Stats) ---
+% ---------------------------------------------------
+hf_stat = figure(figure_idx);
+hf_stat.Position = plot_size_square; 
+
+% Subplot 1: Accuracy
+subplot(2,2,1);
+plot(acc_PTV_prof, y_diag, 'b', acc_Std_prof, y_diag, 'r--', 'LineWidth', 2);
+grid on; xlim([0 100]); ylim([0 6]); ylabel('Height (km)');
+title(['Accuracy (% in \pm', num2str(T_tolerance), ' K)']);
+
+% Subplot 2: Bias (This explains the envelope spike)
+subplot(2,2,2);
+plot(bias_PTV_prof, y_diag, 'b', bias_Std_prof, y_diag, 'r--', 'LineWidth', 2);
+xline(0, 'k:'); grid on; xlim([-5 5]); ylim([0 6]);
+title('Median Bias (K)');
+
+% Subplot 3: 90% Error Envelope
+subplot(2,2,3);
+plot(width_PTV_prof, y_diag, 'b', width_Std_prof, y_diag, 'r--', 'LineWidth', 2);
+xline(3, 'k:', '3K Limit'); grid on; xlim([0 10]); ylim([0 6]);
+xlabel('Error Magnitude (K)'); ylabel('Height (km)');
+title('90% Error Envelope');
+
+% Subplot 4: Legend
+subplot(2,2,4); axis off;
+legend(subplot(2,2,1), {'PTV', 'Standard'}, 'Location', 'southwest');
+title('Retrieval Method');
+
+figure_list{end+1} = figure_idx; 
+suffix_list{end+1} = 'T_Final_Quantitative_Comparison'; 
+figure_idx = figure_idx + 1;
+
+
+
+
+
 % ---------------------------------------------
 % --- SURFACE COMPARISON TIME SERIES ---
 % ---------------------------------------------
@@ -741,34 +836,34 @@ if flag.plot_histograms_2d || flag.plot_1d_histograms
         
         % Figure X+2
         create_2d_density_map(T_PTV_diff_hist, y_range, ...
-            'T PTV - ERA5 Difference vs. Range (Bin 0.2 K)', 'Temperature Difference (K)', ...
+            'T PTV - ERA5 Diff vs. Range (Bin 0.2 K)', 'Temperature Difference (K)', ...
             T_diff_bin_limits, [0 6], T_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_density); 
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'T_Diff_PTV_Histogram_Range'; figure_idx=figure_idx+1;
         
         if flag.read_temp_std
             % Figure X+3
             create_2d_density_map(T_Std_diff_hist, y_range, ... 
-                'T Standard - ERA5 Difference vs. Range (Bin 0.2 K)', 'Temperature Difference (K)',...
+                'T Standard - ERA5 Diff vs. Range (Bin 0.2 K)', 'Temperature Difference (K)',...
                 T_diff_bin_limits, [0 6], T_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_density); 
             figure_list{end+1} = figure_idx; suffix_list{end+1} = 'T_Diff_Standard_Histogram_Range'; figure_idx=figure_idx+1;
         end
 
         % Figure X+4
         create_2d_density_map(AH_Std_diff_hist, y_range, ...
-            'AH Standard - ERA5 Difference vs. Range (Bin 0.2 g m{^3)', 'Absolute Humidity Difference (g m^{-3})', ...
+            'AH Standard - ERA5 Diff vs. Range (Bin 0.2 g m^{-3})', 'Absolute Humidity Difference (g m^{-3})', ...
             AH_diff_bin_limits, [0 6], AH_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'AH_Diff_Standard_Histogram_Range'; figure_idx=figure_idx+1;
         
         % Figure X+5
         create_2d_density_map(AH_PTV_diff_hist, y_range, ...
-            'AH PTV - ERA5 Difference vs. Range (Bin Width: 0.2 g/m^3)', 'Absolute Humidity Difference (g m^{-3})', ...
+            'AH PTV - ERA5 Diff vs. Range (Bin 0.2 g m^{-3})', 'Absolute Humidity Difference (g m^{-3})', ...
             AH_diff_bin_limits, [0 6], AH_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'AH_PTV_Diff_Histogram_Range'; figure_idx=figure_idx+1;
 
         if flag.read_wv_multi
             % Figure X+6
             create_2d_density_map(AH_MultiPulse_diff_hist, y_range, ...
-                'AH MultiPulse - ERA5 Difference vs. Range (Bin Width: 0.2 g/m^3)', 'Absolute Humidity Difference (g m^{-3})', ...
+                'AH MultiPulse - ERA5 Diff vs. Range (Bin 0.2 g m^{-3})', 'Absolute Humidity Difference (g m^{-3})', ...
                 AH_diff_bin_limits, [0 6], AH_diff_bin_width, DENSITY_CLIM, figure_idx, node, plot_size_wide, font_size, cmap_AH); 
             figure_list{end+1} = figure_idx; suffix_list{end+1} = 'AH_MultiPulse_Diff_Histogram_Range'; figure_idx=figure_idx+1;
         end

@@ -4,7 +4,7 @@ clear all; close all
 node = 'MPD04';
 % Use fullfile for robust path definition
 serv_path = '/Volumes/eol/sci/mhayman';
-serv_path = '/Volumes/sci/mhayman';
+%serv_path = '/Volumes/sci/mhayman';
 plot_path = '/Users/spuler/Desktop';
 
 data_dir = fullfile(serv_path, 'DIAL', 'Processed_Data', 'BRIDGE_2025', 'ptv0.7');
@@ -427,6 +427,56 @@ x = comb_duration_decimated;
 disp(['Decimation complete. Time elapsed: ', num2str(toc(tic_decimate)), ' seconds.']);
 
 
+
+% --- INTEGRATED QUANTITATIVE COMPARISON ---
+T_tolerance = 3.0; 
+[num_ranges_dec, ~] = size(comb_T); 
+y_diag = (alt{1}./1000); 
+
+% 1. Preallocate all variables
+acc_PTV_prof  = nan(num_ranges_dec, 1); acc_Std_prof  = nan(num_ranges_dec, 1);
+bias_PTV_prof = nan(num_ranges_dec, 1); bias_Std_prof = nan(num_ranges_dec, 1);
+width_PTV_prof= nan(num_ranges_dec, 1); width_Std_prof= nan(num_ranges_dec, 1);
+prec_PTV_prof = nan(num_ranges_dec, 1); prec_Std_prof = nan(num_ranges_dec, 1);
+counts_PTV    = zeros(num_ranges_dec, 1);
+
+% 2. Run the Calculation Loop
+for i = 1:num_ranges_dec
+    T_ref = comb_T_model(i, :);
+    
+    % --- PTV Method ---
+    diff_PTV = comb_T(i, :) - T_ref;
+    v_PTV = isfinite(diff_PTV);
+    counts_PTV(i) = sum(v_PTV);
+    if counts_PTV(i) > 10
+        valid_PTV = diff_PTV(v_PTV);
+        m_bias = median(valid_PTV); 
+        acc_PTV_prof(i)   = (sum(abs(valid_PTV) <= T_tolerance) / length(valid_PTV)) * 100;
+        bias_PTV_prof(i)  = m_bias;
+        width_PTV_prof(i) = prctile(abs(valid_PTV), 90); % Total error
+        prec_PTV_prof(i)  = prctile(abs(valid_PTV - m_bias), 90); % Spread only
+    end
+    
+    % --- Standard Method ---
+    diff_Std = comb_T_Std(i, :) - T_ref;
+    v_Std = isfinite(diff_Std);
+    if sum(v_Std) > 10
+        valid_Std = diff_Std(v_Std);
+        m_bias_std = median(valid_Std);
+        acc_Std_prof(i)   = (sum(abs(valid_Std) <= T_tolerance) / length(valid_Std)) * 100;
+        bias_Std_prof(i)  = m_bias_std;
+        width_Std_prof(i) = prctile(abs(valid_Std), 90);
+        prec_Std_prof(i)  = prctile(abs(valid_Std - m_bias_std), 90);
+    end
+end
+
+% Re-create diagnostic table for troubleshooting
+DiagnosticTable = table(y_diag(1:num_ranges_dec), counts_PTV, bias_PTV_prof, width_PTV_prof, prec_PTV_prof, acc_PTV_prof, ...
+    'VariableNames', {'Altitude_km', 'ValidPoints', 'MedianBias_K', 'TotalError_90th_K', 'Precision_90th_K', 'Accuracy_3K_Pct'});
+
+
+
+
 % --- 6. PLOT SETUP AND CALLS (Conditional Plotting Implemented) ---
 disp('Starting plotting and saving...');
 tic_plot_save = tic;
@@ -436,6 +486,7 @@ date_str = datestr(comb_duration(1), 'yyyy-mmm-dd'); % Use first day of combined
 plot_size_wide = [scrsz(4)/1.5 scrsz(4)/10 scrsz(3)/1.5 scrsz(4)/3]; % Used for single plots
 plot_size_5panel = [100 100 1200 800]; % Custom size for 5 vertical panels (Figure 1 uses this)
 plot_size_7panel = [100 100 1200 1100]; % Custom size for 7 vertical panels (Figure 2 uses this)
+plot_size_square = [100 100 750 750];
 
 font_size = 20; % ORIGINAL FONT SIZE FOR ALL SINGLE PANEL PLOTS
 font_size_small = 8; % REDUCED FONT SIZE FOR MULTI-PANEL PLOTS
@@ -595,6 +646,48 @@ if flag.plot_single_wv_panels
         figure_list{end+1} = figure_idx; suffix_list{end+1} = 'WV_Diff_MultiPulse_Model'; figure_idx=figure_idx+1;
     end
 end
+
+
+
+
+
+
+% ---------------------------------------------------
+% --- SQUARE PROFILE COMPARISON (Matched to Stats) ---
+% ---------------------------------------------------
+hf_stat = figure(figure_idx);
+hf_stat.Position = [100 100 800 800]; % Force Square
+
+% Accuracy (Overall Success)
+subplot(2,2,1);
+plot(acc_PTV_prof, y_diag, 'b', acc_Std_prof, y_diag, 'r--', 'LineWidth', 2);
+grid on; xlim([0 100]); ylim([0 6]); ylabel('Height (km)');
+title(['Accuracy (% in \pm', num2str(T_tolerance), ' K)']);
+
+% Median Bias (The "Shift")
+subplot(2,2,2);
+plot(bias_PTV_prof, y_diag, 'b', bias_Std_prof, y_diag, 'r--', 'LineWidth', 2);
+xline(0, 'k:'); grid on; xlim([-5 5]); ylim([0 6]);
+title('Median Bias (K)');
+
+% Total Error Envelope (The "Spike")
+subplot(2,2,3);
+plot(width_PTV_prof, y_diag, 'b', width_Std_prof, y_diag, 'r--', 'LineWidth', 2);
+xline(3, 'k:', '3K Limit'); grid on; xlim([0 10]); ylim([0 6]);
+xlabel('Error Magnitude (K)'); ylabel('Height (km)');
+title('90% Total Error Envelope');
+
+% Precision (The "Histogram Width")
+subplot(2,2,4);
+plot(prec_PTV_prof, y_diag, 'b', prec_Std_prof, y_diag, 'r--', 'LineWidth', 2);
+grid on; xlim([0 5]); ylim([0 6]);
+xlabel('Spread (K)'); title('90% Precision (Spread Only)');
+legend({'PTV/Global', 'Standard'}, 'Location', 'northeast', 'FontSize', 8);
+
+figure_list{end+1} = figure_idx; 
+suffix_list{end+1} = 'T_Final_Square_Comparison'; 
+figure_idx = figure_idx + 1;
+
 
 
 % ---------------------------------------------
